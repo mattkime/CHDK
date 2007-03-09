@@ -6,7 +6,7 @@
 #include "gui.h"
 
 #define FN_RAWDIR   "A/DCIM/100CANON"
-#define FN_RAWF     (FN_RAWDIR "/" "CRW_%04d.JPG")
+#define FN_RAWF     (FN_RAWDIR "/" "CRW_%04hd.JPG")
 
 static char fn[64];
 static long (*prev_hhandler)(long a);
@@ -57,6 +57,7 @@ void makedump()
 	started();
 
 	sprintf(fn, FN_RAWF, conf_raw_fileno++);
+//	sprintf(fn, FN_RAWF, *((short*)0x0001281C));
 	fd = fopen(fn, "w+");
 	if (fd >= 0) {
 	    fwrite(hook_raw_image_addr(), 1, hook_raw_size(), fd);

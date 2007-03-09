@@ -31,7 +31,7 @@ int main(int argc, char **argv)
     int size;
     int i,j,k;
     int fail;
-    int base = 0xffc00000;
+    long long base = 0xffc00000;
     FuncSig *sig;
     int count;
     int ret = 0;
@@ -44,7 +44,7 @@ int main(int argc, char **argv)
     if (f == NULL)
 	usage();
 
-    base = strtol(argv[2], NULL, 0);
+    base = strtoll(argv[2], NULL, 0);
 
     printf("// !!! THIS FILE IS GENERATED. DO NOT EDIT. !!!\n");
     printf("#include \"stubs_asm.h\"\n\n");
@@ -70,7 +70,7 @@ int main(int argc, char **argv)
 	    if (!fail){
 		if (count > 1)
 		    printf("// ");
-		printf("NSTUB(%s, 0x%x)\n", func_list[k].name, base+i*4);
+		printf("NSTUB(%s, 0x%08x)\n", func_list[k].name, base+i*4);
 		count ++;
 	    }
 	}

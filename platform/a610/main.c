@@ -352,6 +352,8 @@ long kbd_get_clicked_key()
     return 0;
 }
 
+/*******************************************************************/
+
 void *vid_get_bitmap_fb()
 {
     return (void*)0x103C79A0;
@@ -579,3 +581,44 @@ int shooting_in_progress()
     return t != 0;
 }
 
+/*******************************************************************/
+
+static struct {
+	int hackmode;
+	int canonmode;
+} modemap[] = {
+    { MODE_AUTO,               6  },
+    { MODE_P,                  1  },
+    { MODE_TV,                 3  },
+    { MODE_AV,                 2  },
+    { MODE_M,                  0  },
+    { MODE_PORTRAIT,           9  },
+    { MODE_NIGHT,              8  },
+    { MODE_LANDSCAPE,          7  },
+    { MODE_VIDEO,              18 },
+    { MODE_STITCH,             5  },
+    { MODE_MY_COLORS,          4  },
+    { MODE_SCN_WATER,          13 },
+    { MODE_SCN_NIGHT,          15 },
+    { MODE_SCN_CHILD,          16 },
+    { MODE_SCN_PARTY,          14 },
+    { MODE_SCN_GRASS,          10 },
+    { MODE_SCN_SNOW,           11 },
+    { MODE_SCN_BEACH,          12 },
+    { MODE_SCN_FIREWORK,       17 }
+};
+#define MODESCNT (sizeof(modemap)/sizeof(modemap[0]))
+
+int mode_get() {
+    int mode, i, t=0xFF;
+
+    mode = (kbd_mod_state & 0x00002000)?MODE_REC:MODE_PLAY;
+    
+    GetPropertyCase(0, &t, 4);
+    for (i=0; i<MODESCNT; ++i) {
+	if (modemap[i].canonmode == t) {
+	    return (mode | (modemap[i].hackmode & MODE_SHOOTING_MASK));
+	}
+    }
+    return (mode);
+}

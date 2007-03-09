@@ -44,3 +44,4 @@ else
 endif
 
 main.c: reboot_core.h copy_and_reset.h
+main.o: main.c reboot_core.h copy_and_reset.h

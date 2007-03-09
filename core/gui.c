@@ -4,40 +4,36 @@
 #include "keyboard.h"
 #include "conf.h"
 #include "ubasic.h"
+#include "gui.h"
+#include "gui_draw.h"
+#include "gui_menu.h"
+#include "gui_palette.h"
+#include "gui_mbox.h"
+#include "gui_reversi.h"
+#include "gui_debug.h"
 
+//-------------------------------------------------------------------
 #define HISTO
 
-#define MENUITEM_MASK 0xf
-#define MENUITEM_INFO 1
-#define MENUITEM_BOOL 2
-#define MENUITEM_INT 3
-#define MENUITEM_SUBMENU 4
-#define MENUITEM_PROC 5
-#define MENUITEM_UP 6
-#define MENUITEM_TEXT 7
+// forward declarations
+//-------------------------------------------------------------------
+static void gui_draw_histo();
 
-#define MENUITEM_F_MASK 0xf0
-#define MENUITEM_F_UNSIGNED 0x10
-
-static void canon_redraw_bitmap(); /// XXX
-static void gui_conf_draw();
 static void gui_draw_osd();
+static void gui_draw_splash();
+static void gui_draw_histo();
+
+static void gui_show_build_info();
+static void gui_show_memory_info();
+static void gui_draw_palette();
+static void gui_draw_reversi();
+static void gui_test();
+static void gui_draw_debug();
 
 static void gui_menuproc_save();
 
-#define MENUSTACK_MAXDEPTH 2
-
-typedef struct {
-    const char *text;
-    int type;
-    int *value;
-} CMenuItem;
-
-typedef struct {
-    CMenuItem *menu;
-    int curpos;
-} CMenuItemStacked;
-
+// Menu definition
+//-------------------------------------------------------------------
 CMenuItem script_submenu[] = {
     {"*** Script ***", MENUITEM_INFO, 0 },
     {"Script shoot delay (.1s)", MENUITEM_INT|MENUITEM_F_UNSIGNED, &conf_script_shoot_delay },
@@ -48,13 +44,24 @@ CMenuItem script_submenu[] = {
     {0}
 };
 
+CMenuItem misc_submenu[] = {
+    {"*** Miscellaneous ***", MENUITEM_INFO, 0 },
+    {"Show build info", MENUITEM_PROC, (int*)gui_show_build_info },
+    {"Show memory info", MENUITEM_PROC, (int*)gui_show_memory_info },
+    {"Draw palette", MENUITEM_PROC, (int*)gui_draw_palette },
+    {"MessageBox test", MENUITEM_PROC, (int*)gui_test },
+    {"GAME: Reversi", MENUITEM_PROC, (int*)gui_draw_reversi },
+    {"<- Back", MENUITEM_UP, NULL },
+    {0}
+};
+
 CMenuItem debug_submenu[] = {
     {"*** Debug ***", MENUITEM_INFO, 0 },
 
     {"Show PropCases", MENUITEM_BOOL, &debug_propcase_show },
     {"PropCase page", MENUITEM_INT, &debug_propcase_page },
     {"Show misc. values", MENUITEM_BOOL, &debug_vals_show },
-
+    {"Memory browser", MENUITEM_PROC, (int*)gui_draw_debug },
     {"<- Back", MENUITEM_UP, NULL },
     {0}
 };
@@ -67,94 +74,47 @@ CMenuItem root_menu[] = {
     {"Show live histo", MENUITEM_BOOL, &conf_show_histo },
 #endif
     {"Scripting parameters ->", MENUITEM_SUBMENU, (int*)script_submenu },
+    {"Miscellaneous stuff ->", MENUITEM_SUBMENU, (int*)misc_submenu },
     {"Debug parameters ->", MENUITEM_SUBMENU, (int*)debug_submenu },
     {"Save options now...", MENUITEM_PROC, (int*)gui_menuproc_save },
     {0}
 };
 
-static CMenuItem *curr_menu;
-static CMenuItemStacked gui_menu_stack[MENUSTACK_MAXDEPTH];
-static long gui_menu_stack_ptr;
-static int gui_menu_curr_item;
-static int gui_mode_alt;
-static int gui_mode_conf;
+//-------------------------------------------------------------------
+static volatile enum Gui_Mode gui_mode;
+static volatile int gui_restore;
+static volatile int gui_in_redraw;
+static int gui_splash = 50;
 
-
-const unsigned char fontdata_8x16[4096];
-static char *fb;
-static int width, height;
-static char sbuf[100];
-
-#define SETPIX(_x,_y,_v) fb[(_y)*(width)+(_x)] = \
-    fb[(width)*(height)+(_y)*(width)+(_x)] = (_v)
-
-void draw_char(int x, int y, const char ch)
+//-------------------------------------------------------------------
+void gui_init()
 {
-    const unsigned char *sym = fontdata_8x16 +
-	    ((const unsigned char)ch)*16;
-    int i, ii;
-    char c;
-
-    // XXX optimize. probably use 4bit -> 32bit lookup table
-    // so 4(8) pixels were drawn at a time
-    for (i=0;i<16;i++){
-	for (ii=0;ii<8;ii++){
-	    c = (sym[i] & (0x80>>ii)) ? 0xee:0xff;
-	    SETPIX(x+ii,y+i, c);
-	}
-    }
+    gui_mode = GUI_MODE_NONE;
+    gui_restore = 0;
+    gui_in_redraw = 0;
+    draw_init();
 }
 
-void draw_string(int x, int y, const char *s)
-{
-    while(*s){
-	draw_char(x,y,*s);
-	s++;
-	x+=8;
-	if ((x>=width) && (*s)){
-	    draw_char(x-8,y,'>');
-	    break;
-	}
-    }
+//-------------------------------------------------------------------
+enum Gui_Mode gui_get_mode() {
+    return gui_mode;
 }
 
-void draw_txt_string(int col, int row, const char *s)
-{
-    draw_string(col*8, row*16, s);
+//-------------------------------------------------------------------
+void gui_set_mode(enum Gui_Mode mode) {
+    gui_mode = mode;
 }
 
-void draw_txt_char(int col, int row, const char c)
-{
-    draw_char(col*8, row*16, c);
+//-------------------------------------------------------------------
+void gui_force_restore() {
+    gui_restore = gui_in_redraw;
 }
 
-#ifdef HISTO
-static unsigned int histogram[100];
-static unsigned int histo_max;
-
-void do_histo()
-{
-    unsigned char *img = vid_get_viewport_fb();
-    int i, hi;
-    for (i=0;i<100;i++){
-	histogram[i]=0;
-    }
-    histo_max = 0;
-
-    for (i=0;i<width*height;i++){
-	hi = img[i*3+1]*100/256;
-	histogram[hi]++;
-
-	if (histo_max<histogram[hi])
-	    histo_max=histogram[hi];
-    }
-}
-#endif
-
+//-------------------------------------------------------------------
 void gui_redraw()
 {
 	int i,j;
-	int threshold;
+	enum Gui_Mode gui_mode_old;
 
 #if 0
     {
@@ -190,7 +150,7 @@ void gui_redraw()
 	    r = 0;
 	    f(conf_ubasic_var_a+i, &r, 4);
 	    sprintf(sbuf, "%3d: %d               ", conf_ubasic_var_a+i,r);sbuf[20]=0;
-	    draw_string(64,16+16*i,sbuf);
+	    draw_string(64,16+16*i,sbuf, MAKE_COLOR(COLOR_BG, COLOR_FG));
 	
 	}
 /*
@@ -220,265 +180,245 @@ void gui_redraw()
     }
 #endif
 
+    if (gui_splash) {
+        if (gui_splash>46) {
+            gui_draw_splash();
+        } else if (gui_splash==1 && (mode_get()&MODE_MASK) == MODE_PLAY) {
+            draw_restore();
+        }
+        --gui_splash;
+    }
+
 #ifdef HISTO
-    if (conf_show_histo && kbd_is_key_pressed(KEY_SHOOT_HALF)){
-	const int hx=219;
-	const int hy=48;
-	/* box */
-	for (i=hx-1;i<=hx+100;i++){
-	    SETPIX(i,hy, 0x55);
-	    SETPIX(i,hy+50, 0x55);
-	}
+    gui_draw_histo();
+#endif
 
-	for (i=hy;i<hy+50;i++){
-	    SETPIX(hx-1,i, 0x55);
-	    SETPIX(hx+100,i, 0x55);
-	}
+    gui_in_redraw = 1;
+    gui_mode_old = gui_mode;
 
-	do_histo();
-
-	/* hisogram */
-	for (i=0;i<100;i++){
-	    if (histo_max > 0)
-		threshold = (logf((float)histogram[i]))*50/logf(histo_max);
-	    else
-		threshold = 50;
-	    for (j=1;j<50;j++){
-		int x = hx+i;
-		int y = hy+50-j;
-
-		if (j<=threshold)
-		    SETPIX(x,y, 0x55);
-		else
-		    SETPIX(x,y, 0);
-	    }
-	}
+    switch (gui_mode) {
+        case GUI_MODE_MENU:
+            gui_menu_draw();
+            draw_txt_string(20, 14, "<CNF>", MAKE_COLOR(COLOR_ALT_BG, COLOR_FG));
+            break;
+        case GUI_MODE_ALT:
+            gui_draw_osd();
+            draw_txt_string(20, 14, "<ALT>", MAKE_COLOR(COLOR_ALT_BG, COLOR_FG));
+            break;
+        case GUI_MODE_NONE:
+            gui_draw_osd();
+            break;
+        case GUI_MODE_PALETTE:
+            gui_palette_draw();
+            break;
+        case GUI_MODE_MBOX:
+            gui_mbox_draw();
+            break;
+        case GUI_MODE_REVERSI:
+            gui_reversi_draw();
+            break;
+        case GUI_MODE_DEBUG:
+            gui_debug_draw();
+            break;
+        default:
+            break;
     }
-#endif	
-
-
-    if (gui_mode_conf){
-	gui_conf_draw();
-	draw_txt_string(20, 14, "<CNF>");
-    } else {
-
-	if (conf_show_osd){
-	    gui_draw_osd();
-	}
     
-	if (gui_mode_alt){
-	    draw_txt_string(20, 14, "<ALT>");
-	}
+    gui_in_redraw = 0;
+    if ((gui_mode_old != gui_mode && (gui_mode_old != GUI_MODE_NONE && gui_mode_old != GUI_MODE_ALT) && (gui_mode != GUI_MODE_MBOX)) || gui_restore) {
+        gui_restore = 0;
+        if (gui_mode != GUI_MODE_REVERSI)
+            draw_restore();
     }
-
 }
 
+//-------------------------------------------------------------------
 void gui_kbd_process()
 {
 
     if (kbd_is_key_clicked(KEY_MENU)){
-	gui_mode_conf = !gui_mode_conf;
-	if (!gui_mode_conf){
-	    canon_redraw_bitmap();
-	} else {
-	    if (curr_menu == NULL){
-		curr_menu = root_menu;
-		gui_menu_curr_item = 0;
-		gui_menu_stack_ptr = 0;
-	    }
-	}
-	return;
+        switch (gui_mode) {
+            case GUI_MODE_ALT:
+                gui_menu_init(root_menu);
+                gui_mode = GUI_MODE_MENU;
+                draw_restore();
+                break;
+            case GUI_MODE_MENU:
+                gui_mode = GUI_MODE_ALT;
+                draw_restore();
+                break;
+            case GUI_MODE_PALETTE:
+            case GUI_MODE_REVERSI:
+            case GUI_MODE_DEBUG:
+                draw_restore();
+                gui_mode = GUI_MODE_MENU;
+                break;
+            default:
+                break;
+        }
+        return;
     }
 
-    if (gui_mode_conf){
-	switch (kbd_get_clicked_key()){
-	case KEY_UP:
-	    if (gui_menu_curr_item>0)
-		gui_menu_curr_item--;
-	    break;
-	case KEY_DOWN:
-	    if (curr_menu[gui_menu_curr_item+1].text)
-		gui_menu_curr_item++;
-	    break;
-	case KEY_LEFT:{
-	    long v = *curr_menu[gui_menu_curr_item].value;
-
-	    switch (curr_menu[gui_menu_curr_item].type & MENUITEM_MASK){
-	    case MENUITEM_INT:
-		v -= 1;
-		if ( curr_menu[gui_menu_curr_item].type & MENUITEM_F_UNSIGNED){
-		    if (v < 0)
-			v = 0;
-		}
-		break;
-	    }
-	    *curr_menu[gui_menu_curr_item].value = v;
-	    break;
-	}
-	case KEY_RIGHT:
-	    switch (curr_menu[gui_menu_curr_item].type & MENUITEM_MASK){
-	    case MENUITEM_INT:
-		*curr_menu[gui_menu_curr_item].value += 1;
-		break;
-	    }
-	    break;
-	case KEY_SET:
-	    switch (curr_menu[gui_menu_curr_item].type & MENUITEM_MASK){
-	    case MENUITEM_BOOL:
-		*curr_menu[gui_menu_curr_item].value =
-			!(*curr_menu[gui_menu_curr_item].value);
-		break;
-	    case MENUITEM_PROC:{
-		void (*proc)();
-		proc = (void*)curr_menu[gui_menu_curr_item].value;
-		proc();
-		gui_menu_curr_item = 0;
-		return;
-		}
-	    case MENUITEM_SUBMENU:
-		gui_menu_stack[gui_menu_stack_ptr].menu = curr_menu;
-		gui_menu_stack[gui_menu_stack_ptr].curpos = gui_menu_curr_item;
-		curr_menu = (void*)curr_menu[gui_menu_curr_item].value;
-		gui_menu_curr_item = 0;
-		gui_menu_stack_ptr++;
-		// FIXME check on stack overrun;
-		if (gui_menu_stack_ptr > MENUSTACK_MAXDEPTH){
-		    draw_txt_string(0, 0, "E1");
-		    gui_menu_stack_ptr = 0;
-		}
-		break;
-	    case MENUITEM_UP:
-		if (gui_menu_stack_ptr > 0){
-		    gui_menu_stack_ptr--;
-		    curr_menu = gui_menu_stack[gui_menu_stack_ptr].menu;
-		    gui_menu_curr_item = gui_menu_stack[gui_menu_stack_ptr].curpos;
-		}
-		break;
-	    }
-	    break;
-	case KEY_ERASE:
-//	    {
-//		void (*f)(long a, long b, long c) = 0xFFC1408C;
-//		long p = 0;
-//		f(40,&p,2);
-//	    }
-//	    lens_set_focus_pos(2000);
-//	    makedump();
-//	    shooting_set_tv_rel(2);
-//	    shooting_set_av_rel(2);
-	    break;
-	}
+    if (kbd_is_key_clicked(KEY_ERASE)) {
+//          {
+//              void (*f)(long a, long b, long c) = 0xFFC1408C;
+//              long p = 0;
+//              f(40,&p,2);
+//          }
+//          lens_set_focus_pos(2000);
+//          makedump();
+//          shooting_set_tv_rel(2);
+//          shooting_set_av_rel(2);
+    }
+    
+    switch (gui_mode) {
+    	case GUI_MODE_MENU:
+            gui_menu_kbd_process();
+            break;
+    	case GUI_MODE_PALETTE:
+            gui_palette_kbd_process();
+            break;
+    	case GUI_MODE_MBOX:
+            gui_mbox_kbd_process();
+            break;
+    	case GUI_MODE_REVERSI:
+            gui_reversi_kbd_process();
+            break;
+    	case GUI_MODE_DEBUG:
+            gui_debug_kbd_process();
+            break;
+        default:
+            break;
     }
 }
 
+//-------------------------------------------------------------------
 void gui_kbd_enter()
 {
     // XXX set custom palette
-    gui_mode_alt = 1;
+    gui_mode = GUI_MODE_ALT;
 }
 
+//-------------------------------------------------------------------
 void gui_kbd_leave()
 {
     // XXX restore palette
-    gui_mode_alt = 0;
-    gui_mode_conf = 0;
-    canon_redraw_bitmap();
-}
-
-void gui_init()
-{
-    fb = vid_get_bitmap_fb();
-    width = vid_get_bitmap_width();
-    height  = vid_get_bitmap_height();
-}
-
-void canon_redraw_bitmap()
-{
     ubasic_error = 0;
-    draw_txt_string(20, 14, "     ");
-    // TODO
+    draw_restore();
+    gui_mode = GUI_MODE_NONE;
 }
 
-void gui_conf_draw()
-{
-    static char tbuf[64];
-    int imenu;
-    int c=3,r=2;
-    int l;
-    int itemh;
-    const int itemw = 37;
+#ifdef HISTO
+#define HISTO_WIDTH     100
+#define HISTO_HEIGHT    50
+static unsigned int histogram[HISTO_WIDTH];
+static unsigned int histo_max;
 
+//-------------------------------------------------------------------
+static inline void do_histo() {
+    unsigned char *img = vid_get_viewport_fb();
+    register int i, hi;
 
-    for (imenu=0; curr_menu[imenu].text; imenu++){
-	itemh = 0;
-	switch (curr_menu[imenu].type & MENUITEM_MASK){
-	case MENUITEM_INFO:
-	    l = strlen(curr_menu[imenu].text);
-	    draw_txt_string(c+(itemw-l)/2, r, curr_menu[imenu].text);
-	    itemh=2;
-	    draw_txt_char(c,r,' ');
-	    draw_txt_char(c+itemw-1,r,' ');
-	    break;
-	case MENUITEM_BOOL:
-	    sprintf(tbuf, " %-31s [%c] ", curr_menu[imenu].text,
-		(*curr_menu[imenu].value) ? '*': ' ');
-	    draw_txt_string(c, r, tbuf);
-	    itemh=1;
-	    break;
-	case MENUITEM_INT:
-	    sprintf(tbuf, " %-27s [%5d] ", curr_menu[imenu].text,
-		*curr_menu[imenu].value);
-	    draw_txt_string(c, r, tbuf);
-	    itemh=1;
-	    break;
-	case MENUITEM_UP:
-	case MENUITEM_SUBMENU:
-	case MENUITEM_PROC:
-	case MENUITEM_TEXT:
-	    sprintf(tbuf, " %-35s ", curr_menu[imenu].text);
-	    draw_txt_string(c, r, tbuf);
-	    itemh=1;
-	    break;
-	}
-	if (gui_menu_curr_item == imenu){
-	    draw_txt_char(c,r,'>');
-	    draw_txt_char(c+itemw-1,r,'<');
-	}
-	r+=itemh;
+    for (i=0; i<HISTO_WIDTH; i++)
+        histogram[i] = 0;
+    histo_max = 0;
+
+    for (i=0; i<screen_width*screen_height; i++) {
+        hi = img[i*3+1]*HISTO_WIDTH/256;
+        histogram[hi]++;
+
+        if (histo_max<histogram[hi])
+            histo_max = histogram[hi];
     }
 }
 
+//-------------------------------------------------------------------
+void gui_draw_histo() {
+    if ((mode_get()&MODE_MASK) == MODE_REC && gui_mode==GUI_MODE_NONE && 
+         conf_show_histo && kbd_is_key_pressed(KEY_SHOOT_HALF)) {
+        static const int hx=219;
+        static const int hy=45;
+        register unsigned int i, v, threshold;
+
+        draw_rect(hx-1, hy, hx+HISTO_WIDTH, hy+HISTO_HEIGHT, COLOR_WHITE);
+
+        do_histo();
+
+        /* histogram */
+        for (i=0; i<HISTO_WIDTH; i++) {
+            threshold = (histo_max > 0)?(logf((float)histogram[i]))*HISTO_HEIGHT/logf(histo_max):HISTO_HEIGHT;
+
+            for (v=1; v<HISTO_HEIGHT; v++)
+                draw_pixel(hx+i, hy+HISTO_HEIGHT-v, (v<=threshold)?COLOR_WHITE:COLOR_BG);
+        }
+    }
+}
+#endif
+
+//-------------------------------------------------------------------
+static long calc_average_vbatt() {
+    #define VOLTS_N 		100
+    static unsigned short	volts[VOLTS_N] = {0};
+    static unsigned int   	n = 0, rn = 0;
+    static unsigned long	volt_aver = 0;
+
+    volt_aver-=volts[n];
+    volts[n]=(unsigned short)stat_get_vbatt();
+    volt_aver+=volts[n];
+    if (++n>rn) rn=n;
+    if (n>=VOLTS_N) n=0;
+    return volt_aver/rn;
+}
+
+//-------------------------------------------------------------------
 extern long physw_status[3];
-static char osd_buf[32];
 extern long GetPropertyCase(long opt_id, void *buf, long bufsize);
+static char osd_buf[32];
+//-------------------------------------------------------------------
+void gui_draw_osd() {
+    unsigned int i, n = 0;
+    unsigned long v;
+    
+    if (!conf_show_osd) return;
 
-void gui_draw_osd()
-{
-    if (conf_save_raw){
-	draw_txt_string(40, 3, "RAW");
-    } else {
-	draw_txt_string(40, 3, "   ");
+    i = mode_get();
+    if ((i&MODE_MASK) == MODE_REC) {
+        i &= MODE_SHOOTING_MASK;
+        if (i==MODE_SCN_WATER || i==MODE_SCN_NIGHT || i==MODE_SCN_CHILD || i==MODE_SCN_PARTY || i==MODE_STITCH ||
+            i==MODE_SCN_GRASS || i==MODE_SCN_SNOW  || i==MODE_SCN_BEACH || i==MODE_SCN_FIREWORK || i==MODE_VIDEO)
+            ++n;
+
+        if (conf_save_raw){
+    	    draw_txt_string(40, 3+n, "RAW", MAKE_COLOR(COLOR_BG, COLOR_FG));
+    	    ++n;
+        }
+        if (state_kbd_script_run){
+    	    draw_txt_string(40, 3+n, "SCR", MAKE_COLOR(COLOR_BG, COLOR_FG));
+    	    ++n;
+        }
     }
 
-    if (state_kbd_script_run){
-	draw_txt_string(40, 4, "SCR");
-    } else {
-	draw_txt_string(40, 4, "   ");
+    n=6;
+    if ((mode_get()&MODE_MASK) == MODE_REC) {
+        sprintf(osd_buf, "Z:%ld/%ld%8s", lens_get_zoom_point(), lens_get_zoom_pos(), "");
+        osd_buf[8]=0;
+        draw_txt_string(35, n++, osd_buf, MAKE_COLOR(COLOR_BG, COLOR_FG));
+        sprintf(osd_buf, "F:%ld%8s", lens_get_focus_pos(), "");
+        osd_buf[8]=0;
+        draw_txt_string(35, n++, osd_buf, MAKE_COLOR(COLOR_BG, COLOR_FG));
     }
+    v = calc_average_vbatt();
+    sprintf(osd_buf, "V:%ld.%03ld%8s", v/1000, v%1000, "");
+    osd_buf[8]=0;
+    draw_txt_string(35, n++, osd_buf, MAKE_COLOR(COLOR_BG, COLOR_FG));
 
-    sprintf(osd_buf, "Z:%d/%d  ", lens_get_zoom_point(), lens_get_zoom_pos());
-    draw_txt_string(35, 6, osd_buf);
-    sprintf(osd_buf, "F:%d  ", lens_get_focus_pos());
-    draw_txt_string(35, 7, osd_buf);
-    sprintf(osd_buf, "V:%d  ", stat_get_vbatt());
-    draw_txt_string(35, 8, osd_buf);
 
     if (debug_vals_show) {
-	sprintf(osd_buf, "1:%8x  ", physw_status[2]);
-	draw_txt_string(28, 10, osd_buf);
+	sprintf(osd_buf, "1:%8lx  ", ~physw_status[2]);
+	draw_txt_string(28, 10, osd_buf, MAKE_COLOR(COLOR_BG, COLOR_FG));
 
-	sprintf(osd_buf, "2:%8d  ", get_tick_count());
-	draw_txt_string(28, 11, osd_buf);
+	sprintf(osd_buf, "2:%8ld  ", get_tick_count());
+	draw_txt_string(28, 11, osd_buf, MAKE_COLOR(COLOR_BG, COLOR_FG));
     }
 
     if (debug_propcase_show){
@@ -490,25 +430,144 @@ void gui_draw_osd()
 	    p = debug_propcase_page*10+i;
 	    GetPropertyCase(p, &r, 4);
 	    sprintf(sbuf, "%3d: %d              ", p, r);sbuf[20]=0;
-	    draw_string(64,16+16*i,sbuf);
+	    draw_string(64,16+16*i,sbuf, MAKE_COLOR(COLOR_BG, COLOR_FG));
 	}
-    
     }
 
 
     if (ubasic_error){
 	const char *msg;
-    if (ubasic_error >= UBASIC_E_ENDMARK) {
-        msg = ubasic_errstrings[UBASIC_E_UNKNOWN_ERROR];
-    } else {
+        if (ubasic_error >= UBASIC_E_ENDMARK) {
+            msg = ubasic_errstrings[UBASIC_E_UNKNOWN_ERROR];
+        } else {
 	    msg = ubasic_errstrings[ubasic_error];
 	}
 	sprintf(osd_buf, "uBASIC:%d %s ", ubasic_linenumber(), msg);
-	draw_txt_string(0, 0, osd_buf);
+	draw_txt_string(0, 0, osd_buf, MAKE_COLOR(COLOR_RED, COLOR_YELLOW));
     }
 }
 
+//-------------------------------------------------------------------
 void gui_menuproc_save()
 {
     conf_save(1);
 }
+
+//-------------------------------------------------------------------
+void gui_draw_palette() {
+    draw_restore();
+    gui_palette_init();
+    gui_mode = GUI_MODE_PALETTE;
+}
+
+//-------------------------------------------------------------------
+void gui_show_build_info() {
+    gui_mbox_init("*** Build Info ***", "Date:    " __DATE__ "\nTime:    " __TIME__ "\nCamera:  " PLATFORM "\nFW Vers: " PLATFORMSUB, MBOX_FUNC_RESTORE|MBOX_TEXT_LEFT);
+}
+
+//-------------------------------------------------------------------
+void gui_show_memory_info() {
+    static char buf[128];
+    int size, l_size, d;
+    char* ptr;
+
+    size = 16;
+    while (1) {
+        ptr= malloc(size);
+        if (ptr) {
+            free(ptr);
+            size <<= 1;
+        } else
+            break;
+    }
+
+    l_size = size;
+    size >>= 1;
+    d=1024;
+    while (d) {
+        ptr = malloc(size);
+        if (ptr) {
+            free(ptr);
+            d = l_size-size;
+            if (d<0) d=-d;
+            l_size = size;
+            size += d>>1;
+        } else {
+            d = size-l_size;
+            if (d<0) d=-d;
+            l_size = size;
+            size -= d>>1;
+        }
+        
+    }
+    
+    sprintf(buf, "Free memory: %d bytes", size);
+    gui_mbox_init("*** Memory Info ***", buf, 1);
+}
+
+//-------------------------------------------------------------------
+void gui_draw_reversi() {
+    if ((mode_get()&MODE_MASK) != MODE_PLAY) {
+        gui_mbox_init("*** Information ***", "Please switch your camera\nto PLAY mode\nand try again. :)" , MBOX_FUNC_RESTORE|MBOX_TEXT_CENTER);
+        return;
+    }
+    gui_mode = GUI_MODE_REVERSI;
+    gui_reversi_init();
+}
+
+//-------------------------------------------------------------------
+void gui_test() {
+    gui_mbox_init("*** Information ***", "Test multibuttons" , MBOX_FUNC_RESTORE|MBOX_TEXT_CENTER|MBOX_BTN_YES_NO_CANCEL);
+}
+
+//-------------------------------------------------------------------
+void gui_draw_debug() {
+//    gui_debug_init(0x2510);
+//    gui_debug_init(0x127E0);
+//    gui_debug_init(0x7F5B8);
+     DIR *d;
+     struct dirent *dd;
+     int i=0, t;
+     char buf[128];
+
+     d=opendir("A/DCIM/130CANON");
+     if (d) {
+         dd = readdir(d);
+         while (dd && i<14) {
+             sprintf(buf, "%08X %s", dd, dd->name);
+             draw_txt_string(1, i++, buf, MAKE_COLOR(COLOR_BLACK, COLOR_FG));
+             dd = readdir(d);
+         }
+         closedir(d);
+     }
+
+     t = get_tick_count();
+     while (get_tick_count() - t <10000) ;
+
+//    gui_debug_init(d);
+}
+
+//-------------------------------------------------------------------
+void gui_draw_splash() {
+    coord w, h, x, y;
+    static const char *text[] = {"HDK Firmware", 
+        "Build: " __DATE__ " " __TIME__ ,
+        "Camera: " PLATFORM " - " PLATFORMSUB };
+    int i, l;
+
+    h=sizeof(text)/sizeof(text[0])*FONT_HEIGHT+8;
+    w=0;
+    for (i=0; i<sizeof(text)/sizeof(text[0]); ++i) {
+        l=strlen(text[i]);
+        if (l>w) w=l;
+    }
+    w=w*FONT_WIDTH+10;
+
+    x = (screen_width-w)>>1; y = (screen_height-h)>>1;
+    draw_filled_rect(x, y, x+w, y+h, MAKE_COLOR(0xD9, COLOR_WHITE));
+    for (i=0; i<sizeof(text)/sizeof(text[0]); ++i) {
+        draw_string(x+((w-strlen(text[i])*FONT_WIDTH)>>1)+5, y+i*FONT_HEIGHT+4, text[i], MAKE_COLOR(0xD9, COLOR_WHITE));
+    }
+}
+
+//-------------------------------------------------------------------

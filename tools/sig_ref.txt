@@ -56,3 +56,12 @@ DisplayImagePhysicalScreen 0xFFD112AC
 ExecuteEventProcedure 0xFFC067F0
 GetPropertyCase 0xFFC141A8
 SetPropertyCase 0xFFC1408C
+malloc 0xFFEBEE9C
+free 0xFFEBEEA8
+strcat 0xFFEB5AA4
+strchr 0xFFEB5AD0
+RefreshPhysicalScreen 0xFFD5F6C0
+opendir 0xFFEB7E30
+closedir 0xFFEB7DFC
+readdir 0xFFEB7DC8
+rewinddir 0xFFEB7DF0

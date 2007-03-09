@@ -82,7 +82,7 @@ int main(int argc, char **argv)
     char *proc_name;
     uint32_t buf[1024];
     FILE *f;
-    int base;
+    long long base;
     int pos;
     int size;
     int i,j;
@@ -96,12 +96,11 @@ int main(int argc, char **argv)
     if (f == NULL)
 	usage();
 
-    base = strtol(argv[2], NULL, 0);
+    base = strtoll(argv[2], NULL, 0);
     proc_name = argv[3];
-    pos = strtol(argv[4], NULL, 0) - base;
+    pos = strtoll(argv[4], NULL, 0) - base;
     size = strtol(argv[5], NULL, 0);
     wcount = 0;
-
 
     fseek(f, pos, SEEK_SET);
     fread(buf, 4, size, f);

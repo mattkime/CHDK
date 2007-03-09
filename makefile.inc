@@ -32,9 +32,13 @@ ifndef OSTYPE
       OSTYPE = Other
       EXE =
       SH =
-     DEVNULL = /dev/null
+      DEVNULL = /dev/null
     endif
   endif
+else
+  EXE =
+  SH =
+  DEVNULL = /dev/null
 endif
 
 ##########################################################################
@@ -48,7 +52,7 @@ PAKWIF=$(topdir)tools/pakwif$(EXE)
 
 ##########################################################################
 
-export PATH+=:/opt/arm/bin
+export PATH+=:/net/mos127/export/home/gratchev/_distr/opt/arm/bin
 
 CC=arm-elf-gcc
 OBJCOPY=arm-elf-objcopy
@@ -60,6 +64,7 @@ RANLIB=arm-elf-ranlib
 
 CFLAGS=-fno-inline -O2 -Wall -Wno-unused -mtune=arm946e-s -fno-strict-aliasing -msoft-float
 CFLAGS+=-I$(topdir)include $(PLFLAGS) $(CPPFLAGS)
+CFLAGS+=-DPLATFORM=\"$(PLATFORM)\" -DPLATFORMSUB=\"$(PLATFORMSUB)\"
 LDFLAGS=-L$(topdir)lib/math -L$(topdir)lib/font
 LDFLAGS+=-L$(topdir)lib/libc -L$(topdir)lib/ubasic
 LDFLAGS+=-L$(topdir)platform/$(PLATFORM) -L$(topdir)platform/$(PLATFORM)/sub/$(PLATFORMSUB)
