@@ -68,3 +68,13 @@ NSTUB(opendir, 0xffebeb54)
 NSTUB(closedir, 0xffebeb20)
 NSTUB(readdir, 0xffebeaec)
 NSTUB(rewinddir, 0xffebeb14)
+// WARNING: isalpha is not found!
+// WARNING: isdigit is not found!
+// WARNING: isspace is not found!
+// WARNING: isupper is not found!
+// WARNING: islower is not found!
+NSTUB(strncmp, 0xffebcb74)
+NSTUB(strtol, 0xffebc390)
+// WARNING: rand is not found!
+// WARNING: srand is not found!
+NSTUB(stat, 0xffebebe8)

@@ -65,3 +65,13 @@ opendir 0xFFEB7E30
 closedir 0xFFEB7DFC
 readdir 0xFFEB7DC8
 rewinddir 0xFFEB7DF0
+isalpha 0xFFEB1D70
+isdigit 0xFFEB1DA0
+isspace 0xFFEB1E18
+isupper 0xFFEB1E30
+islower 0xFFEB1DD0
+strncmp 0xFFEB5E50
+strtol 0xFFEB566C
+rand 0xFFEB5254
+srand 0xFFEB5278
+stat 0xFFEB7EC4

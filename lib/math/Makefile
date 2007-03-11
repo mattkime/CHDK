@@ -2,7 +2,7 @@ topdir=../../
 
 include $(topdir)makefile.inc
 
-OBJS = ef_log.o rnd.o
+OBJS = ef_log.o
 
 all: libmath.a
 

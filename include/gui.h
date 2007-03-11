@@ -7,7 +7,8 @@ enum Gui_Mode { GUI_MODE_NONE = 0,
                 GUI_MODE_PALETTE,
                 GUI_MODE_MBOX,
                 GUI_MODE_REVERSI,
-                GUI_MODE_DEBUG };
+                GUI_MODE_DEBUG,
+                GUI_MODE_FSELECT };
 
 extern void gui_redraw();
 extern void gui_force_restore();

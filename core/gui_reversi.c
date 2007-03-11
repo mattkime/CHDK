@@ -150,7 +150,7 @@ static uchar ComputerPlace(uchar Player) {
         }
     }
 //    E=1;
-    rand_set_seed(get_tick_count());
+    srand(get_tick_count());
     E=(rand()%NPl)+1;
     Place(PlX[E],PlY[E],Player,1);
     return ((PlX[E] << 4) | PlY[E]);
@@ -382,7 +382,7 @@ void gui_reversi_kbd_process() {
             need_redraw = 1;
             break;
         case KEY_DISPLAY:
-            gui_mbox_init("*** About ***", "REVERSI\n(c) Grand, 2007", MBOX_TEXT_CENTER);
+            gui_mbox_init("*** About ***", "REVERSI\n(c) GrAnd, 2007", MBOX_TEXT_CENTER);
             need_redraw_all = 1;
             break;
     }

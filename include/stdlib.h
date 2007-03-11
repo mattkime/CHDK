@@ -12,11 +12,11 @@
 #define O_TRUNC         0x400
 #define O_CREAT         0x200
 
-extern long rand_set_seed(long int sd);
-extern long rand_get_seed();
-extern unsigned long rand();
+extern int	rand(void);
+extern void*	srand(unsigned int seed);
 
 extern float logf(float v);
+//extern double log(double x);
 extern long strlen(const char *s);
 extern long sprintf(char *s, const char *st, ...);
 
@@ -28,6 +28,7 @@ extern int isupper(int c);
 extern int strcmp(const char *s1, const char *s2);
 extern int strncmp(const char *s1, const char *s2, long n);
 extern char *strchr(const char *s, int c);
+extern char *strcpy(char *dest, const char *src);
 extern void *memcpy(void *dest, const void *src, long n);
 extern void *malloc(long size);
 extern void free(void *p);
@@ -60,33 +61,36 @@ extern int lseek (int fd, long offset, int whence);
 #define fwrite(a,b,c,d) Fwrite_Fut(a,b,c,d)
 #define fseek(a,b,c) Fseek_Fut(a,b,c)
 
-//#define FILENAME_MAX 260
-//typedef	long	time_t;
-//typedef	unsigned long	_fsize_t;
-//struct _finddata_t
-//{
-//	unsigned	attrib;		/* Attributes, see constants above. */
-//	time_t		time_create;
-//	time_t		time_access;	/* always midnight local time */
-//	time_t		time_write;
-//	_fsize_t	size;
-//	char		name[FILENAME_MAX];	/* may include spaces. */
-//};
-//struct dirent
-//{
-//	long		d_ino;		/* Always zero. */
-//	unsigned short	d_reclen;	/* Always zero. */
-//	unsigned short	d_namlen;	/* Length of name in d_name. */
-//	char		d_name[FILENAME_MAX]; /* File name. */
-//};
-//typedef struct
-//{
-//	struct _finddata_t	dd_dta;
-//	struct dirent		dd_dir;
-//	long			dd_handle;
-//	int			dd_stat;
-//	char			dd_name[1];
-//} DIR;
+#define DOS_ATTR_RDONLY         0x01            /* read-only file */
+#define DOS_ATTR_HIDDEN         0x02            /* hidden file */
+#define DOS_ATTR_SYSTEM         0x04            /* system file */
+#define DOS_ATTR_VOL_LABEL      0x08            /* volume label (not a file) */
+#define DOS_ATTR_DIRECTORY      0x10            /* entry is a sub-directory */
+#define DOS_ATTR_ARCHIVE        0x20            /* file subject to archiving */
+
+struct	stat
+    {
+    unsigned long	st_dev;		/* device ID number */
+    unsigned long	st_ino;		/* file serial number */
+    unsigned short	st_mode;	/* file mode (see below) */
+    short		st_nlink;	/* number of links to file */
+    short		st_uid;		/* user ID of file's owner */
+    short		st_gid;		/* group ID of file's group */
+    unsigned long	st_rdev;	/* device ID, only if special file */
+    unsigned long	st_size;	/* size of file, in bytes */
+    unsigned long	st_atime;	/* time of last access */
+    unsigned long	st_mtime;	/* time of last modification */
+    unsigned long	st_ctime;	/* time of last change of file status */
+    long		st_blksize;
+    long		st_blocks;
+    unsigned char	st_attrib;	/* file attribute byte (dosFs only) */
+    int			reserved1;	/* reserved for future use */
+    int			reserved2;	/* reserved for future use */
+    int			reserved3;	/* reserved for future use */
+    int			reserved4;	/* reserved for future use */
+    int			reserved5;	/* reserved for future use */
+    int			reserved6;	/* reserved for future use */
+};
 
 struct dirent {
     char                name[100];
@@ -98,10 +102,11 @@ typedef struct {
     struct dirent       dir;
 } DIR;
 
-extern DIR* opendir (const char* name);
+extern DIR*           opendir (const char* name);
 extern struct dirent* readdir (DIR*);
-extern int   closedir (DIR*);
-extern void  rewinddir (DIR*);
+extern int            closedir (DIR*);
+extern void           rewinddir (DIR*);
+extern int            stat (char *name, struct stat *pStat);
 
 
 #endif

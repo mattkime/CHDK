@@ -11,6 +11,7 @@
 #include "gui_mbox.h"
 #include "gui_reversi.h"
 #include "gui_debug.h"
+#include "gui_fselect.h"
 
 //-------------------------------------------------------------------
 #define HISTO
@@ -29,6 +30,7 @@ static void gui_draw_palette();
 static void gui_draw_reversi();
 static void gui_test();
 static void gui_draw_debug();
+static void gui_draw_fselect();
 
 static void gui_menuproc_save();
 
@@ -48,6 +50,7 @@ CMenuItem misc_submenu[] = {
     {"*** Miscellaneous ***", MENUITEM_INFO, 0 },
     {"Show build info", MENUITEM_PROC, (int*)gui_show_build_info },
     {"Show memory info", MENUITEM_PROC, (int*)gui_show_memory_info },
+    {"File browser", MENUITEM_PROC, (int*)gui_draw_fselect },
     {"Draw palette", MENUITEM_PROC, (int*)gui_draw_palette },
     {"MessageBox test", MENUITEM_PROC, (int*)gui_test },
     {"GAME: Reversi", MENUITEM_PROC, (int*)gui_draw_reversi },
@@ -85,6 +88,7 @@ static volatile enum Gui_Mode gui_mode;
 static volatile int gui_restore;
 static volatile int gui_in_redraw;
 static int gui_splash = 50;
+static int charge_max = 5200, charge_min = 4400;
 
 //-------------------------------------------------------------------
 void gui_init()
@@ -220,6 +224,9 @@ void gui_redraw()
         case GUI_MODE_DEBUG:
             gui_debug_draw();
             break;
+        case GUI_MODE_FSELECT:
+            gui_fselect_draw();
+            break;
         default:
             break;
     }
@@ -287,6 +294,9 @@ void gui_kbd_process()
     	case GUI_MODE_DEBUG:
             gui_debug_kbd_process();
             break;
+    	case GUI_MODE_FSELECT:
+            gui_fselect_kbd_process();
+            break;
         default:
             break;
     }
@@ -334,7 +344,7 @@ static inline void do_histo() {
 
 //-------------------------------------------------------------------
 void gui_draw_histo() {
-    if ((mode_get()&MODE_MASK) == MODE_REC && gui_mode==GUI_MODE_NONE && 
+    if ((mode_get()&MODE_MASK) == MODE_REC && (gui_mode==GUI_MODE_NONE || gui_mode==GUI_MODE_NONE) && 
          conf_show_histo && kbd_is_key_pressed(KEY_SHOOT_HALF)) {
         static const int hx=219;
         static const int hy=45;
@@ -346,7 +356,7 @@ void gui_draw_histo() {
 
         /* histogram */
         for (i=0; i<HISTO_WIDTH; i++) {
-            threshold = (histo_max > 0)?(logf((float)histogram[i]))*HISTO_HEIGHT/logf(histo_max):HISTO_HEIGHT;
+            threshold = (histo_max > 0)?(logf((double)histogram[i]))*HISTO_HEIGHT/logf(histo_max):HISTO_HEIGHT;
 
             for (v=1; v<HISTO_HEIGHT; v++)
                 draw_pixel(hx+i, hy+HISTO_HEIGHT-v, (v<=threshold)?COLOR_WHITE:COLOR_BG);
@@ -378,6 +388,8 @@ static char osd_buf[32];
 void gui_draw_osd() {
     unsigned int i, n = 0;
     unsigned long v;
+    static const coord bx=170, by=4;
+    coord x;
     
     if (!conf_show_osd) return;
 
@@ -407,10 +419,18 @@ void gui_draw_osd() {
         osd_buf[8]=0;
         draw_txt_string(35, n++, osd_buf, MAKE_COLOR(COLOR_BG, COLOR_FG));
     }
+
     v = calc_average_vbatt();
-    sprintf(osd_buf, "V:%ld.%03ld%8s", v/1000, v%1000, "");
+    sprintf(osd_buf, "V:%ld.%03ld", v/1000, v%1000);
     osd_buf[8]=0;
-    draw_txt_string(35, n++, osd_buf, MAKE_COLOR(COLOR_BG, COLOR_FG));
+    draw_string(screen_width-7*FONT_WIDTH-2, screen_height-64, osd_buf, MAKE_COLOR(COLOR_BG, COLOR_FG));
+    draw_rect(bx-1, by, bx+25+1, by+10, COLOR_WHITE);
+    draw_rect(bx-3, by+2, bx-2, by+8, COLOR_WHITE);
+    if (v>charge_max) v = charge_max;
+    if (v<charge_min) v=charge_min; else v-=charge_min;
+    x=bx+1+25-(v*25/(charge_max-charge_min));
+    draw_filled_rect(bx, by+1, x-1, by+9, MAKE_COLOR(COLOR_TRANSPARENT, COLOR_TRANSPARENT));
+    draw_filled_rect(x, by+1, bx+25, by+9, MAKE_COLOR(COLOR_WHITE, COLOR_WHITE));
 
 
     if (debug_vals_show) {
@@ -523,28 +543,8 @@ void gui_test() {
 //-------------------------------------------------------------------
 void gui_draw_debug() {
 //    gui_debug_init(0x2510);
-//    gui_debug_init(0x127E0);
+    gui_debug_init(0x127E0);
 //    gui_debug_init(0x7F5B8);
-     DIR *d;
-     struct dirent *dd;
-     int i=0, t;
-     char buf[128];
-
-     d=opendir("A/DCIM/130CANON");
-     if (d) {
-         dd = readdir(d);
-         while (dd && i<14) {
-             sprintf(buf, "%08X %s", dd, dd->name);
-             draw_txt_string(1, i++, buf, MAKE_COLOR(COLOR_BLACK, COLOR_FG));
-             dd = readdir(d);
-         }
-         closedir(d);
-     }
-
-     t = get_tick_count();
-     while (get_tick_count() - t <10000) ;
-
-//    gui_debug_init(d);
 }
 
 //-------------------------------------------------------------------
@@ -568,6 +568,11 @@ void gui_draw_splash() {
     for (i=0; i<sizeof(text)/sizeof(text[0]); ++i) {
         draw_string(x+((w-strlen(text[i])*FONT_WIDTH)>>1)+5, y+i*FONT_HEIGHT+4, text[i], MAKE_COLOR(0xD9, COLOR_WHITE));
     }
+}
+
+//-------------------------------------------------------------------
+void gui_draw_fselect() {
+    gui_fselect_init("A");
 }
 
 //-------------------------------------------------------------------
