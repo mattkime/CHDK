@@ -25,7 +25,7 @@ main.elf: $(OBJS)
 	( $(NM) $@ | grep ' U ' > $@.syms ) && exit 1 || exit 0
 
 clean: clean-recursive
-	rm -f *.o main.bin main.elf main.dump main.elf.syms
+	rm -f $(OBJS) main.bin main.elf main.dump main.elf.syms
 	rm -f reboot_core.h copy_and_reset.h
 
 reboot_core.h: $(topdir)core/main.bin
@@ -43,3 +43,5 @@ else
 endif
 
 main.c: reboot_core.h copy_and_reset.h
+
+main.o: main.c reboot_core.h copy_and_reset.h

@@ -20,4 +20,4 @@ main.elf: $(OBJS)
 	( $(NM) $@ | grep ' U ' > $@.syms ) && exit 1 || exit 0
 
 clean: clean-recursive
-	rm -f *.o main.bin main.elf main.dump main.elf.syms
+	rm -f $(OBJS) main.bin main.elf main.dump main.elf.syms

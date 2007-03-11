@@ -27,7 +27,7 @@ void usage()
 int main(int argc, char **argv)
 {
     uint32_t *buf;
-    FILE *f = fopen("PRIMARY.BIN", "r+b");
+    FILE *f;
     int size;
     int i,j,k;
     int fail;
@@ -59,10 +59,10 @@ int main(int argc, char **argv)
     for (k=0;func_list[k].name;k++){
 	sig = func_list[k].sig;
 	count = 0;
-	for (i=0;i<size-32;i++){
+	for (i=0;i<size;i++){
 	    fail = 0;
 	    for (j=0;sig[j].offs!=-1;j++){
-		if ((buf[i+sig[j].offs] & sig[j].mask) != sig[j].value){
+		if ((i+sig[j].offs) >= size || (buf[i+sig[j].offs] & sig[j].mask) != sig[j].value){
 		    fail = 1;
 		    break;
 		}

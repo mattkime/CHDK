@@ -11,3 +11,13 @@ NSTUB(GetFocusLensSubjectDistance, 0xFFEA2F3C)
 NSTUB(GetSystemTime, 0xFFC04D38)
 NSTUB(GetPropertyCase, 0xFFC14DEC)
 NSTUB(SetPropertyCase, 0xFFC14C9C)
+
+NSTUB(malloc, 0xFFF00AC0)
+NSTUB(free, 0xFFF00ACC)
+
+NSTUB(AllocateMemory, 0xFFC01AB0)
+NSTUB(FreeMemory, 0xFFC01ABC)
+NSTUB(CreatePhysicalVram, 0xFFD37D50)
+NSTUB(DisplayImagePhysicalScreen, 0xFFD36FE0)
+NSTUB(PhySw_testgpio, 0xFFC1889C)
+NSTUB(RefreshPhysicalScreen, 0xFFD8752C)

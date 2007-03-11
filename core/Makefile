@@ -16,10 +16,13 @@ main.bin: main.elf
 	$(OBJDUMP) -z -d main.elf > main.dump
 	$(OBJCOPY) -O binary main.elf main.bin
 
-main.elf: $(OBJS)
+main.elf: $(OBJS) $(topdir)platform/$(PLATFORM)/libplatform.a \
+          $(topdir)platform/$(PLATFORM)/sub/$(PLATFORMSUB)/libplatformsub.a \
+          $(topdir)lib/font/libfont.a $(topdir)lib/libc/libc.a \
+          $(topdir)lib/ubasic/libubasic.a $(topdir)lib/math/libmath.a
 	$(CC) $(CFLAGS) -o $@ $^   $(LDLIBS) $(LDFLAGS) $(LDOPTS)
 	( $(NM) $@ | grep ' U ' > $@.syms ) && exit 1 || exit 0
 
 clean:
-	rm -f *.o main.bin main.elf main.dump core.h main.elf.syms
+	rm -f $(OBJS) main.bin main.elf main.dump main.elf.syms
  

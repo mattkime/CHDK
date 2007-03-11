@@ -28,7 +28,7 @@ upload: fir
 infoline:
 	echo "**** BUILDING HDK-$(VER) FOR $(PLATFORM)-$(PLATFORMSUB)"
 
-firzip: infoline all fir
+firzip: infoline clean all fir
 	rm -f $(topdir)bin/$(VER)-$(PLATFORM)-$(PLATFORMSUB).zip
 	cp $(topdir)bin/$(PLATFORM)-$(PLATFORMSUB).FIR $(topdir)bin/PS.FIR
 	LANG=C echo -e "hdk-$(VER) for $(PLATFORM) fw:$(PLATFORMSUB) build:`date -R`" | \

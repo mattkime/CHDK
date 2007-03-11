@@ -22,23 +22,27 @@ ifndef OSTYPE
     EXE = .exe
     SH = sh
     DEVNULL = NUL
+    SORT = $(dir $(shell which uniq.exe | sed s/\\\\/\\\//g))/sort.exe
   else
     ifeq ($(HOSTPLATFORM),Linux)
       OSTYPE = Linux
       EXE =
       SH =
       DEVNULL = /dev/null
+      SORT = sort
     else
       OSTYPE = Other
       EXE =
       SH =
       DEVNULL = /dev/null
+      SORT = sort
     endif
   endif
 else
   EXE =
   SH =
   DEVNULL = /dev/null
+  SORT = sort
 endif
 
 ##########################################################################

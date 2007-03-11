@@ -8,7 +8,7 @@ echo
 
 cat "$FUNCS" | \
 while read name addr; do
-    ./gensig $PRIM $BASE $name $addr 32
+    ./gensig $PRIM $BASE $name $addr 24
 done
 
 cat "$FUNCS" | \
