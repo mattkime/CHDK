@@ -35,7 +35,7 @@ stubs_entry.S: $(topdir)tools/finsig$(EXE) $(TARGET_PRIMARY)
 	  comm -23 stubs_nf.names stubs_mn.names > stubs_not_found_names.err ; \
 	  rm -f stubs_nf.names stubs_mn.names ; \
 	  if [ -s stubs_not_found_names.err ] ; then \
-	    echo ERROR! There are unresolved addresses in \'stubs_entry.S\' ($(PLATFORM)-$(PLATFORMSUB)) for the following names: ; \
+	    echo ERROR! There are unresolved addresses in \'stubs_entry.S\' \($(PLATFORM)-$(PLATFORMSUB)\) for the following names: ; \
 	    cat stubs_not_found_names.err ; \
 	    echo Please, add them into \'stubs_entry_2.S\' manually! ; \
 	    mv stubs_entry.S stubs_entry.S.err ; \
