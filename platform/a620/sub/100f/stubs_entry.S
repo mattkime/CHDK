@@ -78,3 +78,7 @@ NSTUB(strtol, 0xffebc390)
 // WARNING: rand is not found!
 // WARNING: srand is not found!
 NSTUB(stat, 0xffebebe8)
+// WARNING: VbattGet is not found!
+// WARNING: GetZoomLensCurrentPosition is not found!
+// WARNING: GetZoomLensCurrentPoint is not found!
+// WARNING: GetFocusLensSubjectDistance is not found!

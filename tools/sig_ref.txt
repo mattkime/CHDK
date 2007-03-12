@@ -75,3 +75,7 @@ strtol 0xFFEB566C
 rand 0xFFEB5254
 srand 0xFFEB5278
 stat 0xFFEB7EC4
+VbattGet 0xFFC1B4CC
+GetZoomLensCurrentPosition 0xFFE53070
+GetZoomLensCurrentPoint 0xFFE5305C
+GetFocusLensSubjectDistance 0xFFE667F0

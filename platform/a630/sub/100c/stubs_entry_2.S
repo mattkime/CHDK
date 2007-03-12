@@ -1,0 +1,26 @@
+#include "stubs_asm.h"
+
+//NSTUB(VbattGet, 0xFFC1B4CC)
+//NSTUB(GetZoomLensCurrentPosition, 0xFFE53070)
+//NSTUB(GetZoomLensCurrentPoint, 0xFFE5305C)
+//NSTUB(GetFocusLensSubjectDistance, 0xFFE667F0)
+
+
+NSTUB(malloc, 0xFFEF3278)
+NSTUB(free, 0xFFEF3284)
+NSTUB(AllocateMemory, 0xFFC01AB0)
+NSTUB(FreeMemory, 0xFFC01ABC)
+NSTUB(isalpha, 0xFFEE7634)
+NSTUB(isdigit, 0xFFEE7664)
+NSTUB(islower, 0xFFEE7694)
+NSTUB(isspace, 0xFFEE76DC)
+NSTUB(isupper, 0xFFEE76F4)
+NSTUB(CreatePhysicalVram, 0xFFD2E820)
+NSTUB(DisplayPhysicalScreen, 0xFFD2EA78)
+NSTUB(SetPropertyCase, 0xFFC14C94)
+NSTUB(GetPropertyCase, 0xFFC14DE4)
+NSTUB(GetSystemTime, 0xFFC04D38)
+NSTUB(PhySw_testgpio, 0xFFC18964)
+NSTUB(RefreshPhysicalScreen, 0xFFD7F49C)
+NSTUB(kbd_pwr_off, 0xFFC188F0)
+NSTUB(kbd_pwr_on, 0xFFC188C8)

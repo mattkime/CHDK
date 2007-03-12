@@ -1,9 +1,9 @@
 #include "stubs_asm.h"
 
-NSTUB(VbattGet, 0xFFC1B4CC)
-NSTUB(GetZoomLensCurrentPosition, 0xFFE53070)
-NSTUB(GetZoomLensCurrentPoint, 0xFFE5305C)
-NSTUB(GetFocusLensSubjectDistance, 0xFFE667F0)
+//NSTUB(VbattGet, 0xFFC1B4CC)
+//NSTUB(GetZoomLensCurrentPosition, 0xFFE53070)
+//NSTUB(GetZoomLensCurrentPoint, 0xFFE5305C)
+//NSTUB(GetFocusLensSubjectDistance, 0xFFE667F0)
 //NSTUB(malloc, 0xFFEBEE9C)
 //NSTUB(free, 0xFFEBEEA8)
 
