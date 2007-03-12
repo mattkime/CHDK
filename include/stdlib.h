@@ -31,6 +31,7 @@ extern char *strchr(const char *s, int c);
 extern char *strcpy(char *dest, const char *src);
 extern void *memcpy(void *dest, const void *src, long n);
 extern void *malloc(long size);
+extern void *memset(void *s, int c, int n);
 extern void free(void *p);
 
 extern long strtol(const char *nptr, char **endptr, int base);
