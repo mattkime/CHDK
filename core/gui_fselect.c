@@ -55,7 +55,7 @@ static void gui_fselect_read_dir(const char* dir) {
     if (d) {
         de = readdir(d);
         while (de) {
-            if (de->name[0] != 0xE5 /* deleted entry */) {
+            if (de->name[0] != 0xE5 /* deleted entry */ && (de->name[0]!='.' || de->name[1]!=0)) {
                 *ptr = malloc(sizeof(struct fitem));
                 if (*ptr) {
                     (*ptr)->name = malloc(strlen(de->name)+1);
@@ -117,9 +117,9 @@ void gui_fselect_draw() {
             buf[j]=ptr->name[j];
         if (j==NAME_SIZE && ptr->name[j]) buf[NAME_SIZE-1]='>';
         if (ptr->attr & DOS_ATTR_DIRECTORY) {
-            if (j<NAME_SIZE) 
+            if (j<NAME_SIZE) {
                 buf[j++]='/';
-            else {
+            } else {
                 buf[NAME_SIZE-2]='>';
                 buf[NAME_SIZE-1]='/';
             }
