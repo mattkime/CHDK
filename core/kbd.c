@@ -192,7 +192,7 @@ long kbd_process()
 	else {
 	    gui_kbd_process();
 	}
-        if (kbd_get_pressed_key() != 0) {
+        if (kbd_get_pressed_key() != 0 && !state_kbd_script_run) {
             // emulate presskey to avoid camera turn off due to timeout
             kbd_key_release_all();
             kbd_key_press(KEY_PRINT);
