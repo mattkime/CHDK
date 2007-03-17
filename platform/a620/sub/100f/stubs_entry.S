@@ -96,3 +96,7 @@ NSTUB(GetZoomLensCurrentPoint, 0xffe59d18)
 // Best match: 95%
 NSTUB(GetFocusLensSubjectDistance, 0xffe6d4ac)
 NSTUB(IsStrobeChargeCompleted, 0xffcec238)
+// Best match: 94%
+NSTUB(qsort, 0xffebbf54)
+// Best match: 90%
+NSTUB(localtime, 0xffebd314)

@@ -31,6 +31,7 @@ static void gui_draw_reversi();
 static void gui_test();
 static void gui_draw_debug();
 static void gui_draw_fselect();
+static void gui_load_script();
 
 static void gui_menuproc_save();
 
@@ -38,6 +39,7 @@ static void gui_menuproc_save();
 //-------------------------------------------------------------------
 CMenuItem script_submenu[] = {
     {"*** Script ***", MENUITEM_INFO, 0 },
+    {"Load script from file...", MENUITEM_PROC, (int*)gui_load_script },
     {"Script shoot delay (.1s)", MENUITEM_INT|MENUITEM_F_UNSIGNED, &conf_script_shoot_delay },
     {"Var. a value", MENUITEM_INT, &conf_ubasic_var_a },
     {"Var. b value", MENUITEM_INT, &conf_ubasic_var_b },
@@ -86,7 +88,7 @@ static volatile enum Gui_Mode gui_mode;
 static volatile int gui_restore;
 static volatile int gui_in_redraw;
 static int gui_splash = 50;
-static int charge_max = 5200, charge_min = 4400;
+static int charge_max, charge_min;
 
 //-------------------------------------------------------------------
 void gui_init()
@@ -94,6 +96,8 @@ void gui_init()
     gui_mode = GUI_MODE_NONE;
     gui_restore = 0;
     gui_in_redraw = 0;
+    charge_min = get_vbatt_min();
+    charge_max = get_vbatt_max();
     draw_init();
 }
 
@@ -192,26 +196,30 @@ void gui_kbd_process()
                 draw_restore();
                 gui_mode = GUI_MODE_MENU;
                 break;
+            case GUI_MODE_FSELECT:
+                gui_fselect_kbd_process();
+                break;
             default:
                 break;
         }
         return;
     }
-
-    if (kbd_is_key_clicked(KEY_ERASE)) {
-//          {
-//              void (*f)(long a, long b, long c) = 0xFFC1408C;
-//              long p = 0;
-//              f(40,&p,2);
-//          }
-//          lens_set_focus_pos(2000);
-//          makedump();
-//          shooting_set_tv_rel(2);
-//          shooting_set_av_rel(2);
-            dump_memory();
-    }
     
     switch (gui_mode) {
+        case GUI_MODE_ALT:
+            if (kbd_is_key_clicked(KEY_ERASE)) {
+        //          {
+        //              void (*f)(long a, long b, long c) = 0xFFC1408C;
+        //              long p = 0;
+        //              f(40,&p,2);
+        //          }
+        //          lens_set_focus_pos(2000);
+        //          makedump();
+        //          shooting_set_tv_rel(2);
+        //          shooting_set_av_rel(2);
+                    dump_memory();
+            }
+            break;
     	case GUI_MODE_MENU:
             gui_menu_kbd_process();
             break;
@@ -336,11 +344,17 @@ void gui_draw_osd() {
     sprintf(osd_buf, "V:%ld.%03ld", v/1000, v%1000);
     osd_buf[8]=0;
     draw_string(screen_width-7*FONT_WIDTH-2, screen_height-64, osd_buf, MAKE_COLOR(COLOR_BG, COLOR_FG));
+    // battery icon
     draw_rect(bx-1, by, bx+25+1, by+10, COLOR_WHITE);
     draw_rect(bx-3, by+2, bx-2, by+8, COLOR_WHITE);
-    if (v>charge_max) v = charge_max;
+    draw_line(bx, by+11, bx+25+2, by+11, COLOR_BLACK);
+    draw_line(bx+25+2, by+1, bx+25+2, by+10, COLOR_BLACK);
+    // battery fill
+    if (v>charge_max) v=charge_max;
     if (v<charge_min) v=charge_min; else v-=charge_min;
     x=bx+1+25-(v*25/(charge_max-charge_min));
+    if (x<=bx) x=bx+1;
+    if (x>bx+25+1) x=bx+25+1;
     draw_filled_rect(bx, by+1, x-1, by+9, MAKE_COLOR(COLOR_TRANSPARENT, COLOR_TRANSPARENT));
     draw_filled_rect(x, by+1, bx+25, by+9, MAKE_COLOR(COLOR_WHITE, COLOR_WHITE));
 
@@ -487,7 +501,18 @@ void gui_draw_splash() {
 
 //-------------------------------------------------------------------
 void gui_draw_fselect() {
-    gui_fselect_init("A");
+    gui_fselect_init("A", NULL);
+}
+
+//-------------------------------------------------------------------
+static void gui_load_script_selected() {
+    char *fn = gui_fselect_result();
+    
+    if (fn)
+        load_script(fn);
+}
+void gui_load_script() {
+    gui_fselect_init("A", gui_load_script_selected);
 }
 
 //-------------------------------------------------------------------

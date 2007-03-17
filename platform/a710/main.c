@@ -414,6 +414,16 @@ long stat_get_vbatt()
     return VbattGet();
 }
 
+long get_vbatt_min()
+{
+    return 2200;
+}
+
+long get_vbatt_max()
+{
+    return 2600;
+}
+
 /*******************************************************************/
 
 const ApertureSize aperture_sizes_table[] = {

@@ -153,6 +153,25 @@ void conf_save(int force)
 }
 
 
+void load_script(char *fn) {
+    int fd;
+
+    state_ubasic_script = ubasic_script_default;
+
+    fd = open(fn, O_RDONLY, 0777);
+    if (fd >= 0){
+	int rcnt = read(fd, ubasic_script_buf, SCRIPT_BUF_SIZE);
+	if (rcnt > 0){
+	    if (rcnt == SCRIPT_BUF_SIZE) { /* FIXME TODO script is too big? */
+		ubasic_script_buf[SCRIPT_BUF_SIZE-1] = 0;
+	    } else
+		ubasic_script_buf[rcnt] = 0;
+	    state_ubasic_script = ubasic_script_buf;
+	}
+	close(fd);
+    }
+}
+
 void conf_restore()
 {
     int fd;
@@ -167,19 +186,6 @@ void conf_restore()
     }
     dfirst = 1;
 
-    state_ubasic_script = ubasic_script_default;
-
-    fd = open(FN_SCRIPT, O_RDONLY, 0777);
-    if (fd >= 0){
-	int rcnt = read(fd, ubasic_script_buf, SCRIPT_BUF_SIZE);
-	if (rcnt > 0){
-	    if (rcnt == SCRIPT_BUF_SIZE) { /* FIXME TODO script is too big? */
-		ubasic_script_buf[SCRIPT_BUF_SIZE-1] = 0;
-	    } else
-		ubasic_script_buf[rcnt] = 0;
-	    state_ubasic_script = ubasic_script_buf;
-	}
-	close(fd);
-    }
+    load_script(FN_SCRIPT);
 }
 

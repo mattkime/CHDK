@@ -15,6 +15,8 @@
 extern int	rand(void);
 extern void*	srand(unsigned int seed);
 
+extern void	qsort (void *__base, int __nelem, int __size, int (*__cmp)(const void *__e1, const void *__e2));
+
 //extern double log(double x);
 extern float logf(float v);
 extern float sqrtf(float v);
@@ -111,5 +113,20 @@ extern int            closedir (DIR*);
 extern void           rewinddir (DIR*);
 extern int            stat (char *name, struct stat *pStat);
 
+
+struct tm
+	{
+	int tm_sec;	/* seconds after the minute	- [0, 59] */
+	int tm_min;	/* minutes after the hour	- [0, 59] */
+	int tm_hour;	/* hours after midnight		- [0, 23] */
+	int tm_mday;	/* day of the month		- [1, 31] */
+	int tm_mon;	/* months since January		- [0, 11] */
+	int tm_year;	/* years since 1900	*/
+	int tm_wday;	/* days since Sunday		- [0, 6] */
+	int tm_yday;	/* days since January 1		- [0, 365] */
+	int tm_isdst;	/* Daylight Saving Time flag */
+	};
+
+extern struct tm * localtime(const long *_tod);
 
 #endif

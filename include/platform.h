@@ -108,6 +108,8 @@ int mode_get();
 /******************************************************************/
 
 long stat_get_vbatt();
+long get_vbatt_min();
+long get_vbatt_max();
 
 /******************************************************************/
 void __attribute__((noreturn)) shutdown();

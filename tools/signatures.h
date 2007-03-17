@@ -2090,6 +2090,56 @@ static FuncSig func_sig_IsStrobeChargeCompleted[] = {
 	/* 23/24 */
 };
 
+static FuncSig func_sig_qsort[] = {
+	{   0, 0xe1510001, 0xfdffffff }, // cmp:7:0xE3510001
+	{   3, 0xe1510004, 0xfdffffff }, // cmp:7:0xE3510004
+	{   4, 0x3a000000, 0xff000000 }, // b, bl:3:0x3A000001
+	{   5, 0xeb000000, 0xff000000 }, // b, bl:3:0xEBFFFEF8
+	{   7, 0xeb000000, 0xff000000 }, // b, bl:3:0xEBFFFEC7
+	{   9, 0xe59f002c, 0xfdffffff }, // ldr:4:0xE59F002C
+	{  10, 0xe59f102c, 0xfdffffff }, // ldr:4:0xE59F102C
+	{  11, 0xe59fc02c, 0xfdffffff }, // ldr:4:0xE59FC02C
+	{  12, 0xe5903000, 0xfdffffff }, // ldr:4:0xE5903000
+	{  14, 0xe5801000, 0xfdffffff }, // str:4:0xE5801000
+	{  15, 0xe59fc020, 0xfdffffff }, // ldr:4:0xE59FC020
+	{  16, 0xe00c0821, 0xfdffffff }, // and:6:0xE00C0821
+	{  17, 0xe1a0f00e, 0xfdffffff }, // mov:6:0xE1A0F00E
+	{  18, 0xe59fc008, 0xfdffffff }, // ldr:4:0xE59FC008
+	{  19, 0xe58c0000, 0xfdffffff }, // str:4:0xE58C0000
+	{  20, 0xe1a00000, 0xfdffffff }, // mov:6:0xE3A00000
+	{  21, 0xe1a0f00e, 0xfdffffff }, // mov:6:0xE1A0F00E
+	{  22, 0x0000e00c, 0xfdffffff }, // and:6:0x0000E00C
+	{  23, 0x00003039, 0xfdffffff }, // and:6:0x00003039
+	{ -1, -1, -1 },
+	/* 19/24 */
+};
+
+static FuncSig func_sig_localtime[] = {
+	{   1, 0xe59fb010, 0xfdffffff }, // ldr:4:0xE59FB010
+	{   2, 0xe1a0100b, 0xfdffffff }, // mov:6:0xE1A0100B
+	{   3, 0xeb000000, 0xff000000 }, // b, bl:3:0xEBFFFFD7
+	{   4, 0xe1a0000b, 0xfdffffff }, // mov:6:0xE1A0000B
+	{   6, 0x0000f898, 0xfdffffff }, // and:6:0x0000F898 mul:11:0x0000F898
+	{   7, 0x00082cec, 0xfdffffff }, // and:6:0x00082CEC
+	{   9, 0xe1a08000, 0xfdffffff }, // mov:6:0xE1A08000
+	{  10, 0xe1a09001, 0xfdffffff }, // mov:6:0xE1A09001
+	{  11, 0xe5910000, 0xfdffffff }, // ldr:4:0xE5910000
+	{  12, 0xe1a0a002, 0xfdffffff }, // mov:6:0xE1A0A002
+	{  13, 0xe1a01002, 0xfdffffff }, // mov:6:0xE1A01002
+	{  14, 0xeb000000, 0xff000000 }, // b, bl:3:0xEBFFE287
+	{  15, 0xe5983000, 0xfdffffff }, // ldr:4:0xE5983000
+	{  16, 0xe1a0100a, 0xfdffffff }, // mov:6:0xE1A0100A
+	{  17, 0xe0800003, 0xfdffffff }, // add:6:0xE0800003
+	{  18, 0xe5880000, 0xfdffffff }, // str:4:0xE5880000
+	{  19, 0xe599b000, 0xfdffffff }, // ldr:4:0xE599B000
+	{  20, 0xe1a0000b, 0xfdffffff }, // mov:6:0xE1A0000B
+	{  21, 0xeb000000, 0xff000000 }, // b, bl:3:0xEBFFE280
+	{  22, 0xe000009a, 0xfdffffff }, // and:6:0xE000009A mul:11:0xE000009A
+	{  23, 0xe1a0100a, 0xfdffffff }, // mov:6:0xE1A0100A
+	{ -1, -1, -1 },
+	/* 23/24 */
+};
+
 FuncsList func_list[] = {
 	{ "AllocateMemory", func_sig_AllocateMemory },
 	{ "Close", func_sig_Close },
@@ -2173,5 +2223,7 @@ FuncsList func_list[] = {
 	{ "GetZoomLensCurrentPoint", func_sig_GetZoomLensCurrentPoint },
 	{ "GetFocusLensSubjectDistance", func_sig_GetFocusLensSubjectDistance },
 	{ "IsStrobeChargeCompleted", func_sig_IsStrobeChargeCompleted },
+	{ "qsort", func_sig_qsort },
+	{ "localtime", func_sig_localtime },
 	{ NULL }
 };
