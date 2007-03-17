@@ -10,11 +10,11 @@
 extern const unsigned char 	fontdata_8x16[4096];
 
 static char* 			frame_buffer[2];
-unsigned int			screen_width=0, screen_height=0;
+unsigned int			screen_width=0, screen_height=0, screen_size=0;
 //static char*			frame_buffer_bk[2];
 
 //-------------------------------------------------------------------
-extern void RefreshPhysicalScreen(int f);
+extern void vid_bitmap_refresh();;
 
 //-------------------------------------------------------------------
 void draw_init() {
@@ -22,8 +22,9 @@ void draw_init() {
 
     screen_width = vid_get_bitmap_width();
     screen_height  = vid_get_bitmap_height();
+    screen_size = screen_width * screen_height;
     frame_buffer[0] = vid_get_bitmap_fb();
-    frame_buffer[1] = frame_buffer[0] + screen_width*screen_height;
+    frame_buffer[1] = frame_buffer[0] + screen_size;
 //    frame_buffer_bk[0] = malloc(screen_width*screen_height);
 //    frame_buffer_bk[1] = malloc(screen_width*screen_height);
 }
@@ -195,7 +196,7 @@ void draw_clear() {
 
 //-------------------------------------------------------------------
 void draw_restore() {
-    RefreshPhysicalScreen(1);
+    vid_bitmap_refresh();;
 }
 
 //-------------------------------------------------------------------

@@ -4,6 +4,7 @@
 #include "keyboard.h"
 #include "stdlib.h"
 #include "gui.h"
+#include "histogram.h"
 
 #define FN_RAWDIR   "A/DCIM/100CANON"
 #define FN_RAWF     (FN_RAWDIR "/" "CRW_%04hd.JPG")
@@ -41,8 +42,24 @@ void core_hook_task_delete(void *tcb)
 #endif
 }
 
+void dump_memory()
+{
+    int fd;
 
-void makedump()
+    started();
+
+	sprintf(fn, FN_RAWF, conf_raw_fileno++);
+	fd = fopen(fn, "w+");
+	if (fd >= 0) {
+	    fwrite(0x1900, 1, 0x1900, fd);
+	    fwrite(0x1900, 1, 32*1024*1024-0x1900, fd);
+	    fwrite(0x40000000, 1, 0x1000, fd);
+	    fclose(fd);
+	}
+    finished();
+}
+
+static void saverawfile()
 {
     int fd;
 
@@ -70,11 +87,11 @@ void makedump()
 }
 
 
-void myhook1(long a)
+static void myhook1(long a)
 {
     // only this caller allowed
     if (__builtin_return_address(0) == hook_raw_ret_addr()){
-	makedump();
+	saverawfile();
     }
     prev_hhandler(a);
 }
@@ -97,6 +114,8 @@ void core_spytask()
     while (1){
 	if (((cnt++) & 3) == 0)
 	    gui_redraw();
+
+	histogram_process();
 
 	taskLock();
 	if ((*p) != (long)myhook1){

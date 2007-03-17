@@ -2062,6 +2062,34 @@ static FuncSig func_sig_GetFocusLensSubjectDistance[] = {
 	/* 23/24 */
 };
 
+static FuncSig func_sig_IsStrobeChargeCompleted[] = {
+	{   1, 0xe59f3060, 0xfdffffff }, // ldr:4:0xE59F3060
+	{   2, 0xe04dd004, 0xfdffffff }, // sub:6:0xE24DD004
+	{   3, 0xe1a04000, 0xfdffffff }, // mov:6:0xE3A04000
+	{   4, 0xe59f5058, 0xfdffffff }, // ldr:4:0xE59F5058
+	{   5, 0xe5930000, 0xfdffffff }, // ldr:4:0xE5930000
+	{   6, 0xe1a02004, 0xfdffffff }, // mov:6:0xE1A02004
+	{   7, 0xe1a01005, 0xfdffffff }, // mov:6:0xE3A01005
+	{   8, 0xeb000000, 0xff000000 }, // b, bl:3:0xEBFC9199
+	{   9, 0xe1a01003, 0xfdffffff }, // mov:6:0xE3A01003
+	{  10, 0xe5950000, 0xfdffffff }, // ldr:4:0xE5950000
+	{  11, 0xe1a02f7d, 0xfdffffff }, // mov:6:0xE3A02F7D
+	{  12, 0xeb000000, 0xff000000 }, // b, bl:3:0xEBFC8E9B
+	{  13, 0xe1500004, 0xfdffffff }, // cmp:7:0xE1500004
+	{  14, 0xe1a0100d, 0xfdffffff }, // mov:6:0xE1A0100D
+	{  15, 0x1a000000, 0xff000000 }, // b, bl:3:0x1A000006
+	{  16, 0xe5950000, 0xfdffffff }, // ldr:4:0xE5950000
+	{  17, 0xeb000000, 0xff000000 }, // b, bl:3:0xEBFC8F19
+	{  18, 0xe5950000, 0xfdffffff }, // ldr:4:0xE5950000
+	{  19, 0xe1a01003, 0xfdffffff }, // mov:6:0xE3A01003
+	{  20, 0xeb000000, 0xff000000 }, // b, bl:3:0xEBFC8F02
+	{  21, 0xe59d3000, 0xfdffffff }, // ldr:4:0xE59D3000
+	{  22, 0xe0034001, 0xfdffffff }, // and:6:0xE2034001
+	{  23, 0xe1a00004, 0xfdffffff }, // mov:6:0xE1A00004
+	{ -1, -1, -1 },
+	/* 23/24 */
+};
+
 FuncsList func_list[] = {
 	{ "AllocateMemory", func_sig_AllocateMemory },
 	{ "Close", func_sig_Close },
@@ -2144,5 +2172,6 @@ FuncsList func_list[] = {
 	{ "GetZoomLensCurrentPosition", func_sig_GetZoomLensCurrentPosition },
 	{ "GetZoomLensCurrentPoint", func_sig_GetZoomLensCurrentPoint },
 	{ "GetFocusLensSubjectDistance", func_sig_GetFocusLensSubjectDistance },
+	{ "IsStrobeChargeCompleted", func_sig_IsStrobeChargeCompleted },
 	{ NULL }
 };

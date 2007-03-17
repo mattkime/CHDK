@@ -79,3 +79,4 @@ VbattGet 0xFFC1B4CC
 GetZoomLensCurrentPosition 0xFFE53070
 GetZoomLensCurrentPoint 0xFFE5305C
 GetFocusLensSubjectDistance 0xFFE667F0
+IsStrobeChargeCompleted 0xFFCEBE00

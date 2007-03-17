@@ -19,6 +19,9 @@ int conf_ubasic_var_c;
 int state_shooting_progress;
 char *state_ubasic_script;
 int state_save_raw_nth_only;
+int state_expos_recalculated;
+int state_expos_under;
+int state_expos_over;
 
 int state_debug1;
 int debug_propcase_show;
@@ -45,7 +48,7 @@ const char *ubasic_script_default =
     "sleep 1000\n"
     "for s=1 to 999\n"
       "shoot\n"
-      "sleep 57000\n"
+      "sleep 2000\n"
     "next s\n"
     "shoot\n"
     "end\n";

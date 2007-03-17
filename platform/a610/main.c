@@ -23,6 +23,8 @@ extern long GetFocusLensSubjectDistanceFromLens();
 extern long GetPropertyCase(long opt_id, void *buf, long bufsize);
 extern long SetPropertyCase(long opt_id, void *buf, long bufsize);
 extern long VbattGet();
+extern void RefreshPhysicalScreen(long f);
+extern long IsStrobeChargeCompleted();
 
 /* Ours stuff */
 extern long wrs_kernel_bss_start;
@@ -374,6 +376,11 @@ long vid_get_bitmap_height()
     return 240;
 }
 
+void vid_bitmap_refresh()
+{
+    RefreshPhysicalScreen(1);
+}
+
 /*******************************************************************/
 
 long lens_get_zoom_pos()
@@ -579,6 +586,20 @@ int shooting_in_progress()
     int t = 0;
     GetPropertyCase(205, &t, 4);
     return t != 0;
+}
+
+int shooting_is_flash_ready()
+{
+    int t = 0;
+/* well, I'm not sure what's exactly is happening here
+ * but it works for a610-100e
+ */
+    GetPropertyCase(204, &t, 4);
+    if (t == 3){
+	GetPropertyCase(221, &t, 4);
+	return (t==1) && IsStrobeChargeCompleted();
+    }
+    return 1;
 }
 
 /*******************************************************************/

@@ -4,6 +4,7 @@
 #include "keyboard.h"
 #include "conf.h"
 #include "ubasic.h"
+#include "histogram.h"
 
 static int keyid_by_name (const char *n);
 
@@ -16,6 +17,9 @@ static int keyid_by_name (const char *n);
 #define SCRIPT_RELEASE	5
 #define SCRIPT_PR_WAIT_SAVE	6
 #define SCRIPT_WAIT_SAVE	7
+#define SCRIPT_WAIT_FLASH	8
+#define SCRIPT_WAIT_EXPHIST	9
+#define SCRIPT_PR_WAIT_EXPHIST	10
 
 
 #define KBD_STACK_SIZE 24
@@ -65,6 +69,15 @@ void kbd_sched_shoot()
     kbd_sched_delay(20);
 
     KBD_STACK_PUSH(KEY_SHOOT_FULL);
+    KBD_STACK_PUSH(SCRIPT_PRESS);
+
+    KBD_STACK_PUSH(SCRIPT_WAIT_FLASH);
+    KBD_STACK_PUSH(SCRIPT_WAIT_EXPHIST);
+    KBD_STACK_PUSH(SCRIPT_PR_WAIT_EXPHIST);
+
+    kbd_sched_delay(10);
+
+    KBD_STACK_PUSH(KEY_SHOOT_HALF);
     KBD_STACK_PUSH(SCRIPT_PRESS);
 
     KBD_STACK_PUSH(SCRIPT_PR_WAIT_SAVE);
@@ -118,12 +131,35 @@ void process_script()
 	    return;
 	case SCRIPT_PR_WAIT_SAVE:
 	    state_shooting_progress = SHOOTING_PROGRESS_NONE;
+	    state_expos_recalculated = 0;
+	    histogram_stop();
 
 	    kbd_int_stack_ptr-=1; // pop op.
 	    return;
 	case SCRIPT_WAIT_SAVE:{
 	    if (state_shooting_progress == SHOOTING_PROGRESS_DONE)
 		kbd_int_stack_ptr-=1; // pop op.
+	    return;
+	}
+	case SCRIPT_WAIT_FLASH:{
+	    if (shooting_is_flash_ready())
+		kbd_int_stack_ptr-=1; // pop op.
+	    return;
+	}
+	case SCRIPT_WAIT_EXPHIST:{
+	    if (state_expos_recalculated) {
+		kbd_int_stack_ptr-=1; // pop op.
+		state_expos_under = under_exposed;
+		state_expos_over = over_exposed;
+	    }
+	    return;
+	}
+	case SCRIPT_PR_WAIT_EXPHIST: {
+	    if (shooting_in_progress()) {
+		state_expos_recalculated = 0;
+		histogram_restart();
+		kbd_int_stack_ptr-=1; // pop op.
+	    }
 	    return;
 	}
 	default:

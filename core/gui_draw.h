@@ -28,7 +28,7 @@
 typedef unsigned int 		coord;
 typedef unsigned short 		color;
 
-extern unsigned int		screen_width, screen_height;
+extern unsigned int		screen_width, screen_height, screen_size;
 
 
 //-------------------------------------------------------------------

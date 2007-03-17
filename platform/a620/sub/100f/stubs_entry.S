@@ -59,8 +59,10 @@ NSTUB(DisplayImagePhysicalScreen, 0xffd116cc)
 NSTUB(ExecuteEventProcedure, 0xffc067f0)
 NSTUB(GetPropertyCase, 0xffc14188)
 NSTUB(SetPropertyCase, 0xffc1406c)
-// WARNING: malloc is not found!
-// WARNING: free is not found!
+// Best match: 65%
+NSTUB(malloc, 0xffec5bc0)
+// Best match: 52%
+NSTUB(free, 0xffec5bcc)
 NSTUB(strcat, 0xffebc7c8)
 NSTUB(strchr, 0xffebc7f4)
 NSTUB(RefreshPhysicalScreen, 0xffd60708)
@@ -68,17 +70,29 @@ NSTUB(opendir, 0xffebeb54)
 NSTUB(closedir, 0xffebeb20)
 NSTUB(readdir, 0xffebeaec)
 NSTUB(rewinddir, 0xffebeb14)
-// WARNING: isalpha is not found!
-// WARNING: isdigit is not found!
-// WARNING: isspace is not found!
-// WARNING: isupper is not found!
-// WARNING: islower is not found!
+// Best match: 80%
+NSTUB(isalpha, 0xffeb8a94)
+// Best match: 80%
+NSTUB(isdigit, 0xffeb8ac4)
+// Best match: 85%
+NSTUB(isspace, 0xffeb8b3c)
+// Best match: 85%
+NSTUB(isupper, 0xffeb8b54)
+// Best match: 80%
+NSTUB(islower, 0xffeb8af4)
 NSTUB(strncmp, 0xffebcb74)
 NSTUB(strtol, 0xffebc390)
-// WARNING: rand is not found!
-// WARNING: srand is not found!
+// Best match: 95%
+NSTUB(rand, 0xffebbf78)
+// Best match: 95%
+NSTUB(srand, 0xffebbf9c)
 NSTUB(stat, 0xffebebe8)
-// WARNING: VbattGet is not found!
-// WARNING: GetZoomLensCurrentPosition is not found!
-// WARNING: GetZoomLensCurrentPoint is not found!
-// WARNING: GetFocusLensSubjectDistance is not found!
+// Best match: 95%
+NSTUB(VbattGet, 0xffc1b4ac)
+// Best match: 95%
+NSTUB(GetZoomLensCurrentPosition, 0xffe59d2c)
+// Best match: 95%
+NSTUB(GetZoomLensCurrentPoint, 0xffe59d18)
+// Best match: 95%
+NSTUB(GetFocusLensSubjectDistance, 0xffe6d4ac)
+NSTUB(IsStrobeChargeCompleted, 0xffcec238)

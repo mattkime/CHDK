@@ -12,9 +12,9 @@
 #include "gui_reversi.h"
 #include "gui_debug.h"
 #include "gui_fselect.h"
+#include "histogram.h"
 
 //-------------------------------------------------------------------
-#define HISTO
 
 // forward declarations
 //-------------------------------------------------------------------
@@ -73,9 +73,7 @@ CMenuItem root_menu[] = {
     {"*** Main ***", MENUITEM_INFO, 0 },
     {"Show OSD", MENUITEM_BOOL, &conf_show_osd },
     {"Save RAW", MENUITEM_BOOL, &conf_save_raw },
-#ifdef HISTO
-    {"Show live histo", MENUITEM_BOOL, &conf_show_histo },
-#endif
+    {"Show live histogram", MENUITEM_BOOL, &conf_show_histo },
     {"Scripting parameters ->", MENUITEM_SUBMENU, (int*)script_submenu },
     {"Miscellaneous stuff ->", MENUITEM_SUBMENU, (int*)misc_submenu },
     {"Debug parameters ->", MENUITEM_SUBMENU, (int*)debug_submenu },
@@ -117,85 +115,19 @@ void gui_force_restore() {
 //-------------------------------------------------------------------
 void gui_redraw()
 {
-	int i,j;
-	enum Gui_Mode gui_mode_old;
-
-#if 0
-    {
-	static char sbuf[100];
-	volatile long *si = 0x7dd0;
-	extern int taskop_txt_p;
-	extern char taskop_txt[6][32];
-	long (*f)(long prop, void*p, long size);
-	int r,i;
-
-	f = 0xFFC141A8;
-//	i = 0;
-//	f(conf_ubasic_var_a, &i, 4);
-/*
-1 - effect
-5 - color temp
-9 - exp. 
-14 - drive timeout
-21 - iso value 50..400
-24 - image size
-23 - quality
-39 - aperture
-40 - time
-69 - tv result
-
-*/
-// 39 - aperture
-// 40 - exp time
-// 65 - focus
-// 69 - calc. exp time
-
-	for (i=0;i<10;i++){
-	    r = 0;
-	    f(conf_ubasic_var_a+i, &r, 4);
-	    sprintf(sbuf, "%3d: %d               ", conf_ubasic_var_a+i,r);sbuf[20]=0;
-	    draw_string(64,16+16*i,sbuf, MAKE_COLOR(COLOR_BG, COLOR_FG));
-	
-	}
-/*
-	sprintf(sbuf, "d1: %d               ", i);sbuf[20]=0;
-	draw_string(64,16,sbuf);
-
-	sprintf(sbuf, "d1: %d               ", (short)i);sbuf[20]=0;
-	draw_string(64,32,sbuf);
-
-	sprintf(sbuf, "d1: %x               ", i);sbuf[20]=0;
-	draw_string(64,48,sbuf);
-*/
-
-//	sprintf(sbuf, "av: %d               ", shooting_get_av());sbuf[20]=0;
-//	draw_string(64,64+16,sbuf);
-
-//	sprintf(sbuf, "w: %d               ", si[2]);sbuf[20]=0;
-//	draw_string(64,64+32,sbuf);
-
-//	sprintf(sbuf, "w: %d               ", si[3]);sbuf[20]=0;
-//	draw_string(64,64+48,sbuf);
-
-//	for (i=0;i<6;i++){
-//	    sprintf(sbuf, "%s                  ", taskop_txt[i]);sbuf[32]=0;
-//	    draw_string(8,64+64+i*16,sbuf);
-//	}
-    }
-#endif
+    int i,j;
+    enum Gui_Mode gui_mode_old;
 
     if (gui_splash) {
         if (gui_splash>46) {
             gui_draw_splash();
-        } else if (gui_splash==1 && (mode_get()&MODE_MASK) == MODE_PLAY) {
+        } else if (gui_splash==1 && (mode_get()&MODE_MASK) == MODE_PLAY && (gui_mode==GUI_MODE_NONE || gui_mode==GUI_MODE_ALT)) {
             draw_restore();
         }
         --gui_splash;
     }
 
-#ifdef HISTO
     gui_draw_histo();
-#endif
 
     gui_in_redraw = 1;
     gui_mode_old = gui_mode;
@@ -276,6 +208,7 @@ void gui_kbd_process()
 //          makedump();
 //          shooting_set_tv_rel(2);
 //          shooting_set_av_rel(2);
+            dump_memory();
     }
     
     switch (gui_mode) {
@@ -318,52 +251,25 @@ void gui_kbd_leave()
     gui_mode = GUI_MODE_NONE;
 }
 
-#ifdef HISTO
-#define HISTO_WIDTH     100
-#define HISTO_HEIGHT    50
-static unsigned int histogram[HISTO_WIDTH];
-static unsigned int histo_max;
-
-//-------------------------------------------------------------------
-static inline void do_histo() {
-    unsigned char *img = vid_get_viewport_fb();
-    register int i, hi;
-
-    for (i=0; i<HISTO_WIDTH; i++)
-        histogram[i] = 0;
-    histo_max = 0;
-
-    for (i=0; i<screen_width*screen_height; i++) {
-        hi = img[i*3+1]*HISTO_WIDTH/256;
-        histogram[hi]++;
-
-        if (histo_max<histogram[hi])
-            histo_max = histogram[hi];
-    }
-}
-
 //-------------------------------------------------------------------
 void gui_draw_histo() {
-    if ((mode_get()&MODE_MASK) == MODE_REC && (gui_mode==GUI_MODE_NONE || gui_mode==GUI_MODE_NONE) && 
+    if (/*(mode_get()&MODE_MASK) == MODE_REC &&*/ (gui_mode==GUI_MODE_NONE || gui_mode==GUI_MODE_NONE) && 
          conf_show_histo && kbd_is_key_pressed(KEY_SHOOT_HALF)) {
-        static const int hx=219;
+        static const int hx=319-HISTO_WIDTH;
         static const int hy=45;
         register unsigned int i, v, threshold;
 
         draw_rect(hx-1, hy, hx+HISTO_WIDTH, hy+HISTO_HEIGHT, COLOR_WHITE);
 
-        do_histo();
-
         /* histogram */
         for (i=0; i<HISTO_WIDTH; i++) {
-            threshold = (histo_max > 0)?(logf((double)histogram[i]))*HISTO_HEIGHT/logf(histo_max):HISTO_HEIGHT;
+            threshold = histogram[i];
 
             for (v=1; v<HISTO_HEIGHT; v++)
                 draw_pixel(hx+i, hy+HISTO_HEIGHT-v, (v<=threshold)?COLOR_WHITE:COLOR_BG);
         }
     }
 }
-#endif
 
 //-------------------------------------------------------------------
 static long calc_average_vbatt() {
@@ -381,6 +287,7 @@ static long calc_average_vbatt() {
 }
 
 //-------------------------------------------------------------------
+
 extern long physw_status[3];
 extern long GetPropertyCase(long opt_id, void *buf, long bufsize);
 static char osd_buf[32];
@@ -407,6 +314,11 @@ void gui_draw_osd() {
         if (state_kbd_script_run){
     	    draw_txt_string(40, 3+n, "SCR", MAKE_COLOR(COLOR_BG, COLOR_FG));
     	    ++n;
+        }
+        if (/*(mode_get()&MODE_MASK) == MODE_REC &&*/ (gui_mode==GUI_MODE_NONE || gui_mode==GUI_MODE_NONE) && 
+             conf_show_histo && kbd_is_key_pressed(KEY_SHOOT_HALF)) {
+            draw_txt_string(40, 3+n, (under_exposed || over_exposed)?"EXP":"   ", MAKE_COLOR(COLOR_BG, COLOR_FG));
+            ++n;
         }
     }
 
@@ -439,6 +351,9 @@ void gui_draw_osd() {
 
 	sprintf(osd_buf, "2:%8ld  ", get_tick_count());
 	draw_txt_string(28, 11, osd_buf, MAKE_COLOR(COLOR_BG, COLOR_FG));
+
+	sprintf(osd_buf, "3:%d %d ", state_expos_under, state_expos_over);
+	draw_txt_string(28, 12, osd_buf, MAKE_COLOR(COLOR_BG, COLOR_FG));
     }
 
     if (debug_propcase_show){

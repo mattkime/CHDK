@@ -29,9 +29,9 @@ stubs_entry.S: $(topdir)tools/finsig$(EXE) $(TARGET_PRIMARY)
 	  echo CAUTION! \'stubs_entry.S\' is not uptated due to target firmware binary not found! ; \
 	  touch stubs_entry.S ; \
 	fi ; \
-	if [ "X`grep 'WARNING' stubs_entry.S`" != "X" ] ; then \
-	  grep WARNING stubs_entry.S | sed -r "s/\/\/ WARNING: ([^ ]+) is not found.*/\1/" | $(SORT) | uniq > stubs_nf.names ; \
-	  grep NSTUB stubs_entry_2.S | sed -r "s/ *NSTUB\( *([^ ,]+).*/\1/" | $(SORT) | uniq > stubs_mn.names ; \
+	if [ "X`grep 'ERROR' stubs_entry.S`" != "X" ] ; then \
+	  grep "ERROR" stubs_entry.S | sed -r "s/\/\/ ERROR: ([^ ]+) is not found.*/\1/" | $(SORT) | uniq > stubs_nf.names ; \
+	  grep -E "NH?STUB" stubs_entry_2.S | sed -r "s/ *NH?STUB\( *([^ ,]+).*/\1/" | $(SORT) | uniq > stubs_mn.names ; \
 	  comm -23 stubs_nf.names stubs_mn.names > stubs_not_found_names.err ; \
 	  rm -f stubs_nf.names stubs_mn.names ; \
 	  if [ -s stubs_not_found_names.err ] ; then \

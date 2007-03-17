@@ -15,8 +15,10 @@
 extern int	rand(void);
 extern void*	srand(unsigned int seed);
 
-extern float logf(float v);
 //extern double log(double x);
+extern float logf(float v);
+extern float sqrtf(float v);
+
 extern long strlen(const char *s);
 extern long sprintf(char *s, const char *st, ...);
 
