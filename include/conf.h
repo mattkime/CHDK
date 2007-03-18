@@ -31,6 +31,6 @@ extern int debug_vals_show;
 extern void conf_save(int force);
 extern void conf_restore();
 
-extern void load_script(char *fn);
+extern void load_script(const char *fn);
 
 #endif

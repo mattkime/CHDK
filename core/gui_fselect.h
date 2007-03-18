@@ -3,7 +3,7 @@
 
 //-------------------------------------------------------------------
 //-------------------------------------------------------------------
-extern void gui_fselect_init(const char* dir, void (*on_select)());
+extern void gui_fselect_init(const char* dir, void (*on_select)(const char *fn));
 extern char* gui_fselect_result();
 extern void gui_fselect_kbd_process();
 extern void gui_fselect_draw();

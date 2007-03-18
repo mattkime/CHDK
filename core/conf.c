@@ -153,7 +153,7 @@ void conf_save(int force)
 }
 
 
-void load_script(char *fn) {
+void load_script(const char *fn) {
     int fd;
 
     state_ubasic_script = ubasic_script_default;

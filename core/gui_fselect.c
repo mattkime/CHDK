@@ -9,12 +9,17 @@
 
 //-------------------------------------------------------------------
 #define NUM_LINES               7
-#define NAME_SIZE               16
+#define NAME_SIZE               15
+#define SIZE_SIZE               7
+#define TIME_SIZE               14
+#define SPACING                 1
+
 
 //-------------------------------------------------------------------
 static char current_dir[100], selected_file[100];
 static enum Gui_Mode    gui_fselect_mode_old;
 struct fitem {
+    unsigned int    n;
     char            *name;
     unsigned char   attr;
     unsigned long   size;
@@ -22,11 +27,11 @@ struct fitem {
     struct fitem    *prev, *next;
 };
 static struct fitem *head=NULL, *top, *selected;
-//static unsigned int count=0;
+static unsigned int count;
 static coord x, y, w, h;
 static int gui_fselect_redraw;
 static const char *fselect_title = "Select file";
-static void (*fselect_on_select)();
+static void (*fselect_on_select)(const char *fn);
 
 //-------------------------------------------------------------------
 static void gui_fselect_free_data() {
@@ -39,8 +44,8 @@ static void gui_fselect_free_data() {
         ptr=ptr->next;
         free(prev);
     }
-    head=NULL;
-//    count=0;
+    head=top=selected=NULL;
+    count=0;
 }
 
 //-------------------------------------------------------------------
@@ -75,7 +80,7 @@ static void gui_fselect_read_dir(const char* dir) {
     struct stat   st;
     struct fitem  **ptr = &head, *prev = NULL;
     char   buf[100];
-    int    i, count = 0;
+    int    i;
 
     gui_fselect_free_data();
 
@@ -86,6 +91,7 @@ static void gui_fselect_read_dir(const char* dir) {
             if (de->name[0] != 0xE5 /* deleted entry */ && (de->name[0]!='.' || de->name[1]!=0)) {
                 *ptr = malloc(sizeof(struct fitem));
                 if (*ptr) {
+                    (*ptr)->n = count;
                     (*ptr)->name = malloc(strlen(de->name)+1);
                     if ((*ptr)->name)
                         strcpy((*ptr)->name, de->name);
@@ -124,10 +130,12 @@ static void gui_fselect_read_dir(const char* dir) {
             qsort(ptr, count, sizeof(struct fitem*), fselect_sort);
             
             for (i=0; i<count-1; ++i) {
+                ptr[i]->n=i;
                 ptr[i]->next=ptr[i+1];
                 ptr[i+1]->prev=ptr[i];
             }
             ptr[0]->prev=ptr[count-1]->next=NULL;
+            ptr[count-1]->n=count-1;
             head=ptr[0];
 
             free(ptr);
@@ -138,10 +146,10 @@ static void gui_fselect_read_dir(const char* dir) {
 }
 
 //-------------------------------------------------------------------
-void gui_fselect_init(const char* dir, void (*on_select)()) {
+void gui_fselect_init(const char* dir, void (*on_select)(const char *fn)) {
     int i;
     
-    w = (1+NAME_SIZE+2+7+2+14+1)*FONT_WIDTH;
+    w = (1+NAME_SIZE+SPACING+SIZE_SIZE+SPACING+TIME_SIZE+1+1)*FONT_WIDTH;
     h = FONT_HEIGHT+4+NUM_LINES*FONT_HEIGHT+4+FONT_HEIGHT;
     x = (screen_width-w)>>1;
     y = (screen_height-h)>>1;
@@ -169,9 +177,9 @@ char* gui_fselect_result() {
 void gui_fselect_draw_initilal() {
     int i;
 
-    draw_rect(x-3, y-3, x+w+1, y+h+1, COLOR_BLACK); //shadow
-    draw_rect(x-2, y-2, x+w+2, y+h+2, COLOR_BLACK); //shadow
-    draw_rect(x-1, y-1, x+w+3, y+h+3, COLOR_BLACK); //shadow
+    draw_rect(x-3, y-3, x+w+5, y+h+5, COLOR_BLACK); //shadow
+    draw_rect(x-2, y-2, x+w+6, y+h+6, COLOR_BLACK); //shadow
+    draw_rect(x-1, y-1, x+w+7, y+h+7, COLOR_BLACK); //shadow
     draw_filled_rect(x-4, y-4, x+w+4, y+h+4, MAKE_COLOR(COLOR_GREY, COLOR_WHITE)); // main box
     draw_filled_rect(x-2, y-2, x+w+2, y+FONT_HEIGHT+2, MAKE_COLOR(COLOR_BLACK, COLOR_WHITE)); //title
     draw_filled_rect(x-2, y+h-FONT_HEIGHT-2, x+w+2, y+h+2, MAKE_COLOR(COLOR_GREY, COLOR_WHITE)); //footer
@@ -209,6 +217,8 @@ void gui_fselect_draw() {
             buf[NAME_SIZE]=0;
             draw_string(x+FONT_WIDTH, y+FONT_HEIGHT+4+i*FONT_HEIGHT, buf, MAKE_COLOR((ptr==selected)?COLOR_RED:COLOR_GREY, COLOR_WHITE));
 
+            draw_string(x+(1+NAME_SIZE)*FONT_WIDTH, y+FONT_HEIGHT+4+i*FONT_HEIGHT, "³", MAKE_COLOR((ptr==selected)?COLOR_RED:COLOR_GREY, COLOR_WHITE));
+
             // print size or <Dir>
             if (ptr->attr & DOS_ATTR_DIRECTORY) {
                 if (ptr->name[0]=='.' && ptr->name[1]=='.' && ptr->name[2]==0) {
@@ -224,27 +234,50 @@ void gui_fselect_draw() {
                 else
                     sprintf(buf, "%6luM", ptr->size>>20);
             }
-            draw_string(x+(1+NAME_SIZE+2)*FONT_WIDTH, y+FONT_HEIGHT+4+i*FONT_HEIGHT, buf, MAKE_COLOR((ptr==selected)?COLOR_RED:COLOR_GREY, COLOR_WHITE));
+            draw_string(x+(1+NAME_SIZE+SPACING)*FONT_WIDTH, y+FONT_HEIGHT+4+i*FONT_HEIGHT, buf, MAKE_COLOR((ptr==selected)?COLOR_RED:COLOR_GREY, COLOR_WHITE));
+
+            draw_string(x+(1+NAME_SIZE+SPACING+SIZE_SIZE)*FONT_WIDTH, y+FONT_HEIGHT+4+i*FONT_HEIGHT, "³", MAKE_COLOR((ptr==selected)?COLOR_RED:COLOR_GREY, COLOR_WHITE));
 
             // print modification time
-            time = localtime(&(ptr->mtime));
-            sprintf(buf, "%2u/%02u/%02u %02u:%02u", time->tm_mday, time->tm_mon+1, (time->tm_year<100)?time->tm_year:time->tm_year-100, time->tm_hour, time->tm_min);
-            draw_string(x+(1+NAME_SIZE+2+7+2)*FONT_WIDTH, y+FONT_HEIGHT+4+i*FONT_HEIGHT, buf, MAKE_COLOR((ptr==selected)?COLOR_RED:COLOR_GREY, COLOR_WHITE));
+            if (ptr->mtime) {
+                time = localtime(&(ptr->mtime));
+                sprintf(buf, "%2u/%02u/%02u %02u:%02u", time->tm_mday, time->tm_mon+1, (time->tm_year<100)?time->tm_year:time->tm_year-100, time->tm_hour, time->tm_min);
+            } else {
+                sprintf(buf, "%14s", "");
+            }
+            draw_string(x+(1+NAME_SIZE+SPACING+SIZE_SIZE+SPACING)*FONT_WIDTH, y+FONT_HEIGHT+4+i*FONT_HEIGHT, buf, MAKE_COLOR((ptr==selected)?COLOR_RED:COLOR_GREY, COLOR_WHITE));
         }
 
         if (i<NUM_LINES) {
-            draw_filled_rect(x+FONT_WIDTH, y+FONT_HEIGHT+4+i*FONT_HEIGHT, x+(1+NAME_SIZE+2+7+2+14)*FONT_WIDTH, y+FONT_HEIGHT+4+NUM_LINES*FONT_HEIGHT-1, MAKE_COLOR(COLOR_GREY, COLOR_GREY));
+            draw_filled_rect(x+FONT_WIDTH, y+FONT_HEIGHT+4+i*FONT_HEIGHT, x+(1+NAME_SIZE+SPACING+SIZE_SIZE+SPACING+TIME_SIZE)*FONT_WIDTH, 
+                             y+FONT_HEIGHT+4+NUM_LINES*FONT_HEIGHT-1, MAKE_COLOR(COLOR_GREY, COLOR_GREY));
         }
 
         i=strlen(current_dir);
-        if (i>NAME_SIZE+2+7+2+14) {
-            i-=NAME_SIZE+2+7+2+14 -1;
+        if (i>NAME_SIZE+SPACING+SIZE_SIZE+SPACING+TIME_SIZE) {
+            i-=NAME_SIZE+SPACING+SIZE_SIZE+SPACING+TIME_SIZE -1;
             draw_char(x+FONT_WIDTH, y+FONT_HEIGHT+4+NUM_LINES*FONT_HEIGHT+4, '<', MAKE_COLOR(COLOR_GREY, COLOR_WHITE));
             draw_string(x+FONT_WIDTH*2, y+FONT_HEIGHT+4+NUM_LINES*FONT_HEIGHT+4, current_dir+i, MAKE_COLOR(COLOR_GREY, COLOR_WHITE)); //current dir
         } else {
             draw_string(x+FONT_WIDTH, y+FONT_HEIGHT+4+NUM_LINES*FONT_HEIGHT+4, current_dir, MAKE_COLOR(COLOR_GREY, COLOR_WHITE)); //current dir
             draw_filled_rect(x+(1+i)*FONT_WIDTH, y+FONT_HEIGHT+4+NUM_LINES*FONT_HEIGHT+4, 
-                             x+(1+NAME_SIZE+2+7+2+14)*FONT_WIDTH, y+FONT_HEIGHT+4+NUM_LINES*FONT_HEIGHT+4+FONT_HEIGHT, MAKE_COLOR(COLOR_GREY, COLOR_BLACK)); // fill
+                             x+(1+NAME_SIZE+SPACING+SIZE_SIZE+SPACING+TIME_SIZE)*FONT_WIDTH, y+FONT_HEIGHT+4+NUM_LINES*FONT_HEIGHT+4+FONT_HEIGHT, MAKE_COLOR(COLOR_GREY, COLOR_GREY)); // fill
+        }
+
+        // scrollbar
+        if (count>NUM_LINES) {
+            i=NUM_LINES*FONT_HEIGHT-1 -1;
+            j=i*NUM_LINES/count;
+            i=(i-j)*selected->n/(count-1);
+            draw_filled_rect(x+(1+NAME_SIZE+SPACING+SIZE_SIZE+SPACING+TIME_SIZE+1)*FONT_WIDTH+2, y+FONT_HEIGHT+4+1, 
+                             x+(1+NAME_SIZE+SPACING+SIZE_SIZE+SPACING+TIME_SIZE+1)*FONT_WIDTH+6, y+FONT_HEIGHT+4+1+i, MAKE_COLOR(COLOR_BLACK, COLOR_BLACK));
+            draw_filled_rect(x+(1+NAME_SIZE+SPACING+SIZE_SIZE+SPACING+TIME_SIZE+1)*FONT_WIDTH+2, y+FONT_HEIGHT+4+i+j, 
+                             x+(1+NAME_SIZE+SPACING+SIZE_SIZE+SPACING+TIME_SIZE+1)*FONT_WIDTH+6, y+FONT_HEIGHT+4+NUM_LINES*FONT_HEIGHT-1, MAKE_COLOR(COLOR_BLACK, COLOR_BLACK));
+            draw_filled_rect(x+(1+NAME_SIZE+SPACING+SIZE_SIZE+SPACING+TIME_SIZE+1)*FONT_WIDTH+2, y+FONT_HEIGHT+4+1+i, 
+                             x+(1+NAME_SIZE+SPACING+SIZE_SIZE+SPACING+TIME_SIZE+1)*FONT_WIDTH+6, y+FONT_HEIGHT+4+i+j, MAKE_COLOR(COLOR_WHITE, COLOR_WHITE));
+        } else {
+            draw_filled_rect(x+(1+NAME_SIZE+SPACING+SIZE_SIZE+SPACING+TIME_SIZE+1)*FONT_WIDTH+2, y+FONT_HEIGHT+4+1, 
+                             x+(1+NAME_SIZE+SPACING+SIZE_SIZE+SPACING+TIME_SIZE+1)*FONT_WIDTH+6, y+FONT_HEIGHT+4+NUM_LINES*FONT_HEIGHT-1, MAKE_COLOR(COLOR_BLACK, COLOR_BLACK));
         }
 
         gui_fselect_redraw = 0;
@@ -294,7 +327,7 @@ void gui_fselect_kbd_process() {
                     gui_set_mode(gui_fselect_mode_old);
                     draw_restore();
                     if (fselect_on_select) 
-                        fselect_on_select();
+                        fselect_on_select(selected_file);
                 }
             }
             break;
@@ -302,6 +335,8 @@ void gui_fselect_kbd_process() {
             gui_fselect_free_data();
             gui_set_mode(gui_fselect_mode_old);
             draw_restore();
+            if (fselect_on_select) 
+                fselect_on_select(NULL);
             break;
     }
 }

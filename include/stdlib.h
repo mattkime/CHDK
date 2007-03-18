@@ -127,6 +127,6 @@ struct tm
 	int tm_isdst;	/* Daylight Saving Time flag */
 	};
 
-extern struct tm * localtime(const long *_tod);
+extern struct tm * localtime(const unsigned long *_tod);
 
 #endif

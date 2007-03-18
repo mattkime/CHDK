@@ -99,6 +99,7 @@ void script_start()
 void script_end()
 {
     state_kbd_script_run = 0;
+    vid_bitmap_refresh();
 }
 
 void process_script()

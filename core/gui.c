@@ -505,9 +505,7 @@ void gui_draw_fselect() {
 }
 
 //-------------------------------------------------------------------
-static void gui_load_script_selected() {
-    char *fn = gui_fselect_result();
-    
+static void gui_load_script_selected(const char *fn) {
     if (fn)
         load_script(fn);
 }
