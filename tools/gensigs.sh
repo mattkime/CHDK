@@ -1,18 +1,26 @@
 #!/bin/sh
 
-FUNCS="$1"
-PRIM="$2"
-BASE="$3"
+VERSIONS="1 2"
 
 echo
 
-cat "$FUNCS" | \
-while read name addr; do
-    ./gensig $PRIM $BASE $name $addr 24
+for v in $VERSIONS; do
+    cat sig_ref_${v}.txt | \
+    while read line; do
+    	# workaround - multiword read does not work in Windows shell!
+    	line=($line)
+        name=${line[0]}
+        addr=${line[1]}
+        length=${line[2]}
+	./gensig sig_ref_${v}.bin 0xffc00000 ${name}_${v} $addr ${length:-32}
+    done
 done
 
-cat "$FUNCS" | \
-awk 'BEGIN {print "FuncsList func_list[] = {"}
-    { printf("\t{ \"%s\", func_sig_%s },\n",$1,$1)}
-    END {print "\t{ NULL }\n};"}
-'
+echo "FuncsList func_list[] = {"
+
+for v in $VERSIONS; do
+    cat sig_ref_${v}.txt | \
+    awk -v v=${v} '{ printf("\t{ \"%s\", func_sig_%s_%d },\n",$1,$1,v)}'
+done | sort
+
+echo -e "\t{ NULL }\n};"

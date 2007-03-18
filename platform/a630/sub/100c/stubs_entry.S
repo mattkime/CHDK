@@ -1,80 +1,107 @@
 // !!! THIS FILE IS GENERATED. DO NOT EDIT. !!!
 #include "stubs_asm.h"
 
-// WARNING: AllocateMemory is not found!
-NSTUB(Close, 0xffc614e8)
+NSTUB(AllocateMemory, 0xffc01ab0)
 NSTUB(close, 0xffef0238)
+NSTUB(Close, 0xffc614e8)
+NSTUB(closedir, 0xffeed6c0)
+NSTUB(CreatePhysicalVram, 0xffd2e820)
+NSTUB(CreateTask, 0xffc11abc)
 NSTUB(CreateTaskStrict, 0xffc12b5c)
 NSTUB(DisableDispatch, 0xffc118e0)
+// Best match: 51%
+NSTUB(DisplayImagePhysicalScreen, 0xffd2da18)
 NSTUB(EnableDispatch, 0xffc1196c)
+NSTUB(ExecuteEventProcedure, 0xffc0699c)
 NSTUB(ExitTask, 0xffc11e7c)
 NSTUB(Fclose_Fut, 0xffc5a4d8)
 NSTUB(Fopen_Fut, 0xffc5a49c)
 NSTUB(Fread_Fut, 0xffc5a5bc)
-// WARNING: FreeMemory is not found!
+// ERROR: free is not found!
+NSTUB(FreeMemory, 0xffc01abc)
 NSTUB(Fseek_Fut, 0xffc5a6a4)
 NSTUB(Fwrite_Fut, 0xffc5a60c)
-// WARNING: GetSystemTime is not found!
+// Best match: 96%
+NSTUB(GetFocusLensSubjectDistance, 0xffe9b4fc)
+NSTUB(GetPropertyCase, 0xffc14de4)
+NSTUB(GetSystemTime, 0xffc04d38)
+// Best match: 93%
+NSTUB(GetZoomLensCurrentPoint, 0xffe87928)
+// ALT: NSTUB(GetZoomLensCurrentPoint, 0xffe87928) // 27/2
+// Best match: 93%
+NSTUB(GetZoomLensCurrentPosition, 0xffe8793c)
+// ALT: NSTUB(GetZoomLensCurrentPosition, 0xffe8793c) // 27/2
 NSTUB(ints_disable, 0xffc0deb0)
 NSTUB(ints_enable, 0xffc0debc)
 NSTUB(ioctl, 0xffef0378)
+NSTUB(isalpha, 0xffee7634)
+// ALT: NSTUB(isalpha, 0xffee7634) // 4/0
+NSTUB(isdigit, 0xffee7664)
+// ALT: NSTUB(isdigit, 0xffee7664) // 4/0
+NSTUB(islower, 0xffee7694)
+// ALT: NSTUB(islower, 0xffee7694) // 4/0
+NSTUB(isspace, 0xffee76dc)
+// ALT: NSTUB(isspace, 0xffee76dc) // 4/0
+NSTUB(IsStrobeChargeCompleted, 0xffd08620)
+NSTUB(isupper, 0xffee76f4)
+// ALT: NSTUB(isupper, 0xffee76f4) // 4/0
 NSTUB(kbd_p1_f, 0xffc17478)
 NSTUB(kbd_p1_f_cont, 0xffc17484)
 NSTUB(kbd_p2_f, 0xffc1785c)
-// WARNING: kbd_pwr_off is not found!
-// WARNING: kbd_pwr_on is not found!
+NSTUB(kbd_pwr_off, 0xffc188f0)
+// ALT: NSTUB(kbd_pwr_off, 0xffc18920) // 6/0
+// ALT: NSTUB(kbd_pwr_off, 0xffc1893c) // 6/0
+NSTUB(kbd_pwr_on, 0xffc188c8)
 NSTUB(kbd_read_keys_r2, 0xffc18274)
+// Best match: 93%
+NSTUB(localtime, 0xffeebeb4)
 NSTUB(lseek, 0xffef037c)
 NSTUB(MakeDirectory, 0xffc617fc)
-NSTUB(memcmp, 0xffeeb294)
+// Best match: 53%
+NSTUB(malloc, 0xffef3278)
+// ALT: NSTUB(malloc, 0xffef3278) // 15/13
+NSTUB(memcmp, 0xffef7438)
+// ALT: NSTUB(memcmp, 0xffeeb294) // 9/0
 NSTUB(memcpy, 0xffeeb2d0)
 NSTUB(memset, 0xffeeb348)
 NSTUB(mkdir, 0xffc61740)
-NSTUB(Open, 0xffc614c0)
 NSTUB(open, 0xffef087c)
-// WARNING: PhySw_testgpio is not found!
+NSTUB(Open, 0xffc614c0)
+NSTUB(opendir, 0xffeed6f4)
+NSTUB(PhySw_testgpio, 0xffc18964)
 NSTUB(ProtectFile, 0xffc59b04)
+NSTUB(qsort, 0xffeeaaf4)
+NSTUB(rand, 0xffeeab18)
+// ALT: NSTUB(rand, 0xffeeab18) // 8/0
 NSTUB(Read, 0xffc6157c)
 NSTUB(read, 0xffef0298)
-NSTUB(reateTaskStrict, 0xffc12b5c)
+NSTUB(readdir, 0xffeed68c)
+NSTUB(RefreshPhysicalScreen, 0xffd7f49c)
+NSTUB(rewinddir, 0xffeed6b4)
+NSTUB(SetPropertyCase, 0xffc14c94)
+NSTUB(SleepTask, 0xffc119d0)
 NSTUB(sprintf, 0xffeef044)
+NSTUB(srand, 0xffeeab3c)
+// ALT: NSTUB(srand, 0xffeeab3c) // 4/0
+NSTUB(stat, 0xffeed788)
+NSTUB(strcat, 0xffeeb368)
+NSTUB(strchr, 0xffeeb394)
 NSTUB(strcmp, 0xffeeb3b8)
 NSTUB(strcpy, 0xffeeb54c)
 NSTUB(strlen, 0xffeeb6b0)
+NSTUB(strncmp, 0xffeeb714)
+NSTUB(strtol, 0xffeeaf30)
 NSTUB(TakeSemaphore, 0xffc114cc)
+NSTUB(taskCreateHookAdd, 0xffef5ed8)
+NSTUB(taskDeleteHookAdd, 0xffef5e14)
+// Best match: 82%
 NSTUB(taskIdListGet, 0xffeffea0)
 NSTUB(taskLock, 0xfff0055c)
 NSTUB(taskName, 0xffeffd98)
 NSTUB(taskResume, 0xfff0017c)
 NSTUB(taskSuspend, 0xffefffa8)
 NSTUB(taskUnlock, 0xfff00604)
-NSTUB(Write, 0xffc61588)
+// Best match: 96%
+NSTUB(VbattGet, 0xffc1c6d0)
 NSTUB(write, 0xffef0308)
-NSTUB(taskCreateHookAdd, 0xffef5ed8)
-NSTUB(taskDeleteHookAdd, 0xffef5e14)
-NSTUB(SleepTask, 0xffc119d0)
-NSTUB(CreateTask, 0xffc11abc)
-// WARNING: CreatePhysicalVram is not found!
-// WARNING: DisplayImagePhysicalScreen is not found!
-NSTUB(ExecuteEventProcedure, 0xffc0699c)
-// WARNING: GetPropertyCase is not found!
-// WARNING: SetPropertyCase is not found!
-// WARNING: malloc is not found!
-// WARNING: free is not found!
-NSTUB(strcat, 0xffeeb368)
-NSTUB(strchr, 0xffeeb394)
-// WARNING: RefreshPhysicalScreen is not found!
-NSTUB(opendir, 0xffeed6f4)
-NSTUB(closedir, 0xffeed6c0)
-NSTUB(readdir, 0xffeed68c)
-NSTUB(rewinddir, 0xffeed6b4)
-// WARNING: isalpha is not found!
-// WARNING: isdigit is not found!
-// WARNING: isspace is not found!
-// WARNING: isupper is not found!
-// WARNING: islower is not found!
-NSTUB(strncmp, 0xffeeb714)
-NSTUB(strtol, 0xffeeaf30)
-// WARNING: rand is not found!
-// WARNING: srand is not found!
-NSTUB(stat, 0xffeed788)
+NSTUB(Write, 0xffc61588)

@@ -74,14 +74,14 @@ Instr instrs[] = {
     {0x00800000 , 0x0df00000, 0x02000000 },	// add
     {0x00000000 , 0x0de00000, 0x02000000 },	// and
     {0x0a000000 , 0x0e000000, 0x00ffffff },	// b, bl
-//    {0x00000000 , 0x00000000, 0x00000000 },	// bic
+    {0x01c00000 , 0x0de00000, 0x02000000 },	// bic
 //    {0x00000000 , 0x00000000, 0x00000000 },	// bkpt
 //    {0x00000000 , 0x00000000, 0x00000000 },	// blx
 //    {0x00000000 , 0x00000000, 0x00000000 },	// blx
 //    {0x00000000 , 0x00000000, 0x00000000 },	// bx
 //    {0x00000000 , 0x00000000, 0x00000000 },	// cdp
 //    {0x00000000 , 0x00000000, 0x00000000 },	// clz
-//    {0x00000000 , 0x00000000, 0x00000000 },	// cmn
+    {0x01700000 , 0x0df00000, 0x02000000 },	// cmn
     {0x01500000 , 0x0df00000, 0x02000000 },	// cmp
 //    {0x00000000 , 0x00000000, 0x00000000 },	// eor
 //    {0x00000000 , 0x00000000, 0x00000000 },	// ldc
@@ -279,7 +279,8 @@ int main(int argc, char **argv)
     int size;
     int i,j;
     int wcount;
-	char tbuf[1024];
+    char tbuf[1024];
+    int finish;
 
     if (argc != 6)
 	usage();
@@ -299,19 +300,28 @@ int main(int argc, char **argv)
     fread(buf, 4, size, f);
 
     printf("static FuncSig func_sig_%s[] = {\n",proc_name);
+
+    finish = 0;
     for (i=0;i<size;++i){
-		tbuf[0]=0;
-		for (j=0;instrs[j].inst | instrs[j].mask;j++){
-			if ((buf[i] & instrs[j].mask) == instrs[j].inst){
-				if (!tbuf[0]) 
-					sprintf(tbuf, "\t{ %3d, 0x%08x, 0x%08x }, //", i, buf[i] & ~instrs[j].ignore, ~instrs[j].ignore);
-				sprintf(tbuf+strlen(tbuf), " %s:%d:0x%08X", instrs[j].cmd, bits(instrs[j].mask), buf[i]);
-				wcount++;
-				//break;
-			}
-		}
+        tbuf[0]=0;
+       	for (j=0;instrs[j].inst | instrs[j].mask;j++){
+	    if ((buf[i] & instrs[j].mask) == instrs[j].inst){
+       		if (!tbuf[0]) 
+       	 	    sprintf(tbuf, "\t{ %3d, 0x%08x, 0x%08x }, //", i, buf[i] & ~instrs[j].ignore, ~instrs[j].ignore);
+       		sprintf(tbuf+strlen(tbuf), " %s:%d:0x%08X", instrs[j].cmd, bits(instrs[j].mask), buf[i]);
+       		wcount++;
+       	        if ((buf[i] == 0xe1a0f00e) /* "mov pc,lr" aka "ret" */
+       	                && (size*100/wcount) > 75){
+       	            sprintf(tbuf+strlen(tbuf), "\t/* RET found, stopping... */");
+       	            finish = 1;
+       	        }
+       			//break;
+       	    }
+       	}
     	if (tbuf[0]) 
-		    printf("%s\n", tbuf);
+	    printf("%s\n", tbuf);
+        if (finish)
+	    break;
     }
     printf("\t{ -1, -1, -1 },\n");
     printf("\t/* %d/%d */\n",wcount, size);

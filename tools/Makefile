@@ -22,13 +22,16 @@ clean:
 	  rm -f signatures.h ; \
 	fi
 
-signatures.h: gensig$(EXE) gensigs.sh sig_ref.txt sig_ref.bin
-	if [ -s sig_ref.bin ] ; then \
-	  $(SH) ./gensigs.sh sig_ref.txt sig_ref.bin $(ROMBASEADDR) > signatures.h ; \
+signatures.h: gensig$(EXE) gensigs.sh sig_ref_1.txt sig_ref_1.bin sig_ref_2.txt sig_ref_2.bin
+	if [ -s sig_ref_1.bin ] && [ -s sig_ref_2.bin ] ; then \
+	  $(SH) ./gensigs.sh > signatures.h ; \
 	else \
-	  echo CAUTION! \'signatures.h\' is not uptated due to \'sig_ref.bin\` is empty! ; \
+	  echo CAUTION! \'signatures.h\' is not uptated due to \'sig_ref_1.bin\` or \'sig_ref_2.bin\` is empty! ; \
 	  touch signatures.h ; \
 	fi
 
-sig_ref.bin:
-	touch sig_ref.bin
+sig_ref_1.bin:
+	touch sig_ref_1.bin
+
+sig_ref_2.bin:
+	touch sig_ref_2.bin

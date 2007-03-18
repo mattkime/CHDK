@@ -22,7 +22,8 @@ extern long GetFocusLensSubjectDistance();
 extern long GetFocusLensSubjectDistanceFromLens();
 extern long GetPropertyCase(long opt_id, void *buf, long bufsize);
 extern long SetPropertyCase(long opt_id, void *buf, long bufsize);
-extern long VbattGet();
+extern void RefreshPhysicalScreen(long f);
+extern long IsStrobeChargeCompleted();
 
 /* Ours stuff */
 extern long wrs_kernel_bss_start;
@@ -356,12 +357,12 @@ long kbd_get_clicked_key()
 
 void *vid_get_bitmap_fb()
 {
-    return (void*)0x103C79A0;
+    return (void*)(0x10360000+0x1000);
 }
 
 void *vid_get_viewport_fb()
 {
-    return (void*)0x10559570;
+    return (void*)(0x10558000+0x22C0);
 }
 
 long vid_get_bitmap_width()
@@ -372,6 +373,11 @@ long vid_get_bitmap_width()
 long vid_get_bitmap_height()
 {
     return 240;
+}
+
+void vid_bitmap_refresh()
+{
+    RefreshPhysicalScreen(1);
 }
 
 /*******************************************************************/
@@ -483,13 +489,6 @@ const ShutterSpeed shutter_speeds_table[] = {
     {35, 1084, "1/2500",    400 },
 };
 
-const ISOTable iso_table[] = {
-    {0, 50,   "50", -1},
-    {1, 100, "100", -1},
-    {2, 200, "200", -1},
-    {3, 400, "400", -1},
-};
-
 #define SS_SIZE (sizeof(shutter_speeds_table)/sizeof(shutter_speeds_table[0]))
 #define SSID_MIN (shutter_speeds_table[0].id)
 #define SSID_MAX (shutter_speeds_table[SS_SIZE-1].id)
@@ -497,10 +496,6 @@ const ISOTable iso_table[] = {
 #define AS_SIZE (sizeof(aperture_sizes_table)/sizeof(aperture_sizes_table[0]))
 #define ASID_MIN (aperture_sizes_table[0].id)
 #define ASID_MAX (aperture_sizes_table[AS_SIZE-1].id)
-
-#define ISO_SIZE (sizeof(iso_table)/sizeof(iso_table[0]))
-#define ISO_MIN (iso_table[0].id)
-#define ISO_MAX (iso_table[ISO_SIZE-1].id)
 
 int shooting_get_tv()
 {
@@ -589,6 +584,20 @@ int shooting_in_progress()
     int t = 0;
     GetPropertyCase(205, &t, 4);
     return t != 0;
+}
+
+int shooting_is_flash_ready()
+{
+    int t = 0;
+/* well, I'm not sure what's exactly is happening here
+ * but it works for a610-100e
+ */
+    GetPropertyCase(204, &t, 4);
+    if (t == 3){
+	GetPropertyCase(221, &t, 4);
+	return (t==1) && IsStrobeChargeCompleted();
+    }
+    return 1;
 }
 
 /*******************************************************************/
