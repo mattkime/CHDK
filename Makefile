@@ -36,7 +36,7 @@ firzip: infoline clean all fir
 	rm -f $(topdir)bin/$(VER)-$(PLATFORM)-$(PLATFORMSUB).zip
 	cp $(topdir)bin/$(PLATFORM)-$(PLATFORMSUB).FIR $(topdir)bin/PS.FIR
 	LANG=C echo -e "hdk-$(VER) for $(PLATFORM) fw:$(PLATFORMSUB) build:`date -R`" | \
-	    zip -9jc $(topdir)bin/$(VER)-$(PLATFORM)-$(PLATFORMSUB).zip $(topdir)bin/PS.FIR
+	    zip -9jc $(topdir)bin/$(VER)-$(PLATFORM)-$(PLATFORMSUB).zip $(topdir)bin/PS.FIR > $(DEVNULL)
 	rm -f $(topdir)bin/PS.FIR
 
 batch-zip:
