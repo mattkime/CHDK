@@ -13,6 +13,7 @@ clean:
 	rm -f $(OBJS) libplatformsub.a stubs_entry.S.err stubs_not_found_names.err
 
 stubs_auto.S: boot.c
+	@echo $< \-\> $@
 # UNIX shell magick )
 	cat $< | \
 	    grep 'BL\?[[:space:]]*sub_[0-9A-Fa-f]' | \
@@ -22,6 +23,7 @@ stubs_auto.S: boot.c
 		{printf("STUB(%s)\n",$$1)}' > stubs_auto.S
 
 stubs_entry.S: $(topdir)tools/finsig$(EXE) $(TARGET_PRIMARY)
+	@echo \-\> $@
 	rm -f stubs_entry.S.err
 	if [ -s $(TARGET_PRIMARY) ] ; then \
 	  $(topdir)tools/finsig $(TARGET_PRIMARY) $(ROMBASEADDR) > stubs_entry.S ; \

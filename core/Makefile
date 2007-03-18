@@ -15,12 +15,14 @@ OBJS=entry.o main.o gui_draw.o gui_menu.o gui_palette.o gui_mbox.o \
      histogram.o
 
 main.bin: main.elf
+	@echo $< \-\> $@
 	$(OBJDUMP) -z -d main.elf > main.dump
 	$(OBJCOPY) -O binary main.elf main.bin
 
 main.elf: $(OBJS) $(topdir)platform/$(PLATFORM)/libplatform.a \
           $(topdir)platform/$(PLATFORM)/sub/$(PLATFORMSUB)/libplatformsub.a \
           $(topdir)lib/font/libfont.a $(topdir)lib/math/libmath.a $(topdir)lib/ubasic/libubasic.a
+	@echo \-\> $@
 	$(CC) $(CFLAGS) -o $@ $^   $(LDLIBS) $(LDFLAGS) $(LDOPTS)
 	( $(NM) $@ | grep ' U ' > $@.syms ) && exit 1 || exit 0
 

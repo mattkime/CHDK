@@ -12,10 +12,12 @@ all: main.bin
 OBJS=entry.o main.o
 
 main.bin: main.elf
+	@echo $< \-\> $@
 	$(OBJDUMP) -z -d main.elf > main.dump
 	$(OBJCOPY) -O binary main.elf main.bin
 
 main.elf: $(OBJS)
+	@echo \-\> $@
 	$(CC) $(CFLAGS) -o $@ $^   $(LDLIBS) $(LDFLAGS) $(LDOPTS)
 	( $(NM) $@ | grep ' U ' > $@.syms ) && exit 1 || exit 0
 

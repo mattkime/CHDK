@@ -17,10 +17,12 @@ all: all-recursive main.bin
 OBJS=entry.o main.o
 
 main.bin: main.elf
+	@echo $< \-\> $@
 	$(OBJDUMP) -z -d main.elf > main.dump
 	$(OBJCOPY) -O binary main.elf main.bin
 
 main.elf: $(OBJS)
+	@echo \-\> $@
 	$(CC) $(CFLAGS) -o $@ $^   $(LDLIBS) $(LDFLAGS) $(LDOPTS)
 	( $(NM) $@ | grep ' U ' > $@.syms ) && exit 1 || exit 0
 
@@ -29,6 +31,7 @@ clean: clean-recursive
 	rm -f reboot_core.h copy_and_reset.h
 
 reboot_core.h: $(topdir)core/main.bin
+	@echo $< \-\> $@
 ifeq ($(OSTYPE),Windows)
 	$(topdir)tools/hexdmplt  $< $@
 else
@@ -36,6 +39,7 @@ else
 endif
 
 copy_and_reset.h: $(curdir)resetcode/main.bin
+	@echo $< \-\> $@
 ifeq ($(OSTYPE),Windows)
 	$(topdir)tools/hexdmplt  $< $@
 else
