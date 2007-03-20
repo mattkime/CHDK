@@ -37,8 +37,7 @@ static void gui_menuproc_save();
 
 // Menu definition
 //-------------------------------------------------------------------
-CMenuItem script_submenu[] = {
-    {"*** Script ***", MENUITEM_INFO, 0 },
+CMenu script_submenu = { "Script", {
     {"Load script from file...", MENUITEM_PROC, (int*)gui_load_script },
     {"Script shoot delay (.1s)", MENUITEM_INT|MENUITEM_F_UNSIGNED, &conf_script_shoot_delay },
     {"Var. a value", MENUITEM_INT, &conf_ubasic_var_a },
@@ -46,10 +45,9 @@ CMenuItem script_submenu[] = {
     {"Var. c value", MENUITEM_INT, &conf_ubasic_var_c },
     {"<- Back", MENUITEM_UP, NULL },
     {0}
-};
+}};
 
-CMenuItem misc_submenu[] = {
-    {"*** Miscellaneous ***", MENUITEM_INFO, 0 },
+CMenu misc_submenu = { "Miscellaneous", {
     {"Show build info", MENUITEM_PROC, (int*)gui_show_build_info },
     {"Show memory info", MENUITEM_PROC, (int*)gui_show_memory_info },
     {"File browser", MENUITEM_PROC, (int*)gui_draw_fselect },
@@ -58,30 +56,27 @@ CMenuItem misc_submenu[] = {
     {"GAME: Reversi", MENUITEM_PROC, (int*)gui_draw_reversi },
     {"<- Back", MENUITEM_UP, NULL },
     {0}
-};
+}};
 
-CMenuItem debug_submenu[] = {
-    {"*** Debug ***", MENUITEM_INFO, 0 },
-
+CMenu debug_submenu = { "Debug", {
     {"Show PropCases", MENUITEM_BOOL, &debug_propcase_show },
     {"PropCase page", MENUITEM_INT, &debug_propcase_page },
     {"Show misc. values", MENUITEM_BOOL, &debug_vals_show },
     {"Memory browser", MENUITEM_PROC, (int*)gui_draw_debug },
     {"<- Back", MENUITEM_UP, NULL },
     {0}
-};
+}};
 
-CMenuItem root_menu[] = {
-    {"*** Main ***", MENUITEM_INFO, 0 },
+CMenu root_menu = { "Main", {
     {"Show OSD", MENUITEM_BOOL, &conf_show_osd },
     {"Save RAW", MENUITEM_BOOL, &conf_save_raw },
     {"Show live histogram", MENUITEM_BOOL, &conf_show_histo },
-    {"Scripting parameters ->", MENUITEM_SUBMENU, (int*)script_submenu },
-    {"Miscellaneous stuff ->", MENUITEM_SUBMENU, (int*)misc_submenu },
-    {"Debug parameters ->", MENUITEM_SUBMENU, (int*)debug_submenu },
+    {"Scripting parameters ->", MENUITEM_SUBMENU, (int*)&script_submenu },
+    {"Miscellaneous stuff ->", MENUITEM_SUBMENU, (int*)&misc_submenu },
+    {"Debug parameters ->", MENUITEM_SUBMENU, (int*)&debug_submenu },
     {"Save options now...", MENUITEM_PROC, (int*)gui_menuproc_save },
     {0}
-};
+}};
 
 //-------------------------------------------------------------------
 static volatile enum Gui_Mode gui_mode;
@@ -182,7 +177,7 @@ void gui_kbd_process()
     if (kbd_is_key_clicked(KEY_MENU)){
         switch (gui_mode) {
             case GUI_MODE_ALT:
-                gui_menu_init(root_menu);
+                gui_menu_init(&root_menu);
                 gui_mode = GUI_MODE_MENU;
                 draw_restore();
                 break;
