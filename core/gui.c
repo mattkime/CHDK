@@ -58,11 +58,37 @@ CMenu misc_submenu = { "Miscellaneous", {
     {0}
 }};
 
+CMenu m1_submenu = { "Menu 1", {
+    {"Item 1", MENUITEM_PROC, NULL },
+    {"Item 2", MENUITEM_PROC, NULL },
+    {"<- Back", MENUITEM_UP, NULL },
+    {0}
+}};
+
+CMenu m2_submenu = { "Menu 2", {
+    {"Item 1", MENUITEM_PROC, NULL },
+    {"Item 2", MENUITEM_PROC, NULL },
+    {"Item 3", MENUITEM_PROC, NULL },
+    {"Item 4", MENUITEM_PROC, NULL },
+    {"Item 5", MENUITEM_PROC, NULL },
+    {"Item 6", MENUITEM_PROC, NULL },
+    {"Item 7", MENUITEM_PROC, NULL },
+    {"Item 8", MENUITEM_PROC, NULL },
+    {"Item 9", MENUITEM_PROC, NULL },
+    {"Item 10", MENUITEM_PROC, NULL },
+    {"Item 11", MENUITEM_PROC, NULL },
+    {"Item 12", MENUITEM_PROC, NULL },
+    {"<- Back", MENUITEM_UP, NULL },
+    {0}
+}};
+
 CMenu debug_submenu = { "Debug", {
     {"Show PropCases", MENUITEM_BOOL, &debug_propcase_show },
     {"PropCase page", MENUITEM_INT, &debug_propcase_page },
     {"Show misc. values", MENUITEM_BOOL, &debug_vals_show },
     {"Memory browser", MENUITEM_PROC, (int*)gui_draw_debug },
+    {"Menu 1", MENUITEM_SUBMENU, (int*)&m1_submenu },
+    {"Menu 2", MENUITEM_SUBMENU, (int*)&m2_submenu },
     {"<- Back", MENUITEM_UP, NULL },
     {0}
 }};
@@ -262,7 +288,11 @@ void gui_draw_histo() {
         static const int hy=45;
         register unsigned int i, v, threshold;
 
-        draw_rect(hx-1, hy, hx+HISTO_WIDTH, hy+HISTO_HEIGHT, COLOR_WHITE);
+//        draw_rect(hx-1, hy, hx+HISTO_WIDTH, hy+HISTO_HEIGHT, COLOR_WHITE);
+        draw_line(hx, hy, hx+HISTO_WIDTH-1, hy, COLOR_WHITE); //top
+        draw_line(hx, hy+HISTO_HEIGHT, hx+HISTO_WIDTH-1, hy+HISTO_HEIGHT, COLOR_WHITE); //bottom
+        draw_line(hx-1, hy, hx-1, hy+HISTO_HEIGHT, (under_exposed)?COLOR_RED:COLOR_WHITE); //left
+        draw_line(hx+HISTO_WIDTH, hy, hx+HISTO_WIDTH, hy+HISTO_HEIGHT, (over_exposed)?COLOR_RED:COLOR_WHITE); //right
 
         /* histogram */
         for (i=0; i<HISTO_WIDTH; i++) {
@@ -270,6 +300,14 @@ void gui_draw_histo() {
 
             for (v=1; v<HISTO_HEIGHT; v++)
                 draw_pixel(hx+i, hy+HISTO_HEIGHT-v, (v<=threshold)?COLOR_WHITE:COLOR_BG);
+        }
+
+        if (under_exposed) {
+            draw_filled_ellipse(hx+5, hy+5, 3, 3, MAKE_COLOR(COLOR_RED, COLOR_RED));
+        }
+
+        if (over_exposed) {
+            draw_filled_ellipse(hx+HISTO_WIDTH-5, hy+5, 3, 3, MAKE_COLOR(COLOR_RED, COLOR_RED));
         }
     }
 }

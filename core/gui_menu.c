@@ -11,12 +11,13 @@
 //-------------------------------------------------------------------
 #define MENUSTACK_MAXDEPTH  3
 
-#define NUM_LINES           7
+#define NUM_LINES           8
 
 //-------------------------------------------------------------------
 typedef struct {
     CMenu       *menu;
     int         curpos;
+    int         toppos;
 } CMenuStacked;
 
 //-------------------------------------------------------------------
@@ -38,7 +39,7 @@ void gui_menu_init(CMenu *menu_ptr) {
     gui_menu_stack_ptr = 0;
     
     x = (screen_width/FONT_WIDTH-w)>>1;
-    y = (screen_height/FONT_HEIGHT-NUM_LINES-1)>>1;
+    y = (screen_height/FONT_HEIGHT-NUM_LINES)>>1;
     
     gui_menu_redraw=2;
 }
@@ -103,14 +104,19 @@ void gui_menu_kbd_process() {
                     case MENUITEM_BOOL:
                         *(curr_menu->menu[gui_menu_curr_item].value) =
                                 !(*(curr_menu->menu[gui_menu_curr_item].value));
+                        gui_menu_redraw=1;
                         break;
                     case MENUITEM_PROC:
-                        ((void (*)())(curr_menu->menu[gui_menu_curr_item].value))();
-                        gui_menu_curr_item = -1;
+                    	if (curr_menu->menu[gui_menu_curr_item].value) {
+                            ((void (*)())(curr_menu->menu[gui_menu_curr_item].value))();
+                            gui_menu_curr_item = -1;
+                            gui_menu_redraw=2;
+                        }
                         break;
                     case MENUITEM_SUBMENU:
                         gui_menu_stack[gui_menu_stack_ptr].menu = curr_menu;
                         gui_menu_stack[gui_menu_stack_ptr].curpos = gui_menu_curr_item;
+                        gui_menu_stack[gui_menu_stack_ptr].toppos = gui_menu_top_item;
                         curr_menu = (void*)(curr_menu->menu[gui_menu_curr_item].value);
                         gui_menu_curr_item = -1;
                         gui_menu_stack_ptr++;
@@ -119,6 +125,7 @@ void gui_menu_kbd_process() {
                             draw_txt_string(0, 0, "E1", MAKE_COLOR(COLOR_RED, COLOR_YELLOW));
                             gui_menu_stack_ptr = 0;
                         }
+                        gui_menu_redraw=2;
                         draw_restore();
                         gui_force_restore();
                         break;
@@ -127,6 +134,8 @@ void gui_menu_kbd_process() {
                             gui_menu_stack_ptr--;
                             curr_menu = gui_menu_stack[gui_menu_stack_ptr].menu;
                             gui_menu_curr_item = gui_menu_stack[gui_menu_stack_ptr].curpos;
+                            gui_menu_top_item  = gui_menu_stack[gui_menu_stack_ptr].toppos;
+                            gui_menu_redraw=2;
                             draw_restore();
                             gui_force_restore();
                         }
@@ -139,10 +148,14 @@ void gui_menu_kbd_process() {
 
 //-------------------------------------------------------------------
 void gui_menu_draw_initial() {
-    int l;
+    static const char *f=" *** ";
+    int l, xx;
     
     l = strlen(curr_menu->title);
-    draw_txt_string(x+((w-l)>>1), y-2, curr_menu->title, MAKE_COLOR(COLOR_BG, COLOR_FG));
+    xx=x+((w-l)>>1);
+    draw_txt_string(xx-5, y-2, f, MAKE_COLOR(COLOR_BG, COLOR_FG));
+    draw_txt_string(xx, y-2, curr_menu->title, MAKE_COLOR(COLOR_BG, COLOR_FG));
+    draw_txt_string(xx+l, y-2, f, MAKE_COLOR(COLOR_BG, COLOR_FG));
 }
 
 //-------------------------------------------------------------------

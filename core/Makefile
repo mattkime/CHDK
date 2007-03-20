@@ -3,7 +3,7 @@ topdir=../
 include $(topdir)makefile.inc
 
 # warning: library order matters!
-LDLIBS= -lfont -lplatform -lplatformsub -lubasic -lmath -lgcc
+LDLIBS= -lgcc
 #LDOPTS=-nostdlib -Wl,--allow-shlib-undefined -Wl,--no-define-common,-EL,-T,$(topdir)tools/link.RAM
 LDOPTS=-nostdlib -Wl,--allow-shlib-undefined -Wl,-T,$(topdir)tools/link.RAM
 LDOPTS+=-Wl,-N,-Ttext,$(MEMISOSTART)
