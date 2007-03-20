@@ -16,8 +16,11 @@ int conf_ubasic_var_a;
 int conf_ubasic_var_b;
 int conf_ubasic_var_c;
 
+int confns_enable_memdump;
+
+
 int state_shooting_progress;
-char *state_ubasic_script;
+const char *state_ubasic_script;
 int state_save_raw_nth_only;
 int state_expos_recalculated;
 int state_expos_under;
@@ -29,20 +32,27 @@ int debug_propcase_page;
 int debug_vals_show;
 
 static int dfirst;
-static int ubasic_script_buf[SCRIPT_BUF_SIZE];
+static char ubasic_script_buf[SCRIPT_BUF_SIZE];
 
 const char *ubasic_script_default =
 #if 1
     "sleep 1000\n"
+
     "if a<1 then let a=2\n"
     "if b<1 then let b=3\n"
+
     "for s=1 to a\n"
-    "shoot\n"
-    "for n=1 to b\n"
-    "click \"right\"\n"
-    "next n\n"
+      "shoot\n"
+      "for n=1 to b\n"
+        "click \"right\"\n"
+      "next n\n"
     "next s\n"
     "shoot\n"
+
+    "for n=1 to a*b\n"
+      "click \"left\"\n"
+    "next n\n"
+
     "end\n";
 #else
     "sleep 1000\n"

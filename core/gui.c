@@ -18,6 +18,8 @@
 
 // forward declarations
 //-------------------------------------------------------------------
+void dump_memory();
+
 static void gui_draw_histo();
 
 static void gui_draw_osd();
@@ -87,6 +89,7 @@ CMenu debug_submenu = { "Debug", {
     {"PropCase page", MENUITEM_INT, &debug_propcase_page },
     {"Show misc. values", MENUITEM_BOOL, &debug_vals_show },
     {"Memory browser", MENUITEM_PROC, (int*)gui_draw_debug },
+    {"Dump RAM on ALT +/- press", MENUITEM_BOOL, &confns_enable_memdump },
     {"Menu 1", MENUITEM_SUBMENU, (int*)&m1_submenu },
     {"Menu 2", MENUITEM_SUBMENU, (int*)&m2_submenu },
     {"<- Back", MENUITEM_UP, NULL },
@@ -199,6 +202,7 @@ void gui_redraw()
 //-------------------------------------------------------------------
 void gui_kbd_process()
 {
+    int clicked_key;
 
     if (kbd_is_key_clicked(KEY_MENU)){
         switch (gui_mode) {
@@ -229,16 +233,7 @@ void gui_kbd_process()
     switch (gui_mode) {
         case GUI_MODE_ALT:
             if (kbd_is_key_clicked(KEY_ERASE)) {
-        //          {
-        //              void (*f)(long a, long b, long c) = 0xFFC1408C;
-        //              long p = 0;
-        //              f(40,&p,2);
-        //          }
-        //          lens_set_focus_pos(2000);
-        //          makedump();
-        //          shooting_set_tv_rel(2);
-        //          shooting_set_av_rel(2);
-                    dump_memory();
+                dump_memory();
             }
             break;
     	case GUI_MODE_MENU:

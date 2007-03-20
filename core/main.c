@@ -51,9 +51,8 @@ void dump_memory()
 	sprintf(fn, FN_RAWF, conf_raw_fileno++);
 	fd = fopen(fn, "w+");
 	if (fd >= 0) {
-	    fwrite(0x1900, 1, 0x1900, fd);
-	    fwrite(0x1900, 1, 32*1024*1024-0x1900, fd);
-	    fwrite(0x40000000, 1, 0x1000, fd);
+	    fwrite((void*)0x1900, 1, 0x1900, fd);
+	    fwrite((void*)0x1900, 1, 32*1024*1024-0x1900, fd);
 	    fclose(fd);
 	}
     finished();
