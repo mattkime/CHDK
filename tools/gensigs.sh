@@ -21,6 +21,6 @@ echo "FuncsList func_list[] = {"
 for v in $VERSIONS; do
     cat sig_ref_${v}.txt | \
     awk -v v=${v} '{ printf("\t{ \"%s\", func_sig_%s_%d },\n",$1,$1,v)}'
-done | sort
+done | "$1"
 
 echo -e "\t{ NULL }\n};"

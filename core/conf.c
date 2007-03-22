@@ -5,7 +5,7 @@
 
 #define FN_COUNTER  "A/RCFG.BIN"
 #define FN_SCRIPT  "A/SCRIPT.BAS"
-#define CNF_MAGICK_VALUE (0x5acd20c1)
+#define CNF_MAGICK_VALUE (0x31204741)
 
 int conf_show_osd;
 int conf_save_raw;
@@ -15,6 +15,14 @@ int conf_raw_fileno;
 int conf_ubasic_var_a;
 int conf_ubasic_var_b;
 int conf_ubasic_var_c;
+
+int conf_show_dof;
+int conf_batt_volts_max;
+int conf_batt_volts_min;
+int conf_batt_step_25;
+int conf_batt_perc_show;
+int conf_batt_volts_show;
+int conf_batt_icon_show;
 
 int confns_enable_memdump;
 
@@ -74,6 +82,14 @@ static void load_defaults()
     conf_ubasic_var_a = 0;
     conf_ubasic_var_b = 0;
     conf_ubasic_var_c = 0;
+
+    conf_show_dof = 0;
+    conf_batt_volts_max = get_vbatt_max();
+    conf_batt_volts_min = get_vbatt_min();
+    conf_batt_step_show = 0;
+    conf_batt_perc_show = 1;
+    conf_batt_volts_show = 0;
+    conf_batt_icon_show = 1;
 }
 
 static void do_save(int fd)
@@ -90,6 +106,14 @@ static void do_save(int fd)
     write(fd, &conf_ubasic_var_a, 4);
     write(fd, &conf_ubasic_var_b, 4);
     write(fd, &conf_ubasic_var_c, 4);
+
+    write(fd, &conf_show_dof, 4);
+    write(fd, &conf_batt_volts_max, 4);
+    write(fd, &conf_batt_volts_min, 4);
+    write(fd, &conf_batt_step_25, 4);
+    write(fd, &conf_batt_perc_show, 4);
+    write(fd, &conf_batt_volts_show, 4);
+    write(fd, &conf_batt_pict_show, 4);	
 }
 
 static int do_restore(int fd)
@@ -140,6 +164,35 @@ static int do_restore(int fd)
 
     /* read: conf_ubasic_var_c */
     rcnt = read(fd, &conf_ubasic_var_c, 4);
+    if (rcnt != 4)
+	return 1;
+
+    /*read: DOF*/
+    rcnt = read(fd, &conf_show_dof, 4);
+    if (rcnt != 4)
+	return 1;
+
+    rcnt = read(fd, &conf_batt_volts_max, 4);
+    if (rcnt != 4)
+	return 1;
+
+    rcnt = read(fd, &conf_batt_volts_min, 4);
+    if (rcnt != 4)
+	return 1;
+    
+    rcnt = read(fd, &conf_batt_step_25, 4);
+    if (rcnt != 4)
+	return 1;
+		
+    rcnt = read(fd, &conf_batt_perc_show, 4);
+    if (rcnt != 4)
+	return 1;
+		
+    rcnt = read(fd, &conf_batt_volts_show, 4);
+    if (rcnt != 4)
+	return 1;
+		
+    rcnt = read(fd, &conf_batt_pict_show, 4);
     if (rcnt != 4)
 	return 1;
 

@@ -119,6 +119,7 @@ void gui_menu_kbd_process() {
                         gui_menu_stack[gui_menu_stack_ptr].toppos = gui_menu_top_item;
                         curr_menu = (void*)(curr_menu->menu[gui_menu_curr_item].value);
                         gui_menu_curr_item = -1;
+                        gui_menu_top_item = 0;
                         gui_menu_stack_ptr++;
                         // FIXME check on stack overrun;
                         if (gui_menu_stack_ptr > MENUSTACK_MAXDEPTH){

@@ -29,7 +29,7 @@ clean:
 signatures.h: gensig$(EXE) gensigs.sh sig_ref_1.txt sig_ref_1.bin sig_ref_2.txt sig_ref_2.bin
 	@echo \-\> $@
 	if [ -s sig_ref_1.bin ] && [ -s sig_ref_2.bin ] ; then \
-	  $(SH) ./gensigs.sh > signatures.h ; \
+	  $(SH) ./gensigs.sh $(SORT) > signatures.h ; \
 	else \
 	  echo CAUTION! \'signatures.h\' is not uptated due to \'sig_ref_1.bin\` or \'sig_ref_2.bin\` is empty! ; \
 	  touch signatures.h ; \

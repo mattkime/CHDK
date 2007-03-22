@@ -10,6 +10,14 @@ extern int conf_ubasic_var_a;
 extern int conf_ubasic_var_b;
 extern int conf_ubasic_var_c;
 
+extern int conf_show_dof;
+extern int conf_batt_volts_max;
+extern int conf_batt_volts_min;
+extern int conf_batt_step_25;
+extern int conf_batt_perc_show;
+extern int conf_batt_volts_show;
+extern int conf_batt_icon_show;
+
 extern int confns_enable_memdump;
 
 

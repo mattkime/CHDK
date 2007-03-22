@@ -60,38 +60,23 @@ CMenu misc_submenu = { "Miscellaneous", {
     {0}
 }};
 
-CMenu m1_submenu = { "Menu 1", {
-    {"Item 1", MENUITEM_PROC, NULL },
-    {"Item 2", MENUITEM_PROC, NULL },
-    {"<- Back", MENUITEM_UP, NULL },
-    {0}
-}};
-
-CMenu m2_submenu = { "Menu 2", {
-    {"Item 1", MENUITEM_PROC, NULL },
-    {"Item 2", MENUITEM_PROC, NULL },
-    {"Item 3", MENUITEM_PROC, NULL },
-    {"Item 4", MENUITEM_PROC, NULL },
-    {"Item 5", MENUITEM_PROC, NULL },
-    {"Item 6", MENUITEM_PROC, NULL },
-    {"Item 7", MENUITEM_PROC, NULL },
-    {"Item 8", MENUITEM_PROC, NULL },
-    {"Item 9", MENUITEM_PROC, NULL },
-    {"Item 10", MENUITEM_PROC, NULL },
-    {"Item 11", MENUITEM_PROC, NULL },
-    {"Item 12", MENUITEM_PROC, NULL },
-    {"<- Back", MENUITEM_UP, NULL },
-    {0}
-}};
-
 CMenu debug_submenu = { "Debug", {
     {"Show PropCases", MENUITEM_BOOL, &debug_propcase_show },
     {"PropCase page", MENUITEM_INT, &debug_propcase_page },
     {"Show misc. values", MENUITEM_BOOL, &debug_vals_show },
     {"Memory browser", MENUITEM_PROC, (int*)gui_draw_debug },
     {"Dump RAM on ALT +/- press", MENUITEM_BOOL, &confns_enable_memdump },
-    {"Menu 1", MENUITEM_SUBMENU, (int*)&m1_submenu },
-    {"Menu 2", MENUITEM_SUBMENU, (int*)&m2_submenu },
+    {"<- Back", MENUITEM_UP, NULL },
+    {0}
+}};
+
+CMenu batt_submenu = { "Battery", {
+    {"Voltage MAX", MENUITEM_INT, &conf_batt_volts_max },
+    {"Voltage MIN", MENUITEM_INT, &conf_batt_volts_min },
+    {"25+ step", MENUITEM_BOOL, &conf_batt_step_25 },	
+    {"Show percent", MENUITEM_BOOL, &conf_batt_perc_show },
+    {"Show volts", MENUITEM_BOOL, &conf_batt_volts_show },
+    {"Show pict", MENUITEM_BOOL, &conf_batt_icon_show },	
     {"<- Back", MENUITEM_UP, NULL },
     {0}
 }};
@@ -100,7 +85,9 @@ CMenu root_menu = { "Main", {
     {"Show OSD", MENUITEM_BOOL, &conf_show_osd },
     {"Save RAW", MENUITEM_BOOL, &conf_save_raw },
     {"Show live histogram", MENUITEM_BOOL, &conf_show_histo },
+    {"Show DOF calc", MENUITEM_BOOL, &conf_show_dof },
     {"Scripting parameters ->", MENUITEM_SUBMENU, (int*)&script_submenu },
+    {"Battery parameters ->", MENUITEM_SUBMENU, (int*)&battery_submenu },
     {"Miscellaneous stuff ->", MENUITEM_SUBMENU, (int*)&misc_submenu },
     {"Debug parameters ->", MENUITEM_SUBMENU, (int*)&debug_submenu },
     {"Save options now...", MENUITEM_PROC, (int*)gui_menuproc_save },
@@ -112,7 +99,6 @@ static volatile enum Gui_Mode gui_mode;
 static volatile int gui_restore;
 static volatile int gui_in_redraw;
 static int gui_splash = 50;
-static int charge_max, charge_min;
 
 //-------------------------------------------------------------------
 void gui_init()
@@ -120,8 +106,6 @@ void gui_init()
     gui_mode = GUI_MODE_NONE;
     gui_restore = 0;
     gui_in_redraw = 0;
-    charge_min = get_vbatt_min();
-    charge_max = get_vbatt_max();
     draw_init();
 }
 
@@ -277,7 +261,7 @@ void gui_kbd_leave()
 
 //-------------------------------------------------------------------
 void gui_draw_histo() {
-    if (/*(mode_get()&MODE_MASK) == MODE_REC &&*/ (gui_mode==GUI_MODE_NONE || gui_mode==GUI_MODE_NONE) && 
+    if (/*(mode_get()&MODE_MASK) == MODE_REC &&*/ (gui_mode==GUI_MODE_NONE || gui_mode==GUI_MODE_ALT) && 
          conf_show_histo && kbd_is_key_pressed(KEY_SHOOT_HALF)) {
         static const int hx=319-HISTO_WIDTH;
         static const int hy=45;
@@ -378,9 +362,9 @@ void gui_draw_osd() {
     draw_line(bx, by+11, bx+25+2, by+11, COLOR_BLACK);
     draw_line(bx+25+2, by+1, bx+25+2, by+10, COLOR_BLACK);
     // battery fill
-    if (v>charge_max) v=charge_max;
-    if (v<charge_min) v=charge_min; else v-=charge_min;
-    x=bx+1+25-(v*25/(charge_max-charge_min));
+    if (v>conf_batt_volts_max) v=conf_batt_volts_max;
+    if (v<conf_batt_volts_min) v=conf_batt_volts_min; else v-=conf_batt_volts_min;
+    x=bx+1+25-(v*25/(conf_batt_volts_max-conf_batt_volts_min));
     if (x<=bx) x=bx+1;
     if (x>bx+25+1) x=bx+25+1;
     draw_filled_rect(bx, by+1, x-1, by+9, MAKE_COLOR(COLOR_TRANSPARENT, COLOR_TRANSPARENT));
