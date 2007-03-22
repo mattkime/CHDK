@@ -309,7 +309,7 @@ static void gui_draw_dof() {
               {21709, 35},
               {29200, 41}};
     static const int av_tbl[10]={28, 32, 35, 40, 45, 50, 56, 63, 71, 80};
-    int r1, r2, dof, hyp, fl;
+    int r1, r2, hyp, fl;
     
     zp=lens_get_zoom_point();
     if (zp<0) zp=0;
@@ -334,7 +334,7 @@ static void gui_draw_dof() {
     draw_txt_string(6+6, 0, osd_buf, MAKE_COLOR(COLOR_BG, COLOR_FG));
         
     if (r2<0) sprintf(osd_buf, "inf/%d%10s", hyp, "");
-    else      sprintf(osd_buf, "%d/%d%10s", dof, hyp, "");
+    else      sprintf(osd_buf, "%d/%d%10s", r2-r1, hyp, "");
     osd_buf[12]=0;
     draw_txt_string(6+8, 1, osd_buf, MAKE_COLOR(COLOR_BG, COLOR_FG));
 }
