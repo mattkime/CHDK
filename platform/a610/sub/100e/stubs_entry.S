@@ -61,8 +61,8 @@ NSTUB(kbd_read_keys_r2, 0xffc16fd8)
 NSTUB(localtime, 0xffeb65f0)
 NSTUB(lseek, 0xffebbfa0)
 NSTUB(malloc, 0xffebee9c)
-NSTUB(memcmp, 0xffec3db8)
-// ALT: NSTUB(memcmp, 0xffeb59d0) // 9/0
+NSTUB(memcmp, 0xffeb59d0)
+// ALT: NSTUB(memcmp, 0xffec3db8) // 9/0
 NSTUB(memcpy, 0xffeb5a0c)
 NSTUB(memset, 0xffeb5a84)
 NSTUB(mkdir, 0xffc5c8f4)

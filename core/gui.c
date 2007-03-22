@@ -12,6 +12,7 @@
 #include "gui_reversi.h"
 #include "gui_debug.h"
 #include "gui_fselect.h"
+#include "gui_batt.h"
 #include "histogram.h"
 
 //-------------------------------------------------------------------
@@ -70,7 +71,7 @@ CMenu debug_submenu = { "Debug", {
     {0}
 }};
 
-CMenu batt_submenu = { "Battery", {
+CMenu battery_submenu = { "Battery", {
     {"Voltage MAX", MENUITEM_INT, &conf_batt_volts_max },
     {"Voltage MIN", MENUITEM_INT, &conf_batt_volts_min },
     {"25+ step", MENUITEM_BOOL, &conf_batt_step_25 },	
@@ -99,6 +100,7 @@ static volatile enum Gui_Mode gui_mode;
 static volatile int gui_restore;
 static volatile int gui_in_redraw;
 static int gui_splash = 50;
+static char osd_buf[32];
 
 //-------------------------------------------------------------------
 void gui_init()
@@ -292,39 +294,68 @@ void gui_draw_histo() {
 }
 
 //-------------------------------------------------------------------
-static long calc_average_vbatt() {
-    #define VOLTS_N 		100
-    static unsigned short	volts[VOLTS_N] = {0};
-    static unsigned int   	n = 0, rn = 0;
-    static unsigned long	volt_aver = 0;
+static void gui_draw_dof() {
+    long zp, av, fp; 
+    static const struct {
+        unsigned int    f;
+        unsigned int    av;
+    } tbl[9]={{ 7300, 28},
+              { 8460, 32},
+              { 9565, 32},
+              {10835, 32},
+              {12565, 35},
+              {14926, 35},
+              {17342, 35},
+              {21709, 35},
+              {29200, 41}};
+    static const int av_tbl[10]={28, 32, 35, 40, 45, 50, 56, 63, 71, 80};
+    int r1, r2, dof, hyp, fl;
+    
+    zp=lens_get_zoom_point();
+    if (zp<0) zp=0;
+    if (zp>8) zp=8;
+    fl=tbl[zp].f;
+    
+    av=shooting_get_av()-9;
+    if (av<0) av=0;
+    if (av>9) av=9;
+    av=(av_tbl[av]>=tbl[zp].av)?av_tbl[av]:tbl[zp].av;
+    
+    fp=lens_get_focus_pos();
+    hyp=(fl*fl)/(100*6*av);
+    r1=(hyp*fp)/(hyp+fp);
+    r2=(hyp*fp)/(hyp-fp);
 
-    volt_aver-=volts[n];
-    volts[n]=(unsigned short)stat_get_vbatt();
-    volt_aver+=volts[n];
-    if (++n>rn) rn=n;
-    if (n>=VOLTS_N) n=0;
-    return volt_aver/rn;
+    draw_txt_string(6, 0, "R1/R2:",   MAKE_COLOR(COLOR_BG, COLOR_FG));
+    draw_txt_string(6, 1, "DOF/HYP:", MAKE_COLOR(COLOR_BG, COLOR_FG));
+    if (r2<0) sprintf(osd_buf, "%d/inf%10s", r1, "");
+    else      sprintf(osd_buf, "%d/%d%10s", r1, r2, "");
+    osd_buf[12]=0;
+    draw_txt_string(6+6, 0, osd_buf, MAKE_COLOR(COLOR_BG, COLOR_FG));
+        
+    if (r2<0) sprintf(osd_buf, "inf/%d%10s", hyp, "");
+    else      sprintf(osd_buf, "%d/%d%10s", dof, hyp, "");
+    osd_buf[12]=0;
+    draw_txt_string(6+8, 1, osd_buf, MAKE_COLOR(COLOR_BG, COLOR_FG));
 }
 
 //-------------------------------------------------------------------
 
 extern long physw_status[3];
 extern long GetPropertyCase(long opt_id, void *buf, long bufsize);
-static char osd_buf[32];
 //-------------------------------------------------------------------
 void gui_draw_osd() {
-    unsigned int i, n = 0;
-    unsigned long v;
-    static const coord bx=170, by=4;
+    unsigned int m, n = 0;
     coord x;
     
     if (!conf_show_osd) return;
 
-    i = mode_get();
-    if ((i&MODE_MASK) == MODE_REC) {
-        i &= MODE_SHOOTING_MASK;
-        if (i==MODE_SCN_WATER || i==MODE_SCN_NIGHT || i==MODE_SCN_CHILD || i==MODE_SCN_PARTY || i==MODE_STITCH ||
-            i==MODE_SCN_GRASS || i==MODE_SCN_SNOW  || i==MODE_SCN_BEACH || i==MODE_SCN_FIREWORK || i==MODE_VIDEO)
+    m = mode_get();
+    
+    if ((m&MODE_MASK) == MODE_REC) {
+        m &= MODE_SHOOTING_MASK;
+        if (m==MODE_SCN_WATER || m==MODE_SCN_NIGHT || m==MODE_SCN_CHILD || m==MODE_SCN_PARTY || m==MODE_STITCH ||
+            m==MODE_SCN_GRASS || m==MODE_SCN_SNOW  || m==MODE_SCN_BEACH || m==MODE_SCN_FIREWORK || m==MODE_VIDEO)
             ++n;
 
         if (conf_save_raw){
@@ -340,36 +371,21 @@ void gui_draw_osd() {
             draw_txt_string(40, 3+n, (under_exposed || over_exposed)?"EXP":"   ", MAKE_COLOR(COLOR_BG, COLOR_FG));
             ++n;
         }
-    }
 
-    n=6;
-    if ((mode_get()&MODE_MASK) == MODE_REC) {
+        n=6;
         sprintf(osd_buf, "Z:%ld/%ld%8s", lens_get_zoom_point(), lens_get_zoom_pos(), "");
         osd_buf[8]=0;
         draw_txt_string(35, n++, osd_buf, MAKE_COLOR(COLOR_BG, COLOR_FG));
         sprintf(osd_buf, "F:%ld%8s", lens_get_focus_pos(), "");
         osd_buf[8]=0;
         draw_txt_string(35, n++, osd_buf, MAKE_COLOR(COLOR_BG, COLOR_FG));
+
+        if (conf_show_dof && ( m==MODE_P || m==MODE_M || m==MODE_AV ) && kbd_is_key_pressed(KEY_SHOOT_HALF)){
+            gui_draw_dof();
+        }
     }
 
-    v = calc_average_vbatt();
-    sprintf(osd_buf, "V:%ld.%03ld", v/1000, v%1000);
-    osd_buf[8]=0;
-    draw_string(screen_width-7*FONT_WIDTH-2, screen_height-64, osd_buf, MAKE_COLOR(COLOR_BG, COLOR_FG));
-    // battery icon
-    draw_rect(bx-1, by, bx+25+1, by+10, COLOR_WHITE);
-    draw_rect(bx-3, by+2, bx-2, by+8, COLOR_WHITE);
-    draw_line(bx, by+11, bx+25+2, by+11, COLOR_BLACK);
-    draw_line(bx+25+2, by+1, bx+25+2, by+10, COLOR_BLACK);
-    // battery fill
-    if (v>conf_batt_volts_max) v=conf_batt_volts_max;
-    if (v<conf_batt_volts_min) v=conf_batt_volts_min; else v-=conf_batt_volts_min;
-    x=bx+1+25-(v*25/(conf_batt_volts_max-conf_batt_volts_min));
-    if (x<=bx) x=bx+1;
-    if (x>bx+25+1) x=bx+25+1;
-    draw_filled_rect(bx, by+1, x-1, by+9, MAKE_COLOR(COLOR_TRANSPARENT, COLOR_TRANSPARENT));
-    draw_filled_rect(x, by+1, bx+25, by+9, MAKE_COLOR(COLOR_WHITE, COLOR_WHITE));
-
+    gui_batt_draw_osd();
 
     if (debug_vals_show) {
 	sprintf(osd_buf, "1:%8lx  ", ~physw_status[2]);
@@ -491,7 +507,8 @@ void gui_draw_debug() {
 //-------------------------------------------------------------------
 void gui_draw_splash() {
     coord w, h, x, y;
-    static const char *text[] = {"HDK Firmware", 
+    static const char *text[] = {
+        "HDK Firmware '" HDK_VERSION "'" , 
         "Build: " __DATE__ " " __TIME__ ,
         "Camera: " PLATFORM " - " PLATFORMSUB };
     int i, l;
@@ -507,7 +524,7 @@ void gui_draw_splash() {
     x = (screen_width-w)>>1; y = (screen_height-h)>>1;
     draw_filled_rect(x, y, x+w, y+h, MAKE_COLOR(0xD9, COLOR_WHITE));
     for (i=0; i<sizeof(text)/sizeof(text[0]); ++i) {
-        draw_string(x+((w-strlen(text[i])*FONT_WIDTH)>>1)+5, y+i*FONT_HEIGHT+4, text[i], MAKE_COLOR(0xD9, COLOR_WHITE));
+        draw_string(x+((w-strlen(text[i])*FONT_WIDTH)>>1), y+i*FONT_HEIGHT+4, text[i], MAKE_COLOR(0xD9, COLOR_WHITE));
     }
 }
 

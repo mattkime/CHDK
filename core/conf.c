@@ -1,3 +1,4 @@
+#include "platform.h"
 #include "conf.h"
 #include "stdlib.h"
 
@@ -86,7 +87,7 @@ static void load_defaults()
     conf_show_dof = 0;
     conf_batt_volts_max = get_vbatt_max();
     conf_batt_volts_min = get_vbatt_min();
-    conf_batt_step_show = 0;
+    conf_batt_step_25 = 0;
     conf_batt_perc_show = 1;
     conf_batt_volts_show = 0;
     conf_batt_icon_show = 1;
@@ -113,7 +114,7 @@ static void do_save(int fd)
     write(fd, &conf_batt_step_25, 4);
     write(fd, &conf_batt_perc_show, 4);
     write(fd, &conf_batt_volts_show, 4);
-    write(fd, &conf_batt_pict_show, 4);	
+    write(fd, &conf_batt_icon_show, 4);	
 }
 
 static int do_restore(int fd)
@@ -192,7 +193,7 @@ static int do_restore(int fd)
     if (rcnt != 4)
 	return 1;
 		
-    rcnt = read(fd, &conf_batt_pict_show, 4);
+    rcnt = read(fd, &conf_batt_icon_show, 4);
     if (rcnt != 4)
 	return 1;
 
