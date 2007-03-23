@@ -2,22 +2,30 @@
 #define GUI_MENU_H
 
 //-------------------------------------------------------------------
-#define MENUITEM_MASK       0x0f
-#define MENUITEM_BOOL       1
-#define MENUITEM_INT        2
-#define MENUITEM_SUBMENU    3
-#define MENUITEM_PROC       4
-#define MENUITEM_UP         5
-#define MENUITEM_TEXT       6
+#define MENUITEM_MASK           0x000f
+#define MENUITEM_BOOL           1
+#define MENUITEM_INT            2
+#define MENUITEM_SUBMENU        3
+#define MENUITEM_PROC           4
+#define MENUITEM_UP             5
+#define MENUITEM_TEXT           6
+#define MENUITEM_ENUM           7
 
-#define MENUITEM_F_MASK     0xf0
-#define MENUITEM_F_UNSIGNED 0x10
+#define MENUITEM_F_MASK         0x00f0
+#define MENUITEM_F_UNSIGNED     0x0010
+
+#define MENUITEM_ARG_MASK       0x0f00
+#define MENUITEM_ARG_INC        0x0100
+#define MENUITEM_ARG_ADDR_INC   0x0200
+#define MENUITEM_ARG_CALLBACK   0x0300
+
 
 //-------------------------------------------------------------------
 typedef struct {
     const char          *text;
     int                 type;
     int                 *value;
+    int                 arg;
 } CMenuItem;
 
 typedef struct {

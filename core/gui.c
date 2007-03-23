@@ -27,73 +27,95 @@ static void gui_draw_osd();
 static void gui_draw_splash();
 static void gui_draw_histo();
 
-static void gui_show_build_info();
-static void gui_show_memory_info();
-static void gui_draw_palette();
-static void gui_draw_reversi();
-static void gui_test();
-static void gui_draw_debug();
-static void gui_draw_fselect();
-static void gui_load_script();
+// Menu procs
+//-------------------------------------------------------------------
+static void gui_show_build_info(int arg);
+static void gui_show_memory_info(int arg);
+static void gui_draw_palette(int arg);
+static void gui_draw_reversi(int arg);
+static void gui_test(int arg);
+static void gui_draw_debug(int arg);
+static void gui_draw_fselect(int arg);
+static void gui_load_script(int arg);
+static void gui_menuproc_save(int arg);
 
-static void gui_menuproc_save();
+// Menu callbacks
+//-------------------------------------------------------------------
+static void cb_step_25();
+static void cb_perc();
+static void cb_volts();
 
 // Menu definition
 //-------------------------------------------------------------------
 CMenu script_submenu = { "Script", {
-    {"Load script from file...", MENUITEM_PROC, (int*)gui_load_script },
-    {"Script shoot delay (.1s)", MENUITEM_INT|MENUITEM_F_UNSIGNED, &conf_script_shoot_delay },
-    {"Var. a value", MENUITEM_INT, &conf_ubasic_var_a },
-    {"Var. b value", MENUITEM_INT, &conf_ubasic_var_b },
-    {"Var. c value", MENUITEM_INT, &conf_ubasic_var_c },
-    {"<- Back", MENUITEM_UP, NULL },
+    {"Load script from file...",    MENUITEM_PROC,                      (int*)gui_load_script },
+    {"Script shoot delay (.1s)",    MENUITEM_INT|MENUITEM_F_UNSIGNED,   &conf_script_shoot_delay },
+    {"Var. a value",                MENUITEM_INT,                       &conf_ubasic_var_a },
+    {"Var. b value",                MENUITEM_INT,                       &conf_ubasic_var_b },
+    {"Var. c value",                MENUITEM_INT,                       &conf_ubasic_var_c },
+    {"<- Back",                     MENUITEM_UP },
     {0}
 }};
 
 CMenu misc_submenu = { "Miscellaneous", {
-    {"Show build info", MENUITEM_PROC, (int*)gui_show_build_info },
-    {"Show memory info", MENUITEM_PROC, (int*)gui_show_memory_info },
-    {"File browser", MENUITEM_PROC, (int*)gui_draw_fselect },
-    {"Draw palette", MENUITEM_PROC, (int*)gui_draw_palette },
-    {"MessageBox test", MENUITEM_PROC, (int*)gui_test },
-    {"GAME: Reversi", MENUITEM_PROC, (int*)gui_draw_reversi },
-    {"<- Back", MENUITEM_UP, NULL },
+    {"Show build info",             MENUITEM_PROC,  (int*)gui_show_build_info },
+    {"Show memory info",            MENUITEM_PROC,  (int*)gui_show_memory_info },
+    {"File browser",                MENUITEM_PROC,  (int*)gui_draw_fselect },
+    {"Draw palette",                MENUITEM_PROC,  (int*)gui_draw_palette },
+    {"MessageBox test",             MENUITEM_PROC,  (int*)gui_test },
+    {"GAME: Reversi",               MENUITEM_PROC,  (int*)gui_draw_reversi },
+    {"<- Back",                     MENUITEM_UP },
     {0}
 }};
 
 CMenu debug_submenu = { "Debug", {
-    {"Show PropCases", MENUITEM_BOOL, &debug_propcase_show },
-    {"PropCase page", MENUITEM_INT, &debug_propcase_page },
-    {"Show misc. values", MENUITEM_BOOL, &debug_vals_show },
-    {"Memory browser", MENUITEM_PROC, (int*)gui_draw_debug },
-    {"Dump RAM on ALT +/- press", MENUITEM_BOOL, &confns_enable_memdump },
-    {"<- Back", MENUITEM_UP, NULL },
+    {"Show PropCases",              MENUITEM_BOOL,                      &debug_propcase_show },
+    {"PropCase page",               MENUITEM_INT|MENUITEM_F_UNSIGNED,   &debug_propcase_page },
+    {"Show misc. values",           MENUITEM_BOOL,                      &debug_vals_show },
+    {"Memory browser",              MENUITEM_PROC,                      (int*)gui_draw_debug },
+    {"Dump RAM on ALT +/- press",   MENUITEM_BOOL,                      &confns_enable_memdump },
+    {"<- Back",                     MENUITEM_UP },
     {0}
 }};
 
+
+static int voltage_step;
 CMenu battery_submenu = { "Battery", {
-    {"Voltage MAX", MENUITEM_INT, &conf_batt_volts_max },
-    {"Voltage MIN", MENUITEM_INT, &conf_batt_volts_min },
-    {"25+ step", MENUITEM_BOOL, &conf_batt_step_25 },	
-    {"Show percent", MENUITEM_BOOL, &conf_batt_perc_show },
-    {"Show volts", MENUITEM_BOOL, &conf_batt_volts_show },
-    {"Show pict", MENUITEM_BOOL, &conf_batt_icon_show },	
-    {"<- Back", MENUITEM_UP, NULL },
+    {"Voltage MAX",                 MENUITEM_INT|MENUITEM_ARG_ADDR_INC,     &conf_batt_volts_max,   (int)&voltage_step },
+    {"Voltage MIN",                 MENUITEM_INT|MENUITEM_ARG_ADDR_INC,     &conf_batt_volts_min,   (int)&voltage_step },
+    {"25+ step",                    MENUITEM_BOOL|MENUITEM_ARG_CALLBACK,    &conf_batt_step_25,     (int)cb_step_25 },	
+    {"-",                           MENUITEM_TEXT },
+    {"Show percent",                MENUITEM_BOOL|MENUITEM_ARG_CALLBACK,    &conf_batt_perc_show,   (int)cb_perc },
+    {"Show volts",                  MENUITEM_BOOL|MENUITEM_ARG_CALLBACK,    &conf_batt_volts_show,  (int)cb_volts },
+    {"Show icon",                   MENUITEM_BOOL,                          &conf_batt_icon_show },	
+    {"<- Back",                     MENUITEM_UP },
     {0}
 }};
 
 CMenu root_menu = { "Main", {
-    {"Show OSD", MENUITEM_BOOL, &conf_show_osd },
-    {"Save RAW", MENUITEM_BOOL, &conf_save_raw },
-    {"Show live histogram", MENUITEM_BOOL, &conf_show_histo },
-    {"Show DOF calc", MENUITEM_BOOL, &conf_show_dof },
-    {"Scripting parameters ->", MENUITEM_SUBMENU, (int*)&script_submenu },
-    {"Battery parameters ->", MENUITEM_SUBMENU, (int*)&battery_submenu },
-    {"Miscellaneous stuff ->", MENUITEM_SUBMENU, (int*)&misc_submenu },
-    {"Debug parameters ->", MENUITEM_SUBMENU, (int*)&debug_submenu },
-    {"Save options now...", MENUITEM_PROC, (int*)gui_menuproc_save },
+    {"Show OSD",                    MENUITEM_BOOL,      &conf_show_osd },
+    {"Save RAW",                    MENUITEM_BOOL,      &conf_save_raw },
+    {"Show live histogram",         MENUITEM_BOOL,      &conf_show_histo },
+    {"Show DOF calculator",         MENUITEM_BOOL,      &conf_show_dof },
+    {"Scripting parameters ->",     MENUITEM_SUBMENU,   (int*)&script_submenu },
+    {"Battery parameters ->",       MENUITEM_SUBMENU,   (int*)&battery_submenu },
+    {"Miscellaneous stuff ->",      MENUITEM_SUBMENU,   (int*)&misc_submenu },
+    {"Debug parameters ->",         MENUITEM_SUBMENU,   (int*)&debug_submenu },
+    {"Save options now...",         MENUITEM_PROC,      (int*)gui_menuproc_save },
     {0}
 }};
+
+void cb_step_25() {
+    voltage_step = (conf_batt_step_25)?25:1;
+}
+
+void cb_perc() {
+    conf_batt_volts_show=0;
+}
+
+void cb_volts() {
+    conf_batt_perc_show=0;
+}
 
 //-------------------------------------------------------------------
 static volatile enum Gui_Mode gui_mode;
@@ -109,6 +131,8 @@ void gui_init()
     gui_restore = 0;
     gui_in_redraw = 0;
     draw_init();
+
+    voltage_step = (conf_batt_step_25)?25:1;
 }
 
 //-------------------------------------------------------------------
@@ -296,47 +320,34 @@ void gui_draw_histo() {
 //-------------------------------------------------------------------
 static void gui_draw_dof() {
     long zp, av, fp; 
-    static const struct {
-        unsigned int    f;
-        unsigned int    av;
-    } tbl[9]={{ 7300, 28},
-              { 8460, 32},
-              { 9565, 32},
-              {10835, 32},
-              {12565, 35},
-              {14926, 35},
-              {17342, 35},
-              {21709, 35},
-              {29200, 41}};
-    static const int av_tbl[10]={28, 32, 35, 40, 45, 50, 56, 63, 71, 80};
     int r1, r2, hyp, fl;
     
     zp=lens_get_zoom_point();
     if (zp<0) zp=0;
     if (zp>8) zp=8;
-    fl=tbl[zp].f;
+    fl=dof_tbl[zp].f;
     
     av=shooting_get_av()-9;
     if (av<0) av=0;
     if (av>9) av=9;
-    av=(av_tbl[av]>=tbl[zp].av)?av_tbl[av]:tbl[zp].av;
+    av=(dof_av_tbl[av]>=dof_tbl[zp].av)?dof_av_tbl[av]:dof_tbl[zp].av;
     
     fp=lens_get_focus_pos();
     hyp=(fl*fl)/(100*6*av);
     r1=(hyp*fp)/(hyp+fp);
     r2=(hyp*fp)/(hyp-fp);
 
-    draw_txt_string(6, 0, "R1/R2:",   MAKE_COLOR(COLOR_BG, COLOR_FG));
-    draw_txt_string(6, 1, "DOF/HYP:", MAKE_COLOR(COLOR_BG, COLOR_FG));
-    if (r2<0) sprintf(osd_buf, "%d/inf%10s", r1, "");
-    else      sprintf(osd_buf, "%d/%d%10s", r1, r2, "");
+    draw_txt_string(1, 0, "R1/R2:",   MAKE_COLOR(COLOR_BG, COLOR_FG));
+    draw_txt_string(1, 1, "DOF/HYP:", MAKE_COLOR(COLOR_BG, COLOR_FG));
+    if (r2<0) sprintf(osd_buf, "%d/inf%11s", r1, "");
+    else      sprintf(osd_buf, "%d/%d%11s", r1, r2, "");
     osd_buf[12]=0;
-    draw_txt_string(6+6, 0, osd_buf, MAKE_COLOR(COLOR_BG, COLOR_FG));
+    draw_txt_string(1+6, 0, osd_buf, MAKE_COLOR(COLOR_BG, COLOR_FG));
         
-    if (r2<0) sprintf(osd_buf, "inf/%d%10s", hyp, "");
-    else      sprintf(osd_buf, "%d/%d%10s", r2-r1, hyp, "");
+    if (r2<0) sprintf(osd_buf, "inf/%d%9s", hyp, "");
+    else      sprintf(osd_buf, "%d/%d%9s", r2-r1, hyp, "");
     osd_buf[12]=0;
-    draw_txt_string(6+8, 1, osd_buf, MAKE_COLOR(COLOR_BG, COLOR_FG));
+    draw_txt_string(1+8, 1, osd_buf, MAKE_COLOR(COLOR_BG, COLOR_FG));
 }
 
 //-------------------------------------------------------------------
@@ -425,25 +436,25 @@ void gui_draw_osd() {
 }
 
 //-------------------------------------------------------------------
-void gui_menuproc_save()
+void gui_menuproc_save(int arg)
 {
     conf_save(1);
 }
 
 //-------------------------------------------------------------------
-void gui_draw_palette() {
+void gui_draw_palette(int arg) {
     draw_restore();
     gui_palette_init();
     gui_mode = GUI_MODE_PALETTE;
 }
 
 //-------------------------------------------------------------------
-void gui_show_build_info() {
+void gui_show_build_info(int arg) {
     gui_mbox_init("*** Build Info ***", "Date:    " __DATE__ "\nTime:    " __TIME__ "\nCamera:  " PLATFORM "\nFW Vers: " PLATFORMSUB, MBOX_FUNC_RESTORE|MBOX_TEXT_LEFT);
 }
 
 //-------------------------------------------------------------------
-void gui_show_memory_info() {
+void gui_show_memory_info(int arg) {
     static char buf[128];
     int size, l_size, d;
     char* ptr;
@@ -483,7 +494,7 @@ void gui_show_memory_info() {
 }
 
 //-------------------------------------------------------------------
-void gui_draw_reversi() {
+void gui_draw_reversi(int arg) {
     if ((mode_get()&MODE_MASK) != MODE_PLAY) {
         gui_mbox_init("*** Information ***", "Please switch your camera\nto PLAY mode\nand try again. :)" , MBOX_FUNC_RESTORE|MBOX_TEXT_CENTER);
         return;
@@ -493,12 +504,12 @@ void gui_draw_reversi() {
 }
 
 //-------------------------------------------------------------------
-void gui_test() {
+void gui_test(int arg) {
     gui_mbox_init("*** Information ***", "Test multibuttons" , MBOX_FUNC_RESTORE|MBOX_TEXT_CENTER|MBOX_BTN_YES_NO_CANCEL);
 }
 
 //-------------------------------------------------------------------
-void gui_draw_debug() {
+void gui_draw_debug(int arg) {
 //    gui_debug_init(0x2510);
     gui_debug_init(0x127E0);
 //    gui_debug_init(0x7F5B8);
@@ -529,7 +540,7 @@ void gui_draw_splash() {
 }
 
 //-------------------------------------------------------------------
-void gui_draw_fselect() {
+void gui_draw_fselect(int arg) {
     gui_fselect_init("A", NULL);
 }
 
@@ -538,7 +549,7 @@ static void gui_load_script_selected(const char *fn) {
     if (fn)
         load_script(fn);
 }
-void gui_load_script() {
+void gui_load_script(int arg) {
     gui_fselect_init("A", gui_load_script_selected);
 }
 

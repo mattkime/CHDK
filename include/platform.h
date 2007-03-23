@@ -49,6 +49,16 @@ typedef struct {
     char name[8];
 } ApertureSize;
 
+typedef struct {
+    unsigned int    f;
+    unsigned int    av;
+} DofTable;
+
+/******************************************************************/
+
+extern const DofTable     dof_tbl[9];
+extern const int          dof_av_tbl[10];
+
 /******************************************************************/
 
 long get_tick_count();

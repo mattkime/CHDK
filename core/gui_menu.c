@@ -48,40 +48,57 @@ void gui_menu_init(CMenu *menu_ptr) {
 void gui_menu_kbd_process() {
     switch (kbd_get_clicked_key()) {
         case KEY_UP:
-            if (gui_menu_curr_item>0) {
-                if (gui_menu_curr_item-1==gui_menu_top_item && gui_menu_top_item>0) 
-                    --gui_menu_top_item;
-                --gui_menu_curr_item;
-            } else {
-                int i;
-                while (curr_menu->menu[gui_menu_curr_item+1].text)
-                    ++gui_menu_curr_item;
-                gui_menu_top_item = gui_menu_curr_item - NUM_LINES +1;
-                if (gui_menu_top_item<0) gui_menu_top_item=0;
-            }
+            do {
+                if (gui_menu_curr_item>0) {
+                    if (gui_menu_curr_item-1==gui_menu_top_item && gui_menu_top_item>0) 
+                        --gui_menu_top_item;
+                    --gui_menu_curr_item;
+                } else {
+                    int i;
+                    while (curr_menu->menu[gui_menu_curr_item+1].text)
+                        ++gui_menu_curr_item;
+                    gui_menu_top_item = gui_menu_curr_item - NUM_LINES +1;
+                    if (gui_menu_top_item<0) gui_menu_top_item=0;
+                }
+            } while (curr_menu->menu[gui_menu_curr_item].text[0]=='-' && curr_menu->menu[gui_menu_curr_item].text[1]==0);
             gui_menu_redraw=1;
             break;
         case KEY_DOWN:
-            if (curr_menu->menu[gui_menu_curr_item+1].text) {
-                int i;
-                for (i=0; i<NUM_LINES-1 && curr_menu->menu[gui_menu_top_item+i].text; ++i);
-                if (i==NUM_LINES-1 && curr_menu->menu[gui_menu_top_item+i].text 
-                    && gui_menu_top_item+i-1==gui_menu_curr_item && curr_menu->menu[gui_menu_top_item+i+1].text)
-                    ++gui_menu_top_item;
-                ++gui_menu_curr_item;
-            } else {
-                gui_menu_curr_item = gui_menu_top_item = 0;
-            }
+            do {
+                if (curr_menu->menu[gui_menu_curr_item+1].text) {
+                    int i;
+                    for (i=0; i<NUM_LINES-1 && curr_menu->menu[gui_menu_top_item+i].text; ++i);
+                    if (i==NUM_LINES-1 && curr_menu->menu[gui_menu_top_item+i].text 
+                        && gui_menu_top_item+i-1==gui_menu_curr_item && curr_menu->menu[gui_menu_top_item+i+1].text)
+                        ++gui_menu_top_item;
+                    ++gui_menu_curr_item;
+                } else {
+                    gui_menu_curr_item = gui_menu_top_item = 0;
+                }
+            } while (curr_menu->menu[gui_menu_curr_item].text[0]=='-' && curr_menu->menu[gui_menu_curr_item].text[1]==0);
             gui_menu_redraw=1;
             break;
         case KEY_LEFT:
             if (gui_menu_curr_item>=0) {
                 switch (curr_menu->menu[gui_menu_curr_item].type & MENUITEM_MASK) {
                     case MENUITEM_INT:
-                        *(curr_menu->menu[gui_menu_curr_item].value) -= 1;
+                        switch (curr_menu->menu[gui_menu_curr_item].type & MENUITEM_ARG_MASK) {
+                            case MENUITEM_ARG_INC:
+                                *(curr_menu->menu[gui_menu_curr_item].value) -= curr_menu->menu[gui_menu_curr_item].arg;
+                                break;
+                            case MENUITEM_ARG_ADDR_INC:
+                                *(curr_menu->menu[gui_menu_curr_item].value) -= *(int *)(curr_menu->menu[gui_menu_curr_item].arg);
+                                break;
+                            default:
+                                *(curr_menu->menu[gui_menu_curr_item].value) -= 1;
+                                break;
+                        }
                         if ( curr_menu->menu[gui_menu_curr_item].type & MENUITEM_F_UNSIGNED) {
                             if (*(curr_menu->menu[gui_menu_curr_item].value) < 0) 
                                 *(curr_menu->menu[gui_menu_curr_item].value) = 0;
+                        }
+                        if ((curr_menu->menu[gui_menu_curr_item].type & MENUITEM_ARG_MASK) == MENUITEM_ARG_CALLBACK && curr_menu->menu[gui_menu_curr_item].arg) {
+                            ((void (*)())(curr_menu->menu[gui_menu_curr_item].arg))();
                         }
                         gui_menu_redraw=1;
                         break;
@@ -92,7 +109,20 @@ void gui_menu_kbd_process() {
             if (gui_menu_curr_item>=0) {
                 switch (curr_menu->menu[gui_menu_curr_item].type & MENUITEM_MASK){
                     case MENUITEM_INT:
-                        *(curr_menu->menu[gui_menu_curr_item].value) += 1;
+                        switch (curr_menu->menu[gui_menu_curr_item].type & MENUITEM_ARG_MASK) {
+                            case MENUITEM_ARG_INC:
+                                *(curr_menu->menu[gui_menu_curr_item].value) += curr_menu->menu[gui_menu_curr_item].arg;
+                                break;
+                            case MENUITEM_ARG_ADDR_INC:
+                                *(curr_menu->menu[gui_menu_curr_item].value) += *(int *)(curr_menu->menu[gui_menu_curr_item].arg);
+                                break;
+                            default:
+                                *(curr_menu->menu[gui_menu_curr_item].value) += 1;
+                                break;
+                        }
+                        if ((curr_menu->menu[gui_menu_curr_item].type & MENUITEM_ARG_MASK) == MENUITEM_ARG_CALLBACK && curr_menu->menu[gui_menu_curr_item].arg) {
+                            ((void (*)())(curr_menu->menu[gui_menu_curr_item].arg))();
+                        }
                         gui_menu_redraw=1;
                         break;
                 }
@@ -104,11 +134,14 @@ void gui_menu_kbd_process() {
                     case MENUITEM_BOOL:
                         *(curr_menu->menu[gui_menu_curr_item].value) =
                                 !(*(curr_menu->menu[gui_menu_curr_item].value));
+                        if ((curr_menu->menu[gui_menu_curr_item].type & MENUITEM_ARG_MASK) == MENUITEM_ARG_CALLBACK && curr_menu->menu[gui_menu_curr_item].arg) {
+                            ((void (*)())(curr_menu->menu[gui_menu_curr_item].arg))();
+                        }
                         gui_menu_redraw=1;
                         break;
                     case MENUITEM_PROC:
                     	if (curr_menu->menu[gui_menu_curr_item].value) {
-                            ((void (*)())(curr_menu->menu[gui_menu_curr_item].value))();
+                            ((void (*)(int arg))(curr_menu->menu[gui_menu_curr_item].value))(curr_menu->menu[gui_menu_curr_item].arg);
                             gui_menu_curr_item = -1;
                             gui_menu_redraw=2;
                         }
@@ -126,6 +159,9 @@ void gui_menu_kbd_process() {
                             draw_txt_string(0, 0, "E1", MAKE_COLOR(COLOR_RED, COLOR_YELLOW));
                             gui_menu_stack_ptr = 0;
                         }
+                        if ((curr_menu->menu[gui_menu_curr_item].type & MENUITEM_ARG_MASK) == MENUITEM_ARG_CALLBACK && curr_menu->menu[gui_menu_curr_item].arg) {
+                            ((void (*)())(curr_menu->menu[gui_menu_curr_item].arg))();
+                        }
                         gui_menu_redraw=2;
                         draw_restore();
                         gui_force_restore();
@@ -136,6 +172,9 @@ void gui_menu_kbd_process() {
                             curr_menu = gui_menu_stack[gui_menu_stack_ptr].menu;
                             gui_menu_curr_item = gui_menu_stack[gui_menu_stack_ptr].curpos;
                             gui_menu_top_item  = gui_menu_stack[gui_menu_stack_ptr].toppos;
+                            if ((curr_menu->menu[gui_menu_curr_item].type & MENUITEM_ARG_MASK) == MENUITEM_ARG_CALLBACK && curr_menu->menu[gui_menu_curr_item].arg) {
+                                ((void (*)())(curr_menu->menu[gui_menu_curr_item].arg))();
+                            }
                             gui_menu_redraw=2;
                             draw_restore();
                             gui_force_restore();
@@ -190,12 +229,36 @@ void gui_menu_draw() {
             case MENUITEM_SUBMENU:
             case MENUITEM_PROC:
             case MENUITEM_TEXT:
-                sprintf(tbuf, "%c%-35s%c", cb, curr_menu->menu[imenu].text, ce);
-                draw_txt_string(x, y+i, tbuf, cl);
+                if (curr_menu->menu[imenu].text[0]=='-' && curr_menu->menu[imenu].text[1]==0) {
+                    //separator
+                    draw_txt_string(x, y+i, " 컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴� ", MAKE_COLOR(COLOR_BG, COLOR_GREY));
+                } else {
+                    sprintf(tbuf, "%c%-35s%c", cb, curr_menu->menu[imenu].text, ce);
+                    draw_txt_string(x, y+i, tbuf, cl);
+                }
+                break;
+            case MENUITEM_ENUM:
                 break;
             }
         }
         
+        // scrollbar
+        /*
+        if (count>NUM_LINES) {
+            i=NUM_LINES*FONT_HEIGHT-1 -1;
+            j=i*NUM_LINES/count;
+            i=(i-j)*selected->n/(count-1);
+            draw_filled_rect(x+(1+NAME_SIZE+SPACING+SIZE_SIZE+SPACING+TIME_SIZE+1)*FONT_WIDTH+2, y+FONT_HEIGHT+4+1, 
+                             x+(1+NAME_SIZE+SPACING+SIZE_SIZE+SPACING+TIME_SIZE+1)*FONT_WIDTH+6, y+FONT_HEIGHT+4+1+i, MAKE_COLOR(COLOR_BLACK, COLOR_BLACK));
+            draw_filled_rect(x+(1+NAME_SIZE+SPACING+SIZE_SIZE+SPACING+TIME_SIZE+1)*FONT_WIDTH+2, y+FONT_HEIGHT+4+i+j, 
+                             x+(1+NAME_SIZE+SPACING+SIZE_SIZE+SPACING+TIME_SIZE+1)*FONT_WIDTH+6, y+FONT_HEIGHT+4+NUM_LINES*FONT_HEIGHT-1, MAKE_COLOR(COLOR_BLACK, COLOR_BLACK));
+            draw_filled_rect(x+(1+NAME_SIZE+SPACING+SIZE_SIZE+SPACING+TIME_SIZE+1)*FONT_WIDTH+2, y+FONT_HEIGHT+4+1+i, 
+                             x+(1+NAME_SIZE+SPACING+SIZE_SIZE+SPACING+TIME_SIZE+1)*FONT_WIDTH+6, y+FONT_HEIGHT+4+i+j, MAKE_COLOR(COLOR_WHITE, COLOR_WHITE));
+        } else {
+            draw_filled_rect(x+(1+NAME_SIZE+SPACING+SIZE_SIZE+SPACING+TIME_SIZE+1)*FONT_WIDTH+2, y+FONT_HEIGHT+4+1, 
+                             x+(1+NAME_SIZE+SPACING+SIZE_SIZE+SPACING+TIME_SIZE+1)*FONT_WIDTH+6, y+FONT_HEIGHT+4+NUM_LINES*FONT_HEIGHT-1, MAKE_COLOR(COLOR_BLACK, COLOR_BLACK));
+        }
+        */
         gui_menu_redraw=0;
     }
 }

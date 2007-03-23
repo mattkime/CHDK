@@ -2,9 +2,7 @@
 #include "stubs_asm.h"
 
 NSTUB(AllocateMemory, 0xffc01ab0)
-NSTUB(close, 0xffef0238)
 NSTUB(Close, 0xffc614e8)
-NSTUB(closedir, 0xffeed6c0)
 NSTUB(CreatePhysicalVram, 0xffd2e820)
 NSTUB(CreateTask, 0xffc11abc)
 NSTUB(CreateTaskStrict, 0xffc12b5c)
@@ -17,7 +15,6 @@ NSTUB(ExitTask, 0xffc11e7c)
 NSTUB(Fclose_Fut, 0xffc5a4d8)
 NSTUB(Fopen_Fut, 0xffc5a49c)
 NSTUB(Fread_Fut, 0xffc5a5bc)
-// ERROR: free is not found!
 NSTUB(FreeMemory, 0xffc01abc)
 NSTUB(Fseek_Fut, 0xffc5a6a4)
 NSTUB(Fwrite_Fut, 0xffc5a60c)
@@ -31,6 +28,22 @@ NSTUB(GetZoomLensCurrentPoint, 0xffe87928)
 // Best match: 93%
 NSTUB(GetZoomLensCurrentPosition, 0xffe8793c)
 // ALT: NSTUB(GetZoomLensCurrentPosition, 0xffe8793c) // 27/2
+NSTUB(IsStrobeChargeCompleted, 0xffd08620)
+NSTUB(MakeDirectory, 0xffc617fc)
+NSTUB(Open, 0xffc614c0)
+NSTUB(PhySw_testgpio, 0xffc18964)
+NSTUB(ProtectFile, 0xffc59b04)
+NSTUB(Read, 0xffc6157c)
+NSTUB(RefreshPhysicalScreen, 0xffd7f49c)
+NSTUB(SetPropertyCase, 0xffc14c94)
+NSTUB(SleepTask, 0xffc119d0)
+NSTUB(TakeSemaphore, 0xffc114cc)
+// Best match: 96%
+NSTUB(VbattGet, 0xffc1c6d0)
+NSTUB(Write, 0xffc61588)
+NSTUB(close, 0xffef0238)
+NSTUB(closedir, 0xffeed6c0)
+// ERROR: free is not found!
 NSTUB(ints_disable, 0xffc0deb0)
 NSTUB(ints_enable, 0xffc0debc)
 NSTUB(ioctl, 0xffef0378)
@@ -42,7 +55,6 @@ NSTUB(islower, 0xffee7694)
 // ALT: NSTUB(islower, 0xffee7694) // 4/0
 NSTUB(isspace, 0xffee76dc)
 // ALT: NSTUB(isspace, 0xffee76dc) // 4/0
-NSTUB(IsStrobeChargeCompleted, 0xffd08620)
 NSTUB(isupper, 0xffee76f4)
 // ALT: NSTUB(isupper, 0xffee76f4) // 4/0
 NSTUB(kbd_p1_f, 0xffc17478)
@@ -56,30 +68,22 @@ NSTUB(kbd_read_keys_r2, 0xffc18274)
 // Best match: 93%
 NSTUB(localtime, 0xffeebeb4)
 NSTUB(lseek, 0xffef037c)
-NSTUB(MakeDirectory, 0xffc617fc)
 // Best match: 53%
 NSTUB(malloc, 0xffef3278)
 // ALT: NSTUB(malloc, 0xffef3278) // 15/13
-NSTUB(memcmp, 0xffef7438)
-// ALT: NSTUB(memcmp, 0xffeeb294) // 9/0
+NSTUB(memcmp, 0xffeeb294)
+// ALT: NSTUB(memcmp, 0xffef7438) // 9/0
 NSTUB(memcpy, 0xffeeb2d0)
 NSTUB(memset, 0xffeeb348)
 NSTUB(mkdir, 0xffc61740)
 NSTUB(open, 0xffef087c)
-NSTUB(Open, 0xffc614c0)
 NSTUB(opendir, 0xffeed6f4)
-NSTUB(PhySw_testgpio, 0xffc18964)
-NSTUB(ProtectFile, 0xffc59b04)
 NSTUB(qsort, 0xffeeaaf4)
 NSTUB(rand, 0xffeeab18)
 // ALT: NSTUB(rand, 0xffeeab18) // 8/0
-NSTUB(Read, 0xffc6157c)
 NSTUB(read, 0xffef0298)
 NSTUB(readdir, 0xffeed68c)
-NSTUB(RefreshPhysicalScreen, 0xffd7f49c)
 NSTUB(rewinddir, 0xffeed6b4)
-NSTUB(SetPropertyCase, 0xffc14c94)
-NSTUB(SleepTask, 0xffc119d0)
 NSTUB(sprintf, 0xffeef044)
 NSTUB(srand, 0xffeeab3c)
 // ALT: NSTUB(srand, 0xffeeab3c) // 4/0
@@ -91,7 +95,6 @@ NSTUB(strcpy, 0xffeeb54c)
 NSTUB(strlen, 0xffeeb6b0)
 NSTUB(strncmp, 0xffeeb714)
 NSTUB(strtol, 0xffeeaf30)
-NSTUB(TakeSemaphore, 0xffc114cc)
 NSTUB(taskCreateHookAdd, 0xffef5ed8)
 NSTUB(taskDeleteHookAdd, 0xffef5e14)
 // Best match: 82%
@@ -101,7 +104,4 @@ NSTUB(taskName, 0xffeffd98)
 NSTUB(taskResume, 0xfff0017c)
 NSTUB(taskSuspend, 0xffefffa8)
 NSTUB(taskUnlock, 0xfff00604)
-// Best match: 96%
-NSTUB(VbattGet, 0xffc1c6d0)
 NSTUB(write, 0xffef0308)
-NSTUB(Write, 0xffc61588)

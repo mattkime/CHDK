@@ -74,7 +74,7 @@ RANLIB=arm-elf-ranlib
 # -msoft-float is used per default but object files are marked as hard-float
 CFLAGS=-fno-inline -O9 -fno-strict-aliasing
 # flags for gcc v4
-#CFLAGS+=-mtune=arm946e-s
+CFLAGS+=-mtune=arm946e-s
 CFLAGS+=-I$(topdir)include $(PLFLAGS) $(CPPFLAGS)
 CFLAGS+=-DPLATFORM=\"$(PLATFORM)\" -DPLATFORMSUB=\"$(PLATFORMSUB)\" -DHDK_VERSION=\"$(VER)\"
 CFLAGS+=-Wall -Wno-unused -Wno-format

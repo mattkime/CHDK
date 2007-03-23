@@ -362,7 +362,7 @@ void *vid_get_bitmap_fb()
 
 void *vid_get_viewport_fb()
 {
-    return (void*)0x1055A7E0;
+    return (void*)0x105f25e0;
 }
 
 long vid_get_bitmap_width()
@@ -416,12 +416,12 @@ long stat_get_vbatt()
 
 long get_vbatt_min()
 {
-    return 2200;
+    return 2300;
 }
 
 long get_vbatt_max()
 {
-    return 2600;
+    return 2550;
 }
 
 /*******************************************************************/
@@ -641,3 +641,15 @@ int mode_get() {
     }
     return (mode);
 }
+
+const DofTable dof_tbl[9] = {
+        { 7300, 28},
+        { 8460, 32},
+        { 9565, 32},
+        {10835, 32},
+        {12565, 35},
+        {14926, 35},
+        {17342, 35},
+        {21709, 35},
+        {29200, 41}};
+const int dof_av_tbl[10] = {28, 32, 35, 40, 45, 50, 56, 63, 71, 80};

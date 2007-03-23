@@ -102,9 +102,9 @@ void core_spytask()
 
     SleepTask(1000);
 
+    conf_restore();
     gui_init();
     mkdir(FN_RAWDIR);
-    conf_restore();
 
     started();
     SleepTask(50);

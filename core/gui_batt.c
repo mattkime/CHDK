@@ -56,7 +56,7 @@ static void gui_batt_draw_icon () {
 
 //-------------------------------------------------------------------
 static void gui_batt_draw_charge(){
-    sprintf(osd_buf, "Chg:%d%%", get_batt_perc());
+    sprintf(osd_buf, "Chg:%3d%%", get_batt_perc());
     osd_buf[8]=0;
     draw_string(screen_width-8*FONT_WIDTH-2, screen_height-64, osd_buf, MAKE_COLOR(COLOR_BG, COLOR_FG));
 }
