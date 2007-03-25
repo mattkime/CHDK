@@ -165,8 +165,6 @@ void gui_redraw()
         --gui_splash;
     }
 
-    gui_draw_histo();
-
     gui_in_redraw = 1;
     gui_mode_old = gui_mode;
 
@@ -287,67 +285,86 @@ void gui_kbd_leave()
 
 //-------------------------------------------------------------------
 void gui_draw_histo() {
-    if (/*(mode_get()&MODE_MASK) == MODE_REC &&*/ (gui_mode==GUI_MODE_NONE || gui_mode==GUI_MODE_ALT) && 
-         conf_show_histo && kbd_is_key_pressed(KEY_SHOOT_HALF)) {
-        static const int hx=319-HISTO_WIDTH;
-        static const int hy=45;
-        register unsigned int i, v, threshold;
+    static const int hx=319-HISTO_WIDTH;
+    static const int hy=45;
+    register unsigned int i, v, threshold;
 
-//        draw_rect(hx-1, hy, hx+HISTO_WIDTH, hy+HISTO_HEIGHT, COLOR_WHITE);
-        draw_line(hx, hy, hx+HISTO_WIDTH-1, hy, COLOR_WHITE); //top
-        draw_line(hx, hy+HISTO_HEIGHT, hx+HISTO_WIDTH-1, hy+HISTO_HEIGHT, COLOR_WHITE); //bottom
-        draw_line(hx-1, hy, hx-1, hy+HISTO_HEIGHT, (under_exposed)?COLOR_RED:COLOR_WHITE); //left
-        draw_line(hx+HISTO_WIDTH, hy, hx+HISTO_WIDTH, hy+HISTO_HEIGHT, (over_exposed)?COLOR_RED:COLOR_WHITE); //right
+//    draw_rect(hx-1, hy, hx+HISTO_WIDTH, hy+HISTO_HEIGHT, COLOR_WHITE);
+    draw_line(hx, hy, hx+HISTO_WIDTH-1, hy, COLOR_WHITE); //top
+    draw_line(hx, hy+HISTO_HEIGHT, hx+HISTO_WIDTH-1, hy+HISTO_HEIGHT, COLOR_WHITE); //bottom
+    draw_line(hx-1, hy, hx-1, hy+HISTO_HEIGHT, (under_exposed)?COLOR_RED:COLOR_WHITE); //left
+    draw_line(hx+HISTO_WIDTH, hy, hx+HISTO_WIDTH, hy+HISTO_HEIGHT, (over_exposed)?COLOR_RED:COLOR_WHITE); //right
 
-        /* histogram */
-        for (i=0; i<HISTO_WIDTH; i++) {
-            threshold = histogram[i];
+    /* histogram */
+    for (i=0; i<HISTO_WIDTH; i++) {
+        threshold = histogram[i];
 
-            for (v=1; v<HISTO_HEIGHT; v++)
-                draw_pixel(hx+i, hy+HISTO_HEIGHT-v, (v<=threshold)?COLOR_WHITE:COLOR_BG);
-        }
+        for (v=1; v<HISTO_HEIGHT; v++)
+            draw_pixel(hx+i, hy+HISTO_HEIGHT-v, (v<=threshold)?COLOR_WHITE:COLOR_BG);
+    }
 
-        if (under_exposed) {
-            draw_filled_ellipse(hx+5, hy+5, 3, 3, MAKE_COLOR(COLOR_RED, COLOR_RED));
-        }
+    if (under_exposed) {
+        draw_filled_ellipse(hx+5, hy+5, 3, 3, MAKE_COLOR(COLOR_RED, COLOR_RED));
+    }
 
-        if (over_exposed) {
-            draw_filled_ellipse(hx+HISTO_WIDTH-5, hy+5, 3, 3, MAKE_COLOR(COLOR_RED, COLOR_RED));
-        }
+    if (over_exposed) {
+        draw_filled_ellipse(hx+HISTO_WIDTH-5, hy+5, 3, 3, MAKE_COLOR(COLOR_RED, COLOR_RED));
+    }
+}
+
+//-------------------------------------------------------------------
+static inline int get_real_av() {
+    return (int)(((float)powf(1.4142135623730950488016887242097/* sqrt(2) */, ((float)GetCurrentAvValue())/96.0))*100.0);
+}
+
+//-------------------------------------------------------------------
+static void sprintf_dist(char *buf, float dist) {
+// length of printed string is always 4
+    if (dist<0) {
+        sprintf(buf, " inf");
+//    } else if (dist<1000) {
+//        sprintf(buf, ".%03d", (int)dist);
+    } else if (dist<10000) {
+        sprintf(buf, "%d.%02d", (int)(dist/1000), (int)(dist/10)%100);
+    } else if (dist<100000) {
+        sprintf(buf, "%02d.%d", (int)(dist/1000), (int)(dist/100)%10);
+    } else {
+        sprintf(buf, "%4d", (int)(dist/1000));
     }
 }
 
 //-------------------------------------------------------------------
 static void gui_draw_dof() {
     long zp, av, fp; 
-    int r1, r2, hyp, fl;
+    float r1, r2, hyp, fl;
     
     zp=lens_get_zoom_point();
     if (zp<0) zp=0;
     if (zp>8) zp=8;
     fl=dof_tbl[zp].f;
     
-    av=shooting_get_av()-9;
-    if (av<0) av=0;
-    if (av>9) av=9;
-    av=(dof_av_tbl[av]>=dof_tbl[zp].av)?dof_av_tbl[av]:dof_tbl[zp].av;
+//    av=shooting_get_av()-9;
+//    if (av<0) av=0;
+//    if (av>9) av=9;
+//    av=(dof_av_tbl[av]>=dof_tbl[zp].av)?dof_av_tbl[av]:dof_tbl[zp].av;
+    av=get_real_av();
     
     fp=lens_get_focus_pos();
-    hyp=(fl*fl)/(100*6*av);
+    hyp=(fl*fl)/(10*6*av);
     r1=(hyp*fp)/(hyp+fp);
     r2=(hyp*fp)/(hyp-fp);
 
-    draw_txt_string(1, 0, "R1/R2:",   MAKE_COLOR(COLOR_BG, COLOR_FG));
-    draw_txt_string(1, 1, "DOF/HYP:", MAKE_COLOR(COLOR_BG, COLOR_FG));
-    if (r2<0) sprintf(osd_buf, "%d/inf%11s", r1, "");
-    else      sprintf(osd_buf, "%d/%d%11s", r1, r2, "");
-    osd_buf[12]=0;
-    draw_txt_string(1+6, 0, osd_buf, MAKE_COLOR(COLOR_BG, COLOR_FG));
+    draw_txt_string(5, 0, "R1/R2:", MAKE_COLOR(COLOR_BG, COLOR_FG));
+    sprintf_dist(osd_buf, r1);
+    osd_buf[4]='/';
+    sprintf_dist(osd_buf+5, r2);
+    draw_txt_string(5+6, 0, osd_buf, MAKE_COLOR(COLOR_BG, COLOR_FG));
         
-    if (r2<0) sprintf(osd_buf, "inf/%d%9s", hyp, "");
-    else      sprintf(osd_buf, "%d/%d%9s", r2-r1, hyp, "");
-    osd_buf[12]=0;
-    draw_txt_string(1+8, 1, osd_buf, MAKE_COLOR(COLOR_BG, COLOR_FG));
+    draw_txt_string(5, 1, "DOF/HYP:", MAKE_COLOR(COLOR_BG, COLOR_FG));
+    sprintf_dist(osd_buf, r2-r1);
+    osd_buf[4]='/';
+    sprintf_dist(osd_buf+5, hyp);
+    draw_txt_string(5+8, 1, osd_buf, MAKE_COLOR(COLOR_BG, COLOR_FG));
 }
 
 //-------------------------------------------------------------------
@@ -377,8 +394,9 @@ void gui_draw_osd() {
     	    draw_txt_string(40, 3+n, "SCR", MAKE_COLOR(COLOR_BG, COLOR_FG));
     	    ++n;
         }
-        if (/*(mode_get()&MODE_MASK) == MODE_REC &&*/ (gui_mode==GUI_MODE_NONE || gui_mode==GUI_MODE_NONE) && 
+        if (/*(mode_get()&MODE_MASK) == MODE_REC &&*/ (gui_mode==GUI_MODE_NONE || gui_mode==GUI_MODE_ALT) && 
              conf_show_histo && kbd_is_key_pressed(KEY_SHOOT_HALF)) {
+            gui_draw_histo();
             draw_txt_string(40, 3+n, (under_exposed || over_exposed)?"EXP":"   ", MAKE_COLOR(COLOR_BG, COLOR_FG));
             ++n;
         }
@@ -390,8 +408,14 @@ void gui_draw_osd() {
         sprintf(osd_buf, "F:%ld%8s", lens_get_focus_pos(), "");
         osd_buf[8]=0;
         draw_txt_string(35, n++, osd_buf, MAKE_COLOR(COLOR_BG, COLOR_FG));
+        {
+        int av=get_real_av();
+        sprintf(osd_buf, "Av:%d.%02d ", av/100, av%100);
+        osd_buf[8]=0;
+        draw_txt_string(35, n++, osd_buf, MAKE_COLOR(COLOR_BG, COLOR_FG));
+        }
 
-        if (conf_show_dof && ( m==MODE_P || m==MODE_M || m==MODE_AV ) && kbd_is_key_pressed(KEY_SHOOT_HALF)){
+        if (conf_show_dof && kbd_is_key_pressed(KEY_SHOOT_HALF)){
             gui_draw_dof();
         }
     }
@@ -450,7 +474,11 @@ void gui_draw_palette(int arg) {
 
 //-------------------------------------------------------------------
 void gui_show_build_info(int arg) {
-    gui_mbox_init("*** Build Info ***", "Date:    " __DATE__ "\nTime:    " __TIME__ "\nCamera:  " PLATFORM "\nFW Vers: " PLATFORMSUB, MBOX_FUNC_RESTORE|MBOX_TEXT_LEFT);
+    gui_mbox_init("*** Build Info ***", 
+                  "Date:    "   __DATE__ 
+                  "\nTime:    " __TIME__ 
+                  "\nCamera:  " PLATFORM 
+                  "\nFW Vers: " PLATFORMSUB, MBOX_FUNC_RESTORE|MBOX_TEXT_LEFT);
 }
 
 //-------------------------------------------------------------------
@@ -511,8 +539,10 @@ void gui_test(int arg) {
 //-------------------------------------------------------------------
 void gui_draw_debug(int arg) {
 //    gui_debug_init(0x2510);
-    gui_debug_init(0x127E0);
+//    gui_debug_init(0x127E0);
 //    gui_debug_init(0x7F5B8);
+//    gui_debug_init(malloc(16));
+    gui_debug_init(0xB054);
 }
 
 //-------------------------------------------------------------------

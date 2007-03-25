@@ -2234,6 +2234,39 @@ static FuncSig func_sig_localtime_1[] = {
 	/* 32/32 */
 };
 
+static FuncSig func_sig_GetCurrentAvValue_1[] = {
+	{   0, 0xe52de004, 0xfdffffff }, // str:4:0xE52DE004
+	{   1, 0xeb000000, 0xff000000 }, // b, bl:3:0xEBFFB08A
+	{   2, 0xe1a00800, 0xfdffffff }, // mov:6:0xE1A00800
+	{   3, 0xe1a00840, 0xfdffffff }, // mov:6:0xE1A00840
+	{   4, 0xe49df004, 0xfdffffff }, // ldr:4:0xE49DF004
+	{   6, 0xe59f4028, 0xfdffffff }, // ldr:4:0xE59F4028
+	{   7, 0xe1a01001, 0xfdffffff }, // mov:6:0xE3A01001
+	{   8, 0xe5940000, 0xfdffffff }, // ldr:4:0xE5940000
+	{   9, 0xeb000000, 0xff000000 }, // b, bl:3:0xEBF679C8
+	{  10, 0xe59f001c, 0xfdffffff }, // ldr:4:0xE59F001C
+	{  11, 0xe1a01000, 0xfdffffff }, // mov:6:0xE3A01000
+	{  12, 0xeb000000, 0xff000000 }, // b, bl:3:0xEB000006
+	{  13, 0xe5940000, 0xfdffffff }, // ldr:4:0xE5940000
+	{  14, 0xe1a01001, 0xfdffffff }, // mov:6:0xE3A01001
+	{  15, 0xe1a02000, 0xfdffffff }, // mov:6:0xE3A02000
+	{  17, 0xea000000, 0xff000000 }, // b, bl:3:0xEAF67951
+	{  18, 0x0000b050, 0xfdffffff }, // and:6:0x0000B050
+	{  20, 0xe52de004, 0xfdffffff }, // str:4:0xE52DE004
+	{  21, 0xe49de004, 0xfdffffff }, // ldr:4:0xE49DE004
+	{  22, 0xea000000, 0xff000000 }, // b, bl:3:0xEAFFAE6A
+	{  24, 0xe59f4028, 0xfdffffff }, // ldr:4:0xE59F4028
+	{  25, 0xe1a01001, 0xfdffffff }, // mov:6:0xE3A01001
+	{  26, 0xe5940000, 0xfdffffff }, // ldr:4:0xE5940000
+	{  27, 0xeb000000, 0xff000000 }, // b, bl:3:0xEBF679B6
+	{  28, 0xe59f001c, 0xfdffffff }, // ldr:4:0xE59F001C
+	{  29, 0xe1a01000, 0xfdffffff }, // mov:6:0xE3A01000
+	{  30, 0xeb000000, 0xff000000 }, // b, bl:3:0xEB000006
+	{  31, 0xe5940000, 0xfdffffff }, // ldr:4:0xE5940000
+	{ -1, -1, -1 },
+	/* 28/32 */
+};
+
 static FuncSig func_sig_GetSystemTime_2[] = {
 	{   1, 0xe59f6030, 0xfdffffff }, // ldr:4:0xE59F6030
 	{   2, 0xe5965000, 0xfdffffff }, // ldr:4:0xE5965000
@@ -2854,6 +2887,7 @@ FuncsList func_list[] = {
 	{ "FreeMemory", func_sig_FreeMemory_2 },
 	{ "Fseek_Fut", func_sig_Fseek_Fut_1 },
 	{ "Fwrite_Fut", func_sig_Fwrite_Fut_1 },
+	{ "GetCurrentAvValue", func_sig_GetCurrentAvValue_1 },
 	{ "GetFocusLensSubjectDistance", func_sig_GetFocusLensSubjectDistance_1 },
 	{ "GetFocusLensSubjectDistance", func_sig_GetFocusLensSubjectDistance_2 },
 	{ "GetPropertyCase", func_sig_GetPropertyCase_1 },

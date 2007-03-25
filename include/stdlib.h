@@ -12,14 +12,18 @@
 #define O_TRUNC         0x400
 #define O_CREAT         0x200
 
-extern int	rand(void);
-extern void*	srand(unsigned int seed);
+extern int rand(void);
+extern void* srand(unsigned int seed);
 
-extern void	qsort (void *__base, int __nelem, int __size, int (*__cmp)(const void *__e1, const void *__e2));
+extern void qsort (void *__base, int __nelem, int __size, int (*__cmp)(const void *__e1, const void *__e2));
 
 //extern double log(double x);
 extern float logf(float v);
 extern float sqrtf(float v);
+extern float powf(float x, float y);
+extern float fabsf(float x);
+extern float scalbnf(float x, int n);
+extern float copysignf(float x, float y);
 
 extern long strlen(const char *s);
 extern long sprintf(char *s, const char *st, ...);

@@ -75,7 +75,7 @@ static int fselect_sort(const void* v1, const void* v2) {
 
 //-------------------------------------------------------------------
 static void gui_fselect_read_dir(const char* dir) {
-    DIR            *d;
+    DIR           *d;
     struct dirent *de;
     struct stat   st;
     struct fitem  **ptr = &head, *prev = NULL;
@@ -112,6 +112,7 @@ static void gui_fselect_read_dir(const char* dir) {
             }
             de = readdir(d);
         }
+        rewinddir(d);
         closedir(d);
     }
     *ptr=NULL;
@@ -272,12 +273,12 @@ void gui_fselect_draw() {
             draw_filled_rect(x+(1+NAME_SIZE+SPACING+SIZE_SIZE+SPACING+TIME_SIZE+1)*FONT_WIDTH+2, y+FONT_HEIGHT+4+1, 
                              x+(1+NAME_SIZE+SPACING+SIZE_SIZE+SPACING+TIME_SIZE+1)*FONT_WIDTH+6, y+FONT_HEIGHT+4+1+i, MAKE_COLOR(COLOR_BLACK, COLOR_BLACK));
             draw_filled_rect(x+(1+NAME_SIZE+SPACING+SIZE_SIZE+SPACING+TIME_SIZE+1)*FONT_WIDTH+2, y+FONT_HEIGHT+4+i+j, 
-                             x+(1+NAME_SIZE+SPACING+SIZE_SIZE+SPACING+TIME_SIZE+1)*FONT_WIDTH+6, y+FONT_HEIGHT+4+NUM_LINES*FONT_HEIGHT-1, MAKE_COLOR(COLOR_BLACK, COLOR_BLACK));
+                             x+(1+NAME_SIZE+SPACING+SIZE_SIZE+SPACING+TIME_SIZE+1)*FONT_WIDTH+6, y+FONT_HEIGHT+4+NUM_LINES*FONT_HEIGHT-1-1, MAKE_COLOR(COLOR_BLACK, COLOR_BLACK));
             draw_filled_rect(x+(1+NAME_SIZE+SPACING+SIZE_SIZE+SPACING+TIME_SIZE+1)*FONT_WIDTH+2, y+FONT_HEIGHT+4+1+i, 
                              x+(1+NAME_SIZE+SPACING+SIZE_SIZE+SPACING+TIME_SIZE+1)*FONT_WIDTH+6, y+FONT_HEIGHT+4+i+j, MAKE_COLOR(COLOR_WHITE, COLOR_WHITE));
         } else {
             draw_filled_rect(x+(1+NAME_SIZE+SPACING+SIZE_SIZE+SPACING+TIME_SIZE+1)*FONT_WIDTH+2, y+FONT_HEIGHT+4+1, 
-                             x+(1+NAME_SIZE+SPACING+SIZE_SIZE+SPACING+TIME_SIZE+1)*FONT_WIDTH+6, y+FONT_HEIGHT+4+NUM_LINES*FONT_HEIGHT-1, MAKE_COLOR(COLOR_BLACK, COLOR_BLACK));
+                             x+(1+NAME_SIZE+SPACING+SIZE_SIZE+SPACING+TIME_SIZE+1)*FONT_WIDTH+6, y+FONT_HEIGHT+4+NUM_LINES*FONT_HEIGHT-1-1, MAKE_COLOR(COLOR_BLACK, COLOR_BLACK));
         }
 
         gui_fselect_redraw = 0;

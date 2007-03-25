@@ -12,10 +12,12 @@ clean: clean-recursive
 fir: all
 	@echo \-\> $(PLATFORM)-$(PLATFORMSUB).FIR
 	cp $(topdir)loader/$(PLATFORM)/main.bin $(topdir)/bin/main.bin
+ifndef NOZERO100K
 ifeq ($(OSTYPE),Windows)
 	zero | dd bs=1k count=100 >> $(topdir)/bin/main.bin 2> $(DEVNULL)
 else
 	dd if=/dev/zero bs=1k count=100 >> $(topdir)/bin/main.bin 2> $(DEVNULL)
+endif
 endif
 	$(PAKWIF) $(topdir)bin/$(PLATFORM)-$(PLATFORMSUB).FIR \
 	     $(topdir)/bin/main.bin\

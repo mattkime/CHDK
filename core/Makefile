@@ -13,6 +13,10 @@ OBJS=entry.o main.o gui_draw.o gui_menu.o gui_palette.o gui_mbox.o \
      gui_reversi.o gui_debug.o gui_fselect.o gui.o kbd.o conf.o \
      histogram.o gui_batt.o
 
+gui.o: FORCE
+
+FORCE:
+
 main.bin: main.elf
 	@echo $< \-\> $@
 	$(OBJDUMP) -z -d main.elf > main.dump

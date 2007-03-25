@@ -37,7 +37,7 @@ static unsigned long get_batt_perc() {
 
 //-------------------------------------------------------------------
 static void gui_batt_draw_icon () {
-    static const coord bx=170, by=4;
+    static const coord bx=178, by=4;
     coord x;
 
     // battery icon

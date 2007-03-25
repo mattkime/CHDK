@@ -17,6 +17,8 @@ NSTUB(Fread_Fut, 0xffc5a098)
 NSTUB(FreeMemory, 0xffc01abc)
 NSTUB(Fseek_Fut, 0xffc5a180)
 NSTUB(Fwrite_Fut, 0xffc5a0e8)
+// Best match: 78%
+NSTUB(GetCurrentAvValue, 0xffeb41c4)
 NSTUB(GetFocusLensSubjectDistance, 0xffea2f3c)
 NSTUB(GetPropertyCase, 0xffc14dec)
 NSTUB(GetSystemTime, 0xffc04d38)

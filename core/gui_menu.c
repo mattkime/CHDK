@@ -29,13 +29,21 @@ static int          gui_menu_curr_item;
 static int          gui_menu_top_item;
 static int          gui_menu_redraw;
 
+static int          count;
 static coord        x, y, w=37;
 
 //-------------------------------------------------------------------
-void gui_menu_init(CMenu *menu_ptr) {
+static void gui_menu_set_curr_menu(CMenu *menu_ptr, int top_item, int curr_item) {
     curr_menu = menu_ptr;
-    gui_menu_curr_item = -1;
-    gui_menu_top_item = 0;
+    gui_menu_top_item = top_item;
+    gui_menu_curr_item = curr_item;
+
+    for (count=0; curr_menu->menu[count].text; ++count);
+}
+
+//-------------------------------------------------------------------
+void gui_menu_init(CMenu *menu_ptr) {
+    gui_menu_set_curr_menu(menu_ptr, 0, -1);
     gui_menu_stack_ptr = 0;
     
     x = (screen_width/FONT_WIDTH-w)>>1;
@@ -150,9 +158,7 @@ void gui_menu_kbd_process() {
                         gui_menu_stack[gui_menu_stack_ptr].menu = curr_menu;
                         gui_menu_stack[gui_menu_stack_ptr].curpos = gui_menu_curr_item;
                         gui_menu_stack[gui_menu_stack_ptr].toppos = gui_menu_top_item;
-                        curr_menu = (void*)(curr_menu->menu[gui_menu_curr_item].value);
-                        gui_menu_curr_item = -1;
-                        gui_menu_top_item = 0;
+                        gui_menu_set_curr_menu((CMenu*)(curr_menu->menu[gui_menu_curr_item].value), 0, -1);
                         gui_menu_stack_ptr++;
                         // FIXME check on stack overrun;
                         if (gui_menu_stack_ptr > MENUSTACK_MAXDEPTH){
@@ -169,9 +175,7 @@ void gui_menu_kbd_process() {
                     case MENUITEM_UP:
                         if (gui_menu_stack_ptr > 0){
                             gui_menu_stack_ptr--;
-                            curr_menu = gui_menu_stack[gui_menu_stack_ptr].menu;
-                            gui_menu_curr_item = gui_menu_stack[gui_menu_stack_ptr].curpos;
-                            gui_menu_top_item  = gui_menu_stack[gui_menu_stack_ptr].toppos;
+                            gui_menu_set_curr_menu(gui_menu_stack[gui_menu_stack_ptr].menu, gui_menu_stack[gui_menu_stack_ptr].toppos, gui_menu_stack[gui_menu_stack_ptr].curpos);
                             if ((curr_menu->menu[gui_menu_curr_item].type & MENUITEM_ARG_MASK) == MENUITEM_ARG_CALLBACK && curr_menu->menu[gui_menu_curr_item].arg) {
                                 ((void (*)())(curr_menu->menu[gui_menu_curr_item].arg))();
                             }
@@ -196,12 +200,18 @@ void gui_menu_draw_initial() {
     draw_txt_string(xx-5, y-2, f, MAKE_COLOR(COLOR_BG, COLOR_FG));
     draw_txt_string(xx, y-2, curr_menu->title, MAKE_COLOR(COLOR_BG, COLOR_FG));
     draw_txt_string(xx+l, y-2, f, MAKE_COLOR(COLOR_BG, COLOR_FG));
+
+    // scrollbar background
+    if (count>NUM_LINES) {
+        draw_filled_rect((x+w)*FONT_WIDTH, y*FONT_HEIGHT, 
+                         (x+w)*FONT_WIDTH+8, (y+NUM_LINES)*FONT_HEIGHT-1, MAKE_COLOR(COLOR_BG, COLOR_BG));
+    }
 }
 
 //-------------------------------------------------------------------
 void gui_menu_draw() {
     static char tbuf[64];
-    int imenu, i;
+    int imenu, i, j;
     color cl;
     char cb, ce;
 
@@ -243,22 +253,21 @@ void gui_menu_draw() {
         }
         
         // scrollbar
-        /*
         if (count>NUM_LINES) {
-            i=NUM_LINES*FONT_HEIGHT-1 -1;
-            j=i*NUM_LINES/count;
-            i=(i-j)*selected->n/(count-1);
-            draw_filled_rect(x+(1+NAME_SIZE+SPACING+SIZE_SIZE+SPACING+TIME_SIZE+1)*FONT_WIDTH+2, y+FONT_HEIGHT+4+1, 
-                             x+(1+NAME_SIZE+SPACING+SIZE_SIZE+SPACING+TIME_SIZE+1)*FONT_WIDTH+6, y+FONT_HEIGHT+4+1+i, MAKE_COLOR(COLOR_BLACK, COLOR_BLACK));
-            draw_filled_rect(x+(1+NAME_SIZE+SPACING+SIZE_SIZE+SPACING+TIME_SIZE+1)*FONT_WIDTH+2, y+FONT_HEIGHT+4+i+j, 
-                             x+(1+NAME_SIZE+SPACING+SIZE_SIZE+SPACING+TIME_SIZE+1)*FONT_WIDTH+6, y+FONT_HEIGHT+4+NUM_LINES*FONT_HEIGHT-1, MAKE_COLOR(COLOR_BLACK, COLOR_BLACK));
-            draw_filled_rect(x+(1+NAME_SIZE+SPACING+SIZE_SIZE+SPACING+TIME_SIZE+1)*FONT_WIDTH+2, y+FONT_HEIGHT+4+1+i, 
-                             x+(1+NAME_SIZE+SPACING+SIZE_SIZE+SPACING+TIME_SIZE+1)*FONT_WIDTH+6, y+FONT_HEIGHT+4+i+j, MAKE_COLOR(COLOR_WHITE, COLOR_WHITE));
-        } else {
-            draw_filled_rect(x+(1+NAME_SIZE+SPACING+SIZE_SIZE+SPACING+TIME_SIZE+1)*FONT_WIDTH+2, y+FONT_HEIGHT+4+1, 
-                             x+(1+NAME_SIZE+SPACING+SIZE_SIZE+SPACING+TIME_SIZE+1)*FONT_WIDTH+6, y+FONT_HEIGHT+4+NUM_LINES*FONT_HEIGHT-1, MAKE_COLOR(COLOR_BLACK, COLOR_BLACK));
+            i=NUM_LINES*FONT_HEIGHT-1 -1;           // full height
+            j=i*NUM_LINES/count;                    // bar height
+            i=(i-j)*((gui_menu_curr_item<0)?0:gui_menu_curr_item)/(count-1);   // top pos
+            draw_filled_rect((x+w)*FONT_WIDTH+2, y*FONT_HEIGHT+1, 
+                             (x+w)*FONT_WIDTH+6, y*FONT_HEIGHT+1+i, MAKE_COLOR(COLOR_BLACK, COLOR_BLACK));
+            draw_filled_rect((x+w)*FONT_WIDTH+2, y*FONT_HEIGHT+i+j, 
+                             (x+w)*FONT_WIDTH+6, (y+NUM_LINES)*FONT_HEIGHT-1-1, MAKE_COLOR(COLOR_BLACK, COLOR_BLACK));
+            draw_filled_rect((x+w)*FONT_WIDTH+2, y*FONT_HEIGHT+1+i, 
+                             (x+w)*FONT_WIDTH+6, y*FONT_HEIGHT+i+j, MAKE_COLOR(COLOR_WHITE, COLOR_WHITE));
+//        } else {
+//            draw_filled_rect((x+w)*FONT_WIDTH+2, y*FONT_HEIGHT+1, 
+//                             (x+w)*FONT_WIDTH+6, (y+count)*FONT_HEIGHT-1-1, MAKE_COLOR(COLOR_BLACK, COLOR_BLACK));
         }
-        */
+        
         gui_menu_redraw=0;
     }
 }
