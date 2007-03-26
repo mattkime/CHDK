@@ -48,7 +48,7 @@ void dump_memory()
 
     started();
 
-	sprintf(fn, FN_RAWF, conf_raw_fileno++);
+	sprintf(fn, FN_RAWF, conf.raw_fileno++);
 	fd = fopen(fn, "w+");
 	if (fd >= 0) {
 	    fwrite((void*)0x1900, 1, 0x1900, fd);
@@ -69,10 +69,10 @@ static void saverawfile()
 
     state_shooting_progress = SHOOTING_PROGRESS_PROCESSING;
 
-    if (conf_save_raw){
+    if (conf.save_raw){
 	started();
 
-	sprintf(fn, FN_RAWF, conf_raw_fileno++);
+	sprintf(fn, FN_RAWF, conf.raw_fileno++);
 //	sprintf(fn, FN_RAWF, *((short*)0x0001281C));
 	fd = fopen(fn, "w+");
 	if (fd >= 0) {

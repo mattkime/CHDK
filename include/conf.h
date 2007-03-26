@@ -1,25 +1,49 @@
 #ifndef CONF_H
 #define CONF_H
 
-extern int conf_show_osd;
-extern int conf_save_raw;
-extern int conf_script_shoot_delay;
-extern int conf_show_histo;
-extern int conf_raw_fileno;
-extern int conf_ubasic_var_a;
-extern int conf_ubasic_var_b;
-extern int conf_ubasic_var_c;
+#include "gui.h"
 
-extern int conf_show_dof;
-extern int conf_batt_volts_max;
-extern int conf_batt_volts_min;
-extern int conf_batt_step_25;
-extern int conf_batt_perc_show;
-extern int conf_batt_volts_show;
-extern int conf_batt_icon_show;
+typedef struct {
+    unsigned short  x, y;
+} OSD_pos;
 
-extern int confns_enable_memdump;
+typedef struct {
+    int show_osd;
+    int save_raw;
+    int script_shoot_delay;
+    int show_histo;
+    int raw_fileno;
+    int ubasic_var_a;
+    int ubasic_var_b;
+    int ubasic_var_c;
 
+    int show_dof;
+    int batt_volts_max;
+    int batt_volts_min;
+    int batt_step_25;
+    int batt_perc_show;
+    int batt_volts_show;
+    int batt_icon_show;
+
+    int show_state;
+    int show_values;
+
+    OSD_pos histo_pos;
+    OSD_pos dof_pos;
+    OSD_pos batt_icon_pos;
+    OSD_pos batt_txt_pos;
+    OSD_pos mode_state_pos;
+    OSD_pos values_pos;
+
+    color histo_color;
+    color osd_color;
+    color batt_icon_color;
+    color menu_color;
+
+    int ns_enable_memdump;
+} Conf;
+
+extern Conf conf;
 
 #define SHOOTING_PROGRESS_NONE 0
 #define SHOOTING_PROGRESS_STARTED 1
@@ -41,6 +65,7 @@ extern int debug_vals_show;
 
 extern void conf_save(int force);
 extern void conf_restore();
+extern void conf_load_defaults();
 
 extern void load_script(const char *fn);
 

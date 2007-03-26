@@ -21,10 +21,10 @@ finsig$(EXE): finsig.c signatures.h
 	$(HOSTCC) $(HOSTCFLAGS) -o finsig$(EXE) finsig.c
 
 clean:
-	rm -f pakwif$(EXE) gensig$(EXE) finsig$(EXE) hexdmplt$(EXE)
-	if [ -s sig_ref.bin ] ; then \
-	  rm -f signatures.h ; \
-	fi
+	rm -f pakwif$(EXE) finsig$(EXE) hexdmplt$(EXE)
+#	if [ -s sig_ref.bin ] ; then \
+#	  rm -f signatures.h ; \
+#	fi
 
 signatures.h: gensig$(EXE) gensigs.sh sig_ref_1.txt sig_ref_1.bin sig_ref_2.txt sig_ref_2.bin
 	@echo \-\> $@

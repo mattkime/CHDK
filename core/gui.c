@@ -13,6 +13,7 @@
 #include "gui_debug.h"
 #include "gui_fselect.h"
 #include "gui_batt.h"
+#include "gui_osd.h"
 #include "histogram.h"
 
 //-------------------------------------------------------------------
@@ -21,11 +22,8 @@
 //-------------------------------------------------------------------
 void dump_memory();
 
-static void gui_draw_histo();
-
 static void gui_draw_osd();
 static void gui_draw_splash();
-static void gui_draw_histo();
 
 // Menu procs
 //-------------------------------------------------------------------
@@ -36,8 +34,10 @@ static void gui_draw_reversi(int arg);
 static void gui_test(int arg);
 static void gui_draw_debug(int arg);
 static void gui_draw_fselect(int arg);
+static void gui_draw_osd_le(int arg);
 static void gui_load_script(int arg);
 static void gui_menuproc_save(int arg);
+static void gui_menuproc_reset(int arg);
 
 // Menu callbacks
 //-------------------------------------------------------------------
@@ -49,10 +49,10 @@ static void cb_volts();
 //-------------------------------------------------------------------
 CMenu script_submenu = { "Script", {
     {"Load script from file...",    MENUITEM_PROC,                      (int*)gui_load_script },
-    {"Script shoot delay (.1s)",    MENUITEM_INT|MENUITEM_F_UNSIGNED,   &conf_script_shoot_delay },
-    {"Var. a value",                MENUITEM_INT,                       &conf_ubasic_var_a },
-    {"Var. b value",                MENUITEM_INT,                       &conf_ubasic_var_b },
-    {"Var. c value",                MENUITEM_INT,                       &conf_ubasic_var_c },
+    {"Script shoot delay (.1s)",    MENUITEM_INT|MENUITEM_F_UNSIGNED,   &conf.script_shoot_delay },
+    {"Var. a value",                MENUITEM_INT,                       &conf.ubasic_var_a },
+    {"Var. b value",                MENUITEM_INT,                       &conf.ubasic_var_b },
+    {"Var. c value",                MENUITEM_INT,                       &conf.ubasic_var_c },
     {"<- Back",                     MENUITEM_UP },
     {0}
 }};
@@ -73,48 +73,71 @@ CMenu debug_submenu = { "Debug", {
     {"PropCase page",               MENUITEM_INT|MENUITEM_F_UNSIGNED,   &debug_propcase_page },
     {"Show misc. values",           MENUITEM_BOOL,                      &debug_vals_show },
     {"Memory browser",              MENUITEM_PROC,                      (int*)gui_draw_debug },
-    {"Dump RAM on ALT +/- press",   MENUITEM_BOOL,                      &confns_enable_memdump },
+    {"Dump RAM on ALT +/- press",   MENUITEM_BOOL,                      &conf.ns_enable_memdump },
     {"<- Back",                     MENUITEM_UP },
     {0}
 }};
 
-
 static int voltage_step;
 CMenu battery_submenu = { "Battery", {
-    {"Voltage MAX",                 MENUITEM_INT|MENUITEM_ARG_ADDR_INC,     &conf_batt_volts_max,   (int)&voltage_step },
-    {"Voltage MIN",                 MENUITEM_INT|MENUITEM_ARG_ADDR_INC,     &conf_batt_volts_min,   (int)&voltage_step },
-    {"25+ step",                    MENUITEM_BOOL|MENUITEM_ARG_CALLBACK,    &conf_batt_step_25,     (int)cb_step_25 },	
+    {"Voltage MAX",                 MENUITEM_INT|MENUITEM_ARG_ADDR_INC,     &conf.batt_volts_max,   (int)&voltage_step },
+    {"Voltage MIN",                 MENUITEM_INT|MENUITEM_ARG_ADDR_INC,     &conf.batt_volts_min,   (int)&voltage_step },
+    {"25+ step",                    MENUITEM_BOOL|MENUITEM_ARG_CALLBACK,    &conf.batt_step_25,     (int)cb_step_25 },	
     {"-",                           MENUITEM_TEXT },
-    {"Show percent",                MENUITEM_BOOL|MENUITEM_ARG_CALLBACK,    &conf_batt_perc_show,   (int)cb_perc },
-    {"Show volts",                  MENUITEM_BOOL|MENUITEM_ARG_CALLBACK,    &conf_batt_volts_show,  (int)cb_volts },
-    {"Show icon",                   MENUITEM_BOOL,                          &conf_batt_icon_show },	
+    {"Show percent",                MENUITEM_BOOL|MENUITEM_ARG_CALLBACK,    &conf.batt_perc_show,   (int)cb_perc },
+    {"Show volts",                  MENUITEM_BOOL|MENUITEM_ARG_CALLBACK,    &conf.batt_volts_show,  (int)cb_volts },
+    {"Show icon",                   MENUITEM_BOOL,                          &conf.batt_icon_show },	
+    {"<- Back",                     MENUITEM_UP },
+    {0}
+}};
+
+CMenu osd_colors_submenu = { "OSD Colors", {
+    {"OSD text",                    MENUITEM_COLOR_FG,  (int*)&conf.osd_color },
+    {"OSD background",              MENUITEM_COLOR_BG,  (int*)&conf.osd_color },
+    {"Histogram",                   MENUITEM_COLOR_FG,  (int*)&conf.histo_color },
+    {"Histogram background",        MENUITEM_COLOR_BG,  (int*)&conf.histo_color },
+    {"Battery icon",                MENUITEM_COLOR_FG,  (int*)&conf.batt_icon_color },
+    {"Menu text",                   MENUITEM_COLOR_FG,  (int*)&conf.menu_color },
+    {"Menu background",             MENUITEM_COLOR_BG,  (int*)&conf.menu_color },
+    {"<- Back",                     MENUITEM_UP },
+    {0}
+}};
+
+CMenu osd_submenu = { "OSD", {
+    {"Show OSD",                    MENUITEM_BOOL,      &conf.show_osd },
+    {"Show RAW/SCR/EXP state",      MENUITEM_BOOL,      &conf.show_state },
+    {"Show misc values",            MENUITEM_BOOL,      &conf.show_values },
+    {"Show live histogram",         MENUITEM_BOOL,      &conf.show_histo },
+    {"Show DOF calculator",         MENUITEM_BOOL,      &conf.show_dof },
+    {"OSD layout editor",           MENUITEM_PROC,      (int*)gui_draw_osd_le },
+    {"OSD color settings ->",       MENUITEM_SUBMENU,   (int*)&osd_colors_submenu },
+    {"Battery parameters ->",       MENUITEM_SUBMENU,   (int*)&battery_submenu },
+    {"Save options now...",         MENUITEM_PROC,      (int*)gui_menuproc_save },
     {"<- Back",                     MENUITEM_UP },
     {0}
 }};
 
 CMenu root_menu = { "Main", {
-    {"Show OSD",                    MENUITEM_BOOL,      &conf_show_osd },
-    {"Save RAW",                    MENUITEM_BOOL,      &conf_save_raw },
-    {"Show live histogram",         MENUITEM_BOOL,      &conf_show_histo },
-    {"Show DOF calculator",         MENUITEM_BOOL,      &conf_show_dof },
+    {"Save RAW",                    MENUITEM_BOOL,      &conf.save_raw },
+    {"OSD parameters ->",           MENUITEM_SUBMENU,   (int*)&osd_submenu },
     {"Scripting parameters ->",     MENUITEM_SUBMENU,   (int*)&script_submenu },
-    {"Battery parameters ->",       MENUITEM_SUBMENU,   (int*)&battery_submenu },
     {"Miscellaneous stuff ->",      MENUITEM_SUBMENU,   (int*)&misc_submenu },
     {"Debug parameters ->",         MENUITEM_SUBMENU,   (int*)&debug_submenu },
+    {"Reset options to default...", MENUITEM_PROC,      (int*)gui_menuproc_reset },
     {"Save options now...",         MENUITEM_PROC,      (int*)gui_menuproc_save },
     {0}
 }};
 
 void cb_step_25() {
-    voltage_step = (conf_batt_step_25)?25:1;
+    voltage_step = (conf.batt_step_25)?25:1;
 }
 
 void cb_perc() {
-    conf_batt_volts_show=0;
+    conf.batt_volts_show=0;
 }
 
 void cb_volts() {
-    conf_batt_perc_show=0;
+    conf.batt_perc_show=0;
 }
 
 //-------------------------------------------------------------------
@@ -132,7 +155,7 @@ void gui_init()
     gui_in_redraw = 0;
     draw_init();
 
-    voltage_step = (conf_batt_step_25)?25:1;
+    voltage_step = (conf.batt_step_25)?25:1;
 }
 
 //-------------------------------------------------------------------
@@ -195,6 +218,10 @@ void gui_redraw()
         case GUI_MODE_FSELECT:
             gui_fselect_draw();
             break;
+        case GUI_MODE_OSD:
+            gui_osd_draw();
+//            draw_txt_string(20, 14, "<OSD>", MAKE_COLOR(COLOR_ALT_BG, COLOR_FG));
+            break;
         default:
             break;
     }
@@ -226,6 +253,7 @@ void gui_kbd_process()
             case GUI_MODE_PALETTE:
             case GUI_MODE_REVERSI:
             case GUI_MODE_DEBUG:
+            case GUI_MODE_OSD:
                 draw_restore();
                 gui_mode = GUI_MODE_MENU;
                 break;
@@ -240,7 +268,7 @@ void gui_kbd_process()
     
     switch (gui_mode) {
         case GUI_MODE_ALT:
-            if (kbd_is_key_clicked(KEY_ERASE) && confns_enable_memdump) {
+            if (kbd_is_key_clicked(KEY_ERASE) && conf.ns_enable_memdump) {
                 dump_memory();
             }
             break;
@@ -261,6 +289,9 @@ void gui_kbd_process()
             break;
     	case GUI_MODE_FSELECT:
             gui_fselect_kbd_process();
+            break;
+    	case GUI_MODE_OSD:
+            gui_osd_kbd_process();
             break;
         default:
             break;
@@ -284,90 +315,6 @@ void gui_kbd_leave()
 }
 
 //-------------------------------------------------------------------
-void gui_draw_histo() {
-    static const int hx=319-HISTO_WIDTH;
-    static const int hy=45;
-    register unsigned int i, v, threshold;
-
-//    draw_rect(hx-1, hy, hx+HISTO_WIDTH, hy+HISTO_HEIGHT, COLOR_WHITE);
-    draw_line(hx, hy, hx+HISTO_WIDTH-1, hy, COLOR_WHITE); //top
-    draw_line(hx, hy+HISTO_HEIGHT, hx+HISTO_WIDTH-1, hy+HISTO_HEIGHT, COLOR_WHITE); //bottom
-    draw_line(hx-1, hy, hx-1, hy+HISTO_HEIGHT, (under_exposed)?COLOR_RED:COLOR_WHITE); //left
-    draw_line(hx+HISTO_WIDTH, hy, hx+HISTO_WIDTH, hy+HISTO_HEIGHT, (over_exposed)?COLOR_RED:COLOR_WHITE); //right
-
-    /* histogram */
-    for (i=0; i<HISTO_WIDTH; i++) {
-        threshold = histogram[i];
-
-        for (v=1; v<HISTO_HEIGHT; v++)
-            draw_pixel(hx+i, hy+HISTO_HEIGHT-v, (v<=threshold)?COLOR_WHITE:COLOR_BG);
-    }
-
-    if (under_exposed) {
-        draw_filled_ellipse(hx+5, hy+5, 3, 3, MAKE_COLOR(COLOR_RED, COLOR_RED));
-    }
-
-    if (over_exposed) {
-        draw_filled_ellipse(hx+HISTO_WIDTH-5, hy+5, 3, 3, MAKE_COLOR(COLOR_RED, COLOR_RED));
-    }
-}
-
-//-------------------------------------------------------------------
-static inline int get_real_av() {
-    return (int)(((float)powf(1.4142135623730950488016887242097/* sqrt(2) */, ((float)GetCurrentAvValue())/96.0))*100.0);
-}
-
-//-------------------------------------------------------------------
-static void sprintf_dist(char *buf, float dist) {
-// length of printed string is always 4
-    if (dist<0) {
-        sprintf(buf, " inf");
-//    } else if (dist<1000) {
-//        sprintf(buf, ".%03d", (int)dist);
-    } else if (dist<10000) {
-        sprintf(buf, "%d.%02d", (int)(dist/1000), (int)(dist/10)%100);
-    } else if (dist<100000) {
-        sprintf(buf, "%02d.%d", (int)(dist/1000), (int)(dist/100)%10);
-    } else {
-        sprintf(buf, "%4d", (int)(dist/1000));
-    }
-}
-
-//-------------------------------------------------------------------
-static void gui_draw_dof() {
-    long zp, av, fp; 
-    float r1, r2, hyp, fl;
-    
-    zp=lens_get_zoom_point();
-    if (zp<0) zp=0;
-    if (zp>=dof_tbl_size) zp=dof_tbl_size-1;
-    fl=dof_tbl[zp].f;
-    
-//    av=shooting_get_av()-9;
-//    if (av<0) av=0;
-//    if (av>dof_av_tbl_size) av=dof_av_tbl_size-1;
-//    av=(dof_av_tbl[av]>=dof_tbl[zp].av)?dof_av_tbl[av]:dof_tbl[zp].av;
-    av=get_real_av();
-    
-    fp=lens_get_focus_pos();
-    hyp=(fl*fl)/(10*6*av);
-    r1=(hyp*fp)/(hyp+fp);
-    r2=(hyp*fp)/(hyp-fp);
-
-    draw_txt_string(5, 0, "R1/R2:", MAKE_COLOR(COLOR_BG, COLOR_FG));
-    sprintf_dist(osd_buf, r1);
-    osd_buf[4]='/';
-    sprintf_dist(osd_buf+5, r2);
-    draw_txt_string(5+6, 0, osd_buf, MAKE_COLOR(COLOR_BG, COLOR_FG));
-        
-    draw_txt_string(5, 1, "DOF/HYP:", MAKE_COLOR(COLOR_BG, COLOR_FG));
-    sprintf_dist(osd_buf, r2-r1);
-    osd_buf[4]='/';
-    sprintf_dist(osd_buf+5, hyp);
-    draw_txt_string(5+8, 1, osd_buf, MAKE_COLOR(COLOR_BG, COLOR_FG));
-}
-
-//-------------------------------------------------------------------
 
 extern long physw_status[3];
 extern long GetPropertyCase(long opt_id, void *buf, long bufsize);
@@ -376,47 +323,31 @@ void gui_draw_osd() {
     unsigned int m, n = 0;
     coord x;
     
-    if (!conf_show_osd) return;
+    if (!conf.show_osd) return;
 
     m = mode_get();
     
     if ((m&MODE_MASK) == MODE_REC) {
         m &= MODE_SHOOTING_MASK;
-        if (m==MODE_SCN_WATER || m==MODE_SCN_NIGHT || m==MODE_SCN_CHILD || m==MODE_SCN_PARTY || m==MODE_STITCH ||
-            m==MODE_SCN_GRASS || m==MODE_SCN_SNOW  || m==MODE_SCN_BEACH || m==MODE_SCN_FIREWORK || m==MODE_VIDEO)
-            ++n;
+//        if (m==MODE_SCN_WATER || m==MODE_SCN_NIGHT || m==MODE_SCN_CHILD || m==MODE_SCN_PARTY || m==MODE_STITCH ||
+//            m==MODE_SCN_GRASS || m==MODE_SCN_SNOW  || m==MODE_SCN_BEACH || m==MODE_SCN_FIREWORK || m==MODE_VIDEO)
+//            ++n;
 
-        if (conf_save_raw){
-    	    draw_txt_string(40, 3+n, "RAW", MAKE_COLOR(COLOR_BG, COLOR_FG));
-    	    ++n;
-        }
-        if (state_kbd_script_run){
-    	    draw_txt_string(40, 3+n, "SCR", MAKE_COLOR(COLOR_BG, COLOR_FG));
-    	    ++n;
-        }
-        if (/*(mode_get()&MODE_MASK) == MODE_REC &&*/ (gui_mode==GUI_MODE_NONE || gui_mode==GUI_MODE_ALT) && 
-             conf_show_histo && kbd_is_key_pressed(KEY_SHOOT_HALF)) {
-            gui_draw_histo();
-            draw_txt_string(40, 3+n, (under_exposed || over_exposed)?"EXP":"   ", MAKE_COLOR(COLOR_BG, COLOR_FG));
-            ++n;
+        if ((gui_mode==GUI_MODE_NONE || gui_mode==GUI_MODE_ALT) && kbd_is_key_pressed(KEY_SHOOT_HALF)) {
+            if (conf.show_histo) {
+                gui_osd_draw_histo();
+            }
+            if (conf.show_dof){
+                gui_osd_draw_dof();
+            }
         }
 
-        n=6;
-        sprintf(osd_buf, "Z:%ld/%ld%8s", lens_get_zoom_point(), lens_get_zoom_pos(), "");
-        osd_buf[8]=0;
-        draw_txt_string(35, n++, osd_buf, MAKE_COLOR(COLOR_BG, COLOR_FG));
-        sprintf(osd_buf, "F:%ld%8s", lens_get_focus_pos(), "");
-        osd_buf[8]=0;
-        draw_txt_string(35, n++, osd_buf, MAKE_COLOR(COLOR_BG, COLOR_FG));
-        {
-        int av=get_real_av();
-        sprintf(osd_buf, "Av:%d.%02d ", av/100, av%100);
-        osd_buf[8]=0;
-        draw_txt_string(35, n++, osd_buf, MAKE_COLOR(COLOR_BG, COLOR_FG));
+        if (conf.show_state) {
+            gui_osd_draw_state();
         }
 
-        if (conf_show_dof && kbd_is_key_pressed(KEY_SHOOT_HALF)){
-            gui_draw_dof();
+        if (conf.show_values) {
+            gui_osd_draw_values();
         }
     }
 
@@ -424,13 +355,13 @@ void gui_draw_osd() {
 
     if (debug_vals_show) {
 	sprintf(osd_buf, "1:%8lx  ", ~physw_status[2]);
-	draw_txt_string(28, 10, osd_buf, MAKE_COLOR(COLOR_BG, COLOR_FG));
+	draw_txt_string(28, 10, osd_buf, conf.osd_color);
 
 	sprintf(osd_buf, "2:%8ld  ", get_tick_count());
-	draw_txt_string(28, 11, osd_buf, MAKE_COLOR(COLOR_BG, COLOR_FG));
+	draw_txt_string(28, 11, osd_buf, conf.osd_color);
 
 	sprintf(osd_buf, "3:%d %d ", state_expos_under, state_expos_over);
-	draw_txt_string(28, 12, osd_buf, MAKE_COLOR(COLOR_BG, COLOR_FG));
+	draw_txt_string(28, 12, osd_buf, conf.osd_color);
     }
 
     if (debug_propcase_show){
@@ -442,7 +373,7 @@ void gui_draw_osd() {
 	    p = debug_propcase_page*10+i;
 	    GetPropertyCase(p, &r, 4);
 	    sprintf(sbuf, "%3d: %d              ", p, r);sbuf[20]=0;
-	    draw_string(64,16+16*i,sbuf, MAKE_COLOR(COLOR_BG, COLOR_FG));
+	    draw_string(64,16+16*i,sbuf, conf.osd_color);
 	}
     }
 
@@ -466,9 +397,22 @@ void gui_menuproc_save(int arg)
 }
 
 //-------------------------------------------------------------------
+static void gui_menuproc_reset_selected(unsigned int btn) {
+    if (btn==MBOX_BTN_YES)
+        conf_load_defaults();
+}
+
+void gui_menuproc_reset(int arg)
+{
+    gui_mbox_init("*** Reset ***", 
+                  "Are you SURE to reset\noptions to default?",
+                  MBOX_FUNC_RESTORE|MBOX_TEXT_CENTER|MBOX_BTN_YES_NO, gui_menuproc_reset_selected);
+}
+
+//-------------------------------------------------------------------
 void gui_draw_palette(int arg) {
     draw_restore();
-    gui_palette_init();
+    gui_palette_init(PALETTE_MODE_DEFAULT, 0x00, NULL);
     gui_mode = GUI_MODE_PALETTE;
 }
 
@@ -478,7 +422,7 @@ void gui_show_build_info(int arg) {
                   "Date:    "   __DATE__ 
                   "\nTime:    " __TIME__ 
                   "\nCamera:  " PLATFORM 
-                  "\nFW Vers: " PLATFORMSUB, MBOX_FUNC_RESTORE|MBOX_TEXT_LEFT);
+                  "\nFW Vers: " PLATFORMSUB, MBOX_FUNC_RESTORE|MBOX_TEXT_LEFT, NULL);
 }
 
 //-------------------------------------------------------------------
@@ -518,13 +462,14 @@ void gui_show_memory_info(int arg) {
     }
     
     sprintf(buf, "Free memory: %d bytes", size);
-    gui_mbox_init("*** Memory Info ***", buf, 1);
+    gui_mbox_init("*** Memory Info ***", buf, MBOX_FUNC_RESTORE|MBOX_TEXT_CENTER, NULL);
 }
 
 //-------------------------------------------------------------------
 void gui_draw_reversi(int arg) {
     if ((mode_get()&MODE_MASK) != MODE_PLAY) {
-        gui_mbox_init("*** Information ***", "Please switch your camera\nto PLAY mode\nand try again. :)" , MBOX_FUNC_RESTORE|MBOX_TEXT_CENTER);
+        gui_mbox_init("*** Information ***", "Please switch your camera\nto PLAY mode\nand try again. :)",
+                      MBOX_FUNC_RESTORE|MBOX_TEXT_CENTER, NULL);
         return;
     }
     gui_mode = GUI_MODE_REVERSI;
@@ -533,7 +478,8 @@ void gui_draw_reversi(int arg) {
 
 //-------------------------------------------------------------------
 void gui_test(int arg) {
-    gui_mbox_init("*** Information ***", "Test multibuttons" , MBOX_FUNC_RESTORE|MBOX_TEXT_CENTER|MBOX_BTN_YES_NO_CANCEL);
+    gui_mbox_init("*** Information ***", "Test multibuttons", 
+                  MBOX_FUNC_RESTORE|MBOX_TEXT_CENTER|MBOX_BTN_YES_NO_CANCEL, NULL);
 }
 
 //-------------------------------------------------------------------
@@ -581,6 +527,12 @@ static void gui_load_script_selected(const char *fn) {
 }
 void gui_load_script(int arg) {
     gui_fselect_init("A", gui_load_script_selected);
+}
+
+//-------------------------------------------------------------------
+void gui_draw_osd_le(int arg) {
+    gui_mode = GUI_MODE_OSD;
+    gui_osd_init();
 }
 
 //-------------------------------------------------------------------

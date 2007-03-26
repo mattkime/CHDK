@@ -1,6 +1,11 @@
 #ifndef GUI_H
 #define GUI_H
 
+typedef unsigned int    coord;
+typedef unsigned short 	color;
+
+#define MAKE_COLOR(bg, fg)	((color)((((char)bg)<<8)|((char)fg)))
+
 enum Gui_Mode { GUI_MODE_NONE = 0,
                 GUI_MODE_ALT,
                 GUI_MODE_MENU,
@@ -8,7 +13,8 @@ enum Gui_Mode { GUI_MODE_NONE = 0,
                 GUI_MODE_MBOX,
                 GUI_MODE_REVERSI,
                 GUI_MODE_DEBUG,
-                GUI_MODE_FSELECT };
+                GUI_MODE_FSELECT,
+                GUI_MODE_OSD };
 
 extern void gui_redraw();
 extern void gui_force_restore();

@@ -172,11 +172,11 @@ static uchar CanPlace(uchar Player) {
 //-------------------------------------------------------------------
 static void Result() {
     if (NumPl1>NumPl2)
-        gui_mbox_init("*** Game Results ***", "You won the game! :)", MBOX_TEXT_CENTER);
+        gui_mbox_init("*** Game Results ***", "You won the game! :)", MBOX_TEXT_CENTER, NULL);
     else if (NumPl1<NumPl2)
-        gui_mbox_init("*** Game Results ***", "You lost the game! :(", MBOX_TEXT_CENTER);
+        gui_mbox_init("*** Game Results ***", "You lost the game! :(", MBOX_TEXT_CENTER, NULL);
     else
-        gui_mbox_init("*** Game Results ***", "Draw! :/", MBOX_TEXT_CENTER);
+        gui_mbox_init("*** Game Results ***", "Draw! :/", MBOX_TEXT_CENTER, NULL);
     redraw();
     redrawstatus();
     need_redraw_all = 1;
@@ -246,10 +246,10 @@ static void Clk(uchar x, uchar y) {
     else {
         Placed=Place(x,y ,CurrPlayer,0);
         if (Placed==0) { 
-            gui_mbox_init("*** Wrong move ***", "You can't place here!", MBOX_TEXT_CENTER);
+            gui_mbox_init("*** Wrong move ***", "You can't place here!", MBOX_TEXT_CENTER, NULL);
             need_redraw_all = 1;
         } else if (Placed==0xFF) { 
-            gui_mbox_init("*** Wrong move ***", "This cell is not empty!", MBOX_TEXT_CENTER);
+            gui_mbox_init("*** Wrong move ***", "This cell is not empty!", MBOX_TEXT_CENTER, NULL);
             need_redraw_all = 1;
         } else {
             Placed=Place(x, y, CurrPlayer,1);
@@ -382,7 +382,7 @@ void gui_reversi_kbd_process() {
             need_redraw = 1;
             break;
         case KEY_DISPLAY:
-            gui_mbox_init("*** About ***", "REVERSI\n(c) GrAnd, 2007", MBOX_TEXT_CENTER);
+            gui_mbox_init("*** About ***", "REVERSI\n(c) GrAnd, 2007", MBOX_TEXT_CENTER, NULL);
             need_redraw_all = 1;
             break;
     }

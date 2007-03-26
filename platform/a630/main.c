@@ -1,5 +1,6 @@
 #include "platform.h"
 #include "core.h"
+#include "stdlib.h"
 #include "keyboard.h"
 
 /* VxWorks stuff */
@@ -555,6 +556,10 @@ int shooting_get_av()
 	    return aperture_sizes_table[i].id;
     }
     return 0;
+}
+
+int shooting_get_real_av() {
+    return (int)(((float)powf(1.4142135623730950488016887242097/* sqrt(2) */, ((float)GetCurrentAvValue())/96.0))*100.0);
 }
 
 void shooting_set_av(int v)

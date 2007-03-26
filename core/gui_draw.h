@@ -18,18 +18,11 @@
 #define COLOR_SELECTED_FG	COLOR_WHITE
 #define COLOR_ALT_BG 		0xD4
 
-#define MAKE_COLOR(bg, fg)	((color)((((char)bg)<<8)|((char)fg)))
-
 #define FONT_WIDTH 		8
 #define FONT_HEIGHT             16
 
-
 //-------------------------------------------------------------------
-typedef unsigned int 		coord;
-typedef unsigned short 		color;
-
 extern unsigned int		screen_width, screen_height, screen_size;
-
 
 //-------------------------------------------------------------------
 void draw_init();

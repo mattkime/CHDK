@@ -30,35 +30,34 @@ static unsigned long get_batt_perc() {
     unsigned long v;
 
     v = get_batt_average();
-    if (v>conf_batt_volts_max) v=conf_batt_volts_max;
-    if (v<conf_batt_volts_min) v=conf_batt_volts_min;
-    return (v-conf_batt_volts_min)*100/(conf_batt_volts_max-conf_batt_volts_min);
+    if (v>conf.batt_volts_max) v=conf.batt_volts_max;
+    if (v<conf.batt_volts_min) v=conf.batt_volts_min;
+    return (v-conf.batt_volts_min)*100/(conf.batt_volts_max-conf.batt_volts_min);
 }
 
 //-------------------------------------------------------------------
 static void gui_batt_draw_icon () {
-    static const coord bx=178, by=4;
     coord x;
 
     // battery icon
-    draw_rect(bx-1, by, bx+25+1, by+10, COLOR_WHITE);
-    draw_rect(bx-3, by+2, bx-2, by+8, COLOR_WHITE);
-    draw_line(bx, by+11, bx+25+2, by+11, COLOR_BLACK);
-    draw_line(bx+25+2, by+1, bx+25+2, by+10, COLOR_BLACK);
+    draw_rect(conf.batt_icon_pos.x+3-1, conf.batt_icon_pos.y, conf.batt_icon_pos.x+3+25+1, conf.batt_icon_pos.y+10, conf.batt_icon_color&0xFF);
+    draw_rect(conf.batt_icon_pos.x+3-3, conf.batt_icon_pos.y+2, conf.batt_icon_pos.x+3-2, conf.batt_icon_pos.y+8, conf.batt_icon_color&0xFF);
+    draw_line(conf.batt_icon_pos.x+3, conf.batt_icon_pos.y+11, conf.batt_icon_pos.x+3+25+2, conf.batt_icon_pos.y+11, COLOR_BLACK);
+    draw_line(conf.batt_icon_pos.x+3+25+2, conf.batt_icon_pos.y+1, conf.batt_icon_pos.x+3+25+2, conf.batt_icon_pos.y+10, COLOR_BLACK);
     
     // battery fill
-    x=bx+1+25-(get_batt_perc()/4);
-    if (x<=bx) x=bx+1;
-    if (x>bx+25+1) x=bx+25+1;
-    draw_filled_rect(bx, by+1, x-1, by+9, MAKE_COLOR(COLOR_TRANSPARENT, COLOR_TRANSPARENT));
-    draw_filled_rect(x, by+1, bx+25, by+9, MAKE_COLOR(COLOR_WHITE, COLOR_WHITE));
+    x=conf.batt_icon_pos.x+3+1+25-(get_batt_perc()/4);
+    if (x<=conf.batt_icon_pos.x+3) x=conf.batt_icon_pos.x+3+1;
+    if (x>conf.batt_icon_pos.x+3+25+1) x=conf.batt_icon_pos.x+3+25+1;
+    draw_filled_rect(conf.batt_icon_pos.x+3, conf.batt_icon_pos.y+1, x-1, conf.batt_icon_pos.y+9, MAKE_COLOR(COLOR_TRANSPARENT, COLOR_TRANSPARENT));
+    draw_filled_rect(x, conf.batt_icon_pos.y+1, conf.batt_icon_pos.x+3+25, conf.batt_icon_pos.y+9, MAKE_COLOR(conf.batt_icon_color&0xFF, conf.batt_icon_color&0xFF));
 }
 
 //-------------------------------------------------------------------
 static void gui_batt_draw_charge(){
     sprintf(osd_buf, "Chg:%3d%%", get_batt_perc());
     osd_buf[8]=0;
-    draw_string(screen_width-8*FONT_WIDTH-2, screen_height-64, osd_buf, MAKE_COLOR(COLOR_BG, COLOR_FG));
+    draw_string(conf.batt_txt_pos.x, conf.batt_txt_pos.y, osd_buf, conf.osd_color);
 }
 
 //-------------------------------------------------------------------
@@ -68,18 +67,18 @@ static void gui_batt_draw_volts() {
     v = get_batt_average();
     sprintf(osd_buf, "V:%ld.%03ld", v/1000, v%1000);
     osd_buf[7]=0;
-    draw_string(screen_width-7*FONT_WIDTH-2, screen_height-64, osd_buf, MAKE_COLOR(COLOR_BG, COLOR_FG));
+    draw_string(conf.batt_txt_pos.x, conf.batt_txt_pos.y, osd_buf, conf.osd_color);
 }
 
 //-------------------------------------------------------------------
 void gui_batt_draw_osd() {
-    if (conf_batt_perc_show) {
+    if (conf.batt_perc_show) {
         gui_batt_draw_charge();
-    } else if (conf_batt_volts_show) {
+    } else if (conf.batt_volts_show) {
         gui_batt_draw_volts();
     }
     
-    if (conf_batt_icon_show) {
+    if (conf.batt_icon_show) {
         gui_batt_draw_icon();
     }
 }

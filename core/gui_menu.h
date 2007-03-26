@@ -10,6 +10,8 @@
 #define MENUITEM_UP             5
 #define MENUITEM_TEXT           6
 #define MENUITEM_ENUM           7
+#define MENUITEM_COLOR_BG       8
+#define MENUITEM_COLOR_FG       9
 
 #define MENUITEM_F_MASK         0x00f0
 #define MENUITEM_F_UNSIGNED     0x0010

@@ -6,6 +6,7 @@
 #include "ubasic.h"
 #include "gui.h"
 #include "gui_draw.h"
+#include "gui_palette.h"
 #include "gui_menu.h"
 
 //-------------------------------------------------------------------
@@ -31,6 +32,7 @@ static int          gui_menu_redraw;
 
 static int          count;
 static coord        x, y, w=37;
+static unsigned char *item_color;
 
 //-------------------------------------------------------------------
 static void gui_menu_set_curr_menu(CMenu *menu_ptr, int top_item, int curr_item) {
@@ -50,6 +52,14 @@ void gui_menu_init(CMenu *menu_ptr) {
     y = (screen_height/FONT_HEIGHT-NUM_LINES)>>1;
     
     gui_menu_redraw=2;
+}
+
+//-------------------------------------------------------------------
+static void gui_menu_color_selected(color clr) {
+    *item_color = (unsigned char)(clr&0xFF);
+    gui_menu_redraw=2;
+    draw_restore();
+    gui_force_restore();
 }
 
 //-------------------------------------------------------------------
@@ -151,6 +161,7 @@ void gui_menu_kbd_process() {
                     	if (curr_menu->menu[gui_menu_curr_item].value) {
                             ((void (*)(int arg))(curr_menu->menu[gui_menu_curr_item].value))(curr_menu->menu[gui_menu_curr_item].arg);
                             gui_menu_curr_item = -1;
+                            gui_menu_top_item = 0;
                             gui_menu_redraw=2;
                         }
                         break;
@@ -184,6 +195,14 @@ void gui_menu_kbd_process() {
                             gui_force_restore();
                         }
                         break;
+                    case MENUITEM_COLOR_FG:
+                    case MENUITEM_COLOR_BG:
+                        draw_restore();
+                        item_color=((unsigned char*)(curr_menu->menu[gui_menu_curr_item].value)) + (((curr_menu->menu[gui_menu_curr_item].type & MENUITEM_MASK)==MENUITEM_COLOR_BG)?1:0);
+                        gui_palette_init(PALETTE_MODE_SELECT, (*item_color)&0xFF, gui_menu_color_selected);
+                        gui_set_mode(GUI_MODE_PALETTE);
+                        gui_menu_redraw=2;
+                        break;
                 }
             }
             break;
@@ -197,14 +216,14 @@ void gui_menu_draw_initial() {
     
     l = strlen(curr_menu->title);
     xx=x+((w-l)>>1);
-    draw_txt_string(xx-5, y-2, f, MAKE_COLOR(COLOR_BG, COLOR_FG));
-    draw_txt_string(xx, y-2, curr_menu->title, MAKE_COLOR(COLOR_BG, COLOR_FG));
-    draw_txt_string(xx+l, y-2, f, MAKE_COLOR(COLOR_BG, COLOR_FG));
+    draw_txt_string(xx-5, y-2, f, conf.menu_color);
+    draw_txt_string(xx, y-2, curr_menu->title, conf.menu_color);
+    draw_txt_string(xx+l, y-2, f, conf.menu_color);
 
     // scrollbar background
     if (count>NUM_LINES) {
         draw_filled_rect((x+w)*FONT_WIDTH, y*FONT_HEIGHT, 
-                         (x+w)*FONT_WIDTH+8, (y+NUM_LINES)*FONT_HEIGHT-1, MAKE_COLOR(COLOR_BG, COLOR_BG));
+                         (x+w)*FONT_WIDTH+8, (y+NUM_LINES)*FONT_HEIGHT-1, MAKE_COLOR(conf.menu_color>>8, conf.menu_color>>8));
     }
 }
 
@@ -220,7 +239,7 @@ void gui_menu_draw() {
             gui_menu_draw_initial();
 
         for (imenu=gui_menu_top_item, i=0; curr_menu->menu[imenu].text && i<NUM_LINES; ++imenu, ++i){
-            cl = (gui_menu_curr_item==imenu)?MAKE_COLOR(COLOR_SELECTED_BG, COLOR_SELECTED_FG):MAKE_COLOR(COLOR_BG, COLOR_FG);
+            cl = (gui_menu_curr_item==imenu)?MAKE_COLOR(COLOR_SELECTED_BG, COLOR_SELECTED_FG):conf.menu_color;
             cb = (gui_menu_curr_item==imenu)?'\x10':' ';
             ce = (gui_menu_curr_item==imenu)?'\x11':' ';
 
@@ -241,11 +260,18 @@ void gui_menu_draw() {
             case MENUITEM_TEXT:
                 if (curr_menu->menu[imenu].text[0]=='-' && curr_menu->menu[imenu].text[1]==0) {
                     //separator
-                    draw_txt_string(x, y+i, " 컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴� ", MAKE_COLOR(COLOR_BG, COLOR_GREY));
+                    draw_txt_string(x, y+i, " 컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴� ", conf.menu_color);
                 } else {
                     sprintf(tbuf, "%c%-35s%c", cb, curr_menu->menu[imenu].text, ce);
                     draw_txt_string(x, y+i, tbuf, cl);
                 }
+                break;
+            case MENUITEM_COLOR_FG:
+            case MENUITEM_COLOR_BG:
+                sprintf(tbuf, "%c%-33s", cb, curr_menu->menu[imenu].text);
+                draw_txt_string(x, y+i, tbuf, cl);
+                draw_txt_string(x+34, y+i, "\xf9\xfa", (cl&0xFF00)|(((*(curr_menu->menu[imenu].value))>>(((curr_menu->menu[imenu].type & MENUITEM_MASK)==MENUITEM_COLOR_BG)?8:0))&0xFF));
+                draw_txt_char(x+36, y+i, ce, cl);
                 break;
             case MENUITEM_ENUM:
                 break;

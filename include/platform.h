@@ -115,6 +115,7 @@ void shooting_set_av(int v);
 void shooting_set_av_rel(int v);
 
 int GetCurrentAvValue();
+int shooting_get_real_av();
 
 /******************************************************************/
 

@@ -32,9 +32,10 @@ static struct {
 static int      mbox_buttons[MAX_BUTTONS], mbox_buttons_num, mbox_button_active;
 static coord    mbox_buttons_x, mbox_buttons_y;
 #define BUTTON_SEP      18
+static void (*mbox_on_select)(unsigned int btn);
 
 //-------------------------------------------------------------------
-void gui_mbox_init(const char* title, const char* msg, const unsigned int flags) {
+void gui_mbox_init(const char* title, const char* msg, const unsigned int flags, void (*on_select)(unsigned int btn)) {
     int i;
 
     mbox_buttons_num = 0;
@@ -51,6 +52,7 @@ void gui_mbox_init(const char* title, const char* msg, const unsigned int flags)
     mbox_msg = msg;
     mbox_to_draw = 1;
     mbox_flags = flags;
+    mbox_on_select = on_select;
     gui_set_mode(GUI_MODE_MBOX);
 
 }
@@ -155,6 +157,8 @@ void gui_mbox_kbd_process() {
         gui_set_mode(gui_mbox_mode_old);
         if (mbox_flags & MBOX_FUNC_RESTORE)
             draw_restore();
+        if (mbox_on_select) 
+            mbox_on_select(buttons[mbox_buttons[mbox_button_active]].flag);
         break;
     }
 }

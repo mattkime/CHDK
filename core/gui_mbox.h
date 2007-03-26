@@ -19,7 +19,7 @@
 #define MBOX_FUNC_RESTORE       0x0400
 
 //-------------------------------------------------------------------
-extern void gui_mbox_init(const char* title, const char* msg, const unsigned int flags);
+extern void gui_mbox_init(const char* title, const char* msg, const unsigned int flags, void (*on_select)(unsigned int btn));
 extern void gui_mbox_kbd_process();
 extern void gui_mbox_draw();
 

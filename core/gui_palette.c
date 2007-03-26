@@ -4,47 +4,67 @@
 #include "keyboard.h"
 #include "conf.h"
 #include "ubasic.h"
+#include "gui.h"
 #include "gui_draw.h"
 #include "gui_palette.h"
 
 //-------------------------------------------------------------------
 static volatile int full_palette;
-static unsigned char cl;
+static color cl;
 static volatile char counter;
+static int palette_mode;
+static void (*palette_on_select)(color clr);
+static int gui_palette_redraw;
+
 #define COUNTER_N 100
+
 //-------------------------------------------------------------------
-void gui_palette_init() {
-    full_palette = 1;
-    cl = 0x00;
+void gui_palette_init(int mode, color st_color, void (*on_select)(color clr)) {
+    full_palette = (mode!=PALETTE_MODE_SELECT);
+    cl = st_color;
+    palette_mode = mode;
+    palette_on_select = on_select;
     counter = COUNTER_N;
+    gui_palette_redraw = 1;
 }
 
 //-------------------------------------------------------------------
 void gui_palette_kbd_process() {
     switch (kbd_get_clicked_key()) {
-    case KEY_UP:
-    	if (!full_palette) {
-            cl = (((cl>>4)+1)<<4)|(cl&0x0f);
-        }
-        break;
     case KEY_DOWN:
     	if (!full_palette) {
-            cl = (((cl>>4)-1)<<4)|(cl&0x0f);
+            cl = ((((cl>>4)+1)<<4)|(cl&0x0f))&0xFF;
+            gui_palette_redraw = 1;
+        }
+        break;
+    case KEY_UP:
+    	if (!full_palette) {
+            cl = ((((cl>>4)-1)<<4)|(cl&0x0f))&0xFF;
+            gui_palette_redraw = 1;
         }
         break;
     case KEY_LEFT:
     	if (!full_palette) {
-            cl = (((cl&0x0f)-1)&0x0f)|(cl&0xf0);
+            cl = ((((cl&0x0f)-1)&0x0f)|(cl&0xf0))&0xFF;
+            gui_palette_redraw = 1;
         }
         break;
     case KEY_RIGHT:
     	if (!full_palette) {
-            cl = (((cl&0x0f)+1)&0x0f)|(cl&0xf0);
+            cl = ((((cl&0x0f)+1)&0x0f)|(cl&0xf0))&0xFF;
+            gui_palette_redraw = 1;
         }
         break;
     case KEY_SET:
-    	full_palette = !full_palette;
-    	counter = 0;
+        if (palette_mode!=PALETTE_MODE_SELECT) {
+            full_palette = !full_palette;
+            counter = 0;
+            gui_palette_redraw = 1;
+        } else {
+            if (palette_on_select) 
+                palette_on_select(cl);
+           gui_set_mode(GUI_MODE_MENU);
+        }
         break;
     }
 }
@@ -52,32 +72,55 @@ void gui_palette_kbd_process() {
 //-------------------------------------------------------------------
 void gui_palette_draw() {
     unsigned int x, y;
-    char c, f=0;
+    char f=0;
+    color c;
+    static char buf[16];
 
-    if (full_palette) {
-        if (!counter || counter == COUNTER_N) {
-            for (y=0; y<screen_height; ++y) {
-                for (x=0; x<screen_width; ++x) {
-                    c = ((y*16/screen_height)<<4)|(x*16/screen_width);
-                    draw_pixel(x, y, c);
+    switch (palette_mode) {
+        case PALETTE_MODE_DEFAULT:
+            if (full_palette) {
+                if (!counter || counter == COUNTER_N) {
+                    for (y=0; y<screen_height; ++y) {
+                        for (x=0; x<screen_width; ++x) {
+                            c = ((y*16/screen_height)<<4)|(x*16/screen_width);
+                            draw_pixel(x, y, c);
+                        }
+                    }
+                    if (counter) {
+                        draw_txt_string(6, 7, "Press SET to draw particular color", MAKE_COLOR(COLOR_BLACK, COLOR_WHITE));
+                        draw_txt_string(6, 8, "       Press MENU to exit         ", MAKE_COLOR(COLOR_BLACK, COLOR_WHITE));
+                    }
                 }
+                if (counter)
+                    --counter;
+                f=1;
             }
-            if (counter) {
-                draw_txt_string(6, 7, "Press SET to draw particular color", MAKE_COLOR(COLOR_BLACK, COLOR_WHITE));
-                draw_txt_string(6, 8, "       Press MENU to exit         ", MAKE_COLOR(COLOR_BLACK, COLOR_WHITE));
+            
+            if (!full_palette) {
+                sprintf(buf, " Color: 0x%02X ", cl);
+                draw_txt_string(0, 0, buf, MAKE_COLOR(COLOR_BLACK, COLOR_WHITE));
+                draw_filled_rect(20, 20, screen_width-20, screen_height-20, MAKE_COLOR(cl, COLOR_WHITE));
+                draw_txt_string(0, 14, "Use \x18\x19\x1b\x1a to change color", MAKE_COLOR(COLOR_BLACK, COLOR_WHITE));
             }
-        }
-        if (counter)
-            --counter;
-        f=1;
-    }
-    
-    if (!full_palette) {
-        char buf[16];
-        sprintf(buf, " Color: 0x%02X ", cl);
-        draw_txt_string(0, 0, buf, MAKE_COLOR(COLOR_BLACK, COLOR_WHITE));
-        draw_filled_rect(20, 20, screen_width-20, screen_height-20, MAKE_COLOR(cl, COLOR_WHITE));
-        draw_txt_string(0, 14, "Use \x18\x19\x1b\x1a to change color", MAKE_COLOR(COLOR_BLACK, COLOR_WHITE));
+            break;
+        case PALETTE_MODE_SELECT:
+            if (gui_palette_redraw) {
+                #define CELL_SIZE 13
+                draw_string(screen_width-26*FONT_WIDTH, 0, " Use \x18\x19\x1b\x1a to change color ", MAKE_COLOR(COLOR_BLACK, COLOR_WHITE));
+                sprintf(buf, " Color: 0x%02hX ", (unsigned char)cl);
+                draw_txt_string(0, 0, buf, MAKE_COLOR(COLOR_BLACK, COLOR_WHITE));
+                for (y=0; y<16; ++y) {
+                    for (x=0; x<16; ++x) {
+                        c = (y<<4)|x;
+                        draw_filled_rect(x*CELL_SIZE, y*CELL_SIZE+FONT_HEIGHT, (x+1)*CELL_SIZE, (y+1)*CELL_SIZE+FONT_HEIGHT, MAKE_COLOR(c, COLOR_WHITE));
+                    }
+                }
+                y=(cl>>4)&0x0F; x=cl&0x0F;
+                draw_rect(x*CELL_SIZE, y*CELL_SIZE+FONT_HEIGHT, (x+1)*CELL_SIZE, (y+1)*CELL_SIZE+FONT_HEIGHT, COLOR_RED);
+                draw_filled_rect(16*CELL_SIZE, FONT_HEIGHT, screen_width-1, FONT_HEIGHT+16*CELL_SIZE, MAKE_COLOR(cl, COLOR_WHITE));
+                gui_palette_redraw = 0;
+            }
+            break;
     }
 }
 

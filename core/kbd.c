@@ -59,7 +59,7 @@ void kbd_sched_shoot()
 {
 // WARNING stack program flow is reversed
 
-    kbd_sched_delay(conf_script_shoot_delay*100);// XXX FIXME find out how to wait to jpeg save finished
+    kbd_sched_delay(conf.script_shoot_delay*100);// XXX FIXME find out how to wait to jpeg save finished
 
     KBD_STACK_PUSH(SCRIPT_WAIT_SAVE);
 
@@ -92,9 +92,9 @@ void script_start()
     kbd_key_release_all();
     ubasic_init(state_ubasic_script);
 
-    ubasic_set_variable('a' - 'a', conf_ubasic_var_a);
-    ubasic_set_variable('b' - 'a', conf_ubasic_var_b);
-    ubasic_set_variable('c' - 'a', conf_ubasic_var_c);
+    ubasic_set_variable('a' - 'a', conf.ubasic_var_a);
+    ubasic_set_variable('b' - 'a', conf.ubasic_var_b);
+    ubasic_set_variable('c' - 'a', conf.ubasic_var_c);
 }
 
 void script_end()
