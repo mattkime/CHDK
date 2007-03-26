@@ -642,7 +642,7 @@ int mode_get() {
     return (mode);
 }
 
-const DofTable dof_tbl[9] = {
+const DofTable dof_tbl[] = {
         { 7300, 28},
         { 8460, 32},
         { 9565, 32},
@@ -652,4 +652,7 @@ const DofTable dof_tbl[9] = {
         {17342, 35},
         {21709, 35},
         {29200, 41}};
-const int dof_av_tbl[10] = {28, 32, 35, 40, 45, 50, 56, 63, 71, 80};
+const int dof_tbl_size = sizeof(dof_tbl)/sizeof(dof_tbl[0]);
+
+const int dof_av_tbl[] = {28, 32, 35, 40, 45, 50, 56, 63, 71, 80};
+const int dof_av_tbl_size = sizeof(dof_av_tbl)/sizeof(dof_av_tbl[0]);

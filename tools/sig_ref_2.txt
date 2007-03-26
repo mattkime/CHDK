@@ -21,3 +21,4 @@ isupper 0xFFEF4F3C
 rand 0xFFEF8360
 srand 0xFFEF8384
 IsStrobeChargeCompleted 0xFFD11B24
+GetCurrentAvValue 0xFFEB3D50 18

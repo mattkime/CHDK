@@ -240,7 +240,7 @@ void gui_kbd_process()
     
     switch (gui_mode) {
         case GUI_MODE_ALT:
-            if (kbd_is_key_clicked(KEY_ERASE)) {
+            if (kbd_is_key_clicked(KEY_ERASE) && confns_enable_memdump) {
                 dump_memory();
             }
             break;
@@ -340,12 +340,12 @@ static void gui_draw_dof() {
     
     zp=lens_get_zoom_point();
     if (zp<0) zp=0;
-    if (zp>8) zp=8;
+    if (zp>=dof_tbl_size) zp=dof_tbl_size-1;
     fl=dof_tbl[zp].f;
     
 //    av=shooting_get_av()-9;
 //    if (av<0) av=0;
-//    if (av>9) av=9;
+//    if (av>dof_av_tbl_size) av=dof_av_tbl_size-1;
 //    av=(dof_av_tbl[av]>=dof_tbl[zp].av)?dof_av_tbl[av]:dof_tbl[zp].av;
     av=get_real_av();
     

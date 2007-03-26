@@ -56,8 +56,10 @@ typedef struct {
 
 /******************************************************************/
 
-extern const DofTable     dof_tbl[9];
-extern const int          dof_av_tbl[10];
+extern const DofTable   dof_tbl[];
+extern const int        dof_av_tbl[];
+extern const int        dof_tbl_size;
+extern const int        dof_av_tbl_size;
 
 /******************************************************************/
 

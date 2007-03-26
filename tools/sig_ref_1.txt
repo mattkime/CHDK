@@ -81,4 +81,4 @@ srand 0xFFEB5278
 stat 0xFFEB7EC4
 qsort 0xFFEB5230
 localtime 0xFFEB65F0
-GetCurrentAvValue 0xFFE71314
+GetCurrentAvValue 0xFFE71314 14

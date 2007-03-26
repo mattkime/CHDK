@@ -18,8 +18,9 @@ NSTUB(Fread_Fut, 0xffc5a5bc)
 NSTUB(FreeMemory, 0xffc01abc)
 NSTUB(Fseek_Fut, 0xffc5a6a4)
 NSTUB(Fwrite_Fut, 0xffc5a60c)
-// Best match: 78%
-NSTUB(GetCurrentAvValue, 0xffea7470)
+NSTUB(GetCurrentAvValue, 0xffea6ffc)
+// ALT: NSTUB(GetCurrentAvValue, 0xffea70f4) // 13/0
+// ALT: NSTUB(GetCurrentAvValue, 0xffea9528) // 13/0
 // Best match: 96%
 NSTUB(GetFocusLensSubjectDistance, 0xffe9b4fc)
 NSTUB(GetPropertyCase, 0xffc14de4)

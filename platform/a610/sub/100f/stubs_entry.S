@@ -18,6 +18,7 @@ NSTUB(FreeMemory, 0xffc01b28)
 NSTUB(Fseek_Fut, 0xffc560c0)
 NSTUB(Fwrite_Fut, 0xffc56028)
 NSTUB(GetCurrentAvValue, 0xffe7169c)
+// ALT: NSTUB(GetCurrentAvValue, 0xffe73a9c) // 13/0
 NSTUB(GetFocusLensSubjectDistance, 0xffe66b78)
 NSTUB(GetPropertyCase, 0xffc141a8)
 NSTUB(GetSystemTime, 0xffc04b10)
