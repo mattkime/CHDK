@@ -8,23 +8,28 @@
 
 
 //-------------------------------------------------------------------
-static unsigned long addr;
+static void *addr;
 static char debug_to_draw;
 static char buf[32];
+static long dummy=0;
+static unsigned int step;
 
 //-------------------------------------------------------------------
 #define SCREEN_COLOR            0xDB
 
 //-------------------------------------------------------------------
-void gui_debug_init(const unsigned long st_addr) {
+void gui_debug_init(void *st_addr) {
     addr = st_addr;
     debug_to_draw = 1;
+    step = 4;
     gui_set_mode(GUI_MODE_DEBUG);
 }
 
 //-------------------------------------------------------------------
-static void gui_debug_draw_values(const coord y, const unsigned long addr) {
+static void gui_debug_draw_values(const coord y, void* addr) {
     int i;
+
+    if (!(addr<(void*)0x2000000 || addr>(void*)0xFFC00000)) { addr = &dummy; };
 
     sprintf(buf, "0x%08X (%10u)", *((unsigned int*)addr), *((unsigned int*)addr));
     draw_txt_string(10, y, buf, MAKE_COLOR(COLOR_BLACK, COLOR_WHITE));
@@ -55,6 +60,7 @@ void gui_debug_draw() {
         case 1:
             draw_filled_rect(0, 0, screen_width-1, screen_height-1, MAKE_COLOR(SCREEN_COLOR, SCREEN_COLOR));
             draw_txt_string(1, 0, "Address:", MAKE_COLOR(SCREEN_COLOR, COLOR_WHITE));
+            draw_txt_string(25, 0, "Incr:", MAKE_COLOR(SCREEN_COLOR, COLOR_WHITE));
             draw_txt_string(1, 1, "Values:",  MAKE_COLOR(SCREEN_COLOR, COLOR_WHITE));
             draw_txt_string(2, 2, "DWORD  :", MAKE_COLOR(SCREEN_COLOR, COLOR_WHITE));
             draw_txt_string(2, 3, "WORD   :", MAKE_COLOR(SCREEN_COLOR, COLOR_WHITE));
@@ -71,10 +77,12 @@ void gui_debug_draw() {
             debug_to_draw = 2;
             break;
         case 2:
-            sprintf(buf, "0x%08X", (unsigned int)addr);
-            draw_txt_string(10, 0, buf, MAKE_COLOR(COLOR_RED, COLOR_WHITE));
+            sprintf(buf, "0x%08X", addr);
+            draw_txt_string(10, 0, buf, MAKE_COLOR(COLOR_BLACK, COLOR_WHITE));
+            sprintf(buf, "0x%08X", step);
+            draw_txt_string(31, 0, buf, MAKE_COLOR(COLOR_BLACK, COLOR_WHITE));
             gui_debug_draw_values(2, addr);
-//            gui_debug_draw_values(8, *((unsigned long*)addr));
+            gui_debug_draw_values(8, *((void**)addr));
 
             debug_to_draw = 0;
             break;
@@ -88,22 +96,24 @@ void gui_debug_draw() {
 void gui_debug_kbd_process() {
     switch (kbd_get_clicked_key()) {
     case KEY_DOWN:
-        addr-=0xFF;
-        debug_to_draw = 2;
         break;
     case KEY_UP:
-        addr+=0xFF;
-        debug_to_draw = 2;
         break;
     case KEY_LEFT:
-        addr-=4;
+        addr-=step;
         debug_to_draw = 2;
         break;
     case KEY_RIGHT:
-        addr+=4;
+        addr+=step;
         debug_to_draw = 2;
         break;
-    case KEY_SET:
+    case KEY_DISPLAY:
+        switch (step) {
+            case 0x00000004: step = 0x00000010; break;
+            case 0x10000000: step = 0x00000004; break;
+            default: step<<=4; break;
+        }
+        debug_to_draw = 2;
         break;
     }
 }

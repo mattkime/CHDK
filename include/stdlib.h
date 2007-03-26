@@ -17,6 +17,8 @@ extern void* srand(unsigned int seed);
 
 extern void qsort (void *__base, int __nelem, int __size, int (*__cmp)(const void *__e1, const void *__e2));
 
+extern double d2d(double value);
+
 //extern double log(double x);
 extern float logf(float v);
 extern float sqrtf(float v);

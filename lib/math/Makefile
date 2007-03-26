@@ -2,7 +2,7 @@ topdir=../../
 
 include $(topdir)makefile.inc
 
-OBJS = ef_log.o ef_sqrt.o ef_pow.o sf_fabs.o s_scalbnf.o s_copysignf.o
+OBJS = ef_log.o ef_sqrt.o ef_pow.o sf_fabs.o s_scalbnf.o s_copysignf.o d2d.o
 
 all: libmath.a
 
@@ -17,6 +17,8 @@ sf_fabs.o: sf_fabs.c fdlibm.h
 s_scalbnf.o: s_scalbnf.c fdlibm.h
 
 s_copysignf.o: s_copysignf.c fdlibm.h
+
+d2d.o: d2d.c fdlibm.h
 
 clean:
 	rm -f $(OBJS) libmath.a

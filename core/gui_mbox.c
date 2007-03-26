@@ -45,7 +45,13 @@ void gui_mbox_init(const char* title, const char* msg, const unsigned int flags,
     }
     if (mbox_buttons_num == 0)
         mbox_buttons[mbox_buttons_num++] = 0; // Add button "Ok" if there is no buttons
-    mbox_button_active = 0;
+
+    switch (flags & MBOX_DEF_MASK) {
+        case MBOX_DEF_BTN1: mbox_button_active = 0; break;
+        case MBOX_DEF_BTN2: mbox_button_active = 1; break;
+        case MBOX_DEF_BTN3: mbox_button_active = 2; break;
+        default: mbox_button_active = 0; break;
+    }
 
     gui_mbox_mode_old = gui_get_mode();
     mbox_title = title;

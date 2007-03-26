@@ -60,7 +60,7 @@ void boot()
     // at least it looks so...
     sysPhysMemTopPtr = 0x2000000;
     sysMemTopPtr = sysPhysMemTopPtr - 0x1D00000;
-    sysMemTopPtr -= 0x10000;
+    sysMemTopPtr -= 0x20000;
 
     h_usrInit();
 }

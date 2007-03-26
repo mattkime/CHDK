@@ -318,6 +318,7 @@ void gui_kbd_leave()
 
 extern long physw_status[3];
 extern long GetPropertyCase(long opt_id, void *buf, long bufsize);
+extern double atof(const char *v);
 //-------------------------------------------------------------------
 void gui_draw_osd() {
     unsigned int m, n = 0;
@@ -404,9 +405,9 @@ static void gui_menuproc_reset_selected(unsigned int btn) {
 
 void gui_menuproc_reset(int arg)
 {
-    gui_mbox_init("*** Reset ***", 
+    gui_mbox_init("*** Reset options ***", 
                   "Are you SURE to reset\noptions to default?",
-                  MBOX_FUNC_RESTORE|MBOX_TEXT_CENTER|MBOX_BTN_YES_NO, gui_menuproc_reset_selected);
+                  MBOX_FUNC_RESTORE|MBOX_TEXT_CENTER|MBOX_BTN_YES_NO|MBOX_DEF_BTN2, gui_menuproc_reset_selected);
 }
 
 //-------------------------------------------------------------------
@@ -488,7 +489,7 @@ void gui_draw_debug(int arg) {
 //    gui_debug_init(0x127E0);
 //    gui_debug_init(0x7F5B8);
 //    gui_debug_init(malloc(16));
-    gui_debug_init(0xB054);
+    gui_debug_init((void*)0xB054);
 }
 
 //-------------------------------------------------------------------

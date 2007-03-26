@@ -18,6 +18,11 @@
 #define MBOX_FUNC_MASK          0x0C00
 #define MBOX_FUNC_RESTORE       0x0400
 
+#define MBOX_DEF_MASK           0x3000
+#define MBOX_DEF_BTN1           0x0000
+#define MBOX_DEF_BTN2           0x1000
+#define MBOX_DEF_BTN3           0x2000
+
 //-------------------------------------------------------------------
 extern void gui_mbox_init(const char* title, const char* msg, const unsigned int flags, void (*on_select)(unsigned int btn));
 extern void gui_mbox_kbd_process();

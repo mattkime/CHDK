@@ -1,5 +1,6 @@
 #include "stubs_asm.h"
 
+NHSTUB(atof, 0xFFEB4AD0)
 //NHSTUB(VbattGet, 0xFFC1B4CC)
 //NHSTUB(GetZoomLensCurrentPosition, 0xFFE53070)
 //NHSTUB(GetZoomLensCurrentPoint, 0xFFE5305C)

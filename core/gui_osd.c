@@ -54,7 +54,7 @@ void gui_osd_draw() {
                       osd[curr_item].pos->x+osd[curr_item].size.x+i, osd[curr_item].pos->y+osd[curr_item].size.y+i,
                       COLOR_GREEN);
         }
-        sprintf(osd_buf, " %s  x:%d y:%d s:%d ", osd[curr_item].title, osd[curr_item].pos->x, osd[curr_item].pos->y, step);
+        sprintf(osd_buf, " %s:  x:%d y:%d s:%d ", osd[curr_item].title, osd[curr_item].pos->x, osd[curr_item].pos->y, step);
         draw_string(0, (osd[curr_item].pos->x<strlen(osd_buf)*FONT_WIDTH+4 && osd[curr_item].pos->y<FONT_HEIGHT+4)?screen_height-FONT_HEIGHT:0,
                     osd_buf, MAKE_COLOR(COLOR_RED, COLOR_WHITE));
         osd_to_draw = 0;
@@ -95,11 +95,7 @@ void gui_osd_kbd_process() {
         osd_to_draw = 1;
         break;
     case KEY_DISPLAY:
-        switch (step) {
-            case 1:  step = 10; break;
-            case 10: step = 25; break;
-            case 25: step = 1;  break;
-        }
+        step=(step==1)?10:1;
         osd_to_draw = 1;
         break;
     }
