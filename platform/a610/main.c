@@ -1,6 +1,7 @@
 #include "platform.h"
 #include "core.h"
 #include "stdlib.h"
+#include "math.h"
 #include "keyboard.h"
 
 /* VxWorks stuff */
@@ -571,7 +572,7 @@ int shooting_get_av()
 }
 
 int shooting_get_real_av() {
-    return (int)(((float)powf(1.4142135623730950488016887242097/* sqrt(2) */, ((float)GetCurrentAvValue())/96.0))*100.0);
+    return (int)(((double)pow(1.4142135623730950488016887242097/* sqrt(2) */, ((double)GetCurrentAvValue())/96.0))*100.0);
 }
 
 void shooting_set_av(int v)

@@ -51,7 +51,7 @@ void gui_osd_draw() {
         gui_osd_draw_values();
         for (i=1; i<=2; ++i) {
             draw_rect((osd[curr_item].pos->x>=i)?osd[curr_item].pos->x-i:0, (osd[curr_item].pos->y>=i)?osd[curr_item].pos->y-i:0, 
-                      osd[curr_item].pos->x+osd[curr_item].size.x+i, osd[curr_item].pos->y+osd[curr_item].size.y+i,
+                      osd[curr_item].pos->x+osd[curr_item].size.x+i-1, osd[curr_item].pos->y+osd[curr_item].size.y+i-1,
                       COLOR_GREEN);
         }
         sprintf(osd_buf, " %s:  x:%d y:%d s:%d ", osd[curr_item].title, osd[curr_item].pos->x, osd[curr_item].pos->y, step);
@@ -104,27 +104,40 @@ void gui_osd_kbd_process() {
 //-------------------------------------------------------------------
 void gui_osd_draw_histo() {
     register unsigned int i, v, threshold;
+    register color cl;
 
 //    draw_rect(conf.histo_pos.x-1, conf.histo_pos.y, conf.histo_pos.x+HISTO_WIDTH, conf.histo_pos.y+HISTO_HEIGHT, COLOR_WHITE);
     draw_line(conf.histo_pos.x, conf.histo_pos.y, conf.histo_pos.x+HISTO_WIDTH-1, conf.histo_pos.y, conf.histo_color); //top
     draw_line(conf.histo_pos.x, conf.histo_pos.y+HISTO_HEIGHT, conf.histo_pos.x+HISTO_WIDTH-1, conf.histo_pos.y+HISTO_HEIGHT, conf.histo_color); //bottom
-    draw_line(conf.histo_pos.x-1, conf.histo_pos.y, conf.histo_pos.x-1, conf.histo_pos.y+HISTO_HEIGHT, (under_exposed)?COLOR_RED:conf.histo_color); //left
-    draw_line(conf.histo_pos.x+HISTO_WIDTH, conf.histo_pos.y, conf.histo_pos.x+HISTO_WIDTH, conf.histo_pos.y+HISTO_HEIGHT, (over_exposed)?COLOR_RED:conf.histo_color); //right
+    draw_line(conf.histo_pos.x-1, conf.histo_pos.y, conf.histo_pos.x-1, conf.histo_pos.y+HISTO_HEIGHT, 
+              (under_exposed && conf.show_overexp)?COLOR_RED:conf.histo_color); //left
+    draw_line(conf.histo_pos.x+HISTO_WIDTH, conf.histo_pos.y, conf.histo_pos.x+HISTO_WIDTH, conf.histo_pos.y+HISTO_HEIGHT, 
+              (over_exposed && conf.show_overexp)?COLOR_RED:conf.histo_color); //right
 
     /* histogram */
     for (i=0; i<HISTO_WIDTH; i++) {
         threshold = histogram[i];
 
-        for (v=1; v<HISTO_HEIGHT; v++)
+        for (v=1; v<HISTO_HEIGHT-3; v++)
             draw_pixel(conf.histo_pos.x+i, conf.histo_pos.y+HISTO_HEIGHT-v, (v<=threshold)?conf.histo_color:conf.histo_color>>8);
+        cl = (threshold==HISTO_HEIGHT && conf.show_overexp)?COLOR_RED:conf.histo_color&0xFF;
+        for (; v<HISTO_HEIGHT; v++)
+            draw_pixel(conf.histo_pos.x+i, conf.histo_pos.y+HISTO_HEIGHT-v, (v<=threshold)?cl:conf.histo_color>>8);
     }
 
-    if (under_exposed) {
+    if (under_exposed && conf.show_overexp) {
         draw_filled_ellipse(conf.histo_pos.x+5, conf.histo_pos.y+5, 3, 3, MAKE_COLOR(COLOR_RED, COLOR_RED));
     }
 
-    if (over_exposed) {
+    if (over_exposed && conf.show_overexp) {
         draw_filled_ellipse(conf.histo_pos.x+HISTO_WIDTH-5, conf.histo_pos.y+5, 3, 3, MAKE_COLOR(COLOR_RED, COLOR_RED));
+    }
+
+    if (histo_magnification) {
+        sprintf(osd_buf, " %d.%02dx ", histo_magnification/1000, histo_magnification/10%100);
+        draw_string(conf.histo_pos.x, conf.histo_pos.y-FONT_HEIGHT, osd_buf, conf.histo_color);
+    } else {
+        draw_filled_rect(conf.histo_pos.x, conf.histo_pos.y-FONT_HEIGHT, conf.histo_pos.x+8*FONT_WIDTH, conf.histo_pos.y-1, MAKE_COLOR(COLOR_TRANSPARENT, COLOR_TRANSPARENT));
     }
 }
 
@@ -193,7 +206,7 @@ void gui_osd_draw_state() {
         draw_string(conf.mode_state_pos.x, conf.mode_state_pos.y+n, "SCR", conf.osd_color);
         n+=FONT_HEIGHT;
     }
-    if (((gui_mode==GUI_MODE_NONE || gui_mode==GUI_MODE_ALT) && conf.show_histo && kbd_is_key_pressed(KEY_SHOOT_HALF)) || gui_mode==GUI_MODE_OSD) {
+    if (((gui_mode==GUI_MODE_NONE || gui_mode==GUI_MODE_ALT) && conf.show_histo && conf.show_overexp && kbd_is_key_pressed(KEY_SHOOT_HALF)) || gui_mode==GUI_MODE_OSD) {
         draw_string(conf.mode_state_pos.x, conf.mode_state_pos.y+n, (under_exposed || over_exposed)?"EXP":"   ", conf.osd_color);
     }
 }

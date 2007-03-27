@@ -18,6 +18,8 @@
 
 //-------------------------------------------------------------------
 
+#define OPTIONS_AUTOSAVE
+
 // forward declarations
 //-------------------------------------------------------------------
 void dump_memory();
@@ -36,20 +38,26 @@ static void gui_draw_debug(int arg);
 static void gui_draw_fselect(int arg);
 static void gui_draw_osd_le(int arg);
 static void gui_load_script(int arg);
+#ifndef OPTIONS_AUTOSAVE
 static void gui_menuproc_save(int arg);
+#endif
 static void gui_menuproc_reset(int arg);
+static const char* gui_histo_mode_enum(int change, int arg);
 
 // Menu callbacks
 //-------------------------------------------------------------------
 static void cb_step_25();
 static void cb_perc();
 static void cb_volts();
+static void cb_battery_menu_change(unsigned int item);
 
 // Menu definition
 //-------------------------------------------------------------------
-CMenu script_submenu = { "Script", {
+CMenu script_submenu = { "Script", NULL, 
+{
     {"Load script from file...",    MENUITEM_PROC,                      (int*)gui_load_script },
     {"Script shoot delay (.1s)",    MENUITEM_INT|MENUITEM_F_UNSIGNED,   &conf.script_shoot_delay },
+    {"-",                           MENUITEM_TEXT },
     {"Var. a value",                MENUITEM_INT,                       &conf.ubasic_var_a },
     {"Var. b value",                MENUITEM_INT,                       &conf.ubasic_var_b },
     {"Var. c value",                MENUITEM_INT,                       &conf.ubasic_var_c },
@@ -57,7 +65,8 @@ CMenu script_submenu = { "Script", {
     {0}
 }};
 
-CMenu misc_submenu = { "Miscellaneous", {
+CMenu misc_submenu = { "Miscellaneous", NULL, 
+{
     {"Show build info",             MENUITEM_PROC,  (int*)gui_show_build_info },
     {"Show memory info",            MENUITEM_PROC,  (int*)gui_show_memory_info },
     {"File browser",                MENUITEM_PROC,  (int*)gui_draw_fselect },
@@ -68,9 +77,10 @@ CMenu misc_submenu = { "Miscellaneous", {
     {0}
 }};
 
-CMenu debug_submenu = { "Debug", {
+CMenu debug_submenu = { "Debug", NULL,
+{
     {"Show PropCases",              MENUITEM_BOOL,                      &debug_propcase_show },
-    {"PropCase page",               MENUITEM_INT|MENUITEM_F_UNSIGNED,   &debug_propcase_page },
+    {"PropCase page",               MENUITEM_INT|MENUITEM_F_UNSIGNED|MENUITEM_F_MINMAX,   &debug_propcase_page, MENU_MINMAX(0, 128) },
     {"Show misc. values",           MENUITEM_BOOL,                      &debug_vals_show },
     {"Memory browser",              MENUITEM_PROC,                      (int*)gui_draw_debug },
     {"Dump RAM on ALT +/- press",   MENUITEM_BOOL,                      &conf.ns_enable_memdump },
@@ -79,7 +89,8 @@ CMenu debug_submenu = { "Debug", {
 }};
 
 static int voltage_step;
-CMenu battery_submenu = { "Battery", {
+CMenu battery_submenu = { "Battery", cb_battery_menu_change,
+{
     {"Voltage MAX",                 MENUITEM_INT|MENUITEM_ARG_ADDR_INC,     &conf.batt_volts_max,   (int)&voltage_step },
     {"Voltage MIN",                 MENUITEM_INT|MENUITEM_ARG_ADDR_INC,     &conf.batt_volts_min,   (int)&voltage_step },
     {"25+ step",                    MENUITEM_BOOL|MENUITEM_ARG_CALLBACK,    &conf.batt_step_25,     (int)cb_step_25 },	
@@ -91,7 +102,8 @@ CMenu battery_submenu = { "Battery", {
     {0}
 }};
 
-CMenu osd_colors_submenu = { "OSD Colors", {
+CMenu osd_colors_submenu = { "OSD Colors", NULL,
+{
     {"OSD text",                    MENUITEM_COLOR_FG,  (int*)&conf.osd_color },
     {"OSD background",              MENUITEM_COLOR_BG,  (int*)&conf.osd_color },
     {"Histogram",                   MENUITEM_COLOR_FG,  (int*)&conf.histo_color },
@@ -103,31 +115,49 @@ CMenu osd_colors_submenu = { "OSD Colors", {
     {0}
 }};
 
-CMenu osd_submenu = { "OSD", {
-    {"Show OSD",                    MENUITEM_BOOL,      &conf.show_osd },
+CMenu osd_submenu = { "OSD", NULL,
+{
     {"Show RAW/SCR/EXP state",      MENUITEM_BOOL,      &conf.show_state },
     {"Show misc values",            MENUITEM_BOOL,      &conf.show_values },
-    {"Show live histogram",         MENUITEM_BOOL,      &conf.show_histo },
     {"Show DOF calculator",         MENUITEM_BOOL,      &conf.show_dof },
     {"OSD layout editor",           MENUITEM_PROC,      (int*)gui_draw_osd_le },
     {"OSD color settings ->",       MENUITEM_SUBMENU,   (int*)&osd_colors_submenu },
     {"Battery parameters ->",       MENUITEM_SUBMENU,   (int*)&battery_submenu },
+#ifndef OPTIONS_AUTOSAVE
     {"Save options now...",         MENUITEM_PROC,      (int*)gui_menuproc_save },
+#endif
     {"<- Back",                     MENUITEM_UP },
     {0}
 }};
 
-CMenu root_menu = { "Main", {
+CMenu histo_submenu = { "Histogram", NULL,
+{
+    {"Histogram mode",              MENUITEM_ENUM,      (int*)gui_histo_mode_enum },
+    {"Show histogram over/under EXP", MENUITEM_BOOL,    &conf.show_overexp },
+    {"Ignore boundary peaks",       MENUITEM_INT|MENUITEM_F_UNSIGNED|MENUITEM_F_MINMAX,  &conf.histo_ignore_boundary,   MENU_MINMAX(0, 32)},
+    {"Auto magnify",                MENUITEM_BOOL,      &conf.histo_auto_ajust },
+    {"<- Back",                     MENUITEM_UP },
+    {0}
+}};
+
+CMenu root_menu = { "Main", NULL,
+{
     {"Save RAW",                    MENUITEM_BOOL,      &conf.save_raw },
+    {"Show OSD",                    MENUITEM_BOOL,      &conf.show_osd },
     {"OSD parameters ->",           MENUITEM_SUBMENU,   (int*)&osd_submenu },
+    {"Show live histogram",         MENUITEM_BOOL,      &conf.show_histo },
+    {"Histogram parameters ->",     MENUITEM_SUBMENU,   (int*)&histo_submenu },
     {"Scripting parameters ->",     MENUITEM_SUBMENU,   (int*)&script_submenu },
     {"Miscellaneous stuff ->",      MENUITEM_SUBMENU,   (int*)&misc_submenu },
     {"Debug parameters ->",         MENUITEM_SUBMENU,   (int*)&debug_submenu },
     {"Reset options to default...", MENUITEM_PROC,      (int*)gui_menuproc_reset },
+#ifndef OPTIONS_AUTOSAVE
     {"Save options now...",         MENUITEM_PROC,      (int*)gui_menuproc_save },
+#endif
     {0}
 }};
 
+//-------------------------------------------------------------------
 void cb_step_25() {
     voltage_step = (conf.batt_step_25)?25:1;
 }
@@ -140,12 +170,47 @@ void cb_volts() {
     conf.batt_perc_show=0;
 }
 
+void cb_battery_menu_change(unsigned int item) {
+    switch (item) {
+        case 0: //Voltage MAX
+            if (conf.batt_volts_max<conf.batt_volts_min+25) {
+                conf.batt_volts_min = conf.batt_volts_max-25;
+            }
+            break;
+        case 1: //Voltage MIN
+            if (conf.batt_volts_min>conf.batt_volts_max-25) {
+                conf.batt_volts_max = conf.batt_volts_min+25;
+            }
+            break;
+        default:
+            break;
+    }
+}
+
+//-------------------------------------------------------------------
+const char* gui_histo_mode_enum(int change, int arg) {
+    static const char* modes[]={ "Linear", "Log" };
+
+    conf.histo_mode+=change;
+    if (conf.histo_mode>=2) 
+        conf.histo_mode=0;
+    else if (conf.histo_mode<0)
+        conf.histo_mode=1;
+
+    histogram_set_mode(conf.histo_mode);
+
+    return modes[conf.histo_mode];
+}
+
 //-------------------------------------------------------------------
 static volatile enum Gui_Mode gui_mode;
 static volatile int gui_restore;
 static volatile int gui_in_redraw;
 static int gui_splash = 50;
 static char osd_buf[32];
+#ifdef OPTIONS_AUTOSAVE
+static Conf old_conf;
+#endif
 
 //-------------------------------------------------------------------
 void gui_init()
@@ -155,6 +220,7 @@ void gui_init()
     gui_in_redraw = 0;
     draw_init();
 
+    exposition_thresh = screen_size/500;
     voltage_step = (conf.batt_step_25)?25:1;
 }
 
@@ -234,6 +300,22 @@ void gui_redraw()
     }
 }
 
+#ifdef OPTIONS_AUTOSAVE
+//-------------------------------------------------------------------
+static inline void conf_store_old_settings() {
+    old_conf=conf;
+}
+
+//-------------------------------------------------------------------
+static inline int conf_save_new_settings_if_changed() {
+    if (memcmp(&old_conf, &conf, sizeof(Conf)) != 0) {
+        conf_save(1);
+        return 1;
+    }
+    return 0;
+}
+#endif
+
 //-------------------------------------------------------------------
 void gui_kbd_process()
 {
@@ -242,11 +324,17 @@ void gui_kbd_process()
     if (kbd_is_key_clicked(KEY_MENU)){
         switch (gui_mode) {
             case GUI_MODE_ALT:
+#ifdef OPTIONS_AUTOSAVE
+                conf_store_old_settings();
+#endif
                 gui_menu_init(&root_menu);
                 gui_mode = GUI_MODE_MENU;
                 draw_restore();
                 break;
             case GUI_MODE_MENU:
+#ifdef OPTIONS_AUTOSAVE
+                conf_save_new_settings_if_changed();
+#endif
                 gui_mode = GUI_MODE_ALT;
                 draw_restore();
                 break;
@@ -309,16 +397,17 @@ void gui_kbd_enter()
 void gui_kbd_leave()
 {
     // XXX restore palette
+#ifdef OPTIONS_AUTOSAVE
+    conf_save_new_settings_if_changed();
+#endif
     ubasic_error = 0;
     draw_restore();
     gui_mode = GUI_MODE_NONE;
 }
 
 //-------------------------------------------------------------------
-
 extern long physw_status[3];
 extern long GetPropertyCase(long opt_id, void *buf, long bufsize);
-extern double atof(const char *v);
 //-------------------------------------------------------------------
 void gui_draw_osd() {
     unsigned int m, n = 0;
@@ -349,6 +438,10 @@ void gui_draw_osd() {
 
         if (conf.show_values) {
             gui_osd_draw_values();
+        }
+    } else /* MODE_PLAY */ {
+        if (conf.show_histo && gui_mode==GUI_MODE_NONE && kbd_is_key_pressed(KEY_SHOOT_HALF)) {
+            gui_osd_draw_histo();
         }
     }
 
@@ -391,11 +484,13 @@ void gui_draw_osd() {
     }
 }
 
+#ifndef OPTIONS_AUTOSAVE
 //-------------------------------------------------------------------
 void gui_menuproc_save(int arg)
 {
     conf_save(1);
 }
+#endif
 
 //-------------------------------------------------------------------
 static void gui_menuproc_reset_selected(unsigned int btn) {

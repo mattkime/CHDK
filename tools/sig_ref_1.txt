@@ -82,3 +82,7 @@ stat 0xFFEB7EC4
 qsort 0xFFEB5230
 localtime 0xFFEB65F0
 GetCurrentAvValue 0xFFE71314 14
+_pow 0xFFEA8F74
+_log 0xFFEA83DC
+_log10 0xFFEA8A84
+_sqrt 0xFFEAD2C0

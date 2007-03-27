@@ -27,6 +27,11 @@ typedef struct {
 
     int show_state;
     int show_values;
+    int show_overexp;
+
+    int histo_mode;
+    int histo_auto_ajust;
+    int histo_ignore_boundary;
 
     OSD_pos histo_pos;
     OSD_pos dof_pos;

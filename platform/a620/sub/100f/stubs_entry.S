@@ -42,6 +42,14 @@ NSTUB(TakeSemaphore, 0xffc10c40)
 // Best match: 96%
 NSTUB(VbattGet, 0xffc1b4ac)
 NSTUB(Write, 0xffc5cf2c)
+NSTUB(_log, 0xffeaf100)
+// ALT: NSTUB(_log, 0xffeaf100) // 27/0
+NSTUB(_log10, 0xffeaf7a8)
+// ALT: NSTUB(_log10, 0xffeaf7a8) // 27/0
+NSTUB(_pow, 0xffeafc98)
+// ALT: NSTUB(_pow, 0xffeafc98) // 25/0
+NSTUB(_sqrt, 0xffeb3fe4)
+// ALT: NSTUB(_sqrt, 0xffeb3fe4) // 24/0
 NSTUB(close, 0xffec2b80)
 NSTUB(closedir, 0xffebeb20)
 // ERROR: free is not found!

@@ -114,9 +114,27 @@ void gui_menu_kbd_process() {
                         if ( curr_menu->menu[gui_menu_curr_item].type & MENUITEM_F_UNSIGNED) {
                             if (*(curr_menu->menu[gui_menu_curr_item].value) < 0) 
                                 *(curr_menu->menu[gui_menu_curr_item].value) = 0;
+                            if ( curr_menu->menu[gui_menu_curr_item].type & MENUITEM_F_MIN) {
+                                if (*(curr_menu->menu[gui_menu_curr_item].value) < (unsigned short)(curr_menu->menu[gui_menu_curr_item].arg & 0xFFFF)) 
+                                    *(curr_menu->menu[gui_menu_curr_item].value) = (unsigned short)(curr_menu->menu[gui_menu_curr_item].arg & 0xFFFF);
+                            }
+                        } else {
+                            if ( curr_menu->menu[gui_menu_curr_item].type & MENUITEM_F_MIN) {
+                                if (*(curr_menu->menu[gui_menu_curr_item].value) < (short)(curr_menu->menu[gui_menu_curr_item].arg & 0xFFFF)) 
+                                    *(curr_menu->menu[gui_menu_curr_item].value) = (short)(curr_menu->menu[gui_menu_curr_item].arg & 0xFFFF);
+                            }
                         }
                         if ((curr_menu->menu[gui_menu_curr_item].type & MENUITEM_ARG_MASK) == MENUITEM_ARG_CALLBACK && curr_menu->menu[gui_menu_curr_item].arg) {
                             ((void (*)())(curr_menu->menu[gui_menu_curr_item].arg))();
+                        }
+                        if (curr_menu->on_change) {
+                            curr_menu->on_change(gui_menu_curr_item);
+                        }
+                        gui_menu_redraw=1;
+                        break;
+                    case MENUITEM_ENUM:
+                        if (curr_menu->menu[gui_menu_curr_item].value) {
+                            ((const char* (*)(int change, int arg))(curr_menu->menu[gui_menu_curr_item].value))(-1, curr_menu->menu[gui_menu_curr_item].arg);
                         }
                         gui_menu_redraw=1;
                         break;
@@ -138,8 +156,28 @@ void gui_menu_kbd_process() {
                                 *(curr_menu->menu[gui_menu_curr_item].value) += 1;
                                 break;
                         }
+                        if ( curr_menu->menu[gui_menu_curr_item].type & MENUITEM_F_UNSIGNED) {
+                            if ( curr_menu->menu[gui_menu_curr_item].type & MENUITEM_F_MAX) {
+                                if (*(curr_menu->menu[gui_menu_curr_item].value) > (unsigned short)((curr_menu->menu[gui_menu_curr_item].arg>>16) & 0xFFFF)) 
+                                    *(curr_menu->menu[gui_menu_curr_item].value) = (unsigned short)((curr_menu->menu[gui_menu_curr_item].arg>>16) & 0xFFFF);
+                            }
+                        } else {
+                            if ( curr_menu->menu[gui_menu_curr_item].type & MENUITEM_F_MAX) {
+                                if (*(curr_menu->menu[gui_menu_curr_item].value) > (short)((curr_menu->menu[gui_menu_curr_item].arg>>16) & 0xFFFF)) 
+                                    *(curr_menu->menu[gui_menu_curr_item].value) = (short)((curr_menu->menu[gui_menu_curr_item].arg>>16) & 0xFFFF);
+                            }
+                        }
                         if ((curr_menu->menu[gui_menu_curr_item].type & MENUITEM_ARG_MASK) == MENUITEM_ARG_CALLBACK && curr_menu->menu[gui_menu_curr_item].arg) {
                             ((void (*)())(curr_menu->menu[gui_menu_curr_item].arg))();
+                        }
+                        if (curr_menu->on_change) {
+                            curr_menu->on_change(gui_menu_curr_item);
+                        }
+                        gui_menu_redraw=1;
+                        break;
+                    case MENUITEM_ENUM:
+                        if (curr_menu->menu[gui_menu_curr_item].value) {
+                            ((const char* (*)(int change, int arg))(curr_menu->menu[gui_menu_curr_item].value))(+1, curr_menu->menu[gui_menu_curr_item].arg);
                         }
                         gui_menu_redraw=1;
                         break;
@@ -155,11 +193,17 @@ void gui_menu_kbd_process() {
                         if ((curr_menu->menu[gui_menu_curr_item].type & MENUITEM_ARG_MASK) == MENUITEM_ARG_CALLBACK && curr_menu->menu[gui_menu_curr_item].arg) {
                             ((void (*)())(curr_menu->menu[gui_menu_curr_item].arg))();
                         }
+                        if (curr_menu->on_change) {
+                            curr_menu->on_change(gui_menu_curr_item);
+                        }
                         gui_menu_redraw=1;
                         break;
                     case MENUITEM_PROC:
                     	if (curr_menu->menu[gui_menu_curr_item].value) {
                             ((void (*)(int arg))(curr_menu->menu[gui_menu_curr_item].value))(curr_menu->menu[gui_menu_curr_item].arg);
+                            if (curr_menu->on_change) {
+                                curr_menu->on_change(gui_menu_curr_item);
+                            }
                             gui_menu_curr_item = -1;
                             gui_menu_top_item = 0;
                             gui_menu_redraw=2;
@@ -176,9 +220,6 @@ void gui_menu_kbd_process() {
                             draw_txt_string(0, 0, "E1", MAKE_COLOR(COLOR_RED, COLOR_YELLOW));
                             gui_menu_stack_ptr = 0;
                         }
-                        if ((curr_menu->menu[gui_menu_curr_item].type & MENUITEM_ARG_MASK) == MENUITEM_ARG_CALLBACK && curr_menu->menu[gui_menu_curr_item].arg) {
-                            ((void (*)())(curr_menu->menu[gui_menu_curr_item].arg))();
-                        }
                         gui_menu_redraw=2;
                         draw_restore();
                         gui_force_restore();
@@ -187,9 +228,6 @@ void gui_menu_kbd_process() {
                         if (gui_menu_stack_ptr > 0){
                             gui_menu_stack_ptr--;
                             gui_menu_set_curr_menu(gui_menu_stack[gui_menu_stack_ptr].menu, gui_menu_stack[gui_menu_stack_ptr].toppos, gui_menu_stack[gui_menu_stack_ptr].curpos);
-                            if ((curr_menu->menu[gui_menu_curr_item].type & MENUITEM_ARG_MASK) == MENUITEM_ARG_CALLBACK && curr_menu->menu[gui_menu_curr_item].arg) {
-                                ((void (*)())(curr_menu->menu[gui_menu_curr_item].arg))();
-                            }
                             gui_menu_redraw=2;
                             draw_restore();
                             gui_force_restore();
@@ -202,6 +240,12 @@ void gui_menu_kbd_process() {
                         gui_palette_init(PALETTE_MODE_SELECT, (*item_color)&0xFF, gui_menu_color_selected);
                         gui_set_mode(GUI_MODE_PALETTE);
                         gui_menu_redraw=2;
+                        break;
+                    case MENUITEM_ENUM:
+                        if (curr_menu->menu[gui_menu_curr_item].value) {
+                            ((const char* (*)(int change, int arg))(curr_menu->menu[gui_menu_curr_item].value))(+1, curr_menu->menu[gui_menu_curr_item].arg);
+                        }
+                        gui_menu_redraw=1;
                         break;
                 }
             }
@@ -233,6 +277,7 @@ void gui_menu_draw() {
     int imenu, i, j;
     color cl;
     char cb, ce;
+    const char *ch = "";
 
     if (gui_menu_redraw) {
         if (gui_menu_redraw==2)
@@ -274,6 +319,11 @@ void gui_menu_draw() {
                 draw_txt_char(x+36, y+i, ce, cl);
                 break;
             case MENUITEM_ENUM:
+                if (curr_menu->menu[imenu].value) {
+                    ch=((const char* (*)(int change, int arg))(curr_menu->menu[imenu].value))(0, curr_menu->menu[imenu].arg);
+                }
+                sprintf(tbuf, "%c%-26s [%6s]%c", cb, curr_menu->menu[imenu].text, ch, ce);
+                draw_txt_string(x, y+i, tbuf, cl);
                 break;
             }
         }

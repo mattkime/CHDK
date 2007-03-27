@@ -8,7 +8,7 @@
 
 #define FN_COUNTER  "A/RCFG.BIN"
 #define FN_SCRIPT  "A/SCRIPT.BAS"
-#define CNF_MAGICK_VALUE (0x31204741)
+#define CNF_MAGICK_VALUE (0x32204741)
 
 Conf conf;
 
@@ -78,6 +78,11 @@ void conf_load_defaults()
 
     conf.show_state = 1;
     conf.show_values = 0;
+    conf.show_overexp = 1;
+
+    conf.histo_mode = HISTO_MODE_LINEAR;
+    conf.histo_auto_ajust = 1;
+    conf.histo_ignore_boundary = 5;
 
     conf.histo_pos.x=319-HISTO_WIDTH;
     conf.histo_pos.y=45;

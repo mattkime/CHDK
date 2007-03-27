@@ -100,24 +100,33 @@ void gui_palette_draw() {
                 sprintf(buf, " Color: 0x%02X ", cl);
                 draw_txt_string(0, 0, buf, MAKE_COLOR(COLOR_BLACK, COLOR_WHITE));
                 draw_filled_rect(20, 20, screen_width-20, screen_height-20, MAKE_COLOR(cl, COLOR_WHITE));
-                draw_txt_string(0, 14, "Use \x18\x19\x1b\x1a to change color", MAKE_COLOR(COLOR_BLACK, COLOR_WHITE));
+                draw_txt_string(0, 14, "Use \x18\x19\x1b\x1a to select color", MAKE_COLOR(COLOR_BLACK, COLOR_WHITE));
             }
             break;
         case PALETTE_MODE_SELECT:
             if (gui_palette_redraw) {
-                #define CELL_SIZE 13
-                draw_string(screen_width-26*FONT_WIDTH, 0, " Use \x18\x19\x1b\x1a to change color ", MAKE_COLOR(COLOR_BLACK, COLOR_WHITE));
-                sprintf(buf, " Color: 0x%02hX ", (unsigned char)cl);
+                #define CELL_SIZE   13
+                #define BORDER_SIZE 8
+                #define CELL_ZOOM   5
+                draw_string(screen_width-29*FONT_WIDTH, 0, "    Use \x18\x19\x1b\x1a to change color ", MAKE_COLOR(COLOR_BLACK, COLOR_WHITE));
+                sprintf(buf, " Color: 0x%02hX    ", (unsigned char)cl);
                 draw_txt_string(0, 0, buf, MAKE_COLOR(COLOR_BLACK, COLOR_WHITE));
                 for (y=0; y<16; ++y) {
                     for (x=0; x<16; ++x) {
                         c = (y<<4)|x;
-                        draw_filled_rect(x*CELL_SIZE, y*CELL_SIZE+FONT_HEIGHT, (x+1)*CELL_SIZE, (y+1)*CELL_SIZE+FONT_HEIGHT, MAKE_COLOR(c, COLOR_WHITE));
+                        draw_filled_rect(BORDER_SIZE+x*CELL_SIZE, BORDER_SIZE+y*CELL_SIZE+FONT_HEIGHT, BORDER_SIZE+(x+1)*CELL_SIZE, BORDER_SIZE+(y+1)*CELL_SIZE+FONT_HEIGHT, MAKE_COLOR(c, COLOR_BLACK));
                     }
                 }
+                draw_filled_rect(0, FONT_HEIGHT, screen_width-1, FONT_HEIGHT+BORDER_SIZE-1, MAKE_COLOR(COLOR_GREY, COLOR_GREY)); //top
+                draw_filled_rect(0, FONT_HEIGHT+BORDER_SIZE+16*CELL_SIZE+1, screen_width-1, FONT_HEIGHT+BORDER_SIZE+16*CELL_SIZE+BORDER_SIZE, MAKE_COLOR(COLOR_GREY, COLOR_GREY)); //bottom
+                draw_filled_rect(0, FONT_HEIGHT+BORDER_SIZE, BORDER_SIZE-1, FONT_HEIGHT+BORDER_SIZE+16*CELL_SIZE, MAKE_COLOR(COLOR_GREY, COLOR_GREY)); //left
+                draw_filled_rect(BORDER_SIZE+16*CELL_SIZE+1, FONT_HEIGHT+BORDER_SIZE, BORDER_SIZE+16*CELL_SIZE+BORDER_SIZE, FONT_HEIGHT+BORDER_SIZE+16*CELL_SIZE, MAKE_COLOR(COLOR_GREY, COLOR_GREY)); //middle
+                draw_filled_rect(screen_width-BORDER_SIZE, FONT_HEIGHT+BORDER_SIZE, screen_width-1, FONT_HEIGHT+BORDER_SIZE+16*CELL_SIZE, MAKE_COLOR(COLOR_GREY, COLOR_GREY)); //right
+
                 y=(cl>>4)&0x0F; x=cl&0x0F;
-                draw_rect(x*CELL_SIZE, y*CELL_SIZE+FONT_HEIGHT, (x+1)*CELL_SIZE, (y+1)*CELL_SIZE+FONT_HEIGHT, COLOR_RED);
-                draw_filled_rect(16*CELL_SIZE, FONT_HEIGHT, screen_width-1, FONT_HEIGHT+16*CELL_SIZE, MAKE_COLOR(cl, COLOR_WHITE));
+                draw_filled_rect(BORDER_SIZE+x*CELL_SIZE-CELL_ZOOM, FONT_HEIGHT+BORDER_SIZE+y*CELL_SIZE-CELL_ZOOM, BORDER_SIZE+(x+1)*CELL_SIZE+CELL_ZOOM, FONT_HEIGHT+BORDER_SIZE+(y+1)*CELL_SIZE+CELL_ZOOM, MAKE_COLOR(cl, COLOR_RED)); //selected
+                draw_rect(BORDER_SIZE+x*CELL_SIZE-CELL_ZOOM-1, FONT_HEIGHT+BORDER_SIZE+y*CELL_SIZE-CELL_ZOOM-1, BORDER_SIZE+(x+1)*CELL_SIZE+CELL_ZOOM+1, FONT_HEIGHT+BORDER_SIZE+(y+1)*CELL_SIZE+CELL_ZOOM+1, COLOR_RED); //selected
+                draw_filled_rect(BORDER_SIZE+16*CELL_SIZE+BORDER_SIZE+1, FONT_HEIGHT+BORDER_SIZE, screen_width-BORDER_SIZE-1, FONT_HEIGHT+BORDER_SIZE+16*CELL_SIZE, MAKE_COLOR(cl, COLOR_WHITE));
                 gui_palette_redraw = 0;
             }
             break;

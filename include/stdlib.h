@@ -17,35 +17,28 @@ extern void* srand(unsigned int seed);
 
 extern void qsort (void *__base, int __nelem, int __size, int (*__cmp)(const void *__e1, const void *__e2));
 
-extern double d2d(double value);
-
-//extern double log(double x);
-extern float logf(float v);
-extern float sqrtf(float v);
-extern float powf(float x, float y);
-extern float fabsf(float x);
-extern float scalbnf(float x, int n);
-extern float copysignf(float x, float y);
-
-extern long strlen(const char *s);
-extern long sprintf(char *s, const char *st, ...);
-
 extern int isdigit(int c);
 extern int isspace(int c);
 extern int isalpha(int c);
 extern int isupper(int c);
 
+extern long sprintf(char *s, const char *st, ...);
+
+extern long strlen(const char *s);
 extern int strcmp(const char *s1, const char *s2);
 extern int strncmp(const char *s1, const char *s2, long n);
 extern char *strchr(const char *s, int c);
 extern char *strcpy(char *dest, const char *src);
-extern void *memcpy(void *dest, const void *src, long n);
-extern void *malloc(long size);
-extern void *memset(void *s, int c, int n);
-extern void free(void *p);
 
 extern long strtol(const char *nptr, char **endptr, int base);
 #define atoi(n) strtol((n),NULL,0)
+
+extern void *malloc(long size);
+extern void free(void *p);
+
+extern void *memcpy(void *dest, const void *src, long n);
+extern void *memset(void *s, int c, int n);
+extern int memcmp(const void *s1, const void *s2, long n);
 
 
 extern void SleepTask(long msec);

@@ -36,6 +36,14 @@ NSTUB(SleepTask, 0xffc11164)
 NSTUB(TakeSemaphore, 0xffc10c60)
 NSTUB(VbattGet, 0xffc1b4cc)
 NSTUB(Write, 0xffc5cb34)
+NSTUB(_log, 0xffea8764)
+// ALT: NSTUB(_log, 0xffea8764) // 27/0
+NSTUB(_log10, 0xffea8e0c)
+// ALT: NSTUB(_log10, 0xffea8e0c) // 27/0
+NSTUB(_pow, 0xffea92fc)
+// ALT: NSTUB(_pow, 0xffea92fc) // 25/0
+NSTUB(_sqrt, 0xffead648)
+// ALT: NSTUB(_sqrt, 0xffead648) // 24/0
 NSTUB(close, 0xffebc1e4)
 NSTUB(closedir, 0xffeb8184)
 NSTUB(free, 0xffebf230)

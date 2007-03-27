@@ -15,12 +15,16 @@
 
 #define MENUITEM_F_MASK         0x00f0
 #define MENUITEM_F_UNSIGNED     0x0010
+#define MENUITEM_F_MIN          0x0020
+#define MENUITEM_F_MAX          0x0040
+#define MENUITEM_F_MINMAX       0x0060
 
 #define MENUITEM_ARG_MASK       0x0f00
 #define MENUITEM_ARG_INC        0x0100
 #define MENUITEM_ARG_ADDR_INC   0x0200
 #define MENUITEM_ARG_CALLBACK   0x0300
 
+#define MENU_MINMAX(min, max)   (((max)<<16)|(min))
 
 //-------------------------------------------------------------------
 typedef struct {
@@ -32,6 +36,7 @@ typedef struct {
 
 typedef struct {
     const char          *title;
+    void                (*on_change)(unsigned int item);
     const CMenuItem     menu[];
 } CMenu;
 

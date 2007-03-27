@@ -22,3 +22,7 @@ rand 0xFFEF8360
 srand 0xFFEF8384
 IsStrobeChargeCompleted 0xFFD11B24
 GetCurrentAvValue 0xFFEB3D50 18
+_pow 0xFFEEFA14
+_log 0xFFEF34EC
+_log10 0xFFEEF88C
+_sqrt 0xFFEF18E8
