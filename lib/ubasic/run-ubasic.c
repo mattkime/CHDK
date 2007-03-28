@@ -28,7 +28,7 @@
  *
  */
 
-#include "ubasic.h"
+#include "../../include/ubasic.h"
 #include <stdio.h>
 #include <assert.h>
 #include <stdlib.h>

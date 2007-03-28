@@ -34,12 +34,16 @@
 #define DEBUG_PRINTF(...)
 #endif
 
-
+#ifdef TEST
+#include "../../include/ubasic.h"
+#include "../../include/platform.h"
+#else
 #include "ubasic.h"
+#include "platform.h"
+#endif
 #include "tokenizer.h"
 
 #include "camera_functions.h"
-#include "platform.h"
 
 #include "stdlib.h" /* exit() */
 
@@ -513,10 +517,11 @@ click_statement(void)
 static void
 sleep_statement(void)
 {
+  int val;
   accept(TOKENIZER_SLEEP);
-  ubasic_camera_sleep(tokenizer_num());
+  val = expr();
+  ubasic_camera_sleep(val);
   DEBUG_PRINTF("End of sleep\n");
-  tokenizer_next();
   accept(TOKENIZER_CR);
 }
 /*---------------------------------------------------------------------------*/

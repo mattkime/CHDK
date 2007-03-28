@@ -28,7 +28,7 @@ static OSD_elem osd[]={
 };
 static int osd_to_draw;
 static int curr_item;
-static char osd_buf[32];
+static char osd_buf[40];
 static int step;
 
 //-------------------------------------------------------------------
@@ -105,6 +105,15 @@ void gui_osd_kbd_process() {
 void gui_osd_draw_histo() {
     register unsigned int i, v, threshold;
     register color cl;
+/*
+    unsigned char *img;
+
+    img=vid_get_viewport_fb();
+    for (i=0;i<screen_size;++i) {
+        draw_pixel(i%360, i/360, (img[i*3+1]==255)?COLOR_RED:((img[i*3+1]==0)?COLOR_RED:COLOR_TRANSPARENT));
+    }
+    return;
+// */
 
 //    draw_rect(conf.histo_pos.x-1, conf.histo_pos.y, conf.histo_pos.x+HISTO_WIDTH, conf.histo_pos.y+HISTO_HEIGHT, COLOR_WHITE);
     draw_line(conf.histo_pos.x, conf.histo_pos.y, conf.histo_pos.x+HISTO_WIDTH-1, conf.histo_pos.y, conf.histo_color); //top

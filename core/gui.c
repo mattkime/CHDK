@@ -102,7 +102,7 @@ CMenu battery_submenu = { "Battery", cb_battery_menu_change,
     {0}
 }};
 
-CMenu osd_colors_submenu = { "OSD Colors", NULL,
+CMenu colors_submenu = { "Colors", NULL,
 {
     {"OSD text",                    MENUITEM_COLOR_FG,  (int*)&conf.osd_color },
     {"OSD background",              MENUITEM_COLOR_BG,  (int*)&conf.osd_color },
@@ -117,11 +117,11 @@ CMenu osd_colors_submenu = { "OSD Colors", NULL,
 
 CMenu osd_submenu = { "OSD", NULL,
 {
+    {"Show OSD",                    MENUITEM_BOOL,      &conf.show_osd },
     {"Show RAW/SCR/EXP state",      MENUITEM_BOOL,      &conf.show_state },
     {"Show misc values",            MENUITEM_BOOL,      &conf.show_values },
     {"Show DOF calculator",         MENUITEM_BOOL,      &conf.show_dof },
     {"OSD layout editor",           MENUITEM_PROC,      (int*)gui_draw_osd_le },
-    {"OSD color settings ->",       MENUITEM_SUBMENU,   (int*)&osd_colors_submenu },
     {"Battery parameters ->",       MENUITEM_SUBMENU,   (int*)&battery_submenu },
 #ifndef OPTIONS_AUTOSAVE
     {"Save options now...",         MENUITEM_PROC,      (int*)gui_menuproc_save },
@@ -132,6 +132,7 @@ CMenu osd_submenu = { "OSD", NULL,
 
 CMenu histo_submenu = { "Histogram", NULL,
 {
+    {"Show live histogram",         MENUITEM_BOOL,      &conf.show_histo },
     {"Histogram mode",              MENUITEM_ENUM,      (int*)gui_histo_mode_enum },
     {"Show histogram over/under EXP", MENUITEM_BOOL,    &conf.show_overexp },
     {"Ignore boundary peaks",       MENUITEM_INT|MENUITEM_F_UNSIGNED|MENUITEM_F_MINMAX,  &conf.histo_ignore_boundary,   MENU_MINMAX(0, 32)},
@@ -143,11 +144,10 @@ CMenu histo_submenu = { "Histogram", NULL,
 CMenu root_menu = { "Main", NULL,
 {
     {"Save RAW",                    MENUITEM_BOOL,      &conf.save_raw },
-    {"Show OSD",                    MENUITEM_BOOL,      &conf.show_osd },
     {"OSD parameters ->",           MENUITEM_SUBMENU,   (int*)&osd_submenu },
-    {"Show live histogram",         MENUITEM_BOOL,      &conf.show_histo },
     {"Histogram parameters ->",     MENUITEM_SUBMENU,   (int*)&histo_submenu },
     {"Scripting parameters ->",     MENUITEM_SUBMENU,   (int*)&script_submenu },
+    {"Color settings ->",           MENUITEM_SUBMENU,   (int*)&colors_submenu },
     {"Miscellaneous stuff ->",      MENUITEM_SUBMENU,   (int*)&misc_submenu },
     {"Debug parameters ->",         MENUITEM_SUBMENU,   (int*)&debug_submenu },
     {"Reset options to default...", MENUITEM_PROC,      (int*)gui_menuproc_reset },
