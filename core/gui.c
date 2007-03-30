@@ -43,6 +43,7 @@ static void gui_menuproc_save(int arg);
 #endif
 static void gui_menuproc_reset(int arg);
 static const char* gui_histo_mode_enum(int change, int arg);
+static const char* gui_histo_layout_enum(int change, int arg);
 
 // Menu callbacks
 //-------------------------------------------------------------------
@@ -133,6 +134,7 @@ CMenu osd_submenu = { "OSD", NULL,
 CMenu histo_submenu = { "Histogram", NULL,
 {
     {"Show live histogram",         MENUITEM_BOOL,      &conf.show_histo },
+    {"Histogram layout",            MENUITEM_ENUM,      (int*)gui_histo_layout_enum },
     {"Histogram mode",              MENUITEM_ENUM,      (int*)gui_histo_mode_enum },
     {"Show histogram over/under EXP", MENUITEM_BOOL,    &conf.show_overexp },
     {"Ignore boundary peaks",       MENUITEM_INT|MENUITEM_F_UNSIGNED|MENUITEM_F_MINMAX,  &conf.histo_ignore_boundary,   MENU_MINMAX(0, 32)},
@@ -192,14 +194,33 @@ const char* gui_histo_mode_enum(int change, int arg) {
     static const char* modes[]={ "Linear", "Log" };
 
     conf.histo_mode+=change;
-    if (conf.histo_mode>=2) 
+    if (conf.histo_mode<0)
+        conf.histo_mode=(sizeof(modes)/sizeof(modes[0]))-1;
+    else if (conf.histo_mode>=(sizeof(modes)/sizeof(modes[0])))
         conf.histo_mode=0;
-    else if (conf.histo_mode<0)
-        conf.histo_mode=1;
 
     histogram_set_mode(conf.histo_mode);
 
     return modes[conf.histo_mode];
+}
+
+//-------------------------------------------------------------------
+const char* gui_histo_layout_enum(int change, int arg) {
+    static const char* modes[]={ "RGB", "Y", "RGB Y",  "R G B", "RGB all", "Y all"};
+
+    conf.histo_layout+=change;
+    if (conf.histo_layout<0)
+        conf.histo_layout=(sizeof(modes)/sizeof(modes[0]))-1;
+    else if (conf.histo_layout>=(sizeof(modes)/sizeof(modes[0])))
+        conf.histo_layout=0;
+
+    if (conf.histo_layout==OSD_HISTO_LAYOUT_Y || conf.histo_layout==OSD_HISTO_LAYOUT_Y_argb) {
+        histogram_set_main(HISTO_Y);
+    } else {
+        histogram_set_main(HISTO_RGB);
+    }
+
+    return modes[conf.histo_layout];
 }
 
 //-------------------------------------------------------------------
@@ -413,6 +434,10 @@ void gui_draw_osd() {
     unsigned int m, n = 0;
     coord x;
     
+    if (conf.show_histo && (gui_mode==GUI_MODE_NONE || gui_mode==GUI_MODE_ALT) && kbd_is_key_pressed(KEY_SHOOT_HALF)) {
+        gui_osd_draw_histo();
+    }
+
     if (!conf.show_osd) return;
 
     m = mode_get();
@@ -423,13 +448,8 @@ void gui_draw_osd() {
 //            m==MODE_SCN_GRASS || m==MODE_SCN_SNOW  || m==MODE_SCN_BEACH || m==MODE_SCN_FIREWORK || m==MODE_VIDEO)
 //            ++n;
 
-        if ((gui_mode==GUI_MODE_NONE || gui_mode==GUI_MODE_ALT) && kbd_is_key_pressed(KEY_SHOOT_HALF)) {
-            if (conf.show_histo) {
-                gui_osd_draw_histo();
-            }
-            if (conf.show_dof){
-                gui_osd_draw_dof();
-            }
+        if (conf.show_dof && (gui_mode==GUI_MODE_NONE || gui_mode==GUI_MODE_ALT) && kbd_is_key_pressed(KEY_SHOOT_HALF)) {
+            gui_osd_draw_dof();
         }
 
         if (conf.show_state) {
@@ -438,10 +458,6 @@ void gui_draw_osd() {
 
         if (conf.show_values) {
             gui_osd_draw_values();
-        }
-    } else /* MODE_PLAY */ {
-        if (conf.show_histo && gui_mode==GUI_MODE_NONE && kbd_is_key_pressed(KEY_SHOOT_HALF)) {
-            gui_osd_draw_histo();
         }
     }
 

@@ -2,6 +2,7 @@
 #include "conf.h"
 #include "histogram.h"
 #include "gui_draw.h"
+#include "gui_osd.h"
 #include "stdlib.h"
 
 #define SCRIPT_BUF_SIZE 2048
@@ -71,7 +72,7 @@ void conf_load_defaults()
     conf.show_dof = 0;
     conf.batt_volts_max = get_vbatt_max();
     conf.batt_volts_min = get_vbatt_min();
-    conf.batt_step_25 = 0;
+    conf.batt_step_25 = 1;
     conf.batt_perc_show = 1;
     conf.batt_volts_show = 0;
     conf.batt_icon_show = 1;
@@ -81,8 +82,15 @@ void conf_load_defaults()
     conf.show_overexp = 1;
 
     conf.histo_mode = HISTO_MODE_LINEAR;
+    histogram_set_mode(conf.histo_mode);
     conf.histo_auto_ajust = 1;
     conf.histo_ignore_boundary = 5;
+    conf.histo_layout = OSD_HISTO_LAYOUT_A;
+    if (conf.histo_layout==OSD_HISTO_LAYOUT_Y || conf.histo_layout==OSD_HISTO_LAYOUT_Y_argb) {
+        histogram_set_main(HISTO_Y);
+    } else {
+        histogram_set_main(HISTO_RGB);
+    }
 
     conf.histo_pos.x=319-HISTO_WIDTH;
     conf.histo_pos.y=45;
@@ -184,6 +192,14 @@ void conf_restore()
     if (fd >= 0){
 	if (do_restore(fd))
 	    conf_load_defaults();
+        else {
+            histogram_set_mode(conf.histo_mode);
+            if (conf.histo_layout==OSD_HISTO_LAYOUT_Y || conf.histo_layout==OSD_HISTO_LAYOUT_Y_argb) {
+                histogram_set_main(HISTO_Y);
+            } else {
+                histogram_set_main(HISTO_RGB);
+            }
+        }
 	close(fd);
     } else {
 	conf_load_defaults();

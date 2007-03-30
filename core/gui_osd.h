@@ -2,6 +2,13 @@
 #define GUI_OSD_H
 
 //-------------------------------------------------------------------
+// A - RGB
+#define OSD_HISTO_LAYOUT_A              0
+#define OSD_HISTO_LAYOUT_Y              1
+#define OSD_HISTO_LAYOUT_A_Y            2
+#define OSD_HISTO_LAYOUT_R_G_B          3
+#define OSD_HISTO_LAYOUT_A_yrgb         4
+#define OSD_HISTO_LAYOUT_Y_argb         5
 
 //-------------------------------------------------------------------
 extern void gui_osd_init();

@@ -32,6 +32,7 @@ typedef struct {
     int histo_mode;
     int histo_auto_ajust;
     int histo_ignore_boundary;
+    int histo_layout;
 
     OSD_pos histo_pos;
     OSD_pos dof_pos;

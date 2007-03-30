@@ -101,11 +101,61 @@ void gui_osd_kbd_process() {
     }
 }
 
+static void gui_osd_draw_single_histo(int hist, coord x, coord y, int small) {
+    register unsigned int i, v, threshold;
+    register color cl, cl_over, cl_bg=conf.histo_color>>8;
+    coord w=HISTO_WIDTH, h=HISTO_HEIGHT;
+
+    switch (hist) {
+        case HISTO_R: 
+            cl=COLOR_RED; 
+            break;
+        case HISTO_G: 
+            cl=COLOR_GREEN; 
+            break;
+        case HISTO_B: 
+            cl=((mode_get()&MODE_MASK) == MODE_REC)?0xDF:0xCC; 
+            break;
+        case HISTO_RGB:
+        case HISTO_Y:
+        default:
+            cl=conf.histo_color; 
+            break;
+    }
+
+    if (small) {
+        h>>=1; w>>=1;
+        for (i=0; i<w; ++i) {
+            threshold = (histogram[hist][i<<1]+histogram[hist][(i<<1)+1])>>2;
+
+            for (v=1; v<h-1; ++v)
+                draw_pixel(x+i, y+h-v, (v<=threshold)?cl:cl_bg);
+            cl_over = (threshold==h && conf.show_overexp)?COLOR_RED:cl;
+            for (; v<h; ++v)
+                draw_pixel(x+i, y+h-v, (v<=threshold)?cl_over:cl_bg);
+        }
+    } else {
+        for (i=0; i<w; ++i) {
+            threshold = histogram[hist][i];
+
+            for (v=1; v<h-3; ++v)
+                draw_pixel(x+i, y+h-v, (v<=threshold)?cl:cl_bg);
+            cl_over = (threshold==h && conf.show_overexp)?COLOR_RED:cl;
+            for (; v<h; ++v)
+                draw_pixel(x+i, y+h-v, (v<=threshold)?cl_over:cl_bg);
+        }
+    }
+      
+    draw_rect(x-1, y, x+w, y+h, COLOR_WHITE);
+
+}
+
 //-------------------------------------------------------------------
 void gui_osd_draw_histo() {
-    register unsigned int i, v, threshold;
+    register unsigned int i, v, c, threshold;
     register color cl;
 /*
+    // "zebra"
     unsigned char *img;
 
     img=vid_get_viewport_fb();
@@ -115,31 +165,47 @@ void gui_osd_draw_histo() {
     return;
 // */
 
-//    draw_rect(conf.histo_pos.x-1, conf.histo_pos.y, conf.histo_pos.x+HISTO_WIDTH, conf.histo_pos.y+HISTO_HEIGHT, COLOR_WHITE);
-    draw_line(conf.histo_pos.x, conf.histo_pos.y, conf.histo_pos.x+HISTO_WIDTH-1, conf.histo_pos.y, conf.histo_color); //top
-    draw_line(conf.histo_pos.x, conf.histo_pos.y+HISTO_HEIGHT, conf.histo_pos.x+HISTO_WIDTH-1, conf.histo_pos.y+HISTO_HEIGHT, conf.histo_color); //bottom
-    draw_line(conf.histo_pos.x-1, conf.histo_pos.y, conf.histo_pos.x-1, conf.histo_pos.y+HISTO_HEIGHT, 
-              (under_exposed && conf.show_overexp)?COLOR_RED:conf.histo_color); //left
-    draw_line(conf.histo_pos.x+HISTO_WIDTH, conf.histo_pos.y, conf.histo_pos.x+HISTO_WIDTH, conf.histo_pos.y+HISTO_HEIGHT, 
-              (over_exposed && conf.show_overexp)?COLOR_RED:conf.histo_color); //right
-
-    /* histogram */
-    for (i=0; i<HISTO_WIDTH; i++) {
-        threshold = histogram[i];
-
-        for (v=1; v<HISTO_HEIGHT-3; v++)
-            draw_pixel(conf.histo_pos.x+i, conf.histo_pos.y+HISTO_HEIGHT-v, (v<=threshold)?conf.histo_color:conf.histo_color>>8);
-        cl = (threshold==HISTO_HEIGHT && conf.show_overexp)?COLOR_RED:conf.histo_color&0xFF;
-        for (; v<HISTO_HEIGHT; v++)
-            draw_pixel(conf.histo_pos.x+i, conf.histo_pos.y+HISTO_HEIGHT-v, (v<=threshold)?cl:conf.histo_color>>8);
+    switch (conf.histo_layout) {
+        case OSD_HISTO_LAYOUT_Y:
+                gui_osd_draw_single_histo(HISTO_Y, conf.histo_pos.x, conf.histo_pos.y, 0);
+                break;
+        case OSD_HISTO_LAYOUT_A_Y:
+                gui_osd_draw_single_histo(HISTO_RGB, conf.histo_pos.x, conf.histo_pos.y, 0);
+                gui_osd_draw_single_histo(HISTO_Y, conf.histo_pos.x, conf.histo_pos.y+HISTO_HEIGHT, 0);
+                break;
+        case OSD_HISTO_LAYOUT_R_G_B:
+                gui_osd_draw_single_histo(HISTO_R, conf.histo_pos.x, conf.histo_pos.y, 0);
+                gui_osd_draw_single_histo(HISTO_G, conf.histo_pos.x, conf.histo_pos.y+HISTO_HEIGHT, 0);
+                gui_osd_draw_single_histo(HISTO_B, conf.histo_pos.x, conf.histo_pos.y+HISTO_HEIGHT*2, 0);
+                break;
+        case OSD_HISTO_LAYOUT_A_yrgb:
+                gui_osd_draw_single_histo(HISTO_RGB, conf.histo_pos.x, conf.histo_pos.y, 0);
+                gui_osd_draw_single_histo(HISTO_Y, conf.histo_pos.x, conf.histo_pos.y+HISTO_HEIGHT, 1);
+                gui_osd_draw_single_histo(HISTO_R, conf.histo_pos.x+HISTO_WIDTH/2+1, conf.histo_pos.y+HISTO_HEIGHT, 1);
+                gui_osd_draw_single_histo(HISTO_G, conf.histo_pos.x, conf.histo_pos.y+HISTO_HEIGHT+HISTO_HEIGHT/2, 1);
+                gui_osd_draw_single_histo(HISTO_B, conf.histo_pos.x+HISTO_WIDTH/2+1, conf.histo_pos.y+HISTO_HEIGHT+HISTO_HEIGHT/2, 1);
+                break;
+        case OSD_HISTO_LAYOUT_Y_argb:
+                gui_osd_draw_single_histo(HISTO_Y, conf.histo_pos.x, conf.histo_pos.y, 0);
+                gui_osd_draw_single_histo(HISTO_RGB, conf.histo_pos.x, conf.histo_pos.y+HISTO_HEIGHT, 1);
+                gui_osd_draw_single_histo(HISTO_R, conf.histo_pos.x+HISTO_WIDTH/2+1, conf.histo_pos.y+HISTO_HEIGHT, 1);
+                gui_osd_draw_single_histo(HISTO_G, conf.histo_pos.x, conf.histo_pos.y+HISTO_HEIGHT+HISTO_HEIGHT/2, 1);
+                gui_osd_draw_single_histo(HISTO_B, conf.histo_pos.x+HISTO_WIDTH/2+1, conf.histo_pos.y+HISTO_HEIGHT+HISTO_HEIGHT/2, 1);
+                break;
+        case OSD_HISTO_LAYOUT_A:
+        default:
+                gui_osd_draw_single_histo(HISTO_RGB, conf.histo_pos.x, conf.histo_pos.y, 0);
+                break;
     }
 
-    if (under_exposed && conf.show_overexp) {
-        draw_filled_ellipse(conf.histo_pos.x+5, conf.histo_pos.y+5, 3, 3, MAKE_COLOR(COLOR_RED, COLOR_RED));
-    }
+    if (conf.histo_layout != OSD_HISTO_LAYOUT_R_G_B) {
+        if (under_exposed && conf.show_overexp) {
+            draw_filled_ellipse(conf.histo_pos.x+5, conf.histo_pos.y+5, 3, 3, MAKE_COLOR(COLOR_RED, COLOR_RED));
+        }
 
-    if (over_exposed && conf.show_overexp) {
-        draw_filled_ellipse(conf.histo_pos.x+HISTO_WIDTH-5, conf.histo_pos.y+5, 3, 3, MAKE_COLOR(COLOR_RED, COLOR_RED));
+        if (over_exposed && conf.show_overexp) {
+            draw_filled_ellipse(conf.histo_pos.x+HISTO_WIDTH-5, conf.histo_pos.y+5, 3, 3, MAKE_COLOR(COLOR_RED, COLOR_RED));
+        }
     }
 
     if (histo_magnification) {

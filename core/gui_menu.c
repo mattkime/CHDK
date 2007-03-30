@@ -322,7 +322,7 @@ void gui_menu_draw() {
                 if (curr_menu->menu[imenu].value) {
                     ch=((const char* (*)(int change, int arg))(curr_menu->menu[imenu].value))(0, curr_menu->menu[imenu].arg);
                 }
-                sprintf(tbuf, "%c%-26s [%6s]%c", cb, curr_menu->menu[imenu].text, ch, ce);
+                sprintf(tbuf, "%c%-25s [%7s]%c", cb, curr_menu->menu[imenu].text, ch, ce);
                 draw_txt_string(x, y+i, tbuf, cl);
                 break;
             }

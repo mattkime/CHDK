@@ -51,6 +51,8 @@ void dump_memory()
 	sprintf(fn, FN_RAWF, conf.raw_fileno++);
 	fd = fopen(fn, "w+");
 	if (fd >= 0) {
+//            fwrite((void*)vid_get_viewport_fb(), 360*240*3, 1, fd);
+//            fwrite((void*)vid_get_bitmap_fb(), 360*240, 1, fd);
 	    fwrite((void*)0x1900, 1, 0x1900, fd);
 	    fwrite((void*)0x1900, 1, 32*1024*1024-0x1900, fd);
 	    fclose(fd);
