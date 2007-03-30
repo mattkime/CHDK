@@ -270,7 +270,7 @@ static struct {
 	{ KEY_DOWN	, 0x00000002 },
 	{ KEY_LEFT	, 0x00000008 },
 	{ KEY_RIGHT	, 0x00000004 },
-	{ KEY_SET	, 0x00000800 },
+	{ KEY_SET	, 0x00000100 },
 	{ KEY_SHOOT_FULL, 0x00000030 }, // note 3 here!
 	{ KEY_SHOOT_HALF, 0x00000010 },
 	{ KEY_ZOOM_IN	, 0x00000040 },
@@ -278,7 +278,7 @@ static struct {
 	{ KEY_MENU	, 0x00000200 },
 	{ KEY_DISPLAY	, 0x00000400 },
 	{ KEY_PRINT	, 0x00001000 },
-	{ KEY_ERASE	, 0x00000100 },
+	{ KEY_ERASE	, 0x00000800 },
 };
 
 #define KEYSCNT (sizeof(keymap)/sizeof(keymap[0]))
@@ -360,12 +360,12 @@ long kbd_get_clicked_key()
 
 void *vid_get_bitmap_fb()
 {
-    return (void*)0x10361000;
+    return (void*)(0x10360000+0x1000);
 }
 
 void *vid_get_viewport_fb()
 {
-    return (void*)0x105f25e0;
+    return (void*)(0x105F3170);
 }
 
 long vid_get_bitmap_width()
@@ -419,12 +419,12 @@ long stat_get_vbatt()
 
 long get_vbatt_min()
 {
-    return 2300;
+    return 4550;
 }
 
 long get_vbatt_max()
 {
-    return 2550;
+    return 5150;
 }
 
 /*******************************************************************/
@@ -650,21 +650,15 @@ int mode_get() {
 }
 
 const DofTable dof_tbl[] = {
-        { 5800, 28 },
-        { 6420, 28 },
-        { 7060, 28 },
-        { 7700, 32 },
-        { 8340, 32 },
-        { 9950, 32 },
-        {11550, 35 },
-        {13160, 35 },
-        {14750, 35 },
-        {17150, 35 },
-        {19570, 35 },
-        {22760, 40 },
-        {26750, 40 },
-        {30750, 45 },
-        {34800, 48 }};
+        { 7300, 28},
+        { 8460, 32},
+        { 9565, 32},
+        {10835, 32},
+        {12565, 35},
+        {14926, 35},
+        {17342, 35},
+        {21709, 35},
+        {29200, 41}};
 const int dof_tbl_size = sizeof(dof_tbl)/sizeof(dof_tbl[0]);
 
 const int dof_av_tbl[] = {28, 32, 35, 40, 45, 50, 56, 63, 71, 80};

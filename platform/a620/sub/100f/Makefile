@@ -16,8 +16,8 @@ stubs_auto.S: boot.c
 	@echo $< \-\> $@
 # UNIX shell magick )
 	cat $< | \
-	    grep 'BL\?[[:space:]]*sub_[0-9A-Fa-f]' | \
-	    sed 's/.*sub_\([0-9A-Fa-f]*\).*/\1/' | \
+	    grep 'BL\\?[[:space:]]*sub_[0-9A-Fa-f]' | \
+	    sed 's/.*sub_\\([0-9A-Fa-f]*\\).*/\\1/' | \
 	    $(SORT) | uniq | \
 	    awk 'BEGIN {print "/* THIS FILE IS GENERATED */\n#include \"stubs_asm.h\"\n"} \
 		{printf("STUB(%s)\n",$$1)}' > stubs_auto.S

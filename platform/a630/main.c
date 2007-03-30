@@ -24,6 +24,7 @@ extern long GetFocusLensSubjectDistance();
 extern long GetFocusLensSubjectDistanceFromLens();
 extern long GetPropertyCase(long opt_id, void *buf, long bufsize);
 extern long SetPropertyCase(long opt_id, void *buf, long bufsize);
+extern long VbattGet();
 extern void RefreshPhysicalScreen(long f);
 extern long IsStrobeChargeCompleted();
 
