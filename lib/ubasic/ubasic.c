@@ -406,6 +406,17 @@ let_statement(void)
 }
 /*---------------------------------------------------------------------------*/
 static void
+rem_statement(void)
+{
+  accept(TOKENIZER_REM);
+  DEBUG_PRINTF("rem_statement\n");
+  while (tokenizer_token() != TOKENIZER_CR && tokenizer_token() != TOKENIZER_ENDOFINPUT) {
+      tokenizer_next();
+  }
+  tokenizer_next();
+}
+/*---------------------------------------------------------------------------*/
+static void
 gosub_statement(void)
 {
   accept(TOKENIZER_GOSUB);
@@ -663,6 +674,9 @@ statement(void)
     /* Fall through. */
   case TOKENIZER_VARIABLE:
     let_statement();
+    break;
+  case TOKENIZER_REM:
+    rem_statement();
     break;
   default:
     DEBUG_PRINTF("ubasic.c: statement(): not implemented %d\n", token);

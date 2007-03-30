@@ -64,6 +64,7 @@ static const struct keyword_token keywords[] = {
   {"gosub", TOKENIZER_GOSUB},
   {"return", TOKENIZER_RETURN},
   {"call", TOKENIZER_CALL},
+  {"rem", TOKENIZER_REM},
 
   {"click", TOKENIZER_CLICK},
   {"shot", TOKENIZER_SHOOT}, // for compatibility

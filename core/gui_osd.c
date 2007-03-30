@@ -101,6 +101,7 @@ void gui_osd_kbd_process() {
     }
 }
 
+//-------------------------------------------------------------------
 static void gui_osd_draw_single_histo(int hist, coord x, coord y, int small) {
     register unsigned int i, v, threshold;
     register color cl, cl_over, cl_bg=conf.histo_color>>8;
@@ -152,10 +153,9 @@ static void gui_osd_draw_single_histo(int hist, coord x, coord y, int small) {
 
 //-------------------------------------------------------------------
 void gui_osd_draw_histo() {
-    register unsigned int i, v, c, threshold;
-    register color cl;
 /*
     // "zebra"
+    register unsigned int i;
     unsigned char *img;
 
     img=vid_get_viewport_fb();

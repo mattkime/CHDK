@@ -9,8 +9,8 @@ NHSTUB(Fwrite_Fut, 0xFFC5B6F0)
 NHSTUB(malloc, 0xFFEFD1A0)
 NHSTUB(free, 0xFFEFD1AC)
 
-NHSTUB(VbattGet, 0xFFC1A5DC)
-NHSTUB(GetZoomLensCurrentPosition, 0xFFE912B4)
-NHSTUB(GetZoomLensCurrentPoint, 0xFFE912A0)
-NHSTUB(GetFocusLensSubjectDistance, 0xFFEA4E74)
+//NHSTUB(VbattGet, 0xFFC1A5DC)
+//NHSTUB(GetZoomLensCurrentPosition, 0xFFE912B4)
+//NHSTUB(GetZoomLensCurrentPoint, 0xFFE912A0)
+//NHSTUB(GetFocusLensSubjectDistance, 0xFFEA4E74)
 
