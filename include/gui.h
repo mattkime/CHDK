@@ -21,5 +21,6 @@ extern void gui_force_restore();
 
 extern enum Gui_Mode gui_get_mode();
 extern void gui_set_mode(enum Gui_Mode mode);
+extern void gui_update_script_submenu();
 
 #endif

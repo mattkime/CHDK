@@ -11,7 +11,7 @@ all: main.bin
 
 OBJS=entry.o main.o gui_draw.o gui_menu.o gui_palette.o gui_mbox.o \
      gui_reversi.o gui_debug.o gui_fselect.o gui.o kbd.o conf.o \
-     histogram.o gui_batt.o gui_osd.o
+     histogram.o gui_batt.o gui_osd.o script.o
 
 gui.o: FORCE
 

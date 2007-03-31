@@ -77,9 +77,9 @@ static int fselect_sort(const void* v1, const void* v2) {
 static void gui_fselect_read_dir(const char* dir) {
     DIR           *d;
     struct dirent *de;
-    struct stat   st;
+    static struct stat   st;
     struct fitem  **ptr = &head, *prev = NULL;
-    char   buf[100];
+    static char   buf[100];
     int    i;
 
     gui_fselect_free_data();

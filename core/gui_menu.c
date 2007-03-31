@@ -39,8 +39,6 @@ static void gui_menu_set_curr_menu(CMenu *menu_ptr, int top_item, int curr_item)
     curr_menu = menu_ptr;
     gui_menu_top_item = top_item;
     gui_menu_curr_item = curr_item;
-
-    for (count=0; curr_menu->menu[count].text; ++count);
 }
 
 //-------------------------------------------------------------------
@@ -78,7 +76,7 @@ void gui_menu_kbd_process() {
                     gui_menu_top_item = gui_menu_curr_item - NUM_LINES +1;
                     if (gui_menu_top_item<0) gui_menu_top_item=0;
                 }
-            } while (curr_menu->menu[gui_menu_curr_item].text[0]=='-' && curr_menu->menu[gui_menu_curr_item].text[1]==0);
+            } while ((curr_menu->menu[gui_menu_curr_item].type & MENUITEM_MASK)==MENUITEM_TEXT);
             gui_menu_redraw=1;
             break;
         case KEY_DOWN:
@@ -93,7 +91,7 @@ void gui_menu_kbd_process() {
                 } else {
                     gui_menu_curr_item = gui_menu_top_item = 0;
                 }
-            } while (curr_menu->menu[gui_menu_curr_item].text[0]=='-' && curr_menu->menu[gui_menu_curr_item].text[1]==0);
+            } while ((curr_menu->menu[gui_menu_curr_item].type & MENUITEM_MASK)==MENUITEM_TEXT);
             gui_menu_redraw=1;
             break;
         case KEY_LEFT:
@@ -204,8 +202,7 @@ void gui_menu_kbd_process() {
                             if (curr_menu->on_change) {
                                 curr_menu->on_change(gui_menu_curr_item);
                             }
-                            gui_menu_curr_item = -1;
-                            gui_menu_top_item = 0;
+                            gui_menu_set_curr_menu(curr_menu, 0, -1);
                             gui_menu_redraw=2;
                         }
                         break;
@@ -264,10 +261,12 @@ void gui_menu_draw_initial() {
     draw_txt_string(xx, y-2, curr_menu->title, conf.menu_color);
     draw_txt_string(xx+l, y-2, f, conf.menu_color);
 
+    for (count=0; curr_menu->menu[count].text; ++count);
+
     // scrollbar background
     if (count>NUM_LINES) {
         draw_filled_rect((x+w)*FONT_WIDTH, y*FONT_HEIGHT, 
-                         (x+w)*FONT_WIDTH+8, (y+NUM_LINES)*FONT_HEIGHT-1, MAKE_COLOR(conf.menu_color>>8, conf.menu_color>>8));
+                         (x+w)*FONT_WIDTH+8, (y+NUM_LINES)*FONT_HEIGHT-1, MAKE_COLOR((conf.menu_color>>8)&0xFF, (conf.menu_color>>8)&0xFF));
     }
 }
 

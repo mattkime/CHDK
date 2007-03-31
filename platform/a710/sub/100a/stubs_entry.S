@@ -96,6 +96,10 @@ NSTUB(strcmp, 0xffef8c00)
 NSTUB(strcpy, 0xffef8d94)
 NSTUB(strlen, 0xffef8ef8)
 NSTUB(strncmp, 0xffef8f5c)
+NSTUB(strncpy, 0xffef8fa0)
+// ALT: NSTUB(strncpy, 0xffef8fa0) // 24/0
+NSTUB(strrchr, 0xffef9024)
+// ALT: NSTUB(strrchr, 0xffef9024) // 8/0
 NSTUB(strtol, 0xffef8778)
 NSTUB(taskCreateHookAdd, 0xfff03720)
 NSTUB(taskDeleteHookAdd, 0xfff0365c)

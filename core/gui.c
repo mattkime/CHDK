@@ -15,6 +15,7 @@
 #include "gui_batt.h"
 #include "gui_osd.h"
 #include "histogram.h"
+#include "script.h"
 
 //-------------------------------------------------------------------
 
@@ -54,20 +55,25 @@ static void cb_battery_menu_change(unsigned int item);
 
 // Menu definition
 //-------------------------------------------------------------------
-CMenu script_submenu = { "Script", NULL, 
-{
+CMenuItem script_submenu_items_top[] = {
     {"Load script from file...",    MENUITEM_PROC,                      (int*)gui_load_script },
     {"Script shoot delay (.1s)",    MENUITEM_INT|MENUITEM_F_UNSIGNED,   &conf.script_shoot_delay },
     {"-",                           MENUITEM_TEXT },
-    {"Var. a value",                MENUITEM_INT,                       &conf.ubasic_var_a },
-    {"Var. b value",                MENUITEM_INT,                       &conf.ubasic_var_b },
-    {"Var. c value",                MENUITEM_INT,                       &conf.ubasic_var_c },
+    {script_title,                  MENUITEM_TEXT },
+    {"-",                           MENUITEM_TEXT }
+};
+
+CMenuItem script_submenu_items_bottom[] = {
     {"<- Back",                     MENUITEM_UP },
     {0}
-}};
+};
 
-CMenu misc_submenu = { "Miscellaneous", NULL, 
-{
+CMenuItem script_submenu_items[sizeof(script_submenu_items_top)/sizeof(script_submenu_items_top[0])+SCRIPT_NUM_PARAMS+
+                               sizeof(script_submenu_items_bottom)/sizeof(script_submenu_items_bottom[0])];
+CMenu script_submenu = { "Script", NULL, script_submenu_items };
+
+
+CMenuItem misc_submenu_items[] = {
     {"Show build info",             MENUITEM_PROC,  (int*)gui_show_build_info },
     {"Show memory info",            MENUITEM_PROC,  (int*)gui_show_memory_info },
     {"File browser",                MENUITEM_PROC,  (int*)gui_draw_fselect },
@@ -76,10 +82,11 @@ CMenu misc_submenu = { "Miscellaneous", NULL,
     {"GAME: Reversi",               MENUITEM_PROC,  (int*)gui_draw_reversi },
     {"<- Back",                     MENUITEM_UP },
     {0}
-}};
+};
+CMenu misc_submenu = { "Miscellaneous", NULL, misc_submenu_items };
 
-CMenu debug_submenu = { "Debug", NULL,
-{
+
+CMenuItem debug_submenu_items[] = {
     {"Show PropCases",              MENUITEM_BOOL,                      &debug_propcase_show },
     {"PropCase page",               MENUITEM_INT|MENUITEM_F_UNSIGNED|MENUITEM_F_MINMAX,   &debug_propcase_page, MENU_MINMAX(0, 128) },
     {"Show misc. values",           MENUITEM_BOOL,                      &debug_vals_show },
@@ -87,11 +94,12 @@ CMenu debug_submenu = { "Debug", NULL,
     {"Dump RAM on ALT +/- press",   MENUITEM_BOOL,                      &conf.ns_enable_memdump },
     {"<- Back",                     MENUITEM_UP },
     {0}
-}};
+};
+CMenu debug_submenu = { "Debug", NULL, debug_submenu_items };
+
 
 static int voltage_step;
-CMenu battery_submenu = { "Battery", cb_battery_menu_change,
-{
+CMenuItem battery_submenu_items[] = {
     {"Voltage MAX",                 MENUITEM_INT|MENUITEM_ARG_ADDR_INC,     &conf.batt_volts_max,   (int)&voltage_step },
     {"Voltage MIN",                 MENUITEM_INT|MENUITEM_ARG_ADDR_INC,     &conf.batt_volts_min,   (int)&voltage_step },
     {"25+ step",                    MENUITEM_BOOL|MENUITEM_ARG_CALLBACK,    &conf.batt_step_25,     (int)cb_step_25 },	
@@ -101,10 +109,11 @@ CMenu battery_submenu = { "Battery", cb_battery_menu_change,
     {"Show icon",                   MENUITEM_BOOL,                          &conf.batt_icon_show },	
     {"<- Back",                     MENUITEM_UP },
     {0}
-}};
+};
+CMenu battery_submenu = { "Battery", cb_battery_menu_change, battery_submenu_items };
 
-CMenu colors_submenu = { "Colors", NULL,
-{
+
+CMenuItem colors_submenu_items[] = {
     {"OSD text",                    MENUITEM_COLOR_FG,  (int*)&conf.osd_color },
     {"OSD background",              MENUITEM_COLOR_BG,  (int*)&conf.osd_color },
     {"Histogram",                   MENUITEM_COLOR_FG,  (int*)&conf.histo_color },
@@ -114,10 +123,11 @@ CMenu colors_submenu = { "Colors", NULL,
     {"Menu background",             MENUITEM_COLOR_BG,  (int*)&conf.menu_color },
     {"<- Back",                     MENUITEM_UP },
     {0}
-}};
+};
+CMenu colors_submenu = { "Colors", NULL, colors_submenu_items };
 
-CMenu osd_submenu = { "OSD", NULL,
-{
+
+CMenuItem osd_submenu_items[] = {
     {"Show OSD",                    MENUITEM_BOOL,      &conf.show_osd },
     {"Show RAW/SCR/EXP state",      MENUITEM_BOOL,      &conf.show_state },
     {"Show misc values",            MENUITEM_BOOL,      &conf.show_values },
@@ -129,10 +139,11 @@ CMenu osd_submenu = { "OSD", NULL,
 #endif
     {"<- Back",                     MENUITEM_UP },
     {0}
-}};
+};
+CMenu osd_submenu = { "OSD", NULL, osd_submenu_items };
 
-CMenu histo_submenu = { "Histogram", NULL,
-{
+
+CMenuItem histo_submenu_items[] = {
     {"Show live histogram",         MENUITEM_BOOL,      &conf.show_histo },
     {"Histogram layout",            MENUITEM_ENUM,      (int*)gui_histo_layout_enum },
     {"Histogram mode",              MENUITEM_ENUM,      (int*)gui_histo_mode_enum },
@@ -141,10 +152,11 @@ CMenu histo_submenu = { "Histogram", NULL,
     {"Auto magnify",                MENUITEM_BOOL,      &conf.histo_auto_ajust },
     {"<- Back",                     MENUITEM_UP },
     {0}
-}};
+};
+CMenu histo_submenu = { "Histogram", NULL, histo_submenu_items };
 
-CMenu root_menu = { "Main", NULL,
-{
+
+CMenuItem root_menu_items[] = {
     {"Save RAW",                    MENUITEM_BOOL,      &conf.save_raw },
     {"OSD parameters ->",           MENUITEM_SUBMENU,   (int*)&osd_submenu },
     {"Histogram parameters ->",     MENUITEM_SUBMENU,   (int*)&histo_submenu },
@@ -157,7 +169,8 @@ CMenu root_menu = { "Main", NULL,
     {"Save options now...",         MENUITEM_PROC,      (int*)gui_menuproc_save },
 #endif
     {0}
-}};
+};
+CMenu root_menu = { "Main", NULL, root_menu_items };
 
 //-------------------------------------------------------------------
 void cb_step_25() {
@@ -224,6 +237,26 @@ const char* gui_histo_layout_enum(int change, int arg) {
 }
 
 //-------------------------------------------------------------------
+void gui_update_script_submenu() {
+    register int p=0, i;
+
+    for (i=0; i<sizeof(script_submenu_items_top)/sizeof(script_submenu_items_top[0]); ++p, ++i) {
+        script_submenu_items[p]=script_submenu_items_top[i];
+    }
+    for (i=0; i<SCRIPT_NUM_PARAMS; ++i) {
+        if (script_params[i][0]) {
+            script_submenu_items[p].text=script_params[i];
+            script_submenu_items[p].type=MENUITEM_INT;
+            script_submenu_items[p].value=&conf.ubasic_vars[i];
+            ++p;
+        }
+    }
+    for (i=0; i<sizeof(script_submenu_items_bottom)/sizeof(script_submenu_items_bottom[0]); ++p, ++i) {
+        script_submenu_items[p]=script_submenu_items_bottom[i];
+    }
+}
+
+//-------------------------------------------------------------------
 static volatile enum Gui_Mode gui_mode;
 static volatile int gui_restore;
 static volatile int gui_in_redraw;
@@ -286,6 +319,9 @@ void gui_redraw()
         case GUI_MODE_ALT:
             gui_draw_osd();
             draw_txt_string(20, 14, "<ALT>", MAKE_COLOR(COLOR_ALT_BG, COLOR_FG));
+            if ((mode_get()&MODE_MASK) == MODE_REC) {
+                draw_txt_string(0, 14, script_title, MAKE_COLOR(COLOR_ALT_BG, COLOR_FG));
+            }
             break;
         case GUI_MODE_NONE:
             gui_draw_osd();
@@ -448,7 +484,7 @@ void gui_draw_osd() {
 //            m==MODE_SCN_GRASS || m==MODE_SCN_SNOW  || m==MODE_SCN_BEACH || m==MODE_SCN_FIREWORK || m==MODE_VIDEO)
 //            ++n;
 
-        if (conf.show_dof && (gui_mode==GUI_MODE_NONE || gui_mode==GUI_MODE_ALT) && kbd_is_key_pressed(KEY_SHOOT_HALF)) {
+        if (conf.show_dof && (gui_mode==GUI_MODE_NONE /*|| gui_mode==GUI_MODE_ALT*/) && kbd_is_key_pressed(KEY_SHOOT_HALF)) {
             gui_osd_draw_dof();
         }
 
@@ -635,10 +671,21 @@ void gui_draw_fselect(int arg) {
 //-------------------------------------------------------------------
 static void gui_load_script_selected(const char *fn) {
     if (fn)
-        load_script(fn);
+        script_load(fn);
 }
 void gui_load_script(int arg) {
-    gui_fselect_init("A", gui_load_script_selected);
+    DIR   *d;
+    char  *path="A/SCRIPTS";
+
+    // if exists "A/SCRIPTS" go into
+    d=opendir("A/SCRIPTS");
+    if (d) {
+        closedir(d);
+    } else {
+        path="A";
+    }
+
+    gui_fselect_init(path, gui_load_script_selected);
 }
 
 //-------------------------------------------------------------------

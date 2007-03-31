@@ -86,3 +86,5 @@ _pow 0xFFEA8F74
 _log 0xFFEA83DC
 _log10 0xFFEA8A84
 _sqrt 0xFFEAD2C0
+strncpy 0xFFEB5E94
+strrchr 0xFFEB5F18

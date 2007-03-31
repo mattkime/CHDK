@@ -2375,6 +2375,48 @@ static FuncSig func_sig__sqrt_1[] = {
 	/* 24/32 */
 };
 
+static FuncSig func_sig_strncpy_1[] = {
+	{   0, 0xe1520000, 0xfdffffff }, // cmp:7:0xE3520000
+	{   2, 0xe1a0b000, 0xfdffffff }, // mov:6:0xE1A0B000
+	{   3, 0x0a000000, 0xff000000 }, // b, bl:3:0x0A00000C
+	{   5, 0xe013c0ff, 0xfdffffff }, // and:6:0xE213C0FF
+	{   7, 0x00422001, 0xfdffffff }, // sub:6:0x02422001
+	{   8, 0x01a01000, 0xfdffffff }, // mov:6:0x03A01000
+	{   9, 0x0a000000, 0xff000000 }, // b, bl:3:0x0A000004
+	{  10, 0xe0522001, 0xfdffffff }, // sub:6:0xE2522001
+	{  11, 0x1a000000, 0xff000000 }, // b, bl:3:0x1AFFFFF7
+	{  12, 0xea000000, 0xff000000 }, // b, bl:3:0xEA000003
+	{  14, 0xe0422001, 0xfdffffff }, // sub:6:0xE2422001
+	{  15, 0xe1520000, 0xfdffffff }, // cmp:7:0xE3520000
+	{  16, 0x1a000000, 0xff000000 }, // b, bl:3:0x1AFFFFFB
+	{  18, 0xe1a02000, 0xfdffffff }, // mov:6:0xE1A02000
+	{  21, 0xe1500000, 0xfdffffff }, // cmp:7:0xE3500000
+	{  22, 0x0a000000, 0xff000000 }, // b, bl:3:0x0A000007
+	{  23, 0xe1a0b001, 0xfdffffff }, // mov:6:0xE1A0B001
+	{  25, 0xe15a0000, 0xfdffffff }, // cmp:7:0xE35A0000
+	{  26, 0x0a000000, 0xff000000 }, // b, bl:3:0x0AFFFFF8
+	{  27, 0xe15a0000, 0xfdffffff }, // cmp:7:0xE15A0000
+	{  28, 0x1a000000, 0xff000000 }, // b, bl:3:0x1AFFFFFA
+	{  29, 0xe0420001, 0xfdffffff }, // sub:6:0xE2420001
+	{  30, 0xea000000, 0xff000000 }, // b, bl:3:0xEA000000
+	{  31, 0xe1a00000, 0xfdffffff }, // mov:6:0xE3A00000
+	{ -1, -1, -1 },
+	/* 24/32 */
+};
+
+static FuncSig func_sig_strrchr_1[] = {
+	{   0, 0xe1a02000, 0xfdffffff }, // mov:6:0xE3A02000
+	{   1, 0xe00110ff, 0xfdffffff }, // and:6:0xE20110FF
+	{   3, 0xe15c0001, 0xfdffffff }, // cmp:7:0xE15C0001
+	{   4, 0x01a02000, 0xfdffffff }, // mov:6:0x01A02000
+	{   6, 0xe15c0000, 0xfdffffff }, // cmp:7:0xE35C0000
+	{   7, 0x1a000000, 0xff000000 }, // b, bl:3:0x1AFFFFF9
+	{   8, 0xe1a00002, 0xfdffffff }, // mov:6:0xE1A00002
+	{   9, 0xe1a0f00e, 0xfdffffff }, // mov:6:0xE1A0F00E	/* RET found, stopping... */
+	{ -1, -1, -1 },
+	/* 8/32 */
+};
+
 static FuncSig func_sig_GetSystemTime_2[] = {
 	{   1, 0xe59f6030, 0xfdffffff }, // ldr:4:0xE59F6030
 	{   2, 0xe5965000, 0xfdffffff }, // ldr:4:0xE5965000
@@ -3117,6 +3159,48 @@ static FuncSig func_sig__sqrt_2[] = {
 	/* 24/32 */
 };
 
+static FuncSig func_sig_strncpy_2[] = {
+	{   0, 0xe1520000, 0xfdffffff }, // cmp:7:0xE3520000
+	{   2, 0xe1a0b000, 0xfdffffff }, // mov:6:0xE1A0B000
+	{   3, 0x0a000000, 0xff000000 }, // b, bl:3:0x0A00000C
+	{   5, 0xe013c0ff, 0xfdffffff }, // and:6:0xE213C0FF
+	{   7, 0x00422001, 0xfdffffff }, // sub:6:0x02422001
+	{   8, 0x01a01000, 0xfdffffff }, // mov:6:0x03A01000
+	{   9, 0x0a000000, 0xff000000 }, // b, bl:3:0x0A000004
+	{  10, 0xe0522001, 0xfdffffff }, // sub:6:0xE2522001
+	{  11, 0x1a000000, 0xff000000 }, // b, bl:3:0x1AFFFFF7
+	{  12, 0xea000000, 0xff000000 }, // b, bl:3:0xEA000003
+	{  14, 0xe0422001, 0xfdffffff }, // sub:6:0xE2422001
+	{  15, 0xe1520000, 0xfdffffff }, // cmp:7:0xE3520000
+	{  16, 0x1a000000, 0xff000000 }, // b, bl:3:0x1AFFFFFB
+	{  18, 0xe1a02000, 0xfdffffff }, // mov:6:0xE1A02000
+	{  21, 0xe1500000, 0xfdffffff }, // cmp:7:0xE3500000
+	{  22, 0x0a000000, 0xff000000 }, // b, bl:3:0x0A000007
+	{  23, 0xe1a0b001, 0xfdffffff }, // mov:6:0xE1A0B001
+	{  25, 0xe15a0000, 0xfdffffff }, // cmp:7:0xE35A0000
+	{  26, 0x0a000000, 0xff000000 }, // b, bl:3:0x0AFFFFF8
+	{  27, 0xe15a0000, 0xfdffffff }, // cmp:7:0xE15A0000
+	{  28, 0x1a000000, 0xff000000 }, // b, bl:3:0x1AFFFFFA
+	{  29, 0xe0420001, 0xfdffffff }, // sub:6:0xE2420001
+	{  30, 0xea000000, 0xff000000 }, // b, bl:3:0xEA000000
+	{  31, 0xe1a00000, 0xfdffffff }, // mov:6:0xE3A00000
+	{ -1, -1, -1 },
+	/* 24/32 */
+};
+
+static FuncSig func_sig_strrchr_2[] = {
+	{   0, 0xe1a02000, 0xfdffffff }, // mov:6:0xE3A02000
+	{   1, 0xe00110ff, 0xfdffffff }, // and:6:0xE20110FF
+	{   3, 0xe15c0001, 0xfdffffff }, // cmp:7:0xE15C0001
+	{   4, 0x01a02000, 0xfdffffff }, // mov:6:0x01A02000
+	{   6, 0xe15c0000, 0xfdffffff }, // cmp:7:0xE35C0000
+	{   7, 0x1a000000, 0xff000000 }, // b, bl:3:0x1AFFFFF9
+	{   8, 0xe1a00002, 0xfdffffff }, // mov:6:0xE1A00002
+	{   9, 0xe1a0f00e, 0xfdffffff }, // mov:6:0xE1A0F00E	/* RET found, stopping... */
+	{ -1, -1, -1 },
+	/* 8/32 */
+};
+
 FuncsList func_list[] = {
 	{ "AllocateMemory", func_sig_AllocateMemory_1 },
 	{ "AllocateMemory", func_sig_AllocateMemory_2 },
@@ -3224,6 +3308,10 @@ FuncsList func_list[] = {
 	{ "strcpy", func_sig_strcpy_1 },
 	{ "strlen", func_sig_strlen_1 },
 	{ "strncmp", func_sig_strncmp_1 },
+	{ "strncpy", func_sig_strncpy_1 },
+	{ "strncpy", func_sig_strncpy_2 },
+	{ "strrchr", func_sig_strrchr_1 },
+	{ "strrchr", func_sig_strrchr_2 },
 	{ "strtol", func_sig_strtol_1 },
 	{ "taskCreateHookAdd", func_sig_taskCreateHookAdd_1 },
 	{ "taskDeleteHookAdd", func_sig_taskDeleteHookAdd_1 },

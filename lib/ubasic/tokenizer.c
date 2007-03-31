@@ -28,10 +28,8 @@
  *
  */
 
-#undef DEBUG
-
 #if DEBUG
-#define DEBUG_PRINTF(...)  fprintf(stderr,__VA_ARGS__)
+#define DEBUG_PRINTF(...)  printf(__VA_ARGS__)
 #else
 #define DEBUG_PRINTF(...)
 #endif
@@ -79,6 +77,10 @@ static const struct keyword_token keywords[] = {
   {"get_av", TOKENIZER_GET_AV},
   {"set_av_rel", TOKENIZER_SET_AV_REL},
   {"set_av", TOKENIZER_SET_AV},
+
+  {"@title", TOKENIZER_REM},
+  {"@param", TOKENIZER_REM},
+  {"@default", TOKENIZER_REM},
 
   {"end", TOKENIZER_END},
   {NULL, TOKENIZER_ERROR}
@@ -189,6 +191,9 @@ get_next_token(void)
     for(kt = keywords; kt->keyword != NULL; ++kt) {
       if(strncmp(ptr, kt->keyword, strlen(kt->keyword)) == 0) {
 	nextptr = ptr + strlen(kt->keyword);
+        if (kt->token == TOKENIZER_REM) {
+           while(*nextptr != 0 && *nextptr != '\r' && *nextptr != '\n') ++nextptr;
+        }
 	return kt->token;
       }
     }

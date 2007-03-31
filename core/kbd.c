@@ -5,6 +5,7 @@
 #include "conf.h"
 #include "ubasic.h"
 #include "histogram.h"
+#include "script.h"
 
 static int keyid_by_name (const char *n);
 
@@ -86,15 +87,17 @@ void kbd_sched_shoot()
 
 void script_start()
 {
+    int i;
+
     state_kbd_script_run = 1;
     delay_target_ticks = 0;
     kbd_int_stack_ptr = 0;
     kbd_key_release_all();
     ubasic_init(state_ubasic_script);
 
-    ubasic_set_variable('a' - 'a', conf.ubasic_var_a);
-    ubasic_set_variable('b' - 'a', conf.ubasic_var_b);
-    ubasic_set_variable('c' - 'a', conf.ubasic_var_c);
+    for (i=0; i<SCRIPT_NUM_PARAMS; ++i) {
+        ubasic_set_variable(i, conf.ubasic_vars[i]);
+    }
 }
 
 void script_end()

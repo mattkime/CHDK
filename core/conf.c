@@ -4,17 +4,14 @@
 #include "gui_draw.h"
 #include "gui_osd.h"
 #include "stdlib.h"
-
-#define SCRIPT_BUF_SIZE 2048
+#include "script.h"
 
 #define FN_COUNTER  "A/RCFG.BIN"
-#define FN_SCRIPT  "A/SCRIPT.BAS"
 #define CNF_MAGICK_VALUE (0x32204741)
 
 Conf conf;
 
 int state_shooting_progress;
-const char *state_ubasic_script;
 int state_save_raw_nth_only;
 int state_expos_recalculated;
 int state_expos_under;
@@ -26,48 +23,20 @@ int debug_propcase_page;
 int debug_vals_show;
 
 static int dfirst;
-static char ubasic_script_buf[SCRIPT_BUF_SIZE];
-
-const char *ubasic_script_default =
-#if 1
-    "sleep 1000\n"
-
-    "if a<1 then let a=2\n"
-    "if b<1 then let b=3\n"
-
-    "for s=1 to a\n"
-      "shoot\n"
-      "for n=1 to b\n"
-        "click \"right\"\n"
-      "next n\n"
-    "next s\n"
-    "shoot\n"
-
-    "for n=1 to a*b\n"
-      "click \"left\"\n"
-    "next n\n"
-
-    "end\n";
-#else
-    "sleep 1000\n"
-    "for s=1 to 999\n"
-      "shoot\n"
-      "sleep 2000\n"
-    "next s\n"
-    "shoot\n"
-    "end\n";
-#endif
 
 void conf_load_defaults()
 {
+    register int i;
+
     conf.show_osd = 1;
     conf.save_raw = 0;
     conf.script_shoot_delay = 20;
     conf.show_histo = 0;
     conf.raw_fileno = 1000;
-    conf.ubasic_var_a = 0;
-    conf.ubasic_var_b = 0;
-    conf.ubasic_var_c = 0;
+    for (i=0; i<SCRIPT_NUM_PARAMS; ++i) {
+        conf.ubasic_vars[i] = 0;
+    }
+    conf.script_file[0]=0;
 
     conf.show_dof = 0;
     conf.batt_volts_max = get_vbatt_max();
@@ -165,25 +134,6 @@ void conf_save(int force)
 }
 
 
-void load_script(const char *fn) {
-    int fd;
-
-    state_ubasic_script = ubasic_script_default;
-
-    fd = open(fn, O_RDONLY, 0777);
-    if (fd >= 0){
-	int rcnt = read(fd, ubasic_script_buf, SCRIPT_BUF_SIZE);
-	if (rcnt > 0){
-	    if (rcnt == SCRIPT_BUF_SIZE) { /* FIXME TODO script is too big? */
-		ubasic_script_buf[SCRIPT_BUF_SIZE-1] = 0;
-	    } else
-		ubasic_script_buf[rcnt] = 0;
-	    state_ubasic_script = ubasic_script_buf;
-	}
-	close(fd);
-    }
-}
-
 void conf_restore()
 {
     int fd;
@@ -206,6 +156,6 @@ void conf_restore()
     }
     dfirst = 1;
 
-    load_script(FN_SCRIPT);
+    script_load(conf.script_file);
 }
 

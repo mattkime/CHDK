@@ -2,6 +2,7 @@
 #define CONF_H
 
 #include "gui.h"
+#include "script.h"
 
 typedef struct {
     unsigned short  x, y;
@@ -13,9 +14,8 @@ typedef struct {
     int script_shoot_delay;
     int show_histo;
     int raw_fileno;
-    int ubasic_var_a;
-    int ubasic_var_b;
-    int ubasic_var_c;
+    int ubasic_vars[SCRIPT_NUM_PARAMS];
+    char script_file[100];
 
     int show_dof;
     int batt_volts_max;
@@ -60,7 +60,6 @@ extern int state_kbd_script_run;
 extern int state_shooting_progress;
 extern int state_save_raw_nth_only;
 extern int state_expos_recalculated;
-extern const char *state_ubasic_script;
 extern int state_expos_under;
 extern int state_expos_over;
 
@@ -72,7 +71,5 @@ extern int debug_vals_show;
 extern void conf_save(int force);
 extern void conf_restore();
 extern void conf_load_defaults();
-
-extern void load_script(const char *fn);
 
 #endif

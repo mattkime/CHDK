@@ -37,7 +37,7 @@ typedef struct {
 typedef struct {
     const char          *title;
     void                (*on_change)(unsigned int item);
-    const CMenuItem     menu[];
+    const CMenuItem     *menu;
 } CMenu;
 
 

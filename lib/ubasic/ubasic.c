@@ -29,7 +29,7 @@
  */
 
 #if DEBUG
-#define DEBUG_PRINTF(...)  fprintf(stderr, __VA_ARGS__)
+#define DEBUG_PRINTF(...)  printf(__VA_ARGS__)
 #else
 #define DEBUG_PRINTF(...)
 #endif
@@ -410,10 +410,7 @@ rem_statement(void)
 {
   accept(TOKENIZER_REM);
   DEBUG_PRINTF("rem_statement\n");
-  while (tokenizer_token() != TOKENIZER_CR && tokenizer_token() != TOKENIZER_ENDOFINPUT) {
-      tokenizer_next();
-  }
-  tokenizer_next();
+  accept(TOKENIZER_CR);
 }
 /*---------------------------------------------------------------------------*/
 static void
