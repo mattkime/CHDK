@@ -175,8 +175,10 @@ void process_script()
 
     ubasic_run();
 
-    if (ubasic_finished())
+    if (ubasic_finished()) {
+        script_console_add_line("*** FINISHED ***");
 	script_end();
+    }    
 }
 
 void ubasic_camera_click(const char *s)
@@ -222,8 +224,11 @@ long kbd_process()
 	if (kbd_is_key_pressed(KEY_SHOOT_FULL)){
 	    key_pressed = 1;
 	    if (!state_kbd_script_run){
+                script_console_clear();
+                script_console_add_line("*** STARTED ***");
 		script_start();
 	    } else {
+                script_console_add_line("*** INTERRUPTED ***");
 		script_end();
 	    }
 	}

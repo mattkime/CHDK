@@ -37,9 +37,11 @@
 #ifdef TEST
 #include "../../include/ubasic.h"
 #include "../../include/platform.h"
+#include "../../include/script.h"
 #else
 #include "ubasic.h"
 #include "platform.h"
+#include "script.h"
 #endif
 #include "tokenizer.h"
 
@@ -337,28 +339,30 @@ goto_statement(void)
 static void
 print_statement(void)
 {
-#warning reimplement
+  static char buf[128];
+
+  buf[0]=0;
   accept(TOKENIZER_PRINT);
   do {
     DEBUG_PRINTF("Print loop\n");
     if(tokenizer_token() == TOKENIZER_STRING) {
       tokenizer_string(string, sizeof(string));
-//      printf("%s", string);
+      sprintf(buf+strlen(buf), "%s", string);
       tokenizer_next();
     } else if(tokenizer_token() == TOKENIZER_COMMA) {
-//      printf(" ");
+      strcat(buf, " ");
       tokenizer_next();
     } else if(tokenizer_token() == TOKENIZER_SEMICOLON) {
       tokenizer_next();
     } else if(tokenizer_token() == TOKENIZER_VARIABLE ||
 	      tokenizer_token() == TOKENIZER_NUMBER) {
-//      printf("%d", expr());
+      sprintf(buf+strlen(buf), "%d", expr());
     } else {
       break;
     }
   } while(tokenizer_token() != TOKENIZER_CR &&
 	  tokenizer_token() != TOKENIZER_ENDOFINPUT);
-//  printf("\n");
+  script_console_add_line(buf);     
   DEBUG_PRINTF("End of print\n");
   tokenizer_next();
 }

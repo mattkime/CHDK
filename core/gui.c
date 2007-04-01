@@ -298,6 +298,7 @@ void gui_redraw()
 {
     int i,j;
     enum Gui_Mode gui_mode_old;
+    static int show_script_console=0;
 
     if (gui_splash) {
         if (gui_splash>46) {
@@ -321,6 +322,11 @@ void gui_redraw()
             draw_txt_string(20, 14, "<ALT>", MAKE_COLOR(COLOR_ALT_BG, COLOR_FG));
             if ((mode_get()&MODE_MASK) == MODE_REC) {
                 draw_txt_string(0, 14, script_title, MAKE_COLOR(COLOR_ALT_BG, COLOR_FG));
+                if (state_kbd_script_run) show_script_console=5;
+                if (show_script_console) {
+                    --show_script_console;
+                    script_console_draw();
+                }
             }
             break;
         case GUI_MODE_NONE:

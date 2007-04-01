@@ -3,12 +3,17 @@
 #include "platform.h"
 #include "core.h"
 #include "gui.h"
+#include "gui_draw.h"
 #include "conf.h"
 #include "script.h"
 
 //-------------------------------------------------------------------
 
 #define SCRIPT_BUF_SIZE             2048
+#define SCRIPT_CONSOLE_NUM_LINES    5
+#define SCRIPT_CONSOLE_LINE_LENGTH  25
+#define SCRIPT_CONSOLE_X            0
+#define SCRIPT_CONSOLE_Y            (14-SCRIPT_CONSOLE_NUM_LINES)
 
 //-------------------------------------------------------------------
 const char *state_ubasic_script;
@@ -52,7 +57,8 @@ static const char *ubasic_script_default =
 
 char script_title[36];
 char script_params[SCRIPT_NUM_PARAMS][28];
-
+char script_console_buf[SCRIPT_CONSOLE_NUM_LINES][SCRIPT_CONSOLE_LINE_LENGTH+1];
+static int script_console_lines=0;
 //-------------------------------------------------------------------
 static void process_title(const char *title) {
     register const char *ptr = title;
@@ -184,4 +190,50 @@ void script_load(const char *fn) {
     gui_update_script_submenu();
 }
 
+//-------------------------------------------------------------------
+void script_console_clear() {
+    register int i;
+
+    for (i=0; i<SCRIPT_CONSOLE_NUM_LINES; ++i) {
+        script_console_buf[i][0]=0;
+    }
+    script_console_lines=0;
+    draw_restore();
+}
+
+//-------------------------------------------------------------------
+void script_console_draw() {
+    register int i, l;
+    static char buf[8];
+
+    for (i=0; i<script_console_lines; ++i) {
+        l=strlen(script_console_buf[i]);
+        draw_txt_string(SCRIPT_CONSOLE_X, SCRIPT_CONSOLE_Y+SCRIPT_CONSOLE_NUM_LINES-script_console_lines+i, script_console_buf[i], MAKE_COLOR(COLOR_BG, COLOR_FG));
+        for (; l<SCRIPT_CONSOLE_LINE_LENGTH; ++l)
+            draw_txt_char(SCRIPT_CONSOLE_X+l, SCRIPT_CONSOLE_Y+SCRIPT_CONSOLE_NUM_LINES-script_console_lines+i, ' ', MAKE_COLOR(COLOR_BG, COLOR_FG));
+    }
+
+}
+
+//-------------------------------------------------------------------
+void script_console_add_line(const char *str) {
+    register int i;
+
+    if (script_console_lines == SCRIPT_CONSOLE_NUM_LINES ) {
+        for (i=1; i<SCRIPT_CONSOLE_NUM_LINES; ++i) {
+            strcpy(script_console_buf[i-1], script_console_buf[i]);
+        }
+        --script_console_lines;
+    }
+
+    strncpy(script_console_buf[script_console_lines], str, SCRIPT_CONSOLE_LINE_LENGTH);
+    script_console_buf[script_console_lines][SCRIPT_CONSOLE_LINE_LENGTH]=0;
+    
+    ++script_console_lines;
+
+    script_console_draw();
+}
+
+//-------------------------------------------------------------------
+//-------------------------------------------------------------------
 //-------------------------------------------------------------------
