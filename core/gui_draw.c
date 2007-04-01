@@ -3,12 +3,11 @@
 #include "core.h"
 #include "keyboard.h"
 #include "conf.h"
+#include "font.h"
 #include "ubasic.h"
 #include "gui_draw.h"
 
 //-------------------------------------------------------------------
-extern const unsigned char 	fontdata_8x16[4096];
-
 static char* 			frame_buffer[2];
 unsigned int			screen_width=0, screen_height=0, screen_size=0;
 //static char*			frame_buffer_bk[2];
@@ -130,7 +129,7 @@ void draw_filled_rect(coord x1, coord y1, coord x2, coord y2, color cl) {
 
 //-------------------------------------------------------------------
 void draw_char(coord x, coord y, const char ch, color cl) {
-    const unsigned char *sym = fontdata_8x16 +
+    const unsigned char *sym = current_font +
 	    ((const unsigned char)ch)*FONT_HEIGHT;
     int i, ii;
     char c;

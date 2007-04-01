@@ -287,13 +287,18 @@ void gui_osd_draw_state() {
 }
 //-------------------------------------------------------------------
 void gui_osd_draw_values() {
-    int av=shooting_get_real_av(), fl=get_fl()*10/dof_tbl[0].f;
+    int av=shooting_get_real_av(), fl=get_fl()*10/dof_tbl[0].f, lfp;
 
     sprintf(osd_buf, "Z:%ld/%d.%dx%8s", lens_get_zoom_point(), fl/10, fl%10, "");
     osd_buf[8]=0;
     draw_string(conf.values_pos.x, conf.values_pos.y, osd_buf, conf.osd_color);
 
-    sprintf(osd_buf, "F:%ld%8s", lens_get_focus_pos(), "");
+    lfp = lens_get_focus_pos();
+    if (lfp == 0xFFFF) {
+        sprintf(osd_buf, "F:inf%8s", "");
+    } else {
+        sprintf(osd_buf, "F:%ld%8s", lfp, "");
+    }
     osd_buf[8]=0;
     draw_string(conf.values_pos.x, conf.values_pos.y+FONT_HEIGHT, osd_buf, conf.osd_color);
 

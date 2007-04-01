@@ -1,6 +1,7 @@
 #include "platform.h"
 #include "conf.h"
 #include "histogram.h"
+#include "font.h"
 #include "gui_draw.h"
 #include "gui_osd.h"
 #include "stdlib.h"
@@ -78,6 +79,9 @@ void conf_load_defaults()
     conf.osd_color = MAKE_COLOR(COLOR_BG, COLOR_FG);
     conf.batt_icon_color = COLOR_WHITE;
     conf.menu_color = MAKE_COLOR(COLOR_BG, COLOR_FG);
+
+    conf.font = FONT_DEFAULT;
+    font_set(conf.font);
 }
 
 static void do_save(int fd)
@@ -149,6 +153,7 @@ void conf_restore()
             } else {
                 histogram_set_main(HISTO_RGB);
             }
+            font_set(conf.font);
         }
 	close(fd);
     } else {

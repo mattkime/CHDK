@@ -76,7 +76,8 @@ void gui_menu_kbd_process() {
                     gui_menu_top_item = gui_menu_curr_item - NUM_LINES +1;
                     if (gui_menu_top_item<0) gui_menu_top_item=0;
                 }
-            } while ((curr_menu->menu[gui_menu_curr_item].type & MENUITEM_MASK)==MENUITEM_TEXT);
+            } while ((curr_menu->menu[gui_menu_curr_item].type & MENUITEM_MASK)==MENUITEM_TEXT || 
+                     (curr_menu->menu[gui_menu_curr_item].type & MENUITEM_MASK)==MENUITEM_SEPARATOR);
             gui_menu_redraw=1;
             break;
         case KEY_DOWN:
@@ -91,7 +92,8 @@ void gui_menu_kbd_process() {
                 } else {
                     gui_menu_curr_item = gui_menu_top_item = 0;
                 }
-            } while ((curr_menu->menu[gui_menu_curr_item].type & MENUITEM_MASK)==MENUITEM_TEXT);
+            } while ((curr_menu->menu[gui_menu_curr_item].type & MENUITEM_MASK)==MENUITEM_TEXT || 
+                     (curr_menu->menu[gui_menu_curr_item].type & MENUITEM_MASK)==MENUITEM_SEPARATOR);
             gui_menu_redraw=1;
             break;
         case KEY_LEFT:
@@ -302,13 +304,18 @@ void gui_menu_draw() {
             case MENUITEM_SUBMENU:
             case MENUITEM_PROC:
             case MENUITEM_TEXT:
-                if (curr_menu->menu[imenu].text[0]=='-' && curr_menu->menu[imenu].text[1]==0) {
-                    //separator
-                    draw_txt_string(x, y+i, " 컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴� ", conf.menu_color);
-                } else {
-                    sprintf(tbuf, "%c%-35s%c", cb, curr_menu->menu[imenu].text, ce);
-                    draw_txt_string(x, y+i, tbuf, cl);
+                sprintf(tbuf, "%c%-35s%c", cb, curr_menu->menu[imenu].text, ce);
+                draw_txt_string(x, y+i, tbuf, cl);
+                break;
+            case MENUITEM_SEPARATOR:
+                strcpy(tbuf, " 컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴� ");
+                if (curr_menu->menu[imenu].text[0]) {
+                    j = strlen(curr_menu->menu[imenu].text);
+                    tbuf[((w-j)>>1)-1]=' ';
+                    strcpy(tbuf+((w-j)>>1), curr_menu->menu[imenu].text);
+                    tbuf[((w-j)>>1)+j]=' ';
                 }
+                draw_txt_string(x, y+i, tbuf, conf.menu_color);
                 break;
             case MENUITEM_COLOR_FG:
             case MENUITEM_COLOR_BG:

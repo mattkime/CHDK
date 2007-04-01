@@ -46,6 +46,8 @@ typedef struct {
     color batt_icon_color;
     color menu_color;
 
+    int font;
+
     int ns_enable_memdump;
 } Conf;
 

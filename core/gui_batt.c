@@ -38,19 +38,21 @@ static unsigned long get_batt_perc() {
 //-------------------------------------------------------------------
 static void gui_batt_draw_icon () {
     coord x;
+    int perc = get_batt_perc();
+    color cl = (perc<=10)?COLOR_RED:(conf.batt_icon_color&0xFF);
 
     // battery icon
-    draw_rect(conf.batt_icon_pos.x+3-1, conf.batt_icon_pos.y, conf.batt_icon_pos.x+3+25+1, conf.batt_icon_pos.y+10, conf.batt_icon_color&0xFF);
-    draw_rect(conf.batt_icon_pos.x+3-3, conf.batt_icon_pos.y+2, conf.batt_icon_pos.x+3-2, conf.batt_icon_pos.y+8, conf.batt_icon_color&0xFF);
+    draw_rect(conf.batt_icon_pos.x+3-1, conf.batt_icon_pos.y, conf.batt_icon_pos.x+3+25+1, conf.batt_icon_pos.y+10, cl);
+    draw_rect(conf.batt_icon_pos.x+3-3, conf.batt_icon_pos.y+2, conf.batt_icon_pos.x+3-2, conf.batt_icon_pos.y+8, cl);
     draw_line(conf.batt_icon_pos.x+3, conf.batt_icon_pos.y+11, conf.batt_icon_pos.x+3+25+2, conf.batt_icon_pos.y+11, COLOR_BLACK);
     draw_line(conf.batt_icon_pos.x+3+25+2, conf.batt_icon_pos.y+1, conf.batt_icon_pos.x+3+25+2, conf.batt_icon_pos.y+10, COLOR_BLACK);
     
     // battery fill
-    x=conf.batt_icon_pos.x+3+1+25-(get_batt_perc()/4);
+    x=conf.batt_icon_pos.x+3+1+25-(perc/4);
     if (x<=conf.batt_icon_pos.x+3) x=conf.batt_icon_pos.x+3+1;
     if (x>conf.batt_icon_pos.x+3+25+1) x=conf.batt_icon_pos.x+3+25+1;
     draw_filled_rect(conf.batt_icon_pos.x+3, conf.batt_icon_pos.y+1, x-1, conf.batt_icon_pos.y+9, MAKE_COLOR(COLOR_TRANSPARENT, COLOR_TRANSPARENT));
-    draw_filled_rect(x, conf.batt_icon_pos.y+1, conf.batt_icon_pos.x+3+25, conf.batt_icon_pos.y+9, MAKE_COLOR(conf.batt_icon_color&0xFF, conf.batt_icon_color&0xFF));
+    draw_filled_rect(x, conf.batt_icon_pos.y+1, conf.batt_icon_pos.x+3+25, conf.batt_icon_pos.y+9, MAKE_COLOR(cl, cl));
 }
 
 //-------------------------------------------------------------------

@@ -4,6 +4,7 @@
 #include "keyboard.h"
 #include "conf.h"
 #include "ubasic.h"
+#include "font.h"
 #include "gui.h"
 #include "gui_draw.h"
 #include "gui_menu.h"
@@ -45,6 +46,7 @@ static void gui_menuproc_save(int arg);
 static void gui_menuproc_reset(int arg);
 static const char* gui_histo_mode_enum(int change, int arg);
 static const char* gui_histo_layout_enum(int change, int arg);
+static const char* gui_font_enum(int change, int arg);
 
 // Menu callbacks
 //-------------------------------------------------------------------
@@ -58,9 +60,9 @@ static void cb_battery_menu_change(unsigned int item);
 CMenuItem script_submenu_items_top[] = {
     {"Load script from file...",    MENUITEM_PROC,                      (int*)gui_load_script },
     {"Script shoot delay (.1s)",    MENUITEM_INT|MENUITEM_F_UNSIGNED,   &conf.script_shoot_delay },
-    {"-",                           MENUITEM_TEXT },
+    {"Current script",              MENUITEM_SEPARATOR },
     {script_title,                  MENUITEM_TEXT },
-    {"-",                           MENUITEM_TEXT }
+    {"Script parameters",           MENUITEM_SEPARATOR }
 };
 
 CMenuItem script_submenu_items_bottom[] = {
@@ -103,7 +105,7 @@ CMenuItem battery_submenu_items[] = {
     {"Voltage MAX",                 MENUITEM_INT|MENUITEM_ARG_ADDR_INC,     &conf.batt_volts_max,   (int)&voltage_step },
     {"Voltage MIN",                 MENUITEM_INT|MENUITEM_ARG_ADDR_INC,     &conf.batt_volts_min,   (int)&voltage_step },
     {"25+ step",                    MENUITEM_BOOL|MENUITEM_ARG_CALLBACK,    &conf.batt_step_25,     (int)cb_step_25 },	
-    {"-",                           MENUITEM_TEXT },
+    {"",                            MENUITEM_SEPARATOR },
     {"Show percent",                MENUITEM_BOOL|MENUITEM_ARG_CALLBACK,    &conf.batt_perc_show,   (int)cb_perc },
     {"Show volts",                  MENUITEM_BOOL|MENUITEM_ARG_CALLBACK,    &conf.batt_volts_show,  (int)cb_volts },
     {"Show icon",                   MENUITEM_BOOL,                          &conf.batt_icon_show },	
@@ -113,7 +115,9 @@ CMenuItem battery_submenu_items[] = {
 CMenu battery_submenu = { "Battery", cb_battery_menu_change, battery_submenu_items };
 
 
-CMenuItem colors_submenu_items[] = {
+CMenuItem visual_submenu_items[] = {
+    {"Font",                        MENUITEM_ENUM,      (int*)gui_font_enum },
+    {"Colors",                      MENUITEM_SEPARATOR },
     {"OSD text",                    MENUITEM_COLOR_FG,  (int*)&conf.osd_color },
     {"OSD background",              MENUITEM_COLOR_BG,  (int*)&conf.osd_color },
     {"Histogram",                   MENUITEM_COLOR_FG,  (int*)&conf.histo_color },
@@ -124,7 +128,7 @@ CMenuItem colors_submenu_items[] = {
     {"<- Back",                     MENUITEM_UP },
     {0}
 };
-CMenu colors_submenu = { "Colors", NULL, colors_submenu_items };
+CMenu visual_submenu = { "Visual settings", NULL, visual_submenu_items };
 
 
 CMenuItem osd_submenu_items[] = {
@@ -161,7 +165,7 @@ CMenuItem root_menu_items[] = {
     {"OSD parameters ->",           MENUITEM_SUBMENU,   (int*)&osd_submenu },
     {"Histogram parameters ->",     MENUITEM_SUBMENU,   (int*)&histo_submenu },
     {"Scripting parameters ->",     MENUITEM_SUBMENU,   (int*)&script_submenu },
-    {"Color settings ->",           MENUITEM_SUBMENU,   (int*)&colors_submenu },
+    {"Visual settings ->",           MENUITEM_SUBMENU,   (int*)&visual_submenu },
     {"Miscellaneous stuff ->",      MENUITEM_SUBMENU,   (int*)&misc_submenu },
     {"Debug parameters ->",         MENUITEM_SUBMENU,   (int*)&debug_submenu },
     {"Reset options to default...", MENUITEM_PROC,      (int*)gui_menuproc_reset },
@@ -234,6 +238,21 @@ const char* gui_histo_layout_enum(int change, int arg) {
     }
 
     return modes[conf.histo_layout];
+}
+
+//-------------------------------------------------------------------
+const char* gui_font_enum(int change, int arg) {
+    static const char* fonts[]={ "Default", "UniRus", "VgaKbr"};
+
+    conf.font+=change;
+    if (conf.font<0)
+        conf.font=(sizeof(fonts)/sizeof(fonts[0]))-1;
+    else if (conf.font>=(sizeof(fonts)/sizeof(fonts[0])))
+        conf.font=0;
+
+    font_set(conf.font);
+
+    return fonts[conf.font];
 }
 
 //-------------------------------------------------------------------
