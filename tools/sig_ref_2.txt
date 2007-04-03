@@ -28,5 +28,5 @@ _log10 0xFFEEF88C
 _sqrt 0xFFEF18E8
 strncpy 0xFFEF8FA0
 strrchr 0xFFEF9024
-GetParameterData 0xFFD7734C
-SetParameterData 0xFFD77280
+SetParameterData 0xFFD75FB0
+GetParameterData 0xFFD76090

@@ -23,7 +23,7 @@ NSTUB(GetCurrentAvValue, 0xffea6ffc)
 // ALT: NSTUB(GetCurrentAvValue, 0xffea9528) // 13/0
 // Best match: 96%
 NSTUB(GetFocusLensSubjectDistance, 0xffe9b4fc)
-NSTUB(GetParameterData, 0xffd6edc8)
+NSTUB(GetParameterData, 0xffd6d854)
 NSTUB(GetPropertyCase, 0xffc14de4)
 NSTUB(GetSystemTime, 0xffc04d38)
 // Best match: 93%
@@ -39,7 +39,7 @@ NSTUB(PhySw_testgpio, 0xffc18964)
 NSTUB(ProtectFile, 0xffc59b04)
 NSTUB(Read, 0xffc6157c)
 NSTUB(RefreshPhysicalScreen, 0xffd7f49c)
-NSTUB(SetParameterData, 0xffd6ecd4)
+NSTUB(SetParameterData, 0xffd6d774)
 NSTUB(SetPropertyCase, 0xffc14c94)
 NSTUB(SleepTask, 0xffc119d0)
 NSTUB(TakeSemaphore, 0xffc114cc)
