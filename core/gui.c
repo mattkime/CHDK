@@ -57,7 +57,7 @@ static void cb_battery_menu_change(unsigned int item);
 
 // Menu definition
 //-------------------------------------------------------------------
-CMenuItem script_submenu_items_top[] = {
+static CMenuItem script_submenu_items_top[] = {
     {"Load script from file...",    MENUITEM_PROC,                      (int*)gui_load_script },
     {"Script shoot delay (.1s)",    MENUITEM_INT|MENUITEM_F_UNSIGNED,   &conf.script_shoot_delay },
     {"Current script",              MENUITEM_SEPARATOR },
@@ -65,17 +65,17 @@ CMenuItem script_submenu_items_top[] = {
     {"Script parameters",           MENUITEM_SEPARATOR }
 };
 
-CMenuItem script_submenu_items_bottom[] = {
+static CMenuItem script_submenu_items_bottom[] = {
     {"<- Back",                     MENUITEM_UP },
     {0}
 };
 
-CMenuItem script_submenu_items[sizeof(script_submenu_items_top)/sizeof(script_submenu_items_top[0])+SCRIPT_NUM_PARAMS+
+static CMenuItem script_submenu_items[sizeof(script_submenu_items_top)/sizeof(script_submenu_items_top[0])+SCRIPT_NUM_PARAMS+
                                sizeof(script_submenu_items_bottom)/sizeof(script_submenu_items_bottom[0])];
-CMenu script_submenu = { "Script", NULL, script_submenu_items };
+static CMenu script_submenu = { "Script", NULL, script_submenu_items };
 
 
-CMenuItem misc_submenu_items[] = {
+static CMenuItem misc_submenu_items[] = {
     {"Show build info",             MENUITEM_PROC,  (int*)gui_show_build_info },
     {"Show memory info",            MENUITEM_PROC,  (int*)gui_show_memory_info },
     {"File browser",                MENUITEM_PROC,  (int*)gui_draw_fselect },
@@ -85,10 +85,10 @@ CMenuItem misc_submenu_items[] = {
     {"<- Back",                     MENUITEM_UP },
     {0}
 };
-CMenu misc_submenu = { "Miscellaneous", NULL, misc_submenu_items };
+static CMenu misc_submenu = { "Miscellaneous", NULL, misc_submenu_items };
 
 
-CMenuItem debug_submenu_items[] = {
+static CMenuItem debug_submenu_items[] = {
     {"Show PropCases",              MENUITEM_BOOL,                      &debug_propcase_show },
     {"PropCase page",               MENUITEM_INT|MENUITEM_F_UNSIGNED|MENUITEM_F_MINMAX,   &debug_propcase_page, MENU_MINMAX(0, 128) },
     {"Show misc. values",           MENUITEM_BOOL,                      &debug_vals_show },
@@ -97,11 +97,11 @@ CMenuItem debug_submenu_items[] = {
     {"<- Back",                     MENUITEM_UP },
     {0}
 };
-CMenu debug_submenu = { "Debug", NULL, debug_submenu_items };
+static CMenu debug_submenu = { "Debug", NULL, debug_submenu_items };
 
 
 static int voltage_step;
-CMenuItem battery_submenu_items[] = {
+static CMenuItem battery_submenu_items[] = {
     {"Voltage MAX",                 MENUITEM_INT|MENUITEM_ARG_ADDR_INC,     &conf.batt_volts_max,   (int)&voltage_step },
     {"Voltage MIN",                 MENUITEM_INT|MENUITEM_ARG_ADDR_INC,     &conf.batt_volts_min,   (int)&voltage_step },
     {"25+ step",                    MENUITEM_BOOL|MENUITEM_ARG_CALLBACK,    &conf.batt_step_25,     (int)cb_step_25 },	
@@ -112,10 +112,10 @@ CMenuItem battery_submenu_items[] = {
     {"<- Back",                     MENUITEM_UP },
     {0}
 };
-CMenu battery_submenu = { "Battery", cb_battery_menu_change, battery_submenu_items };
+static CMenu battery_submenu = { "Battery", cb_battery_menu_change, battery_submenu_items };
 
 
-CMenuItem visual_submenu_items[] = {
+static CMenuItem visual_submenu_items[] = {
     {"Font",                        MENUITEM_ENUM,      (int*)gui_font_enum },
     {"Colors",                      MENUITEM_SEPARATOR },
     {"OSD text",                    MENUITEM_COLOR_FG,  (int*)&conf.osd_color },
@@ -128,10 +128,10 @@ CMenuItem visual_submenu_items[] = {
     {"<- Back",                     MENUITEM_UP },
     {0}
 };
-CMenu visual_submenu = { "Visual settings", NULL, visual_submenu_items };
+static CMenu visual_submenu = { "Visual settings", NULL, visual_submenu_items };
 
 
-CMenuItem osd_submenu_items[] = {
+static CMenuItem osd_submenu_items[] = {
     {"Show OSD",                    MENUITEM_BOOL,      &conf.show_osd },
     {"Show RAW/SCR/EXP state",      MENUITEM_BOOL,      &conf.show_state },
     {"Show misc values",            MENUITEM_BOOL,      &conf.show_values },
@@ -144,10 +144,10 @@ CMenuItem osd_submenu_items[] = {
     {"<- Back",                     MENUITEM_UP },
     {0}
 };
-CMenu osd_submenu = { "OSD", NULL, osd_submenu_items };
+static CMenu osd_submenu = { "OSD", NULL, osd_submenu_items };
 
 
-CMenuItem histo_submenu_items[] = {
+static CMenuItem histo_submenu_items[] = {
     {"Show live histogram",         MENUITEM_BOOL,      &conf.show_histo },
     {"Histogram layout",            MENUITEM_ENUM,      (int*)gui_histo_layout_enum },
     {"Histogram mode",              MENUITEM_ENUM,      (int*)gui_histo_mode_enum },
@@ -157,10 +157,10 @@ CMenuItem histo_submenu_items[] = {
     {"<- Back",                     MENUITEM_UP },
     {0}
 };
-CMenu histo_submenu = { "Histogram", NULL, histo_submenu_items };
+static CMenu histo_submenu = { "Histogram", NULL, histo_submenu_items };
 
 
-CMenuItem root_menu_items[] = {
+static CMenuItem root_menu_items[] = {
     {"Save RAW",                    MENUITEM_BOOL,      &conf.save_raw },
     {"OSD parameters ->",           MENUITEM_SUBMENU,   (int*)&osd_submenu },
     {"Histogram parameters ->",     MENUITEM_SUBMENU,   (int*)&histo_submenu },
@@ -174,7 +174,7 @@ CMenuItem root_menu_items[] = {
 #endif
     {0}
 };
-CMenu root_menu = { "Main", NULL, root_menu_items };
+static CMenu root_menu = { "Main", NULL, root_menu_items };
 
 //-------------------------------------------------------------------
 void cb_step_25() {
@@ -525,7 +525,10 @@ void gui_draw_osd() {
     gui_batt_draw_osd();
 
     if (debug_vals_show) {
-	sprintf(osd_buf, "1:%8lx  ", ~physw_status[2]);
+        long v;
+        get_parameter_data(0x2f, &v, 4);
+	sprintf(osd_buf, "1:%03d-%04d  ", (v>>18)&0x3FF, (v>>4)&0x3FFF);
+//	sprintf(osd_buf, "1:%8lx  ", ~physw_status[2]);
 	draw_txt_string(28, 10, osd_buf, conf.osd_color);
 
 	sprintf(osd_buf, "2:%8ld  ", get_tick_count());

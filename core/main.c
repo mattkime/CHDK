@@ -46,6 +46,7 @@ void dump_memory()
 {
     int fd;
 
+//((void (*)(int v))(0xFFC5BCC0))(0x7F); //Make_BOOTDISK
     started();
 
 	sprintf(fn, FN_RAWF, conf.raw_fileno++);

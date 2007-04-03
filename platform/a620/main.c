@@ -15,7 +15,7 @@ extern int CreateTask (const char *name, int prio, int stack_size /*?*/,
     void *entry, long parm /*?*/);
 extern long CreateTaskStrict(const char *taskname, long a, long b, void *func, long d);
 extern void SleepTask(long msec);
-extern void ExitTask();
+extern void __attribute__((noreturn)) ExitTask();
 extern long *GetSystemTime(long *t);
 extern long GetZoomLensCurrentPosition();
 extern long GetZoomLensCurrentPoint();
@@ -28,12 +28,15 @@ extern long VbattGet();
 extern void RefreshPhysicalScreen(long f);
 extern long IsStrobeChargeCompleted();
 
+extern long GetParameterData(long id, long unk, void *buf, long size);
+extern long SetParameterData(long id, long unk, void *buf, long size);
+
 /* Ours stuff */
 extern long wrs_kernel_bss_start;
 extern long wrs_kernel_bss_end;
 
 extern void boot();
-
+extern void *get_parameter_data_magic_pointer();
 
 /*
  *
@@ -173,12 +176,16 @@ extern long physw_run;
 extern long kbd_p1_f();
 extern void kbd_p2_f();
 
+#define NEW_SS (0x2000)
+
+#ifndef MALLOCD_STACK
+static char kbd_stack[NEW_SS];
+#endif
 
 long __attribute__((naked)) wrap_kbd_p1_f() ;
 
-void mykbd_task(long ua, long ub, long uc, long ud, long ue, long uf)
+static void __attribute__((noinline)) mykbd_task_proceed()
 {
-
     while (physw_run){
 	SleepTask(10);
 
@@ -186,9 +193,47 @@ void mykbd_task(long ua, long ub, long uc, long ud, long ue, long uf)
 	    kbd_p2_f();
 	}
     }
+}
+
+void __attribute__((naked,noinline))
+mykbd_task(long ua, long ub, long uc, long ud, long ue, long uf)
+{
+    /* WARNING
+     * Stack pointer manipulation performed here!
+     * This means (but not limited to):
+     *	function arguments destroyed;
+     *	function CAN NOT return properly;
+     *	MUST NOT call or use stack variables before stack
+     *	is setup properly;
+     *
+     */
+
+    register int i;
+    register long *newstack;
+
+#ifndef MALLOCD_STACK
+    newstack = (void*)kbd_stack;
+#else
+    newstack = malloc(NEW_SS);
+#endif
+
+    for (i=0;i<NEW_SS/4;i++)
+	newstack[i]=0xdededede;
+
+    asm volatile (
+	"MOV	SP, %0"
+	:: "r"(((char*)newstack)+NEW_SS)
+	: "memory"
+    );
+
+    mykbd_task_proceed();
+
+    /* function can be modified to restore SP here...
+     */
 
     ExitTask();
 }
+
 
 long __attribute__((naked,noinline)) wrap_kbd_p1_f()
 {
@@ -664,3 +709,14 @@ const int dof_tbl_size = sizeof(dof_tbl)/sizeof(dof_tbl[0]);
 const int dof_av_tbl[] = {28, 32, 35, 40, 45, 50, 56, 63, 71, 80};
 const int dof_av_tbl_size = sizeof(dof_av_tbl)/sizeof(dof_av_tbl[0]);
 
+long get_parameter_data(long id, void *buf, long bufsize)
+{
+    long *magic = get_parameter_data_magic_pointer();
+    return GetParameterData(id, magic[1], buf, bufsize);
+}
+
+long set_parameter_data(long id, void *buf, long bufsize)
+{
+    long *magic = get_parameter_data_magic_pointer();
+    return SetParameterData(id, magic[1], buf, bufsize);
+}
