@@ -746,5 +746,6 @@ long set_parameter_data(long id, void *buf, long bufsize)
 
 long get_file_counter() {
     long v;
-    return get_parameter_data(PARAM_FILE_COUNTER, &v, 4);
+    get_parameter_data(PARAM_FILE_COUNTER, &v, 4);
+    return v;
 }
