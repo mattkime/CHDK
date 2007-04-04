@@ -525,8 +525,7 @@ void gui_draw_osd() {
     gui_batt_draw_osd();
 
     if (debug_vals_show) {
-        long v;
-        get_parameter_data(0x2f, &v, 4);
+        long v=get_file_counter();
 	sprintf(osd_buf, "1:%03d-%04d  ", (v>>18)&0x3FF, (v>>4)&0x3FFF);
 //	sprintf(osd_buf, "1:%8lx  ", ~physw_status[2]);
 	draw_txt_string(28, 10, osd_buf, conf.osd_color);

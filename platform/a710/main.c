@@ -724,3 +724,10 @@ long set_parameter_data(long id, void *buf, long bufsize)
 {
     return SetParameterData(id|0x4000, buf, bufsize);
 }
+
+#define PARAM_FILE_COUNTER      0x34
+
+long get_file_counter() {
+    long v;
+    return get_parameter_data(PARAM_FILE_COUNTER, &v, 4);
+}
