@@ -14,6 +14,7 @@ enum Gui_Mode { GUI_MODE_NONE = 0,
                 GUI_MODE_REVERSI,
                 GUI_MODE_DEBUG,
                 GUI_MODE_FSELECT,
+                GUI_MODE_READ,
                 GUI_MODE_OSD };
 
 extern void gui_redraw();

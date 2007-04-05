@@ -15,6 +15,7 @@
 #include "gui_fselect.h"
 #include "gui_batt.h"
 #include "gui_osd.h"
+#include "gui_read.h"
 #include "histogram.h"
 #include "script.h"
 
@@ -40,6 +41,7 @@ static void gui_draw_debug(int arg);
 static void gui_draw_fselect(int arg);
 static void gui_draw_osd_le(int arg);
 static void gui_load_script(int arg);
+static void gui_draw_read(int arg);
 #ifndef OPTIONS_AUTOSAVE
 static void gui_menuproc_save(int arg);
 #endif
@@ -80,6 +82,7 @@ static CMenuItem misc_submenu_items[] = {
     {"Show memory info",            MENUITEM_PROC,  (int*)gui_show_memory_info },
     {"File browser",                MENUITEM_PROC,  (int*)gui_draw_fselect },
     {"Draw palette",                MENUITEM_PROC,  (int*)gui_draw_palette },
+    {"Text file reader",            MENUITEM_PROC,  (int*)gui_draw_read },
     {"MessageBox test",             MENUITEM_PROC,  (int*)gui_test },
     {"GAME: Reversi",               MENUITEM_PROC,  (int*)gui_draw_reversi },
     {"<- Back",                     MENUITEM_UP },
@@ -366,6 +369,9 @@ void gui_redraw()
         case GUI_MODE_FSELECT:
             gui_fselect_draw();
             break;
+        case GUI_MODE_READ:
+            gui_read_draw();
+            break;
         case GUI_MODE_OSD:
             gui_osd_draw();
 //            draw_txt_string(20, 14, "<OSD>", MAKE_COLOR(COLOR_ALT_BG, COLOR_FG));
@@ -430,6 +436,11 @@ void gui_kbd_process()
             case GUI_MODE_FSELECT:
                 gui_fselect_kbd_process();
                 break;
+            case GUI_MODE_READ:
+                gui_read_kbd_process();
+                draw_restore();
+                gui_mode = GUI_MODE_MENU;
+                break;
             default:
                 break;
         }
@@ -459,6 +470,9 @@ void gui_kbd_process()
             break;
     	case GUI_MODE_FSELECT:
             gui_fselect_kbd_process();
+            break;
+    	case GUI_MODE_READ:
+            gui_read_kbd_process();
             break;
     	case GUI_MODE_OSD:
             gui_osd_kbd_process();
@@ -719,6 +733,17 @@ void gui_load_script(int arg) {
 void gui_draw_osd_le(int arg) {
     gui_mode = GUI_MODE_OSD;
     gui_osd_init();
+}
+
+//-------------------------------------------------------------------
+static void gui_draw_read_selected(const char *fn) {
+    if (fn) {
+        gui_mode = GUI_MODE_READ;
+        gui_read_init(fn);
+    }
+}
+void gui_draw_read(int arg) {
+    gui_fselect_init("A", gui_draw_read_selected);
 }
 
 //-------------------------------------------------------------------
