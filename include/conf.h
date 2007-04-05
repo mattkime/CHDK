@@ -45,6 +45,7 @@ typedef struct {
     color osd_color;
     color batt_icon_color;
     color menu_color;
+    color reader_color;
 
     int font;
 

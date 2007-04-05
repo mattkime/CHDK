@@ -79,6 +79,7 @@ void conf_load_defaults()
     conf.osd_color = MAKE_COLOR(COLOR_BG, COLOR_FG);
     conf.batt_icon_color = COLOR_WHITE;
     conf.menu_color = MAKE_COLOR(COLOR_BG, COLOR_FG);
+    conf.reader_color = MAKE_COLOR(COLOR_GREY, COLOR_WHITE);
 
     conf.font = FONT_DEFAULT;
     font_set(conf.font);

@@ -30,3 +30,7 @@ strncpy 0xFFEF8FA0
 strrchr 0xFFEF9024
 SetParameterData 0xFFD75FB0
 GetParameterData 0xFFD76090
+rename 0xFFEFE0CC
+chdir 0xFFEFE140
+time 0xFFEFA448
+utime 0xFFEFB064

@@ -5,12 +5,10 @@
 #include "stdlib.h"
 #include "gui.h"
 #include "histogram.h"
+#include "raw.h"
 
-#define FN_RAWDIR   "A/DCIM/100CANON"
-#define FN_RAWF     (FN_RAWDIR "/" "CRW_%04hd.JPG")
-
-static char fn[64];
 static long (*prev_hhandler)(long a);
+static int raw_need_postprocess;
 
 #if 0
 int taskop_txt_p;
@@ -45,55 +43,29 @@ void core_hook_task_delete(void *tcb)
 void dump_memory()
 {
     int fd;
+    static int cnt=0;
+    static char fn[32];
 
 //((void (*)(int v))(0xFFC5BCC0))(0x7F); //Make_BOOTDISK
     started();
 
-	sprintf(fn, FN_RAWF, conf.raw_fileno++);
+	sprintf(fn, "A/DCIM/100CANON/CRW_%04d.JPG", cnt++);
 	fd = fopen(fn, "w+");
 	if (fd >= 0) {
 //            fwrite((void*)vid_get_viewport_fb(), 360*240*3, 1, fd);
 //            fwrite((void*)vid_get_bitmap_fb(), 360*240, 1, fd);
-	    fwrite((void*)0x1900, 1, 0x1900, fd);
+	    fwrite((void*)0, 1, 0x1900, fd);
 	    fwrite((void*)0x1900, 1, 32*1024*1024-0x1900, fd);
 	    fclose(fd);
 	}
     finished();
 }
 
-static void saverawfile()
-{
-    int fd;
-
-    // got here second time in a row. Skip second RAW saveing.
-    if (state_shooting_progress == SHOOTING_PROGRESS_PROCESSING){
-	return;
-    }
-
-    state_shooting_progress = SHOOTING_PROGRESS_PROCESSING;
-
-    if (conf.save_raw){
-	started();
-
-	sprintf(fn, FN_RAWF, conf.raw_fileno++);
-//	sprintf(fn, FN_RAWF, *((short*)0x0001281C));
-	fd = fopen(fn, "w+");
-	if (fd >= 0) {
-	    fwrite(hook_raw_image_addr(), 1, hook_raw_size(), fd);
-	    fclose(fd);
-	}
-	conf_save(0);
-	finished();
-    }
-
-}
-
-
 static void myhook1(long a)
 {
     // only this caller allowed
     if (__builtin_return_address(0) == hook_raw_ret_addr()){
-	saverawfile();
+	raw_need_postprocess = raw_savefile();
     }
     prev_hhandler(a);
 }
@@ -103,11 +75,12 @@ void core_spytask()
     long *p = hook_raw_fptr();
     int cnt = 0;
 
+    raw_need_postprocess = 0;
+
     SleepTask(1000);
 
     conf_restore();
     gui_init();
-    mkdir(FN_RAWDIR);
 
     started();
     SleepTask(50);
@@ -126,8 +99,10 @@ void core_spytask()
 	}
 	taskUnlock();
 
-	if ((state_shooting_progress == SHOOTING_PROGRESS_PROCESSING) && (!shooting_in_progress()))
+	if ((state_shooting_progress == SHOOTING_PROGRESS_PROCESSING) && (!shooting_in_progress())) {
 	    state_shooting_progress = SHOOTING_PROGRESS_DONE;
+            if (raw_need_postprocess) raw_postprocess();
+        }
 
 	SleepTask(20);
     }

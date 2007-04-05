@@ -47,6 +47,8 @@ NSTUB(_pow, 0xffeefa14)
 // ALT: NSTUB(_pow, 0xffeefa14) // 25/0
 NSTUB(_sqrt, 0xffef18e8)
 // ALT: NSTUB(_sqrt, 0xffef18e8) // 24/0
+NSTUB(chdir, 0xffefe140)
+// ALT: NSTUB(chdir, 0xffefe140) // 27/0
 NSTUB(close, 0xffefda80)
 NSTUB(closedir, 0xffefaf08)
 NSTUB(free, 0xfff00acc)
@@ -87,6 +89,8 @@ NSTUB(rand, 0xffef8360)
 // ALT: NSTUB(rand, 0xffef8360) // 8/0
 NSTUB(read, 0xffefdae0)
 NSTUB(readdir, 0xffefaed4)
+NSTUB(rename, 0xffefe0cc)
+// ALT: NSTUB(rename, 0xffefe0cc) // 26/0
 NSTUB(rewinddir, 0xffefaefc)
 NSTUB(sprintf, 0xffefc88c)
 NSTUB(srand, 0xffef8384)
@@ -112,4 +116,8 @@ NSTUB(taskName, 0xfff0d5e0)
 NSTUB(taskResume, 0xfff0d9c4)
 NSTUB(taskSuspend, 0xfff0d7f0)
 NSTUB(taskUnlock, 0xfff0de4c)
+NSTUB(time, 0xffefa448)
+// ALT: NSTUB(time, 0xffefa448) // 25/0
+NSTUB(utime, 0xffefb064)
+// ALT: NSTUB(utime, 0xffefb064) // 26/0
 NSTUB(write, 0xffefdb50)

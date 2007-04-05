@@ -128,6 +128,8 @@ static CMenuItem visual_submenu_items[] = {
     {"Battery icon",                MENUITEM_COLOR_FG,  (int*)&conf.batt_icon_color },
     {"Menu text",                   MENUITEM_COLOR_FG,  (int*)&conf.menu_color },
     {"Menu background",             MENUITEM_COLOR_BG,  (int*)&conf.menu_color },
+    {"Text reader text",            MENUITEM_COLOR_FG,  (int*)&conf.reader_color },
+    {"Text reader background",      MENUITEM_COLOR_BG,  (int*)&conf.reader_color },
     {"<- Back",                     MENUITEM_UP },
     {0}
 };
@@ -168,7 +170,7 @@ static CMenuItem root_menu_items[] = {
     {"OSD parameters ->",           MENUITEM_SUBMENU,   (int*)&osd_submenu },
     {"Histogram parameters ->",     MENUITEM_SUBMENU,   (int*)&histo_submenu },
     {"Scripting parameters ->",     MENUITEM_SUBMENU,   (int*)&script_submenu },
-    {"Visual settings ->",           MENUITEM_SUBMENU,   (int*)&visual_submenu },
+    {"Visual settings ->",          MENUITEM_SUBMENU,   (int*)&visual_submenu },
     {"Miscellaneous stuff ->",      MENUITEM_SUBMENU,   (int*)&misc_submenu },
     {"Debug parameters ->",         MENUITEM_SUBMENU,   (int*)&debug_submenu },
     {"Reset options to default...", MENUITEM_PROC,      (int*)gui_menuproc_reset },
@@ -504,6 +506,7 @@ void gui_kbd_leave()
 //-------------------------------------------------------------------
 extern long physw_status[3];
 extern long GetPropertyCase(long opt_id, void *buf, long bufsize);
+//extern int xxxx, eeee;
 //-------------------------------------------------------------------
 void gui_draw_osd() {
     unsigned int m, n = 0;
@@ -544,7 +547,8 @@ void gui_draw_osd() {
 //	sprintf(osd_buf, "1:%8lx  ", ~physw_status[2]);
 	draw_txt_string(28, 10, osd_buf, conf.osd_color);
 
-	sprintf(osd_buf, "2:%8ld  ", get_tick_count());
+//	sprintf(osd_buf, "2:%d, %08X  ", xxxx, eeee);
+        sprintf(osd_buf, "2:%8ld  ", get_tick_count());
 	draw_txt_string(28, 11, osd_buf, conf.osd_color);
 
 	sprintf(osd_buf, "3:%d %d ", state_expos_under, state_expos_over);

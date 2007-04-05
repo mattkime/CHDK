@@ -52,6 +52,8 @@ NSTUB(_pow, 0xffeafc98)
 // ALT: NSTUB(_pow, 0xffeafc98) // 25/0
 NSTUB(_sqrt, 0xffeb3fe4)
 // ALT: NSTUB(_sqrt, 0xffeb3fe4) // 24/0
+NSTUB(chdir, 0xffec3240)
+// ALT: NSTUB(chdir, 0xffec3240) // 27/0
 NSTUB(close, 0xffec2b80)
 NSTUB(closedir, 0xffebeb20)
 // ERROR: free is not found!
@@ -94,6 +96,8 @@ NSTUB(rand, 0xffebbf78)
 // ALT: NSTUB(rand, 0xffebbf78) // 8/0
 NSTUB(read, 0xffec2be0)
 NSTUB(readdir, 0xffebeaec)
+NSTUB(rename, 0xffec31cc)
+// ALT: NSTUB(rename, 0xffec31cc) // 26/0
 NSTUB(rewinddir, 0xffebeb14)
 NSTUB(sprintf, 0xffec04a4)
 NSTUB(srand, 0xffebbf9c)
@@ -119,4 +123,8 @@ NSTUB(taskName, 0xffed36fc)
 NSTUB(taskResume, 0xffed3ae0)
 NSTUB(taskSuspend, 0xffed390c)
 NSTUB(taskUnlock, 0xffed3f68)
+NSTUB(time, 0xffebe060)
+// ALT: NSTUB(time, 0xffebe060) // 25/0
+NSTUB(utime, 0xffebec7c)
+// ALT: NSTUB(utime, 0xffebec7c) // 26/0
 NSTUB(write, 0xffec2c50)

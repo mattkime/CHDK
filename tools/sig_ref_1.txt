@@ -90,3 +90,7 @@ strncpy 0xFFEB5E94
 strrchr 0xFFEB5F18
 SetParameterData 0xFFD4E21C
 GetParameterData 0xFFD4E2FC
+rename 0xFFEBC4A8
+chdir 0xFFEBC51C
+time 0xFFEB733C
+utime 0xFFEB7F58

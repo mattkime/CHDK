@@ -55,6 +55,7 @@ extern void Fclose_Fut(long file);
 extern long Fread_Fut(void *buf, long elsize, long count, long f);
 extern long Fwrite_Fut(const void *buf, long elsize, long count, long f);
 extern long Fseek_Fut(long file, long offset, long whence);
+extern long RenameFile_Fut(const char *oldname, const char *newname);
 
 extern int creat (const char *name, int flags);
 extern int open (const char *name, int flags, int mode );
@@ -131,5 +132,16 @@ struct tm
 	};
 
 extern struct tm * localtime(const unsigned long *_tod);
+
+extern int rename(const char *oldname, const char *newname);
+extern int chdir(char *pathname);
+
+struct utimbuf {
+    unsigned long actime;       /* set the access time */
+    unsigned long modtime;      /* set the modification time */
+};
+
+extern int utime(char *file, struct utimbuf *newTimes);
+extern unsigned long time(unsigned long *timer);
 
 #endif
