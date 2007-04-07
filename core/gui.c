@@ -25,7 +25,7 @@
 
 // forward declarations
 //-------------------------------------------------------------------
-void dump_memory();
+extern void dump_memory();
 
 static void gui_draw_osd();
 static void gui_draw_splash();
@@ -452,9 +452,6 @@ void gui_kbd_process()
     if (kbd_is_key_clicked(KEY_MENU)){
         switch (gui_mode) {
             case GUI_MODE_ALT:
-#ifdef OPTIONS_AUTOSAVE
-                conf_store_old_settings();
-#endif
                 gui_menu_init(&root_menu);
                 gui_mode = GUI_MODE_MENU;
                 draw_restore();
@@ -489,8 +486,13 @@ void gui_kbd_process()
     
     switch (gui_mode) {
         case GUI_MODE_ALT:
-            if (kbd_is_key_clicked(KEY_ERASE) && conf.ns_enable_memdump) {
-                dump_memory();
+            if (kbd_is_key_clicked(KEY_ERASE)) {
+                if (conf.ns_enable_memdump) {
+                    dump_memory();
+                } else {
+                    conf.save_raw = !conf.save_raw;
+                    draw_restore();
+                }
             }
             break;
     	case GUI_MODE_MENU:
