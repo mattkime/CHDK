@@ -56,6 +56,8 @@ extern long Fread_Fut(void *buf, long elsize, long count, long f);
 extern long Fwrite_Fut(const void *buf, long elsize, long count, long f);
 extern long Fseek_Fut(long file, long offset, long whence);
 extern long RenameFile_Fut(const char *oldname, const char *newname);
+extern long Feof_Fut(long file);
+extern long DeleteFile_Fut(const char *name);
 
 extern int creat (const char *name, int flags);
 extern int open (const char *name, int flags, int mode );
@@ -69,6 +71,8 @@ extern int lseek (int fd, long offset, int whence);
 #define fread(a,b,c,d) Fread_Fut(a,b,c,d)
 #define fwrite(a,b,c,d) Fwrite_Fut(a,b,c,d)
 #define fseek(a,b,c) Fseek_Fut(a,b,c)
+#define feof(a) Feof_Fut(a)
+#define fdelete(a) DeleteFile_Fut(a)
 
 #define DOS_ATTR_RDONLY         0x01            /* read-only file */
 #define DOS_ATTR_HIDDEN         0x02            /* hidden file */

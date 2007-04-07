@@ -4,6 +4,7 @@
 #include "core.h"
 #include "gui.h"
 #include "gui_draw.h"
+#include "gui_mbox.h"
 #include "gui_fselect.h"
 
 
@@ -286,6 +287,17 @@ void gui_fselect_draw() {
 }
 
 //-------------------------------------------------------------------
+static void fselect_delete_cb(unsigned int btn) {
+    if (btn==MBOX_BTN_YES) {
+        sprintf(selected_file, "%s/%s", current_dir, selected->name);
+        fdelete(selected_file);
+        selected_file[0]=0;
+        gui_fselect_read_dir(current_dir);
+    }
+    gui_fselect_redraw = 1;
+}
+
+//-------------------------------------------------------------------
 void gui_fselect_kbd_process() {
     int i;
     struct fitem  *ptr;
@@ -331,6 +343,10 @@ void gui_fselect_kbd_process() {
                         fselect_on_select(selected_file);
                 }
             }
+            break;
+        case KEY_ERASE:
+            gui_mbox_init("*** Delete file ***", "Are you SURE to delete\nselected file?",
+                           MBOX_TEXT_CENTER|MBOX_BTN_YES_NO|MBOX_DEF_BTN2, fselect_delete_cb);
             break;
         case KEY_MENU:
             gui_fselect_free_data();

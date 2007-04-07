@@ -29,6 +29,10 @@
 #define MODE_SCN_BEACH          18
 #define MODE_SCN_FIREWORK       19
 
+#define MODE_SCREEN_MASK        0x0C00
+#define MODE_SCREEN_OPENED      0x0400
+#define MODE_SCREEN_ROTATED     0x0800
+
 typedef struct {
     short int id; // hacks id
     short int prop_id; // Canons id

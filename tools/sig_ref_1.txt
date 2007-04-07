@@ -94,3 +94,5 @@ rename 0xFFEBC4A8
 chdir 0xFFEBC51C
 time 0xFFEB733C
 utime 0xFFEB7F58
+Feof_Fut 0xFFC55D80
+DeleteFile_Fut 0xFFC55A2C

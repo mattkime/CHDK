@@ -6,12 +6,16 @@ NSTUB(Close, 0xffc625a8)
 NSTUB(CreatePhysicalVram, 0xffd3074c)
 NSTUB(CreateTask, 0xffc12154)
 NSTUB(CreateTaskStrict, 0xffc131f4)
+// Best match: 59%
+NSTUB(DeleteFile_Fut, 0xffc5b4c0)
+// ALT: NSTUB(DeleteFile_Fut, 0xffc5b4c0) // 16/11
 NSTUB(DisableDispatch, 0xffc11f78)
 NSTUB(DisplayImagePhysicalScreen, 0xffd2f954)
 NSTUB(EnableDispatch, 0xffc12004)
 NSTUB(ExecuteEventProcedure, 0xffc0699c)
 NSTUB(ExitTask, 0xffc12514)
 // ERROR: Fclose_Fut is not found!
+// ERROR: Feof_Fut is not found!
 // Best match: 82%
 NSTUB(Fopen_Fut, 0xffc5b5a4)
 // Best match: 64%

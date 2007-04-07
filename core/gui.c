@@ -36,7 +36,6 @@ static void gui_show_build_info(int arg);
 static void gui_show_memory_info(int arg);
 static void gui_draw_palette(int arg);
 static void gui_draw_reversi(int arg);
-static void gui_test(int arg);
 static void gui_draw_debug(int arg);
 static void gui_draw_fselect(int arg);
 static void gui_draw_osd_le(int arg);
@@ -49,6 +48,8 @@ static void gui_menuproc_reset(int arg);
 static const char* gui_histo_mode_enum(int change, int arg);
 static const char* gui_histo_layout_enum(int change, int arg);
 static const char* gui_font_enum(int change, int arg);
+static const char* gui_raw_prefix_enum(int change, int arg);
+static const char* gui_raw_ext_enum(int change, int arg);
 
 // Menu callbacks
 //-------------------------------------------------------------------
@@ -83,7 +84,7 @@ static CMenuItem misc_submenu_items[] = {
     {"File browser",                MENUITEM_PROC,  (int*)gui_draw_fselect },
     {"Draw palette",                MENUITEM_PROC,  (int*)gui_draw_palette },
     {"Text file reader",            MENUITEM_PROC,  (int*)gui_draw_read },
-    {"MessageBox test",             MENUITEM_PROC,  (int*)gui_test },
+    {"Flash-light",                 MENUITEM_BOOL,  &conf.flashlight },
     {"GAME: Reversi",               MENUITEM_PROC,  (int*)gui_draw_reversi },
     {"<- Back",                     MENUITEM_UP },
     {0}
@@ -165,8 +166,19 @@ static CMenuItem histo_submenu_items[] = {
 static CMenu histo_submenu = { "Histogram", NULL, histo_submenu_items };
 
 
-static CMenuItem root_menu_items[] = {
+static CMenuItem raw_submenu_items[] = {
     {"Save RAW",                    MENUITEM_BOOL,      &conf.save_raw },
+    {"RAW file in dir with JPEG",   MENUITEM_BOOL,      &conf.raw_in_dir },
+    {"RAW file prefix",             MENUITEM_ENUM,      (int*)gui_raw_prefix_enum },
+    {"RAW file extension",          MENUITEM_ENUM,      (int*)gui_raw_ext_enum },
+    {"<- Back",                     MENUITEM_UP },
+    {0}
+};
+static CMenu raw_submenu = { "Histogram", NULL, raw_submenu_items };
+
+
+static CMenuItem root_menu_items[] = {
+    {"RAW parameters ->",           MENUITEM_SUBMENU,   (int*)&raw_submenu },
     {"OSD parameters ->",           MENUITEM_SUBMENU,   (int*)&osd_submenu },
     {"Histogram parameters ->",     MENUITEM_SUBMENU,   (int*)&histo_submenu },
     {"Scripting parameters ->",     MENUITEM_SUBMENU,   (int*)&script_submenu },
@@ -261,6 +273,32 @@ const char* gui_font_enum(int change, int arg) {
 }
 
 //-------------------------------------------------------------------
+const char* gui_raw_prefix_enum(int change, int arg) {
+    static const char* prefixes[]={ "IMG_", "CRW_", "SND_"};
+
+    conf.raw_prefix+=change;
+    if (conf.raw_prefix<0)
+        conf.raw_prefix=(sizeof(prefixes)/sizeof(prefixes[0]))-1;
+    else if (conf.raw_prefix>=(sizeof(prefixes)/sizeof(prefixes[0])))
+        conf.raw_prefix=0;
+
+    return prefixes[conf.raw_prefix];
+}
+
+//-------------------------------------------------------------------
+const char* gui_raw_ext_enum(int change, int arg) {
+    static const char* exts[]={ ".JPG", ".CRW", ".CR2", ".THM", ".WAV"};
+
+    conf.raw_ext+=change;
+    if (conf.raw_ext<0)
+        conf.raw_ext=(sizeof(exts)/sizeof(exts[0]))-1;
+    else if (conf.raw_ext>=(sizeof(exts)/sizeof(exts[0])))
+        conf.raw_ext=0;
+
+    return exts[conf.raw_ext];
+}
+
+//-------------------------------------------------------------------
 void gui_update_script_submenu() {
     register int p=0, i;
 
@@ -320,7 +358,6 @@ void gui_force_restore() {
 //-------------------------------------------------------------------
 void gui_redraw()
 {
-    int i,j;
     enum Gui_Mode gui_mode_old;
     static int show_script_console=0;
 
@@ -399,7 +436,7 @@ static inline void conf_store_old_settings() {
 //-------------------------------------------------------------------
 static inline int conf_save_new_settings_if_changed() {
     if (memcmp(&old_conf, &conf, sizeof(Conf)) != 0) {
-        conf_save(1);
+        conf_save();
         return 1;
     }
     return 0;
@@ -511,14 +548,27 @@ extern long GetPropertyCase(long opt_id, void *buf, long bufsize);
 void gui_draw_osd() {
     unsigned int m, n = 0;
     coord x;
+    static int flashlight = 0;
     
+    m = mode_get();
+
+    if (conf.flashlight && (m&MODE_SCREEN_OPENED) && (m&MODE_SCREEN_ROTATED) && (gui_mode==GUI_MODE_NONE /*|| gui_mode==GUI_MODE_ALT*/)) {
+        draw_filled_rect(0, 0, screen_width-1, screen_height-1, MAKE_COLOR(COLOR_WHITE, COLOR_WHITE));
+        flashlight = 1;
+        return;
+    }
+    if (flashlight) {
+        flashlight = 0;
+        draw_restore();
+        gui_force_restore();
+        return;
+    }
+
     if (conf.show_histo && (gui_mode==GUI_MODE_NONE || gui_mode==GUI_MODE_ALT) && kbd_is_key_pressed(KEY_SHOOT_HALF)) {
         gui_osd_draw_histo();
     }
 
     if (!conf.show_osd) return;
-
-    m = mode_get();
     
     if ((m&MODE_MASK) == MODE_REC) {
         m &= MODE_SHOOTING_MASK;
@@ -542,9 +592,9 @@ void gui_draw_osd() {
     gui_batt_draw_osd();
 
     if (debug_vals_show) {
-        long v=get_file_counter();
-	sprintf(osd_buf, "1:%03d-%04d  ", (v>>18)&0x3FF, (v>>4)&0x3FFF);
-//	sprintf(osd_buf, "1:%8lx  ", ~physw_status[2]);
+//        long v=get_file_counter();
+//	sprintf(osd_buf, "1:%03d-%04d  ", (v>>18)&0x3FF, (v>>4)&0x3FFF);
+	sprintf(osd_buf, "1:%8lx  ", ~physw_status[2]);
 	draw_txt_string(28, 10, osd_buf, conf.osd_color);
 
 //	sprintf(osd_buf, "2:%d, %08X  ", xxxx, eeee);
@@ -585,7 +635,7 @@ void gui_draw_osd() {
 //-------------------------------------------------------------------
 void gui_menuproc_save(int arg)
 {
-    conf_save(1);
+    conf_save();
 }
 #endif
 
@@ -667,12 +717,6 @@ void gui_draw_reversi(int arg) {
     }
     gui_mode = GUI_MODE_REVERSI;
     gui_reversi_init();
-}
-
-//-------------------------------------------------------------------
-void gui_test(int arg) {
-    gui_mbox_init("*** Information ***", "Test multibuttons", 
-                  MBOX_FUNC_RESTORE|MBOX_TEXT_CENTER|MBOX_BTN_YES_NO_CANCEL, NULL);
 }
 
 //-------------------------------------------------------------------

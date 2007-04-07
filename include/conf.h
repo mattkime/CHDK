@@ -9,11 +9,14 @@ typedef struct {
 } OSD_pos;
 
 typedef struct {
-    int show_osd;
     int save_raw;
+    int raw_in_dir;
+    int raw_prefix;
+    int raw_ext;
+
+    int show_osd;
     int script_shoot_delay;
     int show_histo;
-    int raw_fileno;
     int ubasic_vars[SCRIPT_NUM_PARAMS];
     char script_file[100];
 
@@ -48,6 +51,7 @@ typedef struct {
     color reader_color;
 
     int font;
+    int flashlight;
 
     int ns_enable_memdump;
 } Conf;
@@ -71,7 +75,7 @@ extern int debug_propcase_show;
 extern int debug_propcase_page;
 extern int debug_vals_show;
 
-extern void conf_save(int force);
+extern void conf_save();
 extern void conf_restore();
 extern void conf_load_defaults();
 

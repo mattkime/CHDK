@@ -6,6 +6,8 @@ NSTUB(Close, 0xffc614e8)
 NSTUB(CreatePhysicalVram, 0xffd2e820)
 NSTUB(CreateTask, 0xffc11abc)
 NSTUB(CreateTaskStrict, 0xffc12b5c)
+NSTUB(DeleteFile_Fut, 0xffc5a398)
+// ALT: NSTUB(DeleteFile_Fut, 0xffc5a398) // 27/0
 NSTUB(DisableDispatch, 0xffc118e0)
 // Best match: 51%
 NSTUB(DisplayImagePhysicalScreen, 0xffd2da18)
@@ -13,6 +15,8 @@ NSTUB(EnableDispatch, 0xffc1196c)
 NSTUB(ExecuteEventProcedure, 0xffc0699c)
 NSTUB(ExitTask, 0xffc11e7c)
 NSTUB(Fclose_Fut, 0xffc5a4d8)
+NSTUB(Feof_Fut, 0xffc5a6ec)
+// ALT: NSTUB(Feof_Fut, 0xffc5a6ec) // 26/0
 NSTUB(Fopen_Fut, 0xffc5a49c)
 NSTUB(Fread_Fut, 0xffc5a5bc)
 NSTUB(FreeMemory, 0xffc01abc)

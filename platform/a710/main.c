@@ -683,7 +683,9 @@ static struct {
 int mode_get() {
     int mode, i, t=0xFF;
 
-    mode = (kbd_mod_state & 0x00002000)?MODE_REC:MODE_PLAY;
+    mode  = (kbd_mod_state & 0x00002000)?MODE_REC:MODE_PLAY;
+    mode |= (kbd_mod_state & 0x00008000)?0:MODE_SCREEN_OPENED;
+    mode |= (kbd_mod_state & 0x00004000)?0:MODE_SCREEN_ROTATED;
     
     GetPropertyCase(0, &t, 4);
     for (i=0; i<MODESCNT; ++i) {

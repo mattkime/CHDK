@@ -2611,6 +2611,69 @@ static FuncSig func_sig_utime_1[] = {
 	/* 26/32 */
 };
 
+static FuncSig func_sig_Feof_Fut_1[] = {
+	{   1, 0xe0504000, 0xfdffffff }, // sub:6:0xE2504000
+	{   2, 0xe0840020, 0xfdffffff }, // add:6:0xE2840020
+	{   5, 0xeb000000, 0xff000000 }, // b, bl:3:0xEBFFFC52
+	{   6, 0xe1a05000, 0xfdffffff }, // mov:6:0xE1A05000
+	{   7, 0xe1a00004, 0xfdffffff }, // mov:6:0xE1A00004
+	{   8, 0xeb000000, 0xff000000 }, // b, bl:3:0xEB0012CE
+	{   9, 0xe1a04000, 0xfdffffff }, // mov:6:0xE1A04000
+	{  10, 0xe1a00005, 0xfdffffff }, // mov:6:0xE1A00005
+	{  11, 0xeb000000, 0xff000000 }, // b, bl:3:0xEBFFFC57
+	{  12, 0xe1a00004, 0xfdffffff }, // mov:6:0xE1A00004
+	{  15, 0xe0505000, 0xfdffffff }, // sub:6:0xE2505000
+	{  16, 0xe04dd018, 0xfdffffff }, // sub:6:0xE24DD018
+	{  17, 0xe0854020, 0xfdffffff }, // add:6:0xE2854020
+	{  18, 0xe1a00004, 0xfdffffff }, // mov:6:0xE1A00004
+	{  20, 0x0a000000, 0xff000000 }, // b, bl:3:0x0A000014
+	{  21, 0xeb000000, 0xff000000 }, // b, bl:3:0xEBFFFC42
+	{  22, 0xe1a06000, 0xfdffffff }, // mov:6:0xE1A06000
+	{  23, 0xe1a00005, 0xfdffffff }, // mov:6:0xE1A00005
+	{  24, 0xeb000000, 0xff000000 }, // b, bl:3:0xEB0012C4
+	{  25, 0xe1a05000, 0xfdffffff }, // mov:6:0xE1A05000
+	{  26, 0xe1a00004, 0xfdffffff }, // mov:6:0xE1A00004
+	{  27, 0xeb000000, 0xff000000 }, // b, bl:3:0xEB000E62
+	{  28, 0xe1a00004, 0xfdffffff }, // mov:6:0xE1A00004
+	{  29, 0xe1a0100d, 0xfdffffff }, // mov:6:0xE1A0100D
+	{  30, 0xeb000000, 0xff000000 }, // b, bl:3:0xEB000CA7
+	{  31, 0xe59d3004, 0xfdffffff }, // ldr:4:0xE59D3004
+	{ -1, -1, -1 },
+	/* 26/32 */
+};
+
+static FuncSig func_sig_DeleteFile_Fut_1[] = {
+	{   1, 0xe1a04000, 0xfdffffff }, // mov:6:0xE1A04000
+	{   2, 0xeb000000, 0xff000000 }, // b, bl:3:0xEBFFFD2A
+	{   3, 0xe1a01001, 0xfdffffff }, // mov:6:0xE3A01001
+	{   4, 0xe1a05000, 0xfdffffff }, // mov:6:0xE1A05000
+	{   5, 0xe1a00004, 0xfdffffff }, // mov:6:0xE1A00004
+	{   6, 0xeb000000, 0xff000000 }, // b, bl:3:0xEBFFFEEE
+	{   7, 0xe1a04000, 0xfdffffff }, // mov:6:0xE1A04000
+	{   8, 0xe1a00005, 0xfdffffff }, // mov:6:0xE1A00005
+	{   9, 0xeb000000, 0xff000000 }, // b, bl:3:0xEBFFFD2E
+	{  10, 0xe1a00004, 0xfdffffff }, // mov:6:0xE1A00004
+	{  13, 0xe1a04000, 0xfdffffff }, // mov:6:0xE1A04000
+	{  14, 0xeb000000, 0xff000000 }, // b, bl:3:0xEBFFFD1E
+	{  15, 0xe1a01000, 0xfdffffff }, // mov:6:0xE3A01000
+	{  16, 0xe1a05000, 0xfdffffff }, // mov:6:0xE1A05000
+	{  17, 0xe1a00004, 0xfdffffff }, // mov:6:0xE1A00004
+	{  18, 0xeb000000, 0xff000000 }, // b, bl:3:0xEBFFFEE2
+	{  19, 0xe1a04000, 0xfdffffff }, // mov:6:0xE1A04000
+	{  20, 0xe1a00005, 0xfdffffff }, // mov:6:0xE1A00005
+	{  21, 0xeb000000, 0xff000000 }, // b, bl:3:0xEBFFFD22
+	{  22, 0xe1a00004, 0xfdffffff }, // mov:6:0xE1A00004
+	{  25, 0xe1a04000, 0xfdffffff }, // mov:6:0xE1A04000
+	{  26, 0xeb000000, 0xff000000 }, // b, bl:3:0xEBFFFD12
+	{  27, 0xe1a05000, 0xfdffffff }, // mov:6:0xE1A05000
+	{  28, 0xe1a00004, 0xfdffffff }, // mov:6:0xE1A00004
+	{  29, 0xeb000000, 0xff000000 }, // b, bl:3:0xEB001EB8
+	{  30, 0xe1a04000, 0xfdffffff }, // mov:6:0xE1A04000
+	{  31, 0xe1a00005, 0xfdffffff }, // mov:6:0xE1A00005
+	{ -1, -1, -1 },
+	/* 27/32 */
+};
+
 static FuncSig func_sig_GetSystemTime_2[] = {
 	{   1, 0xe59f6030, 0xfdffffff }, // ldr:4:0xE59F6030
 	{   2, 0xe5965000, 0xfdffffff }, // ldr:4:0xE5965000
@@ -3589,6 +3652,69 @@ static FuncSig func_sig_utime_2[] = {
 	/* 26/32 */
 };
 
+static FuncSig func_sig_Feof_Fut_2[] = {
+	{   1, 0xe0504000, 0xfdffffff }, // sub:6:0xE2504000
+	{   2, 0xe0840020, 0xfdffffff }, // add:6:0xE2840020
+	{   5, 0xeb000000, 0xff000000 }, // b, bl:3:0xEBFFFC52
+	{   6, 0xe1a05000, 0xfdffffff }, // mov:6:0xE1A05000
+	{   7, 0xe1a00004, 0xfdffffff }, // mov:6:0xE1A00004
+	{   8, 0xeb000000, 0xff000000 }, // b, bl:3:0xEB0013E7
+	{   9, 0xe1a04000, 0xfdffffff }, // mov:6:0xE1A04000
+	{  10, 0xe1a00005, 0xfdffffff }, // mov:6:0xE1A00005
+	{  11, 0xeb000000, 0xff000000 }, // b, bl:3:0xEBFFFC57
+	{  12, 0xe1a00004, 0xfdffffff }, // mov:6:0xE1A00004
+	{  15, 0xe0505000, 0xfdffffff }, // sub:6:0xE2505000
+	{  16, 0xe04dd018, 0xfdffffff }, // sub:6:0xE24DD018
+	{  17, 0xe0854020, 0xfdffffff }, // add:6:0xE2854020
+	{  18, 0xe1a00004, 0xfdffffff }, // mov:6:0xE1A00004
+	{  20, 0x0a000000, 0xff000000 }, // b, bl:3:0x0A000014
+	{  21, 0xeb000000, 0xff000000 }, // b, bl:3:0xEBFFFC42
+	{  22, 0xe1a06000, 0xfdffffff }, // mov:6:0xE1A06000
+	{  23, 0xe1a00005, 0xfdffffff }, // mov:6:0xE1A00005
+	{  24, 0xeb000000, 0xff000000 }, // b, bl:3:0xEB0013DD
+	{  25, 0xe1a05000, 0xfdffffff }, // mov:6:0xE1A05000
+	{  26, 0xe1a00004, 0xfdffffff }, // mov:6:0xE1A00004
+	{  27, 0xeb000000, 0xff000000 }, // b, bl:3:0xEB000F84
+	{  28, 0xe1a00004, 0xfdffffff }, // mov:6:0xE1A00004
+	{  29, 0xe1a0100d, 0xfdffffff }, // mov:6:0xE1A0100D
+	{  30, 0xeb000000, 0xff000000 }, // b, bl:3:0xEB000D79
+	{  31, 0xe59d3004, 0xfdffffff }, // ldr:4:0xE59D3004
+	{ -1, -1, -1 },
+	/* 26/32 */
+};
+
+static FuncSig func_sig_DeleteFile_Fut_2[] = {
+	{   1, 0xe1a04000, 0xfdffffff }, // mov:6:0xE1A04000
+	{   2, 0xeb000000, 0xff000000 }, // b, bl:3:0xEBFFFD2A
+	{   3, 0xe1a01001, 0xfdffffff }, // mov:6:0xE3A01001
+	{   4, 0xe1a05000, 0xfdffffff }, // mov:6:0xE1A05000
+	{   5, 0xe1a00004, 0xfdffffff }, // mov:6:0xE1A00004
+	{   6, 0xeb000000, 0xff000000 }, // b, bl:3:0xEBFFFEEE
+	{   7, 0xe1a04000, 0xfdffffff }, // mov:6:0xE1A04000
+	{   8, 0xe1a00005, 0xfdffffff }, // mov:6:0xE1A00005
+	{   9, 0xeb000000, 0xff000000 }, // b, bl:3:0xEBFFFD2E
+	{  10, 0xe1a00004, 0xfdffffff }, // mov:6:0xE1A00004
+	{  13, 0xe1a04000, 0xfdffffff }, // mov:6:0xE1A04000
+	{  14, 0xeb000000, 0xff000000 }, // b, bl:3:0xEBFFFD1E
+	{  15, 0xe1a01000, 0xfdffffff }, // mov:6:0xE3A01000
+	{  16, 0xe1a05000, 0xfdffffff }, // mov:6:0xE1A05000
+	{  17, 0xe1a00004, 0xfdffffff }, // mov:6:0xE1A00004
+	{  18, 0xeb000000, 0xff000000 }, // b, bl:3:0xEBFFFEE2
+	{  19, 0xe1a04000, 0xfdffffff }, // mov:6:0xE1A04000
+	{  20, 0xe1a00005, 0xfdffffff }, // mov:6:0xE1A00005
+	{  21, 0xeb000000, 0xff000000 }, // b, bl:3:0xEBFFFD22
+	{  22, 0xe1a00004, 0xfdffffff }, // mov:6:0xE1A00004
+	{  25, 0xe1a04000, 0xfdffffff }, // mov:6:0xE1A04000
+	{  26, 0xeb000000, 0xff000000 }, // b, bl:3:0xEBFFFD12
+	{  27, 0xe1a05000, 0xfdffffff }, // mov:6:0xE1A05000
+	{  28, 0xe1a00004, 0xfdffffff }, // mov:6:0xE1A00004
+	{  29, 0xeb000000, 0xff000000 }, // b, bl:3:0xEB001FF4
+	{  30, 0xe1a04000, 0xfdffffff }, // mov:6:0xE1A04000
+	{  31, 0xe1a00005, 0xfdffffff }, // mov:6:0xE1A00005
+	{ -1, -1, -1 },
+	/* 27/32 */
+};
+
 FuncsList func_list[] = {
 	{ "AllocateMemory", func_sig_AllocateMemory_1 },
 	{ "AllocateMemory", func_sig_AllocateMemory_2 },
@@ -3597,6 +3723,8 @@ FuncsList func_list[] = {
 	{ "CreatePhysicalVram", func_sig_CreatePhysicalVram_2 },
 	{ "CreateTask", func_sig_CreateTask_1 },
 	{ "CreateTaskStrict", func_sig_CreateTaskStrict_1 },
+	{ "DeleteFile_Fut", func_sig_DeleteFile_Fut_1 },
+	{ "DeleteFile_Fut", func_sig_DeleteFile_Fut_2 },
 	{ "DisableDispatch", func_sig_DisableDispatch_1 },
 	{ "DisplayImagePhysicalScreen", func_sig_DisplayImagePhysicalScreen_1 },
 	{ "DisplayImagePhysicalScreen", func_sig_DisplayImagePhysicalScreen_2 },
@@ -3604,6 +3732,8 @@ FuncsList func_list[] = {
 	{ "ExecuteEventProcedure", func_sig_ExecuteEventProcedure_1 },
 	{ "ExitTask", func_sig_ExitTask_1 },
 	{ "Fclose_Fut", func_sig_Fclose_Fut_1 },
+	{ "Feof_Fut", func_sig_Feof_Fut_1 },
+	{ "Feof_Fut", func_sig_Feof_Fut_2 },
 	{ "Fopen_Fut", func_sig_Fopen_Fut_1 },
 	{ "Fread_Fut", func_sig_Fread_Fut_1 },
 	{ "FreeMemory", func_sig_FreeMemory_1 },

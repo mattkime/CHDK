@@ -51,7 +51,7 @@ void dump_memory()
 
 	sprintf(fn, "A/DCIM/100CANON/CRW_%04d.JPG", cnt++);
 	fd = fopen(fn, "w+");
-	if (fd >= 0) {
+	if (fd) {
 //            fwrite((void*)vid_get_viewport_fb(), 360*240*3, 1, fd);
 //            fwrite((void*)vid_get_bitmap_fb(), 360*240, 1, fd);
 	    fwrite((void*)0, 1, 0x1900, fd);

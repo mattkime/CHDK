@@ -2,14 +2,35 @@
 #include "conf.h"
 #include "histogram.h"
 #include "font.h"
+#include "raw.h"
 #include "gui_draw.h"
 #include "gui_osd.h"
 #include "stdlib.h"
 #include "script.h"
 
-#define FN_COUNTER  "A/RCFG.BIN"
-#define CNF_MAGICK_VALUE (0x32204741)
+//-------------------------------------------------------------------
+#define CONF_FILE  "A/RCFG.BIN"
+#define CONF_MAGICK_VALUE (0x33204741)
 
+#define CONF_INFO(id, param, type, def, func) { id, sizeof( param ), &param , type, {def}, func }
+#define CONF_DEF_PTR    1
+#define CONF_DEF_VALUE  2
+
+//-------------------------------------------------------------------
+typedef struct {
+    unsigned short      id;
+    unsigned short      size;
+    void                *var;
+    int                 type;
+    union {
+        void            *ptr;
+        int             i;
+        color           cl;
+    };
+    void                (*func)();
+} ConfInfo;
+
+//-------------------------------------------------------------------
 Conf conf;
 
 int state_shooting_progress;
@@ -23,145 +44,186 @@ int debug_propcase_show;
 int debug_propcase_page;
 int debug_vals_show;
 
-static int dfirst;
+//-------------------------------------------------------------------
+static int def_ubasic_vars[SCRIPT_NUM_PARAMS] = {0};
+static int def_batt_volts_max, def_batt_volts_min;
+static OSD_pos def_histo_pos, def_dof_pos, def_batt_icon_pos, def_batt_txt_pos, def_mode_state_pos, def_values_pos;
 
-void conf_load_defaults()
-{
-    register int i;
+static void conf_change_script_file();
+static void conf_change_histo_mode();
+static void conf_change_histo_layout();
+static void conf_change_font();
 
-    conf.show_osd = 1;
-    conf.save_raw = 0;
-    conf.script_shoot_delay = 20;
-    conf.show_histo = 0;
-    conf.raw_fileno = 1000;
-    for (i=0; i<SCRIPT_NUM_PARAMS; ++i) {
-        conf.ubasic_vars[i] = 0;
-    }
-    conf.script_file[0]=0;
+static const ConfInfo conf_info[] = {
+/* !!! Do NOT change ID for items defined already! Append a new one at the end! !!! */
+    CONF_INFO(  1, conf.show_osd,               CONF_DEF_VALUE, i:1, NULL),
+    CONF_INFO(  2, conf.save_raw,               CONF_DEF_VALUE, i:0, NULL),
+    CONF_INFO(  3, conf.script_shoot_delay,     CONF_DEF_VALUE, i:20, NULL),
+    CONF_INFO(  4, conf.show_histo,             CONF_DEF_VALUE, i:0, NULL),
+    CONF_INFO(  5, conf.ubasic_vars,            CONF_DEF_PTR,   ptr:&def_ubasic_vars, NULL),
+    CONF_INFO(  6, conf.script_file,            CONF_DEF_PTR,   ptr:"", conf_change_script_file),
+    CONF_INFO(  7, conf.show_dof,               CONF_DEF_VALUE, i:0, NULL),
+    CONF_INFO(  8, conf.batt_volts_max,         CONF_DEF_PTR,   ptr:&def_batt_volts_max, NULL),
+    CONF_INFO(  9, conf.batt_volts_min,         CONF_DEF_PTR,   ptr:&def_batt_volts_min, NULL),
+    CONF_INFO( 10, conf.batt_step_25,           CONF_DEF_VALUE, i:1, NULL),
+    CONF_INFO( 11, conf.batt_perc_show,         CONF_DEF_VALUE, i:1, NULL),
+    CONF_INFO( 12, conf.batt_volts_show,        CONF_DEF_VALUE, i:0, NULL),
+    CONF_INFO( 13, conf.batt_icon_show,         CONF_DEF_VALUE, i:1, NULL),
+    CONF_INFO( 14, conf.show_state,             CONF_DEF_VALUE, i:1, NULL),
+    CONF_INFO( 15, conf.show_values,            CONF_DEF_VALUE, i:0, NULL),
+    CONF_INFO( 16, conf.show_overexp,           CONF_DEF_VALUE, i:1, NULL),
+    CONF_INFO( 17, conf.histo_mode,             CONF_DEF_VALUE, i:HISTO_MODE_LINEAR, conf_change_histo_mode),
+    CONF_INFO( 18, conf.histo_auto_ajust,       CONF_DEF_VALUE, i:1, NULL),
+    CONF_INFO( 19, conf.histo_ignore_boundary,  CONF_DEF_VALUE, i:4, NULL),
+    CONF_INFO( 20, conf.histo_layout,           CONF_DEF_VALUE, i:OSD_HISTO_LAYOUT_A, conf_change_histo_layout),
+    CONF_INFO( 21, conf.histo_pos,              CONF_DEF_PTR,   ptr:&def_histo_pos, NULL),
+    CONF_INFO( 22, conf.dof_pos,                CONF_DEF_PTR,   ptr:&def_dof_pos, NULL),
+    CONF_INFO( 23, conf.batt_icon_pos,          CONF_DEF_PTR,   ptr:&def_batt_icon_pos, NULL),
+    CONF_INFO( 24, conf.batt_txt_pos,           CONF_DEF_PTR,   ptr:&def_batt_txt_pos , NULL),
+    CONF_INFO( 25, conf.mode_state_pos,         CONF_DEF_PTR,   ptr:&def_mode_state_pos , NULL),
+    CONF_INFO( 26, conf.values_pos,             CONF_DEF_PTR,   ptr:&def_values_pos , NULL),
+    CONF_INFO( 27, conf.histo_color,            CONF_DEF_VALUE, cl:MAKE_COLOR(COLOR_BG, COLOR_WHITE), NULL),
+    CONF_INFO( 28, conf.osd_color,              CONF_DEF_VALUE, cl:MAKE_COLOR(COLOR_BG, COLOR_FG), NULL),
+    CONF_INFO( 29, conf.batt_icon_color,        CONF_DEF_VALUE, cl:COLOR_WHITE, NULL),
+    CONF_INFO( 30, conf.menu_color,             CONF_DEF_VALUE, cl:MAKE_COLOR(COLOR_BG, COLOR_FG), NULL),
+    CONF_INFO( 31, conf.reader_color,           CONF_DEF_VALUE, cl:MAKE_COLOR(COLOR_GREY, COLOR_WHITE), NULL),
+    CONF_INFO( 32, conf.font,                   CONF_DEF_VALUE, i:FONT_DEFAULT, conf_change_font),
+    CONF_INFO( 33, conf.flashlight,             CONF_DEF_VALUE, i:0, NULL),
+    CONF_INFO( 34, conf.ns_enable_memdump,      CONF_DEF_VALUE, i:0, NULL),
+    CONF_INFO( 35, conf.raw_in_dir,             CONF_DEF_VALUE, i:0, NULL),
+    CONF_INFO( 36, conf.raw_prefix,             CONF_DEF_VALUE, i:RAW_PREFIX_CRW, NULL),
+    CONF_INFO( 37, conf.raw_ext,                CONF_DEF_VALUE, i:RAW_EXT_CRW, NULL)
+};
+#define CONF_NUM (sizeof(conf_info)/sizeof(conf_info[0]))
 
-    conf.show_dof = 0;
-    conf.batt_volts_max = get_vbatt_max();
-    conf.batt_volts_min = get_vbatt_min();
-    conf.batt_step_25 = 1;
-    conf.batt_perc_show = 1;
-    conf.batt_volts_show = 0;
-    conf.batt_icon_show = 1;
-
-    conf.show_state = 1;
-    conf.show_values = 0;
-    conf.show_overexp = 1;
-
-    conf.histo_mode = HISTO_MODE_LINEAR;
+//-------------------------------------------------------------------
+static void conf_change_histo_mode() {
     histogram_set_mode(conf.histo_mode);
-    conf.histo_auto_ajust = 1;
-    conf.histo_ignore_boundary = 5;
-    conf.histo_layout = OSD_HISTO_LAYOUT_A;
+}
+
+static void conf_change_histo_layout() {
     if (conf.histo_layout==OSD_HISTO_LAYOUT_Y || conf.histo_layout==OSD_HISTO_LAYOUT_Y_argb) {
         histogram_set_main(HISTO_Y);
     } else {
         histogram_set_main(HISTO_RGB);
     }
+}
 
-    conf.histo_pos.x=319-HISTO_WIDTH;
-    conf.histo_pos.y=45;
-    conf.dof_pos.x=5*FONT_WIDTH;
-    conf.dof_pos.y=0;
-    conf.batt_icon_pos.x=178;
-    conf.batt_icon_pos.y=4;
-    conf.batt_txt_pos.x=vid_get_bitmap_width()-8*FONT_WIDTH-2;
-    conf.batt_txt_pos.y=vid_get_bitmap_height()-64;
-    conf.mode_state_pos.x=vid_get_bitmap_width()-4*FONT_WIDTH;
-    conf.mode_state_pos.y=45;
-    conf.values_pos.x=vid_get_bitmap_width()-9*FONT_WIDTH;
-    conf.values_pos.y=6*FONT_HEIGHT;
-
-    conf.histo_color = MAKE_COLOR(COLOR_BG, COLOR_WHITE);
-    conf.osd_color = MAKE_COLOR(COLOR_BG, COLOR_FG);
-    conf.batt_icon_color = COLOR_WHITE;
-    conf.menu_color = MAKE_COLOR(COLOR_BG, COLOR_FG);
-    conf.reader_color = MAKE_COLOR(COLOR_GREY, COLOR_WHITE);
-
-    conf.font = FONT_DEFAULT;
+static void conf_change_font() {
     font_set(conf.font);
 }
 
-static void do_save(int fd)
-{
-    long t;
-    t = CNF_MAGICK_VALUE;
-    write(fd, &t, 4);
-    write(fd, &conf, sizeof(Conf));
-    write(fd, &t, 4);
-}
-
-static int do_restore(int fd)
-{
-    int rcnt;
-    long t;
-    Conf conf_tmp;
-
-    /* read magick value */
-    rcnt = read(fd, &t, 4);
-    if ((rcnt != 4) || (t != CNF_MAGICK_VALUE))
-        return 1;
-
-    /* read raw file number counter */
-    rcnt = read(fd, &conf_tmp, sizeof(Conf));
-    if (rcnt != sizeof(Conf))
-        return 1;
-
-    /* read magick value */
-    t=0;
-    rcnt = read(fd, &t, 4);
-    if ((rcnt != 4) || (t != CNF_MAGICK_VALUE))
-        return 1;
-
-    conf_tmp.raw_fileno = (conf_tmp.raw_fileno|3) + 1;
-    conf=conf_tmp;
-
-    return 0;
-}
-
-
-void conf_save(int force)
-{
-    int fd;
-
-    if (((conf.raw_fileno & 3) == 0) || (dfirst == 1) || force){
-	dfirst = 0;
-
-	fd = open(FN_COUNTER, O_WRONLY|O_CREAT, 0777);
-	if (fd >= 0){
-	    do_save(fd);
-	    close(fd);
-	}
-    }
-}
-
-
-void conf_restore()
-{
-    int fd;
-
-    fd = open(FN_COUNTER, O_RDONLY, 0777);
-    if (fd >= 0){
-	if (do_restore(fd))
-	    conf_load_defaults();
-        else {
-            histogram_set_mode(conf.histo_mode);
-            if (conf.histo_layout==OSD_HISTO_LAYOUT_Y || conf.histo_layout==OSD_HISTO_LAYOUT_Y_argb) {
-                histogram_set_main(HISTO_Y);
-            } else {
-                histogram_set_main(HISTO_RGB);
-            }
-            font_set(conf.font);
-        }
-	close(fd);
-    } else {
-	conf_load_defaults();
-    }
-    dfirst = 1;
-
+static void conf_change_script_file() {
     script_load(conf.script_file);
 }
 
+//-------------------------------------------------------------------
+static void conf_init_defaults() {
+    // init some defaults values
+    def_batt_volts_max = get_vbatt_max();
+    def_batt_volts_min = get_vbatt_min();
+    def_histo_pos.x = 319-HISTO_WIDTH;
+    def_histo_pos.y = 45;
+    def_dof_pos.x = 5*FONT_WIDTH;
+    def_dof_pos.y = 0;
+    def_batt_icon_pos.x = 178;
+    def_batt_icon_pos.y = 4;
+    def_batt_txt_pos.x=vid_get_bitmap_width()-8*FONT_WIDTH-2;
+    def_batt_txt_pos.y=vid_get_bitmap_height()-64;
+    def_mode_state_pos.x=vid_get_bitmap_width()-4*FONT_WIDTH;
+    def_mode_state_pos.y=45;
+    def_values_pos.x=vid_get_bitmap_width()-9*FONT_WIDTH;
+    def_values_pos.y=6*FONT_HEIGHT;
+}
+
+//-------------------------------------------------------------------
+void conf_load_defaults()
+{
+    register int i;
+
+    for (i=0; i<CONF_NUM; ++i) {
+        switch (conf_info[i].type) {
+            case CONF_DEF_VALUE:
+                memcpy(conf_info[i].var, &(conf_info[i].i), conf_info[i].size);
+                break;
+            case CONF_DEF_PTR:
+                memcpy(conf_info[i].var, conf_info[i].ptr, conf_info[i].size);
+                break;
+        }
+        if (conf_info[i].func) {
+            conf_info[i].func();
+        }
+    }
+}
+
+//-------------------------------------------------------------------
+void conf_save()
+{
+    static const long t=CONF_MAGICK_VALUE;
+    register int i;
+    int fd;
+
+    fd = fopen(CONF_FILE, "wb");
+    if (fd){
+        fwrite(&t, sizeof(t), 1, fd);
+        
+        for (i=0; i<CONF_NUM; ++i) {
+            fwrite(&(conf_info[i].id), sizeof(conf_info[i].id), 1, fd);
+            fwrite(&(conf_info[i].size), sizeof(conf_info[i].size), 1, fd);
+            fwrite(conf_info[i].var, conf_info[i].size, 1, fd);
+        }
+        fclose(fd);
+    }
+}
+
+//-------------------------------------------------------------------
+void conf_restore()
+{
+    int fd, rcnt;
+    register int i;
+    long t;
+    unsigned short id, size;
+    void *ptr;
+
+    conf_init_defaults();
+
+    conf_load_defaults();
+
+    fd = fopen(CONF_FILE, "rb");
+    if (fd){
+        // read magick value
+        rcnt = fread(&t, 1, sizeof(t), fd);
+        if (rcnt==sizeof(t) && t==CONF_MAGICK_VALUE) {
+            while (!feof(fd)) {
+                rcnt = fread(&id, 1, sizeof(id), fd);
+                if (rcnt!=sizeof(id)) break;
+
+                rcnt = fread(&size, 1, sizeof(size), fd);
+                if (rcnt!=sizeof(size)) break;
+
+                for (i=0; i<CONF_NUM; ++i) {
+                    if (conf_info[i].id==id && conf_info[i].size==size) {
+                        ptr=malloc(size);
+                        if (ptr) {
+                            rcnt = fread(ptr, 1, size, fd);
+                            if (rcnt == size) {
+                               memcpy(conf_info[i].var, ptr, size);
+                               if (conf_info[i].func) {
+                                   conf_info[i].func();
+                               }
+                            }
+                            free(ptr);
+                        }
+                        break;
+                    }
+                }
+                if (i == CONF_NUM) { // unknown id, skip data
+                    fseek(fd, size, SEEK_CUR);
+                }
+            }
+        }
+	fclose(fd);
+    }
+}
+
+//-------------------------------------------------------------------
