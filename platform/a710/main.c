@@ -734,3 +734,7 @@ long get_file_counter() {
     get_parameter_data(PARAM_FILE_COUNTER, &v, 4);
     return v;
 }
+
+long get_file_next_counter() {
+    return get_file_counter();
+}

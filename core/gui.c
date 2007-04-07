@@ -437,6 +437,7 @@ static inline void conf_store_old_settings() {
 static inline int conf_save_new_settings_if_changed() {
     if (memcmp(&old_conf, &conf, sizeof(Conf)) != 0) {
         conf_save();
+        conf_store_old_settings();
         return 1;
     }
     return 0;
@@ -525,6 +526,9 @@ void gui_kbd_process()
 void gui_kbd_enter()
 {
     // XXX set custom palette
+#ifdef OPTIONS_AUTOSAVE
+    conf_store_old_settings();
+#endif
     gui_mode = GUI_MODE_ALT;
 }
 
@@ -552,15 +556,15 @@ void gui_draw_osd() {
     
     m = mode_get();
 
-    if (conf.flashlight && (m&MODE_SCREEN_OPENED) && (m&MODE_SCREEN_ROTATED) && (gui_mode==GUI_MODE_NONE /*|| gui_mode==GUI_MODE_ALT*/)) {
+    if (conf.flashlight && (m&MODE_SCREEN_OPENED) && (m&MODE_SCREEN_ROTATED) && (gui_mode==GUI_MODE_NONE /* || gui_mode==GUI_MODE_ALT */)) {
         draw_filled_rect(0, 0, screen_width-1, screen_height-1, MAKE_COLOR(COLOR_WHITE, COLOR_WHITE));
         flashlight = 1;
-        return;
     }
     if (flashlight) {
-        flashlight = 0;
-        draw_restore();
-        gui_force_restore();
+        if ((!((m&MODE_SCREEN_OPENED) && (m&MODE_SCREEN_ROTATED))) || (gui_mode!=GUI_MODE_NONE /* && gui_mode!=GUI_MODE_ALT */)) {
+            flashlight = 0;
+            draw_restore();
+        }
         return;
     }
 
