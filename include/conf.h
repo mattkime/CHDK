@@ -51,6 +51,12 @@ typedef struct {
     color reader_color;
 
     int font;
+
+    char reader_file[100];
+    int reader_pos;
+
+    int sokoban_level;
+
     int flashlight;
 
     int ns_enable_memdump;

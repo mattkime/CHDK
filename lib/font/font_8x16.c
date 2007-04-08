@@ -14,6 +14,9 @@ static const unsigned char fontdata_8x16[][FONTDATAMAX] = {
     },
     {
         #include "font_8x16_kbr.h"
+    },
+    {
+        #include "font_8x16_rus.h"
     }
 };
 const unsigned char *current_font = fontdata_8x16[FONT_DEFAULT];

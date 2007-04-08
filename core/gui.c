@@ -11,6 +11,7 @@
 #include "gui_palette.h"
 #include "gui_mbox.h"
 #include "gui_reversi.h"
+#include "gui_sokoban.h"
 #include "gui_debug.h"
 #include "gui_fselect.h"
 #include "gui_batt.h"
@@ -36,6 +37,7 @@ static void gui_show_build_info(int arg);
 static void gui_show_memory_info(int arg);
 static void gui_draw_palette(int arg);
 static void gui_draw_reversi(int arg);
+static void gui_draw_sokoban(int arg);
 static void gui_draw_debug(int arg);
 static void gui_draw_fselect(int arg);
 static void gui_draw_osd_le(int arg);
@@ -78,14 +80,22 @@ static CMenuItem script_submenu_items[sizeof(script_submenu_items_top)/sizeof(sc
 static CMenu script_submenu = { "Script", NULL, script_submenu_items };
 
 
+static CMenuItem games_submenu_items[] = {
+    {"Reversi",                     MENUITEM_PROC,  (int*)gui_draw_reversi },
+    {"Sokoban",                     MENUITEM_PROC,  (int*)gui_draw_sokoban },
+    {"<- Back",                     MENUITEM_UP },
+    {0}
+};
+static CMenu games_submenu = { "Games", NULL, games_submenu_items };
+
 static CMenuItem misc_submenu_items[] = {
-    {"Show build info",             MENUITEM_PROC,  (int*)gui_show_build_info },
-    {"Show memory info",            MENUITEM_PROC,  (int*)gui_show_memory_info },
-    {"File browser",                MENUITEM_PROC,  (int*)gui_draw_fselect },
-    {"Draw palette",                MENUITEM_PROC,  (int*)gui_draw_palette },
-    {"Text file reader",            MENUITEM_PROC,  (int*)gui_draw_read },
-    {"Flash-light",                 MENUITEM_BOOL,  &conf.flashlight },
-    {"GAME: Reversi",               MENUITEM_PROC,  (int*)gui_draw_reversi },
+    {"Show build info",             MENUITEM_PROC,    (int*)gui_show_build_info },
+    {"Show memory info",            MENUITEM_PROC,    (int*)gui_show_memory_info },
+    {"File browser",                MENUITEM_PROC,    (int*)gui_draw_fselect },
+    {"Draw palette",                MENUITEM_PROC,    (int*)gui_draw_palette },
+    {"Text file reader",            MENUITEM_PROC,    (int*)gui_draw_read },
+    {"Flash-light",                 MENUITEM_BOOL,    &conf.flashlight },
+    {"Games ->",                    MENUITEM_SUBMENU, (int*)&games_submenu },
     {"<- Back",                     MENUITEM_UP },
     {0}
 };
@@ -163,7 +173,7 @@ static CMenuItem histo_submenu_items[] = {
     {"<- Back",                     MENUITEM_UP },
     {0}
 };
-static CMenu histo_submenu = { "Histogram", NULL, histo_submenu_items };
+static CMenu histo_submenu = { "RAW", NULL, histo_submenu_items };
 
 
 static CMenuItem raw_submenu_items[] = {
@@ -259,7 +269,7 @@ const char* gui_histo_layout_enum(int change, int arg) {
 
 //-------------------------------------------------------------------
 const char* gui_font_enum(int change, int arg) {
-    static const char* fonts[]={ "Default", "UniRus", "VgaKbr"};
+    static const char* fonts[]={ "Default", "UniRus", "VgaKbr", "KeyRus"};
 
     conf.font+=change;
     if (conf.font<0)
@@ -402,6 +412,9 @@ void gui_redraw()
         case GUI_MODE_REVERSI:
             gui_reversi_draw();
             break;
+        case GUI_MODE_SOKOBAN:
+            gui_sokoban_draw();
+            break;
         case GUI_MODE_DEBUG:
             gui_debug_draw();
             break;
@@ -422,7 +435,7 @@ void gui_redraw()
     gui_in_redraw = 0;
     if ((gui_mode_old != gui_mode && (gui_mode_old != GUI_MODE_NONE && gui_mode_old != GUI_MODE_ALT) && (gui_mode != GUI_MODE_MBOX)) || gui_restore) {
         gui_restore = 0;
-        if (gui_mode != GUI_MODE_REVERSI)
+        if (gui_mode != GUI_MODE_REVERSI && gui_mode != GUI_MODE_SOKOBAN)
             draw_restore();
     }
 }
@@ -465,6 +478,7 @@ void gui_kbd_process()
                 break;
             case GUI_MODE_PALETTE:
             case GUI_MODE_REVERSI:
+            case GUI_MODE_SOKOBAN:
             case GUI_MODE_DEBUG:
             case GUI_MODE_OSD:
                 draw_restore();
@@ -506,6 +520,9 @@ void gui_kbd_process()
             break;
     	case GUI_MODE_REVERSI:
             gui_reversi_kbd_process();
+            break;
+    	case GUI_MODE_SOKOBAN:
+            gui_sokoban_kbd_process();
             break;
     	case GUI_MODE_DEBUG:
             gui_debug_kbd_process();
@@ -723,6 +740,17 @@ void gui_draw_reversi(int arg) {
     }
     gui_mode = GUI_MODE_REVERSI;
     gui_reversi_init();
+}
+
+//-------------------------------------------------------------------
+void gui_draw_sokoban(int arg) {
+    if ((mode_get()&MODE_MASK) != MODE_PLAY) {
+        gui_mbox_init("*** Information ***", "Please switch your camera\nto PLAY mode\nand try again. :)",
+                      MBOX_FUNC_RESTORE|MBOX_TEXT_CENTER, NULL);
+        return;
+    }
+    gui_mode = GUI_MODE_SOKOBAN;
+    gui_sokoban_init();
 }
 
 //-------------------------------------------------------------------

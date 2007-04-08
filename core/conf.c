@@ -92,7 +92,10 @@ static const ConfInfo conf_info[] = {
     CONF_INFO( 34, conf.ns_enable_memdump,      CONF_DEF_VALUE, i:0, NULL),
     CONF_INFO( 35, conf.raw_in_dir,             CONF_DEF_VALUE, i:0, NULL),
     CONF_INFO( 36, conf.raw_prefix,             CONF_DEF_VALUE, i:RAW_PREFIX_CRW, NULL),
-    CONF_INFO( 37, conf.raw_ext,                CONF_DEF_VALUE, i:RAW_EXT_CRW, NULL)
+    CONF_INFO( 37, conf.raw_ext,                CONF_DEF_VALUE, i:RAW_EXT_CRW, NULL),
+    CONF_INFO( 38, conf.reader_file,            CONF_DEF_PTR,   ptr:"", conf_change_script_file),
+    CONF_INFO( 39, conf.reader_pos,             CONF_DEF_VALUE, i:0, NULL),
+    CONF_INFO( 40, conf.sokoban_level,          CONF_DEF_VALUE, i:0, NULL),
 };
 #define CONF_NUM (sizeof(conf_info)/sizeof(conf_info[0]))
 
@@ -137,8 +140,7 @@ static void conf_init_defaults() {
 }
 
 //-------------------------------------------------------------------
-void conf_load_defaults()
-{
+void conf_load_defaults() {
     register int i;
 
     for (i=0; i<CONF_NUM; ++i) {
@@ -157,30 +159,34 @@ void conf_load_defaults()
 }
 
 //-------------------------------------------------------------------
-void conf_save()
-{
+void conf_save() {
     static const long t=CONF_MAGICK_VALUE;
     register int i;
     int fd;
+    static char buf[sizeof(t)+CONF_NUM*(sizeof(conf_info[0].id)+sizeof(conf_info[0].size))+sizeof(conf)];
+    char *p=buf;
 
     fd = fopen(CONF_FILE, "wb");
     if (fd){
-        fwrite(&t, sizeof(t), 1, fd);
-        
+        memcpy(p, &t, sizeof(t));
+        p+=sizeof(t);
         for (i=0; i<CONF_NUM; ++i) {
-            fwrite(&(conf_info[i].id), sizeof(conf_info[i].id), 1, fd);
-            fwrite(&(conf_info[i].size), sizeof(conf_info[i].size), 1, fd);
-            fwrite(conf_info[i].var, conf_info[i].size, 1, fd);
+            memcpy(p, &(conf_info[i].id), sizeof(conf_info[i].id));
+            p+=sizeof(conf_info[i].id);
+            memcpy(p, &(conf_info[i].size), sizeof(conf_info[i].size));
+            p+=sizeof(conf_info[i].size);
+            memcpy(p, conf_info[i].var, conf_info[i].size);
+            p+=conf_info[i].size;
         }
+
+        fwrite(buf, p-buf, 1, fd);
         fclose(fd);
     }
 }
 
 //-------------------------------------------------------------------
-void conf_restore()
-{
-    int fd, rcnt;
-    register int i;
+void conf_restore() {
+    int fd, rcnt, i;
     long t;
     unsigned short id, size;
     void *ptr;
@@ -217,7 +223,7 @@ void conf_restore()
                         break;
                     }
                 }
-                if (i == CONF_NUM) { // unknown id, skip data
+                if (i == CONF_NUM) { // unknown id, just skip data
                     fseek(fd, size, SEEK_CUR);
                 }
             }
