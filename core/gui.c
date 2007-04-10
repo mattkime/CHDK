@@ -173,7 +173,7 @@ static CMenuItem histo_submenu_items[] = {
     {"<- Back",                     MENUITEM_UP },
     {0}
 };
-static CMenu histo_submenu = { "RAW", NULL, histo_submenu_items };
+static CMenu histo_submenu = { "Histogram", NULL, histo_submenu_items };
 
 
 static CMenuItem raw_submenu_items[] = {
@@ -184,7 +184,7 @@ static CMenuItem raw_submenu_items[] = {
     {"<- Back",                     MENUITEM_UP },
     {0}
 };
-static CMenu raw_submenu = { "Histogram", NULL, raw_submenu_items };
+static CMenu raw_submenu = { "RAW", NULL, raw_submenu_items };
 
 
 static CMenuItem root_menu_items[] = {

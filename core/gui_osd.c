@@ -18,7 +18,7 @@ typedef struct {
 } OSD_elem;
 
 static OSD_elem osd[]={
-    {"Histogram",       &conf.histo_pos,        {HISTO_WIDTH, HISTO_HEIGHT}     },
+    {"Histogram",       &conf.histo_pos,        {HISTO_WIDTH+2, HISTO_HEIGHT}     },
     {"DOF calc",        &conf.dof_pos,          {17*FONT_WIDTH, 2*FONT_HEIGHT}  },
     {"RAW/SCR/EXP",     &conf.mode_state_pos,   {3*FONT_WIDTH, 3*FONT_HEIGHT}   },
     {"Misc values",     &conf.values_pos,       {8*FONT_WIDTH, 3*FONT_HEIGHT}   },
@@ -130,24 +130,24 @@ static void gui_osd_draw_single_histo(int hist, coord x, coord y, int small) {
             threshold = (histogram[hist][i<<1]+histogram[hist][(i<<1)+1])>>2;
 
             for (v=1; v<h-1; ++v)
-                draw_pixel(x+i, y+h-v, (v<=threshold)?cl:cl_bg);
+                draw_pixel(x+1+i, y+h-v, (v<=threshold)?cl:cl_bg);
             cl_over = (threshold==h && conf.show_overexp)?COLOR_RED:cl;
             for (; v<h; ++v)
-                draw_pixel(x+i, y+h-v, (v<=threshold)?cl_over:cl_bg);
+                draw_pixel(x+1+i, y+h-v, (v<=threshold)?cl_over:cl_bg);
         }
     } else {
         for (i=0; i<w; ++i) {
             threshold = histogram[hist][i];
 
             for (v=1; v<h-3; ++v)
-                draw_pixel(x+i, y+h-v, (v<=threshold)?cl:cl_bg);
+                draw_pixel(x+1+i, y+h-v, (v<=threshold)?cl:cl_bg);
             cl_over = (threshold==h && conf.show_overexp)?COLOR_RED:cl;
             for (; v<h; ++v)
-                draw_pixel(x+i, y+h-v, (v<=threshold)?cl_over:cl_bg);
+                draw_pixel(x+1+i, y+h-v, (v<=threshold)?cl_over:cl_bg);
         }
     }
       
-    draw_rect(x-1, y, x+w, y+h, COLOR_WHITE);
+    draw_rect(x, y, x+1+w, y+h, COLOR_WHITE);
 
 }
 
