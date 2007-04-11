@@ -43,6 +43,7 @@ static void gui_draw_fselect(int arg);
 static void gui_draw_osd_le(int arg);
 static void gui_load_script(int arg);
 static void gui_draw_read(int arg);
+static void gui_menuproc_mkbootdisk(int arg);
 #ifndef OPTIONS_AUTOSAVE
 static void gui_menuproc_save(int arg);
 #endif
@@ -108,6 +109,7 @@ static CMenuItem debug_submenu_items[] = {
     {"Show misc. values",           MENUITEM_BOOL,                      &debug_vals_show },
     {"Memory browser",              MENUITEM_PROC,                      (int*)gui_draw_debug },
     {"Dump RAM on ALT +/- press",   MENUITEM_BOOL,                      &conf.ns_enable_memdump },
+    {"Make card bootable...",       MENUITEM_PROC, 			(int*)gui_menuproc_mkbootdisk },
     {"<- Back",                     MENUITEM_UP },
     {0}
 };
@@ -826,6 +828,11 @@ static void gui_draw_read_selected(const char *fn) {
 }
 void gui_draw_read(int arg) {
     gui_fselect_init("A", gui_draw_read_selected);
+}
+
+//-------------------------------------------------------------------
+void gui_menuproc_mkbootdisk(int arg) {
+    mark_filesystem_bootable();
 }
 
 //-------------------------------------------------------------------

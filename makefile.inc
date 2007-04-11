@@ -1,4 +1,4 @@
-VER=test4-pre9
+VER=test1-pre10_boot
 
 PLATFORM=a610
 PLATFORMSUB=100e

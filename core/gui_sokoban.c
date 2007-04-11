@@ -173,10 +173,6 @@ void gui_sokoban_kbd_process() {
             need_redraw = 1;
             break;
     }
-    if (sokoban_finished()) {
-        gui_mbox_init("*** Finished ***", "YES!\n  You did it!  ", MBOX_TEXT_CENTER, NULL);
-        sokoban_next_level();
-    }
 }
 
 //-------------------------------------------------------------------
@@ -227,6 +223,10 @@ void gui_sokoban_draw() {
 
         draw_filled_rect(cell_size*FIELD_WIDTH+2, 8+FONT_HEIGHT*2, screen_width-1, screen_height-1, MAKE_COLOR(SCREEN_COLOR, SCREEN_COLOR));
 
+        if (sokoban_finished()) {
+            gui_mbox_init("*** Finished ***", "YES!\n  You did it!  ", MBOX_TEXT_CENTER, NULL);
+            sokoban_next_level();
+        }
     }
 }
 

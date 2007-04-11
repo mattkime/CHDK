@@ -70,6 +70,7 @@ static void myhook1(long a)
     prev_hhandler(a);
 }
 
+
 void core_spytask()
 {
     long *p = hook_raw_fptr();

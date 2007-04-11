@@ -27,9 +27,13 @@ extern long SetPropertyCase(long opt_id, void *buf, long bufsize);
 extern long VbattGet();
 extern void RefreshPhysicalScreen(long f);
 extern long IsStrobeChargeCompleted();
+extern void Unmount_FileSystem();
+extern void Mount_FileSystem();
 
+/* Canon stuff with nonoriginal naming */
 extern long GetParameterData(long id, void *buf, long size);
 extern long SetParameterData(long id, void *buf, long size);
+extern void UpdateMBROnFlash(int driveno, long offset, char *str);
 
 /* Ours stuff */
 extern long wrs_kernel_bss_start;
@@ -37,6 +41,8 @@ extern long wrs_kernel_bss_end;
 
 extern void boot();
 extern void *get_parameter_data_magic_pointer();
+
+#define SD_READONLY_FLAG (0x20000)
 
 /*
  *
@@ -71,6 +77,22 @@ static void task_start_hook(
 
     taskprev(p0, p1, p2, p3, p4, p5, p6, p7, p8, p9 );
 }
+
+static void (*taskfsprev)(
+    long p0,    long p1,    long p2,    long p3,    long p4,
+    long p5,    long p6,    long p7,    long p8,    long p9);
+
+
+static void task_fs(
+    long p0,    long p1,    long p2,    long p3,    long p4,
+    long p5,    long p6,    long p7,    long p8,    long p9)
+{
+
+    remount_filesystem();
+
+    taskfsprev(p0, p1, p2, p3, p4, p5, p6, p7, p8, p9 );
+}
+
 
 int my_ncmp(const char *s1, const char *s2, long len)
 {
@@ -110,6 +132,12 @@ void createHook (void *pNewTcb)
 	/*if (my_ncmp(name, "tCaptSeqTask", 8) == 0){
 	    *entry = (long)task_empty;
 	}*/
+
+	if (my_ncmp(name, "tInitFileM", 10) == 0){
+	    taskfsprev = (void*)(*entry);
+	    *entry = (long)task_fs;
+	}
+
 	core_hook_task_create(pNewTcb);
     }
 }
@@ -289,17 +317,18 @@ void my_kbd_read_keys()
 	finished();
 #endif
 
+
     if (kbd_process() == 0){
 	// leave it alone...
 	physw_status[0] = kbd_new_state[0];
 	physw_status[1] = kbd_new_state[1];
 	physw_status[2] = kbd_new_state[2];
-#if 1
+#if 0
 	kbd_mod_state = kbd_new_state[2];
 #endif
     } else {
 	// override keys
-#if 1
+#if 0
 	physw_status[2] = kbd_mod_state;
 #else
 	physw_status[0] = kbd_new_state[0];
@@ -309,9 +338,11 @@ void my_kbd_read_keys()
 #endif
     }
 
-    kbd_read_keys_r2(physw_status); // have no idea what's that
-    
+    kbd_read_keys_r2(physw_status);
+    physw_status[2] = physw_status[2] & ~SD_READONLY_FLAG;
+
     kbd_pwr_off();
+
 }
 
 /****************/
@@ -706,9 +737,9 @@ static struct {
 int mode_get() {
     int mode, i, t=0xFF;
 
-    mode  = (kbd_mod_state & 0x00002000)?MODE_REC:MODE_PLAY;
-    mode |= (kbd_mod_state & 0x00008000)?0:MODE_SCREEN_OPENED;
-    mode |= (kbd_mod_state & 0x00004000)?0:MODE_SCREEN_ROTATED;
+    mode  = (physw_status[2] & 0x00002000)?MODE_REC:MODE_PLAY;
+    mode |= (physw_status[2] & 0x00008000)?0:MODE_SCREEN_OPENED;
+    mode |= (physw_status[2] & 0x00004000)?0:MODE_SCREEN_ROTATED;
     
     GetPropertyCase(0, &t, 4);
     for (i=0; i<MODESCNT; ++i) {
@@ -754,4 +785,16 @@ long get_file_counter() {
 
 long get_file_next_counter() {
     return ((get_file_counter()>>4)+1)<<4;
+}
+
+/* stub */
+void remount_filesystem()
+{
+    Unmount_FileSystem();
+    Mount_FileSystem();
+}
+
+void mark_filesystem_bootable()
+{
+    UpdateMBROnFlash(0, 0x40, "BOOTDISK");
 }

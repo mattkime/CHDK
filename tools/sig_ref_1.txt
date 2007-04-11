@@ -96,3 +96,8 @@ time 0xFFEB733C
 utime 0xFFEB7F58
 Feof_Fut 0xFFC55D80
 DeleteFile_Fut 0xFFC55A2C
+iosDevAdd 0xFFEBD07C
+iosDrvInstall 0xFFEBD340
+Unmount_FileSystem 0xFFC5BAC8
+Mount_FileSystem 0xFFC5B9C0
+UpdateMBROnFlash 0xFFC5BC20

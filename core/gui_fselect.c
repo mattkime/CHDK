@@ -270,6 +270,7 @@ void gui_fselect_draw() {
         if (count>NUM_LINES) {
             i=NUM_LINES*FONT_HEIGHT-1 -1;
             j=i*NUM_LINES/count;
+            if (j<20) j=20;
             i=(i-j)*selected->n/(count-1);
             draw_filled_rect(x+(1+NAME_SIZE+SPACING+SIZE_SIZE+SPACING+TIME_SIZE+1)*FONT_WIDTH+2, y+FONT_HEIGHT+4+1, 
                              x+(1+NAME_SIZE+SPACING+SIZE_SIZE+SPACING+TIME_SIZE+1)*FONT_WIDTH+6, y+FONT_HEIGHT+4+1+i, MAKE_COLOR(COLOR_BLACK, COLOR_BLACK));

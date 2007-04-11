@@ -249,6 +249,15 @@ void gui_menu_kbd_process() {
                 }
             }
             break;
+        case KEY_DISPLAY:
+            if (gui_menu_stack_ptr > 0){
+                gui_menu_stack_ptr--;
+                gui_menu_set_curr_menu(gui_menu_stack[gui_menu_stack_ptr].menu, gui_menu_stack[gui_menu_stack_ptr].toppos, gui_menu_stack[gui_menu_stack_ptr].curpos);
+                gui_menu_redraw=2;
+                draw_restore();
+                gui_force_restore();
+            }
+            break;
     }
 }
 
@@ -338,6 +347,7 @@ void gui_menu_draw() {
         if (count>NUM_LINES) {
             i=NUM_LINES*FONT_HEIGHT-1 -1;           // full height
             j=i*NUM_LINES/count;                    // bar height
+            if (j<20) j=20;
             i=(i-j)*((gui_menu_curr_item<0)?0:gui_menu_curr_item)/(count-1);   // top pos
             draw_filled_rect((x+w)*FONT_WIDTH+2, y*FONT_HEIGHT+1, 
                              (x+w)*FONT_WIDTH+6, y*FONT_HEIGHT+1+i, MAKE_COLOR(COLOR_BLACK, COLOR_BLACK));
