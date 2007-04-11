@@ -42,6 +42,9 @@ NSTUB(GetZoomLensCurrentPosition, 0xffe912b4)
 // ALT: NSTUB(GetZoomLensCurrentPosition, 0xffe912b4) // 27/2
 NSTUB(IsStrobeChargeCompleted, 0xffd0a4a8)
 NSTUB(MakeDirectory, 0xffc628bc)
+// Best match: 90%
+NSTUB(Mount_FileSystem, 0xffc618d0)
+// ALT: NSTUB(Mount_FileSystem, 0xffc618d0) // 27/3
 NSTUB(Open, 0xffc62580)
 // Best match: 96%
 NSTUB(PhySw_testgpio, 0xffc19004)
@@ -52,6 +55,8 @@ NSTUB(SetParameterData, 0xffd70418)
 NSTUB(SetPropertyCase, 0xffc15334)
 NSTUB(SleepTask, 0xffc12068)
 NSTUB(TakeSemaphore, 0xffc11b64)
+NSTUB(Unmount_FileSystem, 0xffc61974)
+NSTUB(UpdateMBROnFlash, 0xffc61ac8)
 // Best match: 96%
 NSTUB(VbattGet, 0xffc1cd70)
 NSTUB(Write, 0xffc62648)
@@ -71,6 +76,8 @@ NSTUB(closedir, 0xffef75e8)
 NSTUB(ints_disable, 0xffc0deb0)
 NSTUB(ints_enable, 0xffc0debc)
 NSTUB(ioctl, 0xffefa2a0)
+NSTUB(iosDevAdd, 0xffefb380)
+NSTUB(iosDrvInstall, 0xffefb644)
 NSTUB(isalpha, 0xffef155c)
 // ALT: NSTUB(isalpha, 0xffef155c) // 4/0
 NSTUB(isdigit, 0xffef158c)
