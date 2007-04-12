@@ -17,6 +17,7 @@
 #include "gui_batt.h"
 #include "gui_osd.h"
 #include "gui_read.h"
+#include "gui_calendar.h"
 #include "histogram.h"
 #include "script.h"
 
@@ -43,6 +44,7 @@ static void gui_draw_fselect(int arg);
 static void gui_draw_osd_le(int arg);
 static void gui_load_script(int arg);
 static void gui_draw_read(int arg);
+static void gui_draw_calendar(int arg);
 static void gui_menuproc_mkbootdisk(int arg);
 #ifndef OPTIONS_AUTOSAVE
 static void gui_menuproc_save(int arg);
@@ -95,6 +97,7 @@ static CMenuItem misc_submenu_items[] = {
     {"File browser",                MENUITEM_PROC,    (int*)gui_draw_fselect },
     {"Draw palette",                MENUITEM_PROC,    (int*)gui_draw_palette },
     {"Text file reader",            MENUITEM_PROC,    (int*)gui_draw_read },
+    {"Calendar",                    MENUITEM_PROC,    (int*)gui_draw_calendar },
     {"Flash-light",                 MENUITEM_BOOL,    &conf.flashlight },
     {"Games ->",                    MENUITEM_SUBMENU, (int*)&games_submenu },
     {"<- Back",                     MENUITEM_UP },
@@ -430,6 +433,9 @@ void gui_redraw()
             gui_osd_draw();
 //            draw_txt_string(20, 14, "<OSD>", MAKE_COLOR(COLOR_ALT_BG, COLOR_FG));
             break;
+        case GUI_MODE_CALENDAR:
+            gui_calendar_draw();
+            break;
         default:
             break;
     }
@@ -483,6 +489,7 @@ void gui_kbd_process()
             case GUI_MODE_SOKOBAN:
             case GUI_MODE_DEBUG:
             case GUI_MODE_OSD:
+            case GUI_MODE_CALENDAR:
                 draw_restore();
                 gui_mode = GUI_MODE_MENU;
                 break;
@@ -537,6 +544,9 @@ void gui_kbd_process()
             break;
     	case GUI_MODE_OSD:
             gui_osd_kbd_process();
+            break;
+    	case GUI_MODE_CALENDAR:
+            gui_calendar_kbd_process();
             break;
         default:
             break;
@@ -833,6 +843,12 @@ void gui_draw_read(int arg) {
 //-------------------------------------------------------------------
 void gui_menuproc_mkbootdisk(int arg) {
     mark_filesystem_bootable();
+}
+
+//-------------------------------------------------------------------
+void gui_draw_calendar(int arg) {
+    gui_mode = GUI_MODE_CALENDAR;
+    gui_calendar_init();
 }
 
 //-------------------------------------------------------------------
