@@ -47,7 +47,8 @@ int debug_vals_show;
 //-------------------------------------------------------------------
 static int def_ubasic_vars[SCRIPT_NUM_PARAMS] = {0};
 static int def_batt_volts_max, def_batt_volts_min;
-static OSD_pos def_histo_pos, def_dof_pos, def_batt_icon_pos, def_batt_txt_pos, def_mode_state_pos, def_values_pos;
+static OSD_pos def_histo_pos, def_dof_pos, def_batt_icon_pos, def_batt_txt_pos, 
+               def_mode_state_pos, def_values_pos, def_clock_pos;
 
 static void conf_change_script_file();
 static void conf_change_histo_mode();
@@ -96,6 +97,8 @@ static const ConfInfo conf_info[] = {
     CONF_INFO( 38, conf.reader_file,            CONF_DEF_PTR,   ptr:"", conf_change_script_file),
     CONF_INFO( 39, conf.reader_pos,             CONF_DEF_VALUE, i:0, NULL),
     CONF_INFO( 40, conf.sokoban_level,          CONF_DEF_VALUE, i:0, NULL),
+    CONF_INFO( 41, conf.show_clock,             CONF_DEF_VALUE, i:0, NULL),
+    CONF_INFO( 42, conf.clock_pos,              CONF_DEF_PTR,   ptr:&def_clock_pos , NULL),
 };
 #define CONF_NUM (sizeof(conf_info)/sizeof(conf_info[0]))
 
@@ -137,6 +140,8 @@ static void conf_init_defaults() {
     def_mode_state_pos.y=45;
     def_values_pos.x=vid_get_bitmap_width()-9*FONT_WIDTH;
     def_values_pos.y=6*FONT_HEIGHT;
+    def_clock_pos.x=vid_get_bitmap_width()-5*FONT_WIDTH-2;
+    def_clock_pos.y=0;
 }
 
 //-------------------------------------------------------------------

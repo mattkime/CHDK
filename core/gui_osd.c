@@ -24,6 +24,7 @@ static OSD_elem osd[]={
     {"Misc values",     &conf.values_pos,       {8*FONT_WIDTH, 3*FONT_HEIGHT}   },
     {"Batt icon",       &conf.batt_icon_pos,    {28, 12}                        },
     {"Batt text",       &conf.batt_txt_pos,     {8*FONT_WIDTH, FONT_HEIGHT}     },
+    {"Clock",           &conf.clock_pos,        {5*FONT_WIDTH, FONT_HEIGHT}     },
     {0}
 };
 static int osd_to_draw;
@@ -49,6 +50,7 @@ void gui_osd_draw() {
         gui_batt_draw_osd();
         gui_osd_draw_state();
         gui_osd_draw_values();
+        gui_osd_draw_clock();
         for (i=1; i<=2; ++i) {
             draw_rect((osd[curr_item].pos->x>=i)?osd[curr_item].pos->x-i:0, (osd[curr_item].pos->y>=i)?osd[curr_item].pos->y-i:0, 
                       osd[curr_item].pos->x+osd[curr_item].size.x+i-1, osd[curr_item].pos->y+osd[curr_item].size.y+i-1,
@@ -285,6 +287,7 @@ void gui_osd_draw_state() {
         draw_string(conf.mode_state_pos.x, conf.mode_state_pos.y+n, (under_exposed || over_exposed)?"EXP":"   ", conf.osd_color);
     }
 }
+
 //-------------------------------------------------------------------
 void gui_osd_draw_values() {
     int av=shooting_get_real_av(), fl=get_fl()*10/dof_tbl[0].f, lfp;
@@ -306,5 +309,16 @@ void gui_osd_draw_values() {
     osd_buf[8]=0;
     draw_string(conf.values_pos.x, conf.values_pos.y+FONT_HEIGHT*2, osd_buf, conf.osd_color);
 }
+
 //-------------------------------------------------------------------
+void gui_osd_draw_clock() {
+    unsigned long t;
+    static struct tm *ttm;
+
+    t = time(NULL);
+    ttm = localtime(&t);
+    sprintf(osd_buf, "%2u:%02u", ttm->tm_hour, ttm->tm_min);
+    draw_string(conf.clock_pos.x, conf.clock_pos.y, osd_buf, conf.osd_color);
+}
+
 //-------------------------------------------------------------------

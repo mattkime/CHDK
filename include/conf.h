@@ -27,6 +27,7 @@ typedef struct {
     int batt_perc_show;
     int batt_volts_show;
     int batt_icon_show;
+    int show_clock;
 
     int show_state;
     int show_values;
@@ -43,6 +44,7 @@ typedef struct {
     OSD_pos batt_txt_pos;
     OSD_pos mode_state_pos;
     OSD_pos values_pos;
+    OSD_pos clock_pos;
 
     color histo_color;
     color osd_color;

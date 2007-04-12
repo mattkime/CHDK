@@ -157,6 +157,7 @@ static CMenuItem osd_submenu_items[] = {
     {"Show RAW/SCR/EXP state",      MENUITEM_BOOL,      &conf.show_state },
     {"Show misc values",            MENUITEM_BOOL,      &conf.show_values },
     {"Show DOF calculator",         MENUITEM_BOOL,      &conf.show_dof },
+    {"Show clock",                  MENUITEM_BOOL,      &conf.show_clock },
     {"OSD layout editor",           MENUITEM_PROC,      (int*)gui_draw_osd_le },
     {"Battery parameters ->",       MENUITEM_SUBMENU,   (int*)&battery_submenu },
 #ifndef OPTIONS_AUTOSAVE
@@ -625,6 +626,10 @@ void gui_draw_osd() {
     }
 
     gui_batt_draw_osd();
+    
+    if (conf.show_clock) {
+        gui_osd_draw_clock();
+    }
 
     if (debug_vals_show) {
 //        long v=get_file_counter();

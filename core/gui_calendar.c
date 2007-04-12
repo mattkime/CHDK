@@ -13,15 +13,14 @@
 #define CALENDAR_COLOR          (MAKE_COLOR(COLOR_GREY, COLOR_WHITE))
 #define WEEKEND_COLOR           (MAKE_COLOR(0x6E, COLOR_RED))
 
-
 //-------------------------------------------------------------------
 static int need_redraw;
 static int cal_year, cal_month;
 static coord cal_x, cal_y, cal_w, cal_h;
-static char *months[] = {"January", "February", "March", "April",
-                            "May", "June", "July", "August",
-                            "September", "October", "November", "December"};
-static char *days[] = {"Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"};                            
+static const char *months[] = {"January", "February", "March", "April",
+                               "May", "June", "July", "August",
+                               "September", "October", "November", "December"};
+static const char *days[] = {"Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"};                            
 //-------------------------------------------------------------------
 static void calendar_goto_today() {
     unsigned long t;
@@ -60,7 +59,7 @@ static void gui_calendar_initial_draw() {
     int x, i;
 
     draw_filled_rect(0, 0, screen_width-1, screen_height-1, MAKE_COLOR(SCREEN_COLOR, SCREEN_COLOR));
-    draw_txt_string(1, 0, "Today: ", MAKE_COLOR(SCREEN_COLOR, COLOR_WHITE));
+    draw_txt_string(1, 0, "Today:", MAKE_COLOR(SCREEN_COLOR, COLOR_WHITE));
     draw_rect(cal_x-3, cal_y-3, cal_x+cal_w+2, cal_y+cal_h+2, CALENDAR_COLOR);
     draw_filled_rect(cal_x-1, cal_y-1, cal_x+cal_w, cal_y+FONT_HEIGHT+8, TITLE_COLOR);
     draw_filled_rect(cal_x-1, cal_y+FONT_HEIGHT+8, cal_x+cal_w, cal_y+cal_h, CALENDAR_COLOR);
@@ -120,7 +119,7 @@ void gui_calendar_draw() {
     static char str[32];
     int w, d, i;
     unsigned long t;
-    struct tm *ttm;
+    static struct tm *ttm;
 
     t = time(NULL);
     ttm = localtime(&t);
