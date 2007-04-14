@@ -40,16 +40,16 @@ int raw_savefile() {
         sprintf(fn, "%s/", dir);
         sprintf(fn+strlen(fn), RAW_TARGET_FILENAME, prefixes[conf.raw_prefix], (v>>4)&0x3FFF, exts[conf.raw_ext]);
 
-        fd = fopen(fn, "wb");
-        if (fd) {
-            fwrite(hook_raw_image_addr(), hook_raw_size(), 1, fd);
-            fclose(fd);
+        fd = open(fn, O_WRONLY|O_CREAT, 0777);
+        if (fd>=0) {
+            write(fd, hook_raw_image_addr(), hook_raw_size());
+            close(fd);
             utime(fn, &t);
         }
 
         finished();
 
-        return (fd != 0);
+        return (fd >= 0);
     }
 
     return 0;

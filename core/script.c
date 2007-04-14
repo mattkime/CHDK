@@ -154,22 +154,22 @@ void script_load(const char *fn) {
 
     if (!fn[0]) { // load internal script
         if (!conf.script_file[0]) { // internal script was used last time
-            fd = fopen(SCRIPT_DEFAULT_FILENAME, "r");
-            if (fd) {
+            fd = open(SCRIPT_DEFAULT_FILENAME, O_RDONLY, 0777);
+            if (fd>=0) {
                 fn = SCRIPT_DEFAULT_FILENAME;
                 update_vars = 1; 
             }
         }
     } else {
-        fd = fopen(fn, "r");
-        if (!fd) {
+        fd = open(fn, O_RDONLY, 0777);
+        if (fd<0) {
             conf.script_file[0]=0;
             update_vars = 1; 
         }
     }
 
-    if (fd){
-	int rcnt = fread(ubasic_script_buf, 1, SCRIPT_BUF_SIZE, fd);
+    if (fd>=0){
+	int rcnt = read(fd, ubasic_script_buf, SCRIPT_BUF_SIZE);
 	if (rcnt > 0){
 	    if (rcnt == SCRIPT_BUF_SIZE) { /* FIXME TODO script is too big? */
 		ubasic_script_buf[SCRIPT_BUF_SIZE-1] = 0;
@@ -177,7 +177,7 @@ void script_load(const char *fn) {
 		ubasic_script_buf[rcnt] = 0;
 	    state_ubasic_script = ubasic_script_buf;
 	}
-	fclose(fd);
+	close(fd);
         strcpy(conf.script_file, fn);
     }
 

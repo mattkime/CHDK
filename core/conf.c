@@ -171,8 +171,8 @@ void conf_save() {
     static char buf[sizeof(t)+CONF_NUM*(sizeof(conf_info[0].id)+sizeof(conf_info[0].size))+sizeof(conf)];
     char *p=buf;
 
-    fd = fopen(CONF_FILE, "wb");
-    if (fd){
+    fd = open(CONF_FILE, O_WRONLY|O_CREAT, 0777); 
+    if (fd>=0){
         memcpy(p, &t, sizeof(t));
         p+=sizeof(t);
         for (i=0; i<CONF_NUM; ++i) {
@@ -184,8 +184,8 @@ void conf_save() {
             p+=conf_info[i].size;
         }
 
-        fwrite(buf, p-buf, 1, fd);
-        fclose(fd);
+        write(fd, buf, p-buf);
+        close(fd);
     }
 }
 
@@ -200,23 +200,23 @@ void conf_restore() {
 
     conf_load_defaults();
 
-    fd = fopen(CONF_FILE, "rb");
-    if (fd){
+    fd = open(CONF_FILE, O_RDONLY, 0777); 
+    if (fd>=0){
         // read magick value
-        rcnt = fread(&t, 1, sizeof(t), fd);
+        rcnt = read(fd, &t, sizeof(t));
         if (rcnt==sizeof(t) && t==CONF_MAGICK_VALUE) {
-            while (!feof(fd)) {
-                rcnt = fread(&id, 1, sizeof(id), fd);
+            while (1) {
+                rcnt = read(fd, &id, sizeof(id));
                 if (rcnt!=sizeof(id)) break;
 
-                rcnt = fread(&size, 1, sizeof(size), fd);
+                rcnt = read(fd, &size, sizeof(size));
                 if (rcnt!=sizeof(size)) break;
 
                 for (i=0; i<CONF_NUM; ++i) {
                     if (conf_info[i].id==id && conf_info[i].size==size) {
                         ptr=malloc(size);
                         if (ptr) {
-                            rcnt = fread(ptr, 1, size, fd);
+                            rcnt = read(fd, ptr, size);
                             if (rcnt == size) {
                                memcpy(conf_info[i].var, ptr, size);
                                if (conf_info[i].func) {
@@ -229,11 +229,11 @@ void conf_restore() {
                     }
                 }
                 if (i == CONF_NUM) { // unknown id, just skip data
-                    fseek(fd, size, SEEK_CUR);
+                    lseek(fd, size, SEEK_CUR);
                 }
             }
         }
-	fclose(fd);
+	close(fd);
     }
 }
 

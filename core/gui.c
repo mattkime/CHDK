@@ -652,7 +652,7 @@ void gui_draw_osd() {
 	for (i=0;i<10;i++){
 	    r = 0;
 	    p = debug_propcase_page*10+i;
-	    GetPropertyCase(p, &r, 4);
+	    get_property_case(p, &r, 4);
 	    sprintf(sbuf, "%3d: %d              ", p, r);sbuf[20]=0;
 	    draw_string(64,16+16*i,sbuf, conf.osd_color);
 	}

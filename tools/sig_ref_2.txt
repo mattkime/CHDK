@@ -34,6 +34,4 @@ rename 0xFFEFE0CC
 chdir 0xFFEFE140
 time 0xFFEFA448
 utime 0xFFEFB064
-Feof_Fut 0xFFC5A1C8
-DeleteFile_Fut 0xFFC59E74
 Mount_FileSystem 0xffc602ec

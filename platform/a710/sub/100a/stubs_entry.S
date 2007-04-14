@@ -6,21 +6,12 @@ NSTUB(Close, 0xffc60fc4)
 NSTUB(CreatePhysicalVram, 0xffd37d50)
 NSTUB(CreateTask, 0xffc11abc)
 NSTUB(CreateTaskStrict, 0xffc12b5c)
-NSTUB(DeleteFile_Fut, 0xffc59e74)
-// ALT: NSTUB(DeleteFile_Fut, 0xffc59e74) // 27/0
 NSTUB(DisableDispatch, 0xffc118e0)
 NSTUB(DisplayImagePhysicalScreen, 0xffd36fe0)
 NSTUB(EnableDispatch, 0xffc1196c)
 NSTUB(ExecuteEventProcedure, 0xffc0699c)
 NSTUB(ExitTask, 0xffc11e7c)
-NSTUB(Fclose_Fut, 0xffc59fb4)
-NSTUB(Feof_Fut, 0xffc5a1c8)
-// ALT: NSTUB(Feof_Fut, 0xffc5a1c8) // 26/0
-NSTUB(Fopen_Fut, 0xffc59f78)
-NSTUB(Fread_Fut, 0xffc5a098)
 NSTUB(FreeMemory, 0xffc01abc)
-NSTUB(Fseek_Fut, 0xffc5a180)
-NSTUB(Fwrite_Fut, 0xffc5a0e8)
 NSTUB(GetCurrentAvValue, 0xffeb3d50)
 // ALT: NSTUB(GetCurrentAvValue, 0xffeb3e48) // 13/0
 // ALT: NSTUB(GetCurrentAvValue, 0xffeb628c) // 13/0
@@ -38,6 +29,7 @@ NSTUB(PhySw_testgpio, 0xffc1889c)
 NSTUB(ProtectFile, 0xffc595e0)
 NSTUB(Read, 0xffc61058)
 NSTUB(RefreshPhysicalScreen, 0xffd8752c)
+NSTUB(Remove, 0xffc60fe4)
 NSTUB(SetParameterData, 0xffd75fb0)
 NSTUB(SetPropertyCase, 0xffc14c9c)
 NSTUB(SleepTask, 0xffc119d0)
@@ -101,7 +93,6 @@ NSTUB(readdir, 0xffefaed4)
 NSTUB(rename, 0xffefe0cc)
 // ALT: NSTUB(rename, 0xffefe0cc) // 26/0
 NSTUB(rewinddir, 0xffefaefc)
-NSTUB(sprintf, 0xffefc88c)
 NSTUB(srand, 0xffef8384)
 // ALT: NSTUB(srand, 0xffef8384) // 4/0
 NSTUB(stat, 0xffefafd0)
@@ -129,4 +120,5 @@ NSTUB(time, 0xffefa448)
 // ALT: NSTUB(time, 0xffefa448) // 25/0
 NSTUB(utime, 0xffefb064)
 // ALT: NSTUB(utime, 0xffefb064) // 26/0
+NSTUB(vsprintf, 0xffefc828)
 NSTUB(write, 0xffefdb50)

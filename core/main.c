@@ -7,7 +7,6 @@
 #include "histogram.h"
 #include "raw.h"
 
-static long (*prev_hhandler)(long a);
 static int raw_need_postprocess;
 
 #if 0
@@ -50,62 +49,63 @@ void dump_memory()
     started();
 
 	sprintf(fn, "A/DCIM/100CANON/CRW_%04d.JPG", cnt++);
-	fd = fopen(fn, "w+");
+	fd = open(fn, O_WRONLY|O_CREAT, 0777);
 	if (fd) {
 //            fwrite((void*)vid_get_viewport_fb(), 360*240*3, 1, fd);
 //            fwrite((void*)vid_get_bitmap_fb(), 360*240, 1, fd);
-	    fwrite((void*)0, 1, 0x1900, fd);
-	    fwrite((void*)0x1900, 1, 32*1024*1024-0x1900, fd);
-	    fclose(fd);
+	    write(fd, (void*)0, 0x1900);
+	    write(fd, (void*)0x1900, 32*1024*1024-0x1900);
+	    close(fd);
 	}
     finished();
 }
 
-static void myhook1(long a)
+static volatile long raw_data_available;
+
+/* called from another process */
+void core_rawdata_available()
 {
-    // only this caller allowed
-    if (__builtin_return_address(0) == hook_raw_ret_addr()){
-	raw_need_postprocess = raw_savefile();
-    }
-    prev_hhandler(a);
+    raw_data_available = 1;
 }
 
 
 void core_spytask()
 {
-    long *p = hook_raw_fptr();
     int cnt = 0;
 
     raw_need_postprocess = 0;
 
-    SleepTask(1000);
+    msleep(2000);
 
     conf_restore();
     gui_init();
 
     started();
-    SleepTask(50);
+    msleep(50);
     finished();
 
     while (1){
+
+	if (raw_data_available){
+            raw_need_postprocess = raw_savefile();
+	    hook_raw_save_complete();
+	    raw_data_available = 0;
+	    continue;
+	}
+
 	if (((cnt++) & 3) == 0)
 	    gui_redraw();
 
 	histogram_process();
 
-	taskLock();
-	if ((*p) != (long)myhook1){
-	    prev_hhandler = (void*)*p;
-	    *p=(long)myhook1;
-	}
-	taskUnlock();
+	hook_raw_install();
 
 	if ((state_shooting_progress == SHOOTING_PROGRESS_PROCESSING) && (!shooting_in_progress())) {
 	    state_shooting_progress = SHOOTING_PROGRESS_DONE;
             if (raw_need_postprocess) raw_postprocess();
         }
 
-	SleepTask(20);
+	msleep(20);
     }
 }
 

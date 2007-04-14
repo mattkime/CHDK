@@ -1,7 +1,11 @@
 #ifndef MATH_H
 #define MATH_H
 
+#ifndef __VFP_FP__
 extern double d2d(double value);
+#else
+#define d2d(v) (v)
+#endif
 /*
 extern float logf(float v);
 extern float sqrtf(float v);

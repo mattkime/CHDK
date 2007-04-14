@@ -50,7 +50,8 @@ static void gui_fselect_free_data() {
 }
 
 //-------------------------------------------------------------------
-static int fselect_sort(const void* v1, const void* v2) {
+extern int fselect_sort_nothumb(const void* v1, const void* v2);
+int fselect_sort(const void* v1, const void* v2) {
     struct fitem *i1=*((struct fitem **)v1), *i2=*((struct fitem **)v2);
 
     if (i1->attr & DOS_ATTR_DIRECTORY) {
@@ -102,7 +103,7 @@ static void gui_fselect_read_dir(const char* dir) {
                         (*ptr)->size=st.st_size;
                         (*ptr)->mtime=st.st_mtime;
                     } else {
-                        (*ptr)->attr=0xFF;
+                        (*ptr)->attr=(de->name[0]=='.' && de->name[1]=='.' && de->name[2]==0)?DOS_ATTR_DIRECTORY:0xFF;
                         (*ptr)->size=(*ptr)->mtime=0;
                     }
                     (*ptr)->prev=prev;
@@ -113,7 +114,6 @@ static void gui_fselect_read_dir(const char* dir) {
             }
             de = readdir(d);
         }
-        rewinddir(d);
         closedir(d);
     }
     *ptr=NULL;
@@ -129,7 +129,7 @@ static void gui_fselect_read_dir(const char* dir) {
                 prev=prev->next;
             }
             
-            qsort(ptr, count, sizeof(struct fitem*), fselect_sort);
+            qsort(ptr, count, sizeof(struct fitem*), fselect_sort_nothumb);
             
             for (i=0; i<count-1; ++i) {
                 ptr[i]->n=i;
@@ -207,7 +207,7 @@ void gui_fselect_draw() {
             for (j=0; j<NAME_SIZE && ptr->name[j]; ++j) 
                 buf[j]=ptr->name[j];
             if (j==NAME_SIZE && ptr->name[j]) buf[NAME_SIZE-1]='>';
-            if (ptr->attr & DOS_ATTR_DIRECTORY) {
+            if (ptr->attr & DOS_ATTR_DIRECTORY && ptr->attr != 0xFF) {
                 if (j<NAME_SIZE) {
                     buf[j++]='/';
                 } else {
@@ -223,7 +223,9 @@ void gui_fselect_draw() {
 
             // print size or <Dir>
             if (ptr->attr & DOS_ATTR_DIRECTORY) {
-                if (ptr->name[0]=='.' && ptr->name[1]=='.' && ptr->name[2]==0) {
+                if (ptr->attr == 0xFF) {
+                    sprintf(buf, "  ???  ");
+                } else if (ptr->name[0]=='.' && ptr->name[1]=='.' && ptr->name[2]==0) {
                     sprintf(buf, "<UpDir>");
                 } else {
                     sprintf(buf, "< Dir >");
@@ -291,7 +293,7 @@ void gui_fselect_draw() {
 static void fselect_delete_cb(unsigned int btn) {
     if (btn==MBOX_BTN_YES) {
         sprintf(selected_file, "%s/%s", current_dir, selected->name);
-        fdelete(selected_file);
+        remove(selected_file);
         selected_file[0]=0;
         gui_fselect_read_dir(current_dir);
     }
@@ -324,7 +326,7 @@ void gui_fselect_kbd_process() {
             }
             break;
         case KEY_SET:
-            if (selected) {
+            if (selected && selected->attr != 0xFF) {
                 if (selected->attr & DOS_ATTR_DIRECTORY) {
                     i=strlen(current_dir);
                     if (selected->name[0]=='.' && selected->name[1]=='.' && selected->name[2]==0) {

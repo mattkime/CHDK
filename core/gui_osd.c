@@ -241,7 +241,7 @@ static int get_fl() {
     zp=lens_get_zoom_point();
     if (zp<0) zp=0;
     if (zp>=dof_tbl_size) zp=dof_tbl_size-1;
-    return dof_tbl[zp].f;
+    return dof_tbl[zp];
 }
 
 //-------------------------------------------------------------------
@@ -290,7 +290,7 @@ void gui_osd_draw_state() {
 
 //-------------------------------------------------------------------
 void gui_osd_draw_values() {
-    int av=shooting_get_real_av(), fl=get_fl()*10/dof_tbl[0].f, lfp;
+    int av=shooting_get_real_av(), fl=get_fl()*10/dof_tbl[0], lfp;
 
     sprintf(osd_buf, "Z:%ld/%d.%dx%8s", lens_get_zoom_point(), fl/10, fl%10, "");
     osd_buf[8]=0;

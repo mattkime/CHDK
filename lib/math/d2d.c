@@ -1,5 +1,6 @@
 #include "fdlibm.h"
 
+#ifndef __VFP_FP__
 #define USE_ASM_D2D
 
 double d2d(double value) {
@@ -19,4 +20,5 @@ double d2d(double value) {
 #endif
     return value;
 }
+#endif
 

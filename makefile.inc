@@ -1,4 +1,4 @@
-VER=test1-pre10_boot
+VER=test2-pre11-thumb
 
 PLATFORM=a610
 PLATFORMSUB=100e
@@ -75,11 +75,14 @@ STRIP=arm-elf-strip
 NM=arm-elf-nm
 AR=arm-elf-ar
 RANLIB=arm-elf-ranlib
+SIZE=arm-elf-size
 
 # -msoft-float is used per default but object files are marked as hard-float
 CFLAGS=-fno-inline -O9 -fno-strict-aliasing
 # flags for gcc v4
-CFLAGS+=-mtune=arm946e-s
+# CFLAGS+=-mtune=arm946e-s
+CTHUMB=-mthumb
+CFLAGS+=-mthumb-interwork
 CFLAGS+=-I$(topdir)include $(PLFLAGS) $(CPPFLAGS)
 CFLAGS+=-DPLATFORM=\"$(PLATFORM)\" -DPLATFORMSUB=\"$(PLATFORMSUB)\" -DHDK_VERSION=\"$(VER)\"
 CFLAGS+=-Wall -Wno-unused -Wno-format

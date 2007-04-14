@@ -20,13 +20,13 @@ static char buffer[READ_BUFFER_SIZE+45];
 //-------------------------------------------------------------------
 int gui_read_init(const char* file) {
     static struct stat   st;
-    read_file = fopen(file, "rb");
+    read_file = open(file, O_RDONLY, 0777);
     if (strcmp(file, conf.reader_file)!=0) {
         conf.reader_pos = 0;
         strcpy(conf.reader_file, file);
     }
     read_on_screen = 0;
-    read_file_size = (read_file && stat((char*)file, &st)==0)?st.st_size:0;
+    read_file_size = (read_file>=0 && stat((char*)file, &st)==0)?st.st_size:0;
     if (read_file_size<=conf.reader_pos) {
         conf.reader_pos = 0;
     }
@@ -37,7 +37,7 @@ int gui_read_init(const char* file) {
     h=(screen_height-y*FONT_HEIGHT)/FONT_HEIGHT;
     s=w*h;
     
-    return (read_file != 0);
+    return (read_file >= 0);
 }
 
 //-------------------------------------------------------------------
@@ -46,8 +46,8 @@ void gui_read_draw() {
         int i, j;
         
         if (read_to_draw) {
-            fseek(read_file, conf.reader_pos, SEEK_SET);
-            i=fread(buffer, 1, s, read_file);
+            lseek(read_file, conf.reader_pos, SEEK_SET);
+            i=read(read_file, buffer, s);
             buffer[i]=0;
 
             j=0; i=1;
@@ -137,7 +137,7 @@ void gui_read_kbd_process() {
             break;
         case KEY_MENU:
             if (read_file >= 0) {
-                fclose(read_file);
+                close(read_file);
                 read_file=-1;
             }
             break;
