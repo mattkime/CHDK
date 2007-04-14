@@ -4,7 +4,7 @@
 typedef unsigned int    coord;
 typedef unsigned short 	color;
 
-#define MAKE_COLOR(bg, fg)	((color)((((char)bg)<<8)|((char)fg)))
+#define MAKE_COLOR(bg, fg)	((color)((((char)(bg))<<8)|((char)(fg))))
 
 enum Gui_Mode { GUI_MODE_NONE = 0,
                 GUI_MODE_ALT,

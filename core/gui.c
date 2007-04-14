@@ -338,7 +338,7 @@ void gui_update_script_submenu() {
 static volatile enum Gui_Mode gui_mode;
 static volatile int gui_restore;
 static volatile int gui_in_redraw;
-static int gui_splash = 50;
+static int gui_splash = 50, gui_splash_mode;
 static char osd_buf[32];
 #ifdef OPTIONS_AUTOSAVE
 static Conf old_conf;
@@ -380,7 +380,7 @@ void gui_redraw()
     if (gui_splash) {
         if (gui_splash>46) {
             gui_draw_splash();
-        } else if (gui_splash==1 && (mode_get()&MODE_MASK) == MODE_PLAY && (gui_mode==GUI_MODE_NONE || gui_mode==GUI_MODE_ALT)) {
+        } else if (gui_splash==1 && (mode_get()&MODE_MASK) == gui_splash_mode && (gui_mode==GUI_MODE_NONE || gui_mode==GUI_MODE_ALT)) {
             draw_restore();
         }
         --gui_splash;
@@ -787,6 +787,9 @@ void gui_draw_splash() {
         "Build: " __DATE__ " " __TIME__ ,
         "Camera: " PLATFORM " - " PLATFORMSUB };
     int i, l;
+    color cl = MAKE_COLOR((gui_splash_mode==MODE_REC)?0xDA:0xD9, COLOR_WHITE);
+
+    gui_splash_mode = (mode_get()&MODE_MASK);
 
     h=sizeof(text)/sizeof(text[0])*FONT_HEIGHT+8;
     w=0;
@@ -797,9 +800,9 @@ void gui_draw_splash() {
     w=w*FONT_WIDTH+10;
 
     x = (screen_width-w)>>1; y = (screen_height-h)>>1;
-    draw_filled_rect(x, y, x+w, y+h, MAKE_COLOR(0xD9, COLOR_WHITE));
+    draw_filled_rect(x, y, x+w, y+h, cl);
     for (i=0; i<sizeof(text)/sizeof(text[0]); ++i) {
-        draw_string(x+((w-strlen(text[i])*FONT_WIDTH)>>1), y+i*FONT_HEIGHT+4, text[i], MAKE_COLOR(0xD9, COLOR_WHITE));
+        draw_string(x+((w-strlen(text[i])*FONT_WIDTH)>>1), y+i*FONT_HEIGHT+4, text[i], cl);
     }
 }
 
