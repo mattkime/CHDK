@@ -45,6 +45,7 @@ static void gui_draw_osd_le(int arg);
 static void gui_load_script(int arg);
 static void gui_draw_read(int arg);
 static void gui_draw_read_last(int arg);
+static void gui_draw_load_rbf(int arg);
 static void gui_draw_calendar(int arg);
 static void gui_menuproc_mkbootdisk(int arg);
 #ifndef OPTIONS_AUTOSAVE
@@ -98,6 +99,7 @@ static CMenuItem reader_submenu_items[] = {
     {"Open last opened file",       MENUITEM_PROC,    (int*)gui_draw_read_last },
     {"Enable autoscroll",           MENUITEM_BOOL,    &conf.reader_autoscroll },
     {"Autoscroll delay (sec)",      MENUITEM_INT|MENUITEM_F_UNSIGNED|MENUITEM_F_MINMAX, &conf.reader_autoscroll_delay, MENU_MINMAX(0, 60) },
+    {"Select RBF font",             MENUITEM_PROC,    (int*)gui_draw_load_rbf },
     {"<- Back",                     MENUITEM_UP },
     {0}
 };
@@ -834,7 +836,7 @@ void gui_load_script(int arg) {
     char  *path="A/SCRIPTS";
 
     // if exists "A/SCRIPTS" go into
-    d=opendir("A/SCRIPTS");
+    d=opendir(path);
     if (d) {
         closedir(d);
     } else {
@@ -853,6 +855,8 @@ void gui_draw_osd_le(int arg) {
 //-------------------------------------------------------------------
 static void gui_draw_read_selected(const char *fn) {
     if (fn) {
+        if (!rbf_load(conf.reader_rbf_file))
+            rbf_load_from_8x16(current_font);
         gui_mode = GUI_MODE_READ;
         gui_read_init(fn);
     }
@@ -883,6 +887,27 @@ void gui_menuproc_mkbootdisk(int arg) {
 void gui_draw_calendar(int arg) {
     gui_mode = GUI_MODE_CALENDAR;
     gui_calendar_init();
+}
+
+//-------------------------------------------------------------------
+static void gui_draw_rbf_selected(const char *fn) {
+    if (fn) {
+        strcpy(conf.reader_rbf_file, fn);
+    }
+}
+void gui_draw_load_rbf(int arg) {
+    DIR   *d;
+    char  *path="A/FONTS";
+
+    // if exists "A/FONTS" go into
+    d=opendir(path);
+    if (d) {
+        closedir(d);
+    } else {
+        path="A";
+    }
+
+    gui_fselect_init(path, gui_draw_rbf_selected);
 }
 
 //-------------------------------------------------------------------

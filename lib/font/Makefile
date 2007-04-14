@@ -2,7 +2,7 @@ topdir=../../
 
 include $(topdir)makefile.inc
 
-OBJS = font_8x16.o
+OBJS = font_8x16.o rbf_font.o
 
 all: libfont.a
 

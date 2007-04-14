@@ -58,6 +58,7 @@ typedef struct {
     int reader_pos;
     int reader_autoscroll;
     int reader_autoscroll_delay;
+    char reader_rbf_file[100];
 
     int sokoban_level;
 

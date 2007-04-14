@@ -4,6 +4,7 @@
 #include "core.h"
 #include "conf.h"
 #include "gui.h"
+#include "font.h"
 #include "gui_draw.h"
 #include "gui_read.h"
 
@@ -13,10 +14,11 @@ static int read_file;
 static int read_file_size;
 static int read_on_screen;
 static int read_to_draw;
-static coord x, y, h, w, s;
-#define READ_BUFFER_SIZE        (45*15)
-static char buffer[READ_BUFFER_SIZE+45];
+static coord x, y, h, w;
+#define READ_BUFFER_SIZE  100
+static char buffer[READ_BUFFER_SIZE+1];
 static long last_time;
+static int xx, yy;
 
 //-------------------------------------------------------------------
 int gui_read_init(const char* file) {
@@ -32,16 +34,28 @@ int gui_read_init(const char* file) {
         conf.reader_pos = 0;
     }
     read_to_draw = 1;
-    x=0; 
-    y=1;
-    w=(screen_width-(x+1)*FONT_WIDTH)/FONT_WIDTH;
-    h=(screen_height-y*FONT_HEIGHT)/FONT_HEIGHT;
-    s=w*h;
+    x=6; 
+    y=FONT_HEIGHT;
+    w=screen_width-6-6-8;
+    h=screen_height-y;
     last_time = get_tick_count();
     
+    draw_filled_rect(0, y, screen_width-1, screen_height-1, MAKE_COLOR((conf.reader_color>>8)&0xFF, (conf.reader_color>>8)&0xFF));
+
     return (read_file >= 0);
 }
 
+//-------------------------------------------------------------------
+static void read_goto_next_line() {
+    draw_filled_rect(xx, yy, x+w-1, yy+rbf_font_height()-1, MAKE_COLOR(conf.reader_color>>8, conf.reader_color>>8));
+    xx  = x;
+    yy += rbf_font_height();
+}
+
+//-------------------------------------------------------------------
+static int read_fit_next_char(int ch) {
+    return (xx+rbf_char_width(ch) < x+w);
+}
 //-------------------------------------------------------------------
 void gui_read_draw() {
     if (conf.reader_autoscroll && get_tick_count()-last_time >= conf.reader_autoscroll_delay*1000 && (conf.reader_pos+read_on_screen)<read_file_size) {
@@ -49,76 +63,69 @@ void gui_read_draw() {
         read_to_draw = 1;
     }
     if (read_to_draw) {
-        int i, j;
+        int n, i;
         
-        if (read_to_draw) {
-            lseek(read_file, conf.reader_pos, SEEK_SET);
-            i=read(read_file, buffer, s);
-            buffer[i]=0;
+        xx=x; yy=y;
 
-            j=0; i=1;
-            for (read_on_screen=0; read_on_screen<s && j<h; ++read_on_screen) {
-                if (buffer[read_on_screen]) {
-                    switch (buffer[read_on_screen]) {
-                        case '\r':
-                            break;
-                        case '\n':
-                            for (; i<w-1; ++i) {
-                                draw_txt_char(x+i, y+j, ' ', conf.reader_color); //fill the rest
-                            }
-                            break;
-                        case '\t':
-                            draw_txt_string(x+i, y+j, "    ", conf.reader_color); //text
-                            i+=4;
-                            break;
-                        default:
-                            draw_txt_char(x+i, y+j, buffer[read_on_screen], conf.reader_color); //text
-                            ++i;
-                            break;
+        lseek(read_file, conf.reader_pos, SEEK_SET);
+        read_on_screen=0;
 
-                    }
-                    if (i>=w-1) {
-                        ++j;
-                        i=1;
-                    }
-                } else {
-                    for (; j<h; ++j) {
-                        for (; i<w-1; ++i) {
-                            draw_txt_char(x+i, y+j, ' ', conf.reader_color); //fill the rest
+        while (yy<=y+h-rbf_font_height()) {
+            n=read(read_file, buffer, READ_BUFFER_SIZE);
+            if (n==0) {
+                 read_goto_next_line();
+                 if (yy < y+h)
+                     draw_filled_rect(x, yy, x+w-1, y+h-1, MAKE_COLOR(conf.reader_color>>8, conf.reader_color>>8));
+                 break;
+            }
+            i=0;
+            while (i<n && yy<=y+h-rbf_font_height()) {
+                switch (buffer[i]) {
+                    case '\r':
+                        break;
+                    case '\n':
+                        read_goto_next_line();
+                        break;
+                    case '\t':
+                        buffer[i] = ' ';
+                        continue;
+                    default:
+                        if (!read_fit_next_char(buffer[i])) {
+                            read_goto_next_line();
+                            continue;
                         }
-                        i=1;
-                    }
+                        xx+=rbf_draw_char(xx, yy, buffer[i], conf.reader_color);
+                        break;
+                }
+                ++i;
+                if (xx >= x+w) {
+                    xx  = x;
+                    yy += rbf_font_height();
                 }
             }
-        
-            sprintf(buffer, "(%3d%%) %d/%d%45s", (read_file_size)?(conf.reader_pos*100/read_file_size):0, conf.reader_pos, read_file_size, "");
-            buffer[screen_width/FONT_WIDTH]=0;
-            draw_txt_string(0, 0, buffer, MAKE_COLOR(COLOR_BLACK, COLOR_WHITE)); //title infoline
-
-            draw_filled_rect(0, y*FONT_HEIGHT, 
-                             FONT_WIDTH-1, (y+h)*FONT_HEIGHT, MAKE_COLOR((conf.reader_color>>8)&0xFF, (conf.reader_color>>8)&0xFF));
-            // scrollbar
-            draw_filled_rect((x+w-1)*FONT_WIDTH, y*FONT_HEIGHT, 
-                             (x+w)*FONT_WIDTH+8, (y+h)*FONT_HEIGHT, MAKE_COLOR((conf.reader_color>>8)&0xFF, (conf.reader_color>>8)&0xFF));
-            if (read_file_size) {
-                i=h*FONT_HEIGHT-1 -1;           // full height
-                j=i*s/read_file_size;           // bar height
-                if (j<20) j=20;
-                i=(i-j)*conf.reader_pos/read_file_size;   // top pos
-                draw_filled_rect((x+w)*FONT_WIDTH+2, y*FONT_HEIGHT+1, 
-                                 (x+w)*FONT_WIDTH+6, y*FONT_HEIGHT+1+i, MAKE_COLOR(COLOR_BLACK, COLOR_BLACK));
-                draw_filled_rect((x+w)*FONT_WIDTH+2, y*FONT_HEIGHT+i+j, 
-                                 (x+w)*FONT_WIDTH+6, (y+h)*FONT_HEIGHT-1-1, MAKE_COLOR(COLOR_BLACK, COLOR_BLACK));
-                draw_filled_rect((x+w)*FONT_WIDTH+2, y*FONT_HEIGHT+1+i, 
-                                 (x+w)*FONT_WIDTH+6, y*FONT_HEIGHT+i+j, MAKE_COLOR(COLOR_WHITE, COLOR_WHITE));
-            } else {
-                draw_filled_rect((x+w)*FONT_WIDTH+2, y*FONT_HEIGHT+1, 
-                                 (x+w)*FONT_WIDTH+6, (y+h)*FONT_HEIGHT-1-1, MAKE_COLOR(COLOR_BLACK, COLOR_BLACK));
-            }
-
-            read_to_draw = 0;
-            last_time = get_tick_count();
+            read_on_screen+=i;
         }
+    
+        sprintf(buffer, "(%3d%%) %d/%d%45s", (read_file_size)?(conf.reader_pos*100/read_file_size):0, conf.reader_pos, read_file_size, "");
+        buffer[screen_width/FONT_WIDTH]=0;
+        draw_txt_string(0, 0, buffer, MAKE_COLOR(COLOR_BLACK, COLOR_WHITE)); //title infoline
+
+        // scrollbar
+        if (read_file_size) {
+            i=h-1 -1;           // full height
+            n=i*read_on_screen/read_file_size;           // bar height
+            if (n<20) n=20;
+            i=(i-n)*conf.reader_pos/read_file_size;   // top pos
+            draw_filled_rect(x+w+6+2, y+1,   x+w+6+6, y+1+i,   MAKE_COLOR(COLOR_BLACK, COLOR_BLACK));
+            draw_filled_rect(x+w+6+2, y+i+n, x+w+6+6, y+h-1-1, MAKE_COLOR(COLOR_BLACK, COLOR_BLACK));
+            draw_filled_rect(x+w+6+2, y+1+i, x+w+6+6, y+i+n,   MAKE_COLOR(COLOR_WHITE, COLOR_WHITE));
+        } else {
+            draw_filled_rect((x+w)*FONT_WIDTH+2, y*FONT_HEIGHT+1, 
+                             (x+w)*FONT_WIDTH+6, (y+h)*FONT_HEIGHT-1-1, MAKE_COLOR(COLOR_BLACK, COLOR_BLACK));
+        }
+
+        read_to_draw = 0;
+        last_time = get_tick_count();
     }
 }
 
@@ -128,7 +135,7 @@ void gui_read_kbd_process() {
         case KEY_ZOOM_OUT:
         case KEY_UP:
             if (conf.reader_pos>0) {
-                conf.reader_pos -= s-w;
+                conf.reader_pos -= 45*15;
                 if (conf.reader_pos<0) conf.reader_pos=0;
                 read_to_draw = 1;
             }

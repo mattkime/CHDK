@@ -28,7 +28,6 @@ extern unsigned int		screen_width, screen_height, screen_size;
 //-------------------------------------------------------------------
 void draw_init();
 
-extern void draw_pixel(coord x, coord y, color cl);
 extern color draw_get_pixel(coord x, coord y);
 
 extern void draw_line(coord x1, coord y1, coord x2, coord y2, color cl);
