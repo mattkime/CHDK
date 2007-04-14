@@ -99,6 +99,8 @@ static const ConfInfo conf_info[] = {
     CONF_INFO( 40, conf.sokoban_level,          CONF_DEF_VALUE, i:0, NULL),
     CONF_INFO( 41, conf.show_clock,             CONF_DEF_VALUE, i:0, NULL),
     CONF_INFO( 42, conf.clock_pos,              CONF_DEF_PTR,   ptr:&def_clock_pos , NULL),
+    CONF_INFO( 43, conf.reader_autoscroll,      CONF_DEF_VALUE, i:0, NULL),
+    CONF_INFO( 44, conf.reader_autoscroll_delay, CONF_DEF_VALUE, i:5, NULL),
 };
 #define CONF_NUM (sizeof(conf_info)/sizeof(conf_info[0]))
 

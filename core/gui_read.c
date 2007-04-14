@@ -16,6 +16,7 @@ static int read_to_draw;
 static coord x, y, h, w, s;
 #define READ_BUFFER_SIZE        (45*15)
 static char buffer[READ_BUFFER_SIZE+45];
+static long last_time;
 
 //-------------------------------------------------------------------
 int gui_read_init(const char* file) {
@@ -36,12 +37,17 @@ int gui_read_init(const char* file) {
     w=(screen_width-(x+1)*FONT_WIDTH)/FONT_WIDTH;
     h=(screen_height-y*FONT_HEIGHT)/FONT_HEIGHT;
     s=w*h;
+    last_time = get_tick_count();
     
     return (read_file >= 0);
 }
 
 //-------------------------------------------------------------------
 void gui_read_draw() {
+    if (conf.reader_autoscroll && get_tick_count()-last_time >= conf.reader_autoscroll_delay*1000 && (conf.reader_pos+read_on_screen)<read_file_size) {
+        conf.reader_pos += read_on_screen;
+        read_to_draw = 1;
+    }
     if (read_to_draw) {
         int i, j;
         
@@ -111,6 +117,7 @@ void gui_read_draw() {
             }
 
             read_to_draw = 0;
+            last_time = get_tick_count();
         }
     }
 }

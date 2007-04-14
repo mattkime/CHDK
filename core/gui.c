@@ -44,6 +44,7 @@ static void gui_draw_fselect(int arg);
 static void gui_draw_osd_le(int arg);
 static void gui_load_script(int arg);
 static void gui_draw_read(int arg);
+static void gui_draw_read_last(int arg);
 static void gui_draw_calendar(int arg);
 static void gui_menuproc_mkbootdisk(int arg);
 #ifndef OPTIONS_AUTOSAVE
@@ -91,15 +92,27 @@ static CMenuItem games_submenu_items[] = {
 };
 static CMenu games_submenu = { "Games", NULL, games_submenu_items };
 
+
+static CMenuItem reader_submenu_items[] = {
+    {"Open new file...",            MENUITEM_PROC,    (int*)gui_draw_read },
+    {"Open last opened file",       MENUITEM_PROC,    (int*)gui_draw_read_last },
+    {"Enable autoscroll",           MENUITEM_BOOL,    &conf.reader_autoscroll },
+    {"Autoscroll delay (sec)",      MENUITEM_INT|MENUITEM_F_UNSIGNED|MENUITEM_F_MINMAX, &conf.reader_autoscroll_delay, MENU_MINMAX(0, 60) },
+    {"<- Back",                     MENUITEM_UP },
+    {0}
+};
+static CMenu reader_submenu = { "Text file reader", NULL, reader_submenu_items };
+
+
 static CMenuItem misc_submenu_items[] = {
+    {"File browser",                MENUITEM_PROC,    (int*)gui_draw_fselect },
+    {"Calendar",                    MENUITEM_PROC,    (int*)gui_draw_calendar },
+    {"Text file reader ->",         MENUITEM_SUBMENU, (int*)&reader_submenu },
+    {"Games ->",                    MENUITEM_SUBMENU, (int*)&games_submenu },
+    {"Flash-light",                 MENUITEM_BOOL,    &conf.flashlight },
+    {"Draw palette",                MENUITEM_PROC,    (int*)gui_draw_palette },
     {"Show build info",             MENUITEM_PROC,    (int*)gui_show_build_info },
     {"Show memory info",            MENUITEM_PROC,    (int*)gui_show_memory_info },
-    {"File browser",                MENUITEM_PROC,    (int*)gui_draw_fselect },
-    {"Draw palette",                MENUITEM_PROC,    (int*)gui_draw_palette },
-    {"Text file reader",            MENUITEM_PROC,    (int*)gui_draw_read },
-    {"Calendar",                    MENUITEM_PROC,    (int*)gui_draw_calendar },
-    {"Flash-light",                 MENUITEM_BOOL,    &conf.flashlight },
-    {"Games ->",                    MENUITEM_SUBMENU, (int*)&games_submenu },
     {"<- Back",                     MENUITEM_UP },
     {0}
 };
@@ -846,6 +859,19 @@ static void gui_draw_read_selected(const char *fn) {
 }
 void gui_draw_read(int arg) {
     gui_fselect_init("A", gui_draw_read_selected);
+}
+
+//-------------------------------------------------------------------
+void gui_draw_read_last(int arg) {
+    int fd;
+    
+    fd = open(conf.reader_file, O_RDONLY, 0777);
+    if (fd >= 0) {
+        close(fd);
+        gui_draw_read_selected(conf.reader_file);
+    } else {
+        gui_draw_read(arg);
+    }
 }
 
 //-------------------------------------------------------------------
