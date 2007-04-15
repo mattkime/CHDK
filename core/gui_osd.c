@@ -31,6 +31,8 @@ static int osd_to_draw;
 static int curr_item;
 static char osd_buf[40];
 static int step;
+static unsigned char *img_buf, *scr_buf;
+
 
 //-------------------------------------------------------------------
 void gui_osd_init() {
@@ -154,19 +156,28 @@ static void gui_osd_draw_single_histo(int hist, coord x, coord y, int small) {
 }
 
 //-------------------------------------------------------------------
-void gui_osd_draw_histo() {
-/*
-    // "zebra"
-    register unsigned int i;
-    unsigned char *img;
+void gui_osd_draw_zebra() {
+    register unsigned int i, j;
+    static int timer = 0;
+    static char *buf = NULL;
 
-    img=vid_get_viewport_fb();
-    for (i=0;i<screen_size;++i) {
-        draw_pixel(i%360, i/360, (img[i*3+1]==255)?COLOR_RED:((img[i*3+1]==0)?COLOR_RED:COLOR_TRANSPARENT));
+    img_buf = vid_get_viewport_fb();
+    scr_buf = vid_get_bitmap_fb();
+    if (!buf) buf = malloc(screen_size);
+
+    if ((++timer)&4) {
+        memset(scr_buf, COLOR_TRANSPARENT, screen_size*2);
+    } else {
+        for (i=0, j=1; i<screen_size; ++i, j+=3) {
+            buf[i]=(img_buf[j]>254)?COLOR_RED:COLOR_TRANSPARENT;
+        }
+        memcpy(scr_buf, buf, screen_size);
+        memcpy(scr_buf+screen_size, buf, screen_size);
     }
-    return;
-// */
+}
 
+//-------------------------------------------------------------------
+void gui_osd_draw_histo() {
     switch (conf.histo_layout) {
         case OSD_HISTO_LAYOUT_Y:
                 gui_osd_draw_single_histo(HISTO_Y, conf.histo_pos.x, conf.histo_pos.y, 0);

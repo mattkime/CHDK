@@ -20,5 +20,7 @@ extern void gui_osd_draw_dof();
 extern void gui_osd_draw_state();
 extern void gui_osd_draw_values();
 extern void gui_osd_draw_clock();
+extern void gui_osd_draw_zebra();
+
 //-------------------------------------------------------------------
 #endif

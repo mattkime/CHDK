@@ -38,6 +38,8 @@ typedef struct {
     int histo_ignore_boundary;
     int histo_layout;
 
+    int zebra_draw;
+
     OSD_pos histo_pos;
     OSD_pos dof_pos;
     OSD_pos batt_icon_pos;

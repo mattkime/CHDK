@@ -197,6 +197,7 @@ static CMenuItem histo_submenu_items[] = {
     {"Show histogram over/under EXP", MENUITEM_BOOL,    &conf.show_overexp },
     {"Ignore boundary peaks",       MENUITEM_INT|MENUITEM_F_UNSIGNED|MENUITEM_F_MINMAX,  &conf.histo_ignore_boundary,   MENU_MINMAX(0, 32)},
     {"Auto magnify",                MENUITEM_BOOL,      &conf.histo_auto_ajust },
+    {"Draw Zebra (Top Priority)",   MENUITEM_BOOL,      &conf.zebra_draw },
     {"<- Back",                     MENUITEM_UP },
     {0}
 };
@@ -619,7 +620,7 @@ extern long GetPropertyCase(long opt_id, void *buf, long bufsize);
 void gui_draw_osd() {
     unsigned int m, n = 0;
     coord x;
-    static int flashlight = 0;
+    static int flashlight = 0, zebra = 0;
     
     m = mode_get();
 
@@ -630,6 +631,18 @@ void gui_draw_osd() {
     if (flashlight) {
         if ((!((m&MODE_SCREEN_OPENED) && (m&MODE_SCREEN_ROTATED))) || (gui_mode!=GUI_MODE_NONE /* && gui_mode!=GUI_MODE_ALT */)) {
             flashlight = 0;
+            draw_restore();
+        }
+        return;
+    }
+
+    if (conf.zebra_draw && gui_mode==GUI_MODE_NONE && kbd_is_key_pressed(KEY_SHOOT_HALF)) {
+        gui_osd_draw_zebra();
+        zebra = 1;
+    }
+    if (zebra) {
+        if (!kbd_is_key_pressed(KEY_SHOOT_HALF)) {
+            zebra = 0;
             draw_restore();
         }
         return;
@@ -669,14 +682,14 @@ void gui_draw_osd() {
     if (debug_vals_show) {
 //        long v=get_file_counter();
 //	sprintf(osd_buf, "1:%03d-%04d  ", (v>>18)&0x3FF, (v>>4)&0x3FFF);
-	sprintf(osd_buf, "1:%8lx  ", ~physw_status[2]);
+//	sprintf(osd_buf, "1:%d, %08X  ", xxxx, eeee);
+	sprintf(osd_buf, "1:%8x  ", physw_status[0]);
 	draw_txt_string(28, 10, osd_buf, conf.osd_color);
 
-//	sprintf(osd_buf, "2:%d, %08X  ", xxxx, eeee);
-        sprintf(osd_buf, "2:%8ld  ", get_tick_count());
+	sprintf(osd_buf, "2:%8x  ", physw_status[1]);
 	draw_txt_string(28, 11, osd_buf, conf.osd_color);
 
-	sprintf(osd_buf, "3:%d %d ", state_expos_under, state_expos_over);
+	sprintf(osd_buf, "3:%8x  ", physw_status[2]);
 	draw_txt_string(28, 12, osd_buf, conf.osd_color);
     }
 
