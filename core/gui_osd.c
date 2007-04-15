@@ -133,7 +133,7 @@ static void gui_osd_draw_single_histo(int hist, coord x, coord y, int small) {
 
             for (v=1; v<h-1; ++v)
                 draw_pixel(x+1+i, y+h-v, (v<=threshold)?cl:cl_bg);
-            cl_over = (threshold==h && conf.show_overexp)?COLOR_RED:cl;
+            cl_over = (threshold==h && conf.show_overexp)?conf.histo_color2>>8:cl;
             for (; v<h; ++v)
                 draw_pixel(x+1+i, y+h-v, (v<=threshold)?cl_over:cl_bg);
         }
@@ -143,13 +143,13 @@ static void gui_osd_draw_single_histo(int hist, coord x, coord y, int small) {
 
             for (v=1; v<h-3; ++v)
                 draw_pixel(x+1+i, y+h-v, (v<=threshold)?cl:cl_bg);
-            cl_over = (threshold==h && conf.show_overexp)?COLOR_RED:cl;
+            cl_over = (threshold==h && conf.show_overexp)?conf.histo_color2>>8:cl;
             for (; v<h; ++v)
                 draw_pixel(x+1+i, y+h-v, (v<=threshold)?cl_over:cl_bg);
         }
     }
       
-    draw_rect(x, y, x+1+w, y+h, COLOR_WHITE);
+    draw_rect(x, y, x+1+w, y+h, conf.histo_color2&0xFF);
 
 }
 
@@ -202,11 +202,11 @@ void gui_osd_draw_histo() {
 
     if (conf.histo_layout != OSD_HISTO_LAYOUT_R_G_B) {
         if (under_exposed && conf.show_overexp) {
-            draw_filled_ellipse(conf.histo_pos.x+5, conf.histo_pos.y+5, 3, 3, MAKE_COLOR(COLOR_RED, COLOR_RED));
+            draw_filled_ellipse(conf.histo_pos.x+5, conf.histo_pos.y+5, 3, 3, MAKE_COLOR(conf.histo_color2>>8, conf.histo_color2>>8));
         }
 
         if (over_exposed && conf.show_overexp) {
-            draw_filled_ellipse(conf.histo_pos.x+HISTO_WIDTH-5, conf.histo_pos.y+5, 3, 3, MAKE_COLOR(COLOR_RED, COLOR_RED));
+            draw_filled_ellipse(conf.histo_pos.x+HISTO_WIDTH-5, conf.histo_pos.y+5, 3, 3, MAKE_COLOR(conf.histo_color2>>8, conf.histo_color2>>8));
         }
     }
 

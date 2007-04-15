@@ -47,6 +47,7 @@ typedef struct {
     OSD_pos clock_pos;
 
     color histo_color;
+    color histo_color2; // markers/border
     color osd_color;
     color batt_icon_color;
     color menu_color;

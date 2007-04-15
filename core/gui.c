@@ -160,6 +160,8 @@ static CMenuItem visual_submenu_items[] = {
     {"OSD background",              MENUITEM_COLOR_BG,  (int*)&conf.osd_color },
     {"Histogram",                   MENUITEM_COLOR_FG,  (int*)&conf.histo_color },
     {"Histogram background",        MENUITEM_COLOR_BG,  (int*)&conf.histo_color },
+    {"Histogram border",            MENUITEM_COLOR_FG,  (int*)&conf.histo_color2 },
+    {"Histogram EXP markers",       MENUITEM_COLOR_BG,  (int*)&conf.histo_color2 },
     {"Battery icon",                MENUITEM_COLOR_FG,  (int*)&conf.batt_icon_color },
     {"Menu text",                   MENUITEM_COLOR_FG,  (int*)&conf.menu_color },
     {"Menu background",             MENUITEM_COLOR_BG,  (int*)&conf.menu_color },
