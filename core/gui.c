@@ -24,6 +24,7 @@
 //-------------------------------------------------------------------
 
 #define OPTIONS_AUTOSAVE
+#define SPLASH_TIME               20
 
 // forward declarations
 //-------------------------------------------------------------------
@@ -114,6 +115,7 @@ static CMenuItem misc_submenu_items[] = {
     {"Text file reader ->",         MENUITEM_SUBMENU, (int*)&reader_submenu },
     {"Games ->",                    MENUITEM_SUBMENU, (int*)&games_submenu },
     {"Flash-light",                 MENUITEM_BOOL,    &conf.flashlight },
+    {"Show splash screen on load",  MENUITEM_BOOL,    &conf.splash_show },
     {"Draw palette",                MENUITEM_PROC,    (int*)gui_draw_palette },
     {"Show build info",             MENUITEM_PROC,    (int*)gui_show_build_info },
     {"Show memory info",            MENUITEM_PROC,    (int*)gui_show_memory_info },
@@ -368,7 +370,7 @@ void gui_update_script_submenu() {
 static volatile enum Gui_Mode gui_mode;
 static volatile int gui_restore;
 static volatile int gui_in_redraw;
-static int gui_splash = 50, gui_splash_mode;
+static int gui_splash, gui_splash_mode;
 static char osd_buf[32];
 #ifdef OPTIONS_AUTOSAVE
 static Conf old_conf;
@@ -380,6 +382,7 @@ void gui_init()
     gui_mode = GUI_MODE_NONE;
     gui_restore = 0;
     gui_in_redraw = 0;
+    gui_splash = (conf.splash_show)?SPLASH_TIME:0;
     draw_init();
 
     exposition_thresh = screen_size/500;
@@ -408,7 +411,7 @@ void gui_redraw()
     static int show_script_console=0;
 
     if (gui_splash) {
-        if (gui_splash>46) {
+        if (gui_splash>(SPLASH_TIME-4)) {
             gui_draw_splash();
         } else if (gui_splash==1 && (mode_get()&MODE_MASK) == gui_splash_mode && (gui_mode==GUI_MODE_NONE || gui_mode==GUI_MODE_ALT)) {
             draw_restore();

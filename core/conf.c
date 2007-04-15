@@ -103,6 +103,7 @@ static const ConfInfo conf_info[] = {
     CONF_INFO( 44, conf.reader_autoscroll_delay, CONF_DEF_VALUE, i:5, NULL),
     CONF_INFO( 45, conf.reader_rbf_file,        CONF_DEF_PTR,   ptr:"", NULL),
     CONF_INFO( 46, conf.reader_codepage,        CONF_DEF_VALUE, i:FONT_CP_WIN, NULL),
+    CONF_INFO( 47, conf.splash_show,            CONF_DEF_VALUE, i:1, NULL),
 };
 #define CONF_NUM (sizeof(conf_info)/sizeof(conf_info[0]))
 

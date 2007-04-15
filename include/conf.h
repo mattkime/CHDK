@@ -64,6 +64,7 @@ typedef struct {
     int sokoban_level;
 
     int flashlight;
+    int splash_show;
 
     int ns_enable_memdump;
 } Conf;
