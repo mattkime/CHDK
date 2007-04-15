@@ -7,19 +7,19 @@
 #define RBF_MAX_NAME       64
 
 //-------------------------------------------------------------------
-const char *RBF_HDR_MAGIC = "\xE0\x0E\xF0\x0D\x03\x00\x00\x00";
-/*
-const char tbl_dos2win[] = {
-    192,193,194,195,196,197,198,199,200,201,202,203,204,205,206,207,
-    208,209,210,211,212,213,214,215,216,217,218,219,220,221,222,223,
-    224,225,226,227,228,229,230,231,232,233,234,235,236,237,238,239,
-    136,137,138,139,140,141,142,143,144,145,146,147,148,149,150,151,
-    152,153,154,129,156,157,158,159,160,161,162,163,164,165,166,167,
-    168,169,170,171,172,173,174,175,176,177,178,179,180,181,182,183,
-    240,241,242,243,244,245,246,247,248,249,250,251,252,253,254,255,
-    130,132,135,134,128,133,131,155,184,185,186,187,188,189,190,191
+static const char *RBF_HDR_MAGIC = "\xE0\x0E\xF0\x0D\x03\x00\x00\x00";
+
+static const char tbl_dos2win[] = {
+    0xC0, 0xC1, 0xC2, 0xC3, 0xC4, 0xC5, 0xC6, 0xC7, 0xC8, 0xC9, 0xCA, 0xCB, 0xCC, 0xCD, 0xCE, 0xCF,
+    0xD0, 0xD1, 0xD2, 0xD3, 0xD4, 0xD5, 0xD6, 0xD7, 0xD8, 0xD9, 0xDA, 0xDB, 0xDC, 0xDD, 0xDE, 0xDF,
+    0xE0, 0xE1, 0xE2, 0xE3, 0xE4, 0xE5, 0xE6, 0xE7, 0xE8, 0xE9, 0xEA, 0xEB, 0xEC, 0xED, 0xEE, 0xEF,
+    0x2D, 0x2D, 0x2D, 0xA6, 0x2B, 0xA6, 0xA6, 0xAC, 0xAC, 0xA6, 0xA6, 0xAC, 0x2D, 0x2D, 0x2D, 0xAC,
+    0x4C, 0x2B, 0x54, 0x2B, 0x2D, 0x2B, 0xA6, 0xA6, 0x4C, 0xE3, 0xA6, 0x54, 0xA6, 0x3D, 0x2B, 0xA6,
+    0xA6, 0x54, 0x54, 0x4C, 0x4C, 0x2D, 0xE3, 0x2B, 0x2B, 0x2D, 0x2D, 0x2D, 0x2D, 0xA6, 0xA6, 0x2D,
+    0xF0, 0xF1, 0xF2, 0xF3, 0xF4, 0xF5, 0xF6, 0xF7, 0xF8, 0xF9, 0xFA, 0xFB, 0xFC, 0xFD, 0xFE, 0xFF,
+    0xA8, 0xB8, 0xAA, 0xBA, 0xAF, 0xBF, 0xA1, 0xA2, 0xB0, 0x95, 0xB7, 0x76, 0xB9, 0xA4, 0xA6, 0xA0
 };
-*/
+
 static struct {
      char name[RBF_MAX_NAME];
      int width, height;
@@ -40,36 +40,9 @@ static int need_free    = 0;
 static int rbf_codepage = FONT_CP_WIN; 
 
 //-------------------------------------------------------------------
-static int win2dos(int ch) {
-    switch (ch) {
-        case 0xAA: return 0xF2;  // ò
-        case 0xBA: return 0xF3;  // ó
-        case 0xAF: return 0xF4;  // ô
-        case 0xBF: return 0xF5;  // õ
-        default:
-            if (ch>=192 && ch<=255) {
-               if (ch<=239) ch-=64;
-               else         ch-=16;
-            }
-            return ch;
-    }
-}
-
-//-------------------------------------------------------------------
 static int dos2win(int ch) {
-    switch (ch) {
-        case 0xF2: return 0xAA;  // ò
-        case 0xF3: return 0xBA;  // ó
-        case 0xF4: return 0xAF;  // ô
-        case 0xF5: return 0xBF;  // õ
-        default:
-            if (ch>=128 && ch<=175) {
-               ch+=64;
-            } else if (ch>=224 && ch<=239) {
-               ch+=16;
-            }
-            return ch;
-    }
+    if (ch<0x80) return ch;
+    else         return tbl_dos2win[ch-0x80];
 }
 
 //-------------------------------------------------------------------
@@ -143,8 +116,20 @@ int rbf_load(char *file) {
 }
 
 //-------------------------------------------------------------------
+static void rbf_assign_char_8x16(char **dst, const char *font_ch, int height) {
+    int c, b;
+
+    *dst=malloc(height);
+    for (c=0; c<height; ++c) {
+        (*dst)[c]=0;
+        for (b=0; b<8; ++b)
+            (*dst)[c]=((*dst)[c]<<1)|(((font_ch[c])>>b)&1);
+    }
+}
+
+//-------------------------------------------------------------------
 void rbf_load_from_8x16(const char *font) {
-    int i;
+    int i, c, b;
 
     rbf_font.charSize  = 16;
     rbf_font.height    = 16;
@@ -163,10 +148,23 @@ void rbf_load_from_8x16(const char *font) {
         rbf_font.cTable[i]=NULL;
     }
     need_free = 0;
-
-    for (i=rbf_font.charFirst; i<=rbf_font.charLast; ++i) {
-        rbf_font.cTable[dos2win(i)]=malloc(rbf_font.charSize);
-        memcpy(rbf_font.cTable[dos2win(i)], font+i*rbf_font.charSize, rbf_font.charSize);
+    
+    for (i=176; i<224; ++i) {
+        rbf_assign_char_8x16(&rbf_font.cTable[dos2win(i)], font+i*rbf_font.charSize, rbf_font.height);
+    }
+    for (i=240; i<256; ++i) {
+        rbf_assign_char_8x16(&rbf_font.cTable[dos2win(i)], font+i*rbf_font.charSize, rbf_font.height);
+    }
+    // Standard symbols
+    for (i=0; i<128; ++i) {
+        rbf_assign_char_8x16(&rbf_font.cTable[dos2win(i)], font+i*rbf_font.charSize, rbf_font.height);
+    }
+    // Russian symbols
+    for (i=128; i<176; ++i) {
+        rbf_assign_char_8x16(&rbf_font.cTable[dos2win(i)], font+i*rbf_font.charSize, rbf_font.height);
+    }
+    for (i=224; i<240; ++i) {
+        rbf_assign_char_8x16(&rbf_font.cTable[dos2win(i)], font+i*rbf_font.charSize, rbf_font.height);
     }
     need_free = 1;
 }
@@ -205,10 +203,12 @@ int rbf_draw_char(int x, int y, int ch, color cl) {
             break;
     }
 
-    for (yy=0; yy<rbf_font.height; ++yy) {
-	for (xx=0; xx<rbf_font.wTable[ch]; ++xx) {
-            draw_pixel(x+xx ,y+yy, (rbf_font.cTable[ch][yy*rbf_font.width/8+xx/8] & (1<<(xx%8)))? cl&0xff : cl>>8);
-	}
+    if (rbf_font.cTable[ch]) {
+        for (yy=0; yy<rbf_font.height; ++yy) {
+            for (xx=0; xx<rbf_font.wTable[ch]; ++xx) {
+                draw_pixel(x+xx ,y+yy, (rbf_font.cTable[ch][yy*rbf_font.width/8+xx/8] & (1<<(xx%8)))? cl&0xff : cl>>8);
+            }
+        }
     }
     return rbf_font.wTable[ch];
 }
