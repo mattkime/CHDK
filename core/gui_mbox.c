@@ -107,6 +107,7 @@ void gui_mbox_draw() {
             }
             ++p;
         }
+        w+=2;
         if (h<MAX_LINES)
             c[h++][l] = 0;
         if (bw+BUTTON_SEP>w*FONT_WIDTH) 
@@ -132,10 +133,10 @@ void gui_mbox_draw() {
         while (h) {
             l = strlen(c[--h]);
             switch (mbox_flags & MBOX_TEXT_MASK) {
-                case MBOX_TEXT_LEFT:    d = 0; break;
+                case MBOX_TEXT_LEFT:    d = FONT_WIDTH; break;
                 case MBOX_TEXT_CENTER:  d = ((w-l)>>1)*FONT_WIDTH; break;
-                case MBOX_TEXT_RIGHT:   d = (w-l)*FONT_WIDTH; break;
-                default:                d = 0; break;
+                case MBOX_TEXT_RIGHT:   d = (w-l-1)*FONT_WIDTH; break;
+                default:                d = FONT_WIDTH; break;
             }
             draw_string(x+d, y+h*FONT_HEIGHT, c[h], MAKE_COLOR(COLOR_GREY, COLOR_WHITE)); // text
         }

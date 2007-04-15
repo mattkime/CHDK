@@ -18,7 +18,7 @@ typedef struct {
 } OSD_elem;
 
 static OSD_elem osd[]={
-    {"Histogram",       &conf.histo_pos,        {HISTO_WIDTH+2, HISTO_HEIGHT}     },
+    {"Histogram",       &conf.histo_pos,        {HISTO_WIDTH+2, HISTO_HEIGHT}   },
     {"DOF calc",        &conf.dof_pos,          {17*FONT_WIDTH, 2*FONT_HEIGHT}  },
     {"RAW/SCR/EXP",     &conf.mode_state_pos,   {3*FONT_WIDTH, 3*FONT_HEIGHT}   },
     {"Misc values",     &conf.values_pos,       {8*FONT_WIDTH, 3*FONT_HEIGHT}   },

@@ -134,6 +134,7 @@ void gui_read_kbd_process() {
     switch (kbd_get_clicked_key()) {
         case KEY_ZOOM_OUT:
         case KEY_UP:
+        case KEY_LEFT:
             if (conf.reader_pos>0) {
                 conf.reader_pos -= 45*15;
                 if (conf.reader_pos<0) conf.reader_pos=0;
@@ -142,6 +143,7 @@ void gui_read_kbd_process() {
             break;
         case KEY_ZOOM_IN:
         case KEY_DOWN:
+        case KEY_RIGHT:
             if ((conf.reader_pos+read_on_screen)<read_file_size) {
                 conf.reader_pos += read_on_screen;
                 read_to_draw = 1;
