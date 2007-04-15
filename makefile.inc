@@ -1,4 +1,4 @@
-VER=test2-pre11-thumb
+VER=test1-pre12
 
 PLATFORM=a610
 PLATFORMSUB=100e
@@ -13,6 +13,9 @@ PLATFORMSUB=100e
 #PLATFORMSUB=100b
 
 #PLATFORM=a710
+#PLATFORMSUB=100a
+
+#PLATFORM=s3is
 #PLATFORMSUB=100a
 
 include $(topdir)platform/$(PLATFORM)/sub/$(PLATFORMSUB)/makefile.inc

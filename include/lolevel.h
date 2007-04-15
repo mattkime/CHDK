@@ -101,6 +101,8 @@ extern long physw_status[3];
 void __attribute__((naked,noinline))
     mykbd_task(long ua, long ub, long uc, long ud, long ue, long uf);
 
+void kbd_fetch_data(long *dst);
+
 /* math */
 extern int _rand(void);
 extern void* _srand(unsigned int seed);
@@ -110,16 +112,16 @@ extern double __log10(double x);
 extern double __pow(double x, double y);
 extern double __sqrt(double x);
 
+/* time */
 extern int _utime(char *file, void *newTimes);
 extern unsigned long _time(unsigned long *timer);
 extern void *_localtime(const unsigned long *_tod);
 
+/* file */
 extern void *_opendir(const char* name);
 extern void *_readdir(void *d);
 extern int   _closedir(void *d);
 extern void  _rewinddir(void *d);
 extern int   _stat(char *name, void *pStat);
-
-
 
 #endif

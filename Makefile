@@ -50,6 +50,7 @@ batch-zip:
 	$(MAKE) -s --no-print-directory PLATFORM=a630 PLATFORMSUB=100c firzip
 	$(MAKE) -s --no-print-directory PLATFORM=a640 PLATFORMSUB=100b firzip
 	$(MAKE) -s --no-print-directory PLATFORM=a710 PLATFORMSUB=100a firzip
+	$(MAKE) -s --no-print-directory PLATFORM=s3is PLATFORMSUB=100a firzip
 	@echo "**** All firmwares created successfully"
 
 batch-clean:
@@ -59,5 +60,6 @@ batch-clean:
 	$(MAKE) -s --no-print-directory PLATFORM=a630 PLATFORMSUB=100c clean
 	$(MAKE) -s --no-print-directory PLATFORM=a640 PLATFORMSUB=100b clean
 	$(MAKE) -s --no-print-directory PLATFORM=a710 PLATFORMSUB=100a clean
+	$(MAKE) -s --no-print-directory PLATFORM=s3is PLATFORMSUB=100a clean
 
 .PHONY: fir upload
