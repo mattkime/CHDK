@@ -55,10 +55,11 @@ typedef struct {
     int font;
 
     char reader_file[100];
-    int reader_pos;
-    int reader_autoscroll;
-    int reader_autoscroll_delay;
+    int  reader_pos;
+    int  reader_autoscroll;
+    int  reader_autoscroll_delay;
     char reader_rbf_file[100];
+    int  reader_codepage;
 
     int sokoban_level;
 

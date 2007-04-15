@@ -57,6 +57,7 @@ static const char* gui_histo_layout_enum(int change, int arg);
 static const char* gui_font_enum(int change, int arg);
 static const char* gui_raw_prefix_enum(int change, int arg);
 static const char* gui_raw_ext_enum(int change, int arg);
+static const char* gui_reader_codepage_enum(int change, int arg);
 
 // Menu callbacks
 //-------------------------------------------------------------------
@@ -97,9 +98,10 @@ static CMenu games_submenu = { "Games", NULL, games_submenu_items };
 static CMenuItem reader_submenu_items[] = {
     {"Open new file...",            MENUITEM_PROC,    (int*)gui_draw_read },
     {"Open last opened file",       MENUITEM_PROC,    (int*)gui_draw_read_last },
+    {"Select RBF font",             MENUITEM_PROC,    (int*)gui_draw_load_rbf },
+    {"Codepage",                    MENUITEM_ENUM,    (int*)gui_reader_codepage_enum },
     {"Enable autoscroll",           MENUITEM_BOOL,    &conf.reader_autoscroll },
     {"Autoscroll delay (sec)",      MENUITEM_INT|MENUITEM_F_UNSIGNED|MENUITEM_F_MINMAX, &conf.reader_autoscroll_delay, MENU_MINMAX(0, 60) },
-    {"Select RBF font",             MENUITEM_PROC,    (int*)gui_draw_load_rbf },
     {"<- Back",                     MENUITEM_UP },
     {0}
 };
@@ -327,6 +329,19 @@ const char* gui_raw_ext_enum(int change, int arg) {
         conf.raw_ext=0;
 
     return exts[conf.raw_ext];
+}
+
+//-------------------------------------------------------------------
+const char* gui_reader_codepage_enum(int change, int arg) {
+    static const char* cps[]={ "Win1251", "DOS"};
+
+    conf.reader_codepage+=change;
+    if (conf.reader_codepage<0)
+        conf.reader_codepage=(sizeof(cps)/sizeof(cps[0]))-1;
+    else if (conf.reader_codepage>=(sizeof(cps)/sizeof(cps[0])))
+        conf.reader_codepage=0;
+
+    return cps[conf.reader_codepage];
 }
 
 //-------------------------------------------------------------------
@@ -857,6 +872,7 @@ static void gui_draw_read_selected(const char *fn) {
     if (fn) {
         if (!rbf_load(conf.reader_rbf_file))
             rbf_load_from_8x16(current_font);
+        rbf_set_codepage(conf.reader_codepage);
         gui_mode = GUI_MODE_READ;
         gui_read_init(fn);
     }
