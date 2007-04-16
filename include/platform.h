@@ -28,6 +28,7 @@
 #define MODE_SCN_SNOW           17
 #define MODE_SCN_BEACH          18
 #define MODE_SCN_FIREWORK       19
+#define MODE_SCN_COLOR_ACCENT   20
 
 #define MODE_SCREEN_MASK        0x0C00
 #define MODE_SCREEN_OPENED      0x0400
@@ -113,6 +114,7 @@ long lens_get_zoom_point();
 void lens_set_zoom_point(long newpt);
 long lens_get_focus_pos();
 void lens_set_focus_pos(long newpos);
+long lens_get_target_distance();
 
 /******************************************************************/
 

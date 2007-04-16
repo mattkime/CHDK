@@ -15,6 +15,7 @@ NSTUB(ExitTask, 0xff821a18)
 NSTUB(FreeMemory, 0xff811ad0)
 NSTUB(GetCurrentAvValue, 0xffb0a538)
 // ALT: NSTUB(GetCurrentAvValue, 0xffb0c5dc) // 13/0
+NSTUB(GetCurrentTargetDistance, 0xffb0c584)
 // Best match: 83%
 NSTUB(GetFocusLensSubjectDistance, 0xffaf007c)
 // ALT: NSTUB(GetFocusLensSubjectDistance, 0xffaf007c) // 26/5

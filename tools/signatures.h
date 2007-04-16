@@ -2641,6 +2641,25 @@ static FuncSig func_sig_Remove_1[] = {
 	/* 18/32 */
 };
 
+static FuncSig func_sig_GetCurrentTargetDistance_1[] = {
+	{   0, 0xe52de004, 0xfdffffff }, // str:4:0xE52DE004
+	{   1, 0xeb000000, 0xff000000 }, // b, bl:3:0xEBFFCC4A
+	{   2, 0xe1a00800, 0xfdffffff }, // mov:6:0xE1A00800
+	{   3, 0xe1a00820, 0xfdffffff }, // mov:6:0xE1A00820
+	{   4, 0xe49df004, 0xfdffffff }, // ldr:4:0xE49DF004
+	{   6, 0xe04dd004, 0xfdffffff }, // sub:6:0xE24DD004
+	{   7, 0xe1a03000, 0xfdffffff }, // mov:6:0xE3A03000
+	{   8, 0xe1a04000, 0xfdffffff }, // mov:6:0xE1A04000
+	{   9, 0xe1a05001, 0xfdffffff }, // mov:6:0xE1A05001
+	{  10, 0xe08d0002, 0xfdffffff }, // add:6:0xE28D0002
+	{  11, 0xe1a0100d, 0xfdffffff }, // mov:6:0xE1A0100D
+	{  14, 0xeb000000, 0xff000000 }, // b, bl:3:0xEBFFCD7E
+	{  19, 0xe08dd004, 0xfdffffff }, // add:6:0xE28DD004
+	{  21, 0xe1a0f00e, 0xfdffffff }, // mov:6:0xE1A0F00E	/* RET found, stopping... */
+	{ -1, -1, -1 },
+	/* 14/32 */
+};
+
 static FuncSig func_sig_GetSystemTime_2[] = {
 	{   1, 0xe59f6030, 0xfdffffff }, // ldr:4:0xE59F6030
 	{   2, 0xe5965000, 0xfdffffff }, // ldr:4:0xE5965000
@@ -3672,6 +3691,7 @@ FuncsList func_list[] = {
 	{ "FreeMemory", func_sig_FreeMemory_2 },
 	{ "GetCurrentAvValue", func_sig_GetCurrentAvValue_1 },
 	{ "GetCurrentAvValue", func_sig_GetCurrentAvValue_2 },
+	{ "GetCurrentTargetDistance", func_sig_GetCurrentTargetDistance_1 },
 	{ "GetFocusLensSubjectDistance", func_sig_GetFocusLensSubjectDistance_1 },
 	{ "GetFocusLensSubjectDistance", func_sig_GetFocusLensSubjectDistance_2 },
 	{ "GetParameterData", func_sig_GetParameterData_1 },

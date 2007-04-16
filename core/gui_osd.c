@@ -161,18 +161,22 @@ void gui_osd_draw_zebra() {
     static int timer = 0;
     static char *buf = NULL;
 
-    img_buf = vid_get_viewport_fb();
-    scr_buf = vid_get_bitmap_fb();
-    if (!buf) buf = malloc(screen_size);
+    if (!buf) {
+        buf = malloc(screen_size);
+        img_buf = vid_get_viewport_fb();
+        scr_buf = vid_get_bitmap_fb();
+    }
 
-    if ((++timer)&4) {
-        memset(scr_buf, COLOR_TRANSPARENT, screen_size*2);
-    } else {
-        for (i=0, j=1; i<screen_size; ++i, j+=3) {
-            buf[i]=(img_buf[j]>254)?COLOR_RED:COLOR_TRANSPARENT;
+    if (buf) {
+        if ((++timer)&4) {
+            memset(scr_buf, COLOR_TRANSPARENT, screen_size*2);
+        } else {
+            for (i=0, j=1; i<screen_size; ++i, j+=3) {
+                buf[i]=(img_buf[j]>254)?COLOR_RED:COLOR_TRANSPARENT;
+            }
+            memcpy(scr_buf, buf, screen_size);
+            memcpy(scr_buf+screen_size, buf, screen_size);
         }
-        memcpy(scr_buf, buf, screen_size);
-        memcpy(scr_buf+screen_size, buf, screen_size);
     }
 }
 
@@ -264,7 +268,7 @@ void gui_osd_draw_dof() {
     
     av=shooting_get_real_av();
     
-    fp=lens_get_focus_pos();
+    fp=lens_get_target_distance();
     hyp=(fl*fl)/(10*6*av);
     r1=(hyp*fp)/(hyp+fp);
     r2=(hyp*fp)/(hyp-fp);
@@ -307,7 +311,7 @@ void gui_osd_draw_values() {
     osd_buf[8]=0;
     draw_string(conf.values_pos.x, conf.values_pos.y, osd_buf, conf.osd_color);
 
-    lfp = lens_get_focus_pos();
+    lfp = lens_get_target_distance();
     if (lfp == 0xFFFF) {
         sprintf(osd_buf, "F:inf%8s", "");
     } else {

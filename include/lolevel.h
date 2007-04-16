@@ -17,6 +17,7 @@ extern long _GetFocusLensCurrentPosition();
 extern long _GetFocusLensSubjectDistance();
 extern long _GetFocusLensSubjectDistanceFromLens();
 extern long _GetCurrentAvValue();
+extern long _GetCurrentTargetDistance();
 extern long _GetPropertyCase(long opt_id, void *buf, long bufsize);
 extern long _SetPropertyCase(long opt_id, void *buf, long bufsize);
 extern long _IsStrobeChargeCompleted();

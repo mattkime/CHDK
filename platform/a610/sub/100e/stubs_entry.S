@@ -14,6 +14,7 @@ NSTUB(ExitTask, 0xffc11610)
 NSTUB(FreeMemory, 0xffc01b28)
 NSTUB(GetCurrentAvValue, 0xffe71314)
 // ALT: NSTUB(GetCurrentAvValue, 0xffe73714) // 13/0
+NSTUB(GetCurrentTargetDistance, 0xffe736bc)
 NSTUB(GetFocusLensSubjectDistance, 0xffe667f0)
 NSTUB(GetParameterData, 0xffd4e2fc)
 NSTUB(GetPropertyCase, 0xffc141a8)
