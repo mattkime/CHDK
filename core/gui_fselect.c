@@ -348,8 +348,10 @@ void gui_fselect_kbd_process() {
             }
             break;
         case KEY_ERASE:
-            gui_mbox_init("*** Delete file ***", "Are you SURE to delete\nselected file?",
-                           MBOX_TEXT_CENTER|MBOX_BTN_YES_NO|MBOX_DEF_BTN2, fselect_delete_cb);
+            if (selected && selected->attr != 0xFF && !(selected->attr & DOS_ATTR_DIRECTORY)) {
+                gui_mbox_init("*** Delete file ***", "Are you SURE to delete\nselected file?",
+                               MBOX_TEXT_CENTER|MBOX_BTN_YES_NO|MBOX_DEF_BTN2, fselect_delete_cb);
+            }
             break;
         case KEY_MENU:
             gui_fselect_free_data();

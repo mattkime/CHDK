@@ -26,7 +26,7 @@ static long get_batt_average() {
 }
 
 //-------------------------------------------------------------------
-static unsigned long get_batt_perc() {
+unsigned long get_batt_perc() {
     unsigned long v;
 
     v = get_batt_average();

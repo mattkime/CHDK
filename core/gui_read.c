@@ -6,6 +6,7 @@
 #include "gui.h"
 #include "font.h"
 #include "gui_draw.h"
+#include "gui_batt.h"
 #include "gui_read.h"
 
 
@@ -19,6 +20,18 @@ static coord x, y, h, w;
 static char buffer[READ_BUFFER_SIZE+1];
 static long last_time;
 static int xx, yy;
+static int pause;
+
+//-------------------------------------------------------------------
+static void gui_read_draw_batt() {
+    sprintf(buffer, "Batt:%3d%%", get_batt_perc());
+    draw_txt_string(screen_width/FONT_WIDTH-2-1-3-9, 0, buffer, MAKE_COLOR(COLOR_BLACK, COLOR_WHITE));
+}
+
+//-------------------------------------------------------------------
+static void gui_read_draw_scroll_indicator() {
+    draw_txt_char(screen_width/FONT_WIDTH-2, 0, (conf.reader_autoscroll)?((pause)?'\x05':'\x04'):'\x03', MAKE_COLOR(COLOR_BLACK, COLOR_WHITE)); //title infoline
+}
 
 //-------------------------------------------------------------------
 int gui_read_init(const char* file) {
@@ -33,6 +46,7 @@ int gui_read_init(const char* file) {
     if (read_file_size<=conf.reader_pos) {
         conf.reader_pos = 0;
     }
+    pause = 0;
     read_to_draw = 1;
     x=6; 
     y=FONT_HEIGHT;
@@ -40,7 +54,11 @@ int gui_read_init(const char* file) {
     h=screen_height-y;
     last_time = get_tick_count();
     
+    draw_filled_rect(0, 0, screen_width-1, y-1, MAKE_COLOR(COLOR_BLACK, COLOR_BLACK));
     draw_filled_rect(0, y, screen_width-1, screen_height-1, MAKE_COLOR((conf.reader_color>>8)&0xFF, (conf.reader_color>>8)&0xFF));
+
+    gui_read_draw_scroll_indicator();
+    gui_read_draw_batt();
 
     return (read_file >= 0);
 }
@@ -56,9 +74,10 @@ static void read_goto_next_line() {
 static int read_fit_next_char(int ch) {
     return (xx+rbf_char_width(ch) < x+w);
 }
+
 //-------------------------------------------------------------------
 void gui_read_draw() {
-    if (conf.reader_autoscroll && get_tick_count()-last_time >= conf.reader_autoscroll_delay*1000 && (conf.reader_pos+read_on_screen)<read_file_size) {
+    if (conf.reader_autoscroll && !pause && get_tick_count()-last_time >= conf.reader_autoscroll_delay*1000 && (conf.reader_pos+read_on_screen)<read_file_size) {
         conf.reader_pos += read_on_screen;
         read_to_draw = 1;
     }
@@ -106,7 +125,7 @@ void gui_read_draw() {
             read_on_screen+=i;
         }
     
-        sprintf(buffer, "(%3d%%) %d/%d%45s", (read_file_size)?(conf.reader_pos*100/read_file_size):0, conf.reader_pos, read_file_size, "");
+        sprintf(buffer, "(%3d%%) %d/%d  ", (read_file_size)?(conf.reader_pos*100/read_file_size):0, conf.reader_pos, read_file_size);
         buffer[screen_width/FONT_WIDTH]=0;
         draw_txt_string(0, 0, buffer, MAKE_COLOR(COLOR_BLACK, COLOR_WHITE)); //title infoline
 
@@ -127,6 +146,7 @@ void gui_read_draw() {
         read_to_draw = 0;
         last_time = get_tick_count();
     }
+    gui_read_draw_batt();
 }
 
 //-------------------------------------------------------------------
@@ -150,6 +170,11 @@ void gui_read_kbd_process() {
             }
             break;
         case KEY_SET:
+            break;
+        case KEY_DISPLAY:
+            pause = !pause;
+            gui_read_draw_scroll_indicator();
+            last_time = get_tick_count();
             break;
         case KEY_MENU:
             if (read_file >= 0) {

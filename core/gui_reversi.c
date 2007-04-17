@@ -4,6 +4,7 @@
 #include "core.h"
 #include "gui.h"
 #include "gui_draw.h"
+#include "gui_batt.h"
 #include "gui_mbox.h"
 #include "gui_reversi.h"
 
@@ -400,6 +401,10 @@ void gui_reversi_draw() {
         redraw();
         redrawstatus();
     }
+
+    sprintf(buf, "Batt:%3d%%", get_batt_perc());
+    draw_txt_string(screen_width/FONT_WIDTH-2-9, screen_height/FONT_HEIGHT-1, buf, MAKE_COLOR(SCREEN_COLOR, COLOR_WHITE));
+
     Timer();
 }
 

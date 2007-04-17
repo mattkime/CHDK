@@ -32,13 +32,12 @@ int raw_savefile() {
         started();
 
         t.actime = t.modtime = time(NULL);
-        v=get_file_next_counter();
 
-        sprintf(dir, RAW_TARGET_DIRECTORY, (conf.raw_in_dir)?((v>>18)&0x3FF):100);
+        sprintf(dir, RAW_TARGET_DIRECTORY, (conf.raw_in_dir)?get_target_dir_num():100);
         mkdir(dir);
 
         sprintf(fn, "%s/", dir);
-        sprintf(fn+strlen(fn), RAW_TARGET_FILENAME, prefixes[conf.raw_prefix], (v>>4)&0x3FFF, exts[conf.raw_ext]);
+        sprintf(fn+strlen(fn), RAW_TARGET_FILENAME, prefixes[conf.raw_prefix], get_target_file_num(), exts[conf.raw_ext]);
 
         fd = open(fn, O_WRONLY|O_CREAT, 0777);
         if (fd>=0) {

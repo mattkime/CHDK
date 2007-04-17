@@ -5,6 +5,7 @@
 #include "conf.h"
 #include "gui.h"
 #include "gui_draw.h"
+#include "gui_batt.h"
 #include "gui_mbox.h"
 #include "gui_sokoban.h"
 
@@ -228,5 +229,8 @@ void gui_sokoban_draw() {
             sokoban_next_level();
         }
     }
+
+    sprintf(str, "Batt:%3d%%", get_batt_perc());
+    draw_txt_string(screen_width/FONT_WIDTH-2-9, screen_height/FONT_HEIGHT-1, str, MAKE_COLOR(SCREEN_COLOR, COLOR_WHITE));
 }
 
