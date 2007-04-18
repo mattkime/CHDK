@@ -181,6 +181,41 @@ void gui_osd_draw_zebra() {
 }
 
 //-------------------------------------------------------------------
+
+static void gui_osd_draw_blended_histo(coord x, coord y) {
+    register unsigned int i, v, red, grn, blu, sel;
+    int m = ((mode_get()&MODE_MASK) == MODE_REC);
+    color cls[] = {
+        conf.histo_color>>8,
+        (m)?0xDF:0xCC,
+        COLOR_GREEN,
+        (m)?COLOR_BLUE_LT:0x99,
+        COLOR_RED,
+        (m)?0x66:0xE2,
+        (m)?COLOR_YELLOW:0x66,
+        COLOR_WHITE
+    };
+
+    for (i=0; i<HISTO_WIDTH; ++i) {
+        red = histogram[HISTO_R][i];
+        grn = histogram[HISTO_G][i];
+        blu = histogram[HISTO_B][i];
+
+        for (v=1; v<HISTO_HEIGHT; ++v) {
+            sel = 0;
+
+            if (v < red) sel = 4;
+            if (v < grn) sel |= 2;
+            if (v < blu) sel |= 1;
+
+            draw_pixel(x+1+i, y+HISTO_HEIGHT-v, cls[sel]);
+        }
+    }
+
+    draw_rect(x, y, x+1+HISTO_WIDTH, y+HISTO_HEIGHT, conf.histo_color2&0xFF);
+}
+
+//-------------------------------------------------------------------
 void gui_osd_draw_histo() {
     switch (conf.histo_layout) {
         case OSD_HISTO_LAYOUT_Y:
@@ -209,6 +244,9 @@ void gui_osd_draw_histo() {
                 gui_osd_draw_single_histo(HISTO_G, conf.histo_pos.x, conf.histo_pos.y+HISTO_HEIGHT+HISTO_HEIGHT/2, 1);
                 gui_osd_draw_single_histo(HISTO_B, conf.histo_pos.x+HISTO_WIDTH/2+1, conf.histo_pos.y+HISTO_HEIGHT+HISTO_HEIGHT/2, 1);
                 break;
+        case OSD_HISTO_LAYOUT_BLEND:
+                gui_osd_draw_blended_histo(conf.histo_pos.x, conf.histo_pos.y);
+                break;
         case OSD_HISTO_LAYOUT_A:
         default:
                 gui_osd_draw_single_histo(HISTO_RGB, conf.histo_pos.x, conf.histo_pos.y, 0);
@@ -236,7 +274,7 @@ void gui_osd_draw_histo() {
 //-------------------------------------------------------------------
 static void sprintf_dist(char *buf, float dist) {
 // length of printed string is always 4
-    if (dist<0) {
+    if (dist<=0) {
         sprintf(buf, " inf");
 //    } else if (dist<1000) {
 //        sprintf(buf, ".%03d", (int)dist);
@@ -262,16 +300,23 @@ static int get_fl() {
 //-------------------------------------------------------------------
 void gui_osd_draw_dof() {
     long av, fp; 
-    float r1, r2, hyp, fl;
+    float r1=-1.0f, r2=-1.0f, hyp=-1.0f, fl, v;
     
     fl=get_fl();
-    
     av=shooting_get_real_av();
-    
     fp=lens_get_target_distance();
-    hyp=(fl*fl)/(10*6*av);
-    r1=(hyp*fp)/(hyp+fp);
-    r2=(hyp*fp)/(hyp-fp);
+
+    if (av) {
+        hyp=(fl*fl)/(10*6*av);
+        if (fp>=0 && fp<65000) {
+            v = (hyp+fp);
+            if (v!=0.0f)
+                r1=(hyp*fp)/v;
+            v = (hyp-fp);
+            if (v!=0.0f)
+                r2=(hyp*fp)/v;
+        }
+    }
 
     draw_string(conf.dof_pos.x, conf.dof_pos.y, "R1/R2:", conf.osd_color);
     sprintf_dist(osd_buf, r1);
@@ -280,7 +325,7 @@ void gui_osd_draw_dof() {
     draw_string(conf.dof_pos.x+6*FONT_WIDTH, conf.dof_pos.y, osd_buf, conf.osd_color);
         
     draw_string(conf.dof_pos.x, conf.dof_pos.y+FONT_HEIGHT, "DOF/HYP:", conf.osd_color);
-    sprintf_dist(osd_buf, r2-r1);
+    sprintf_dist(osd_buf, (r1>=0.0f && r2>=0.0f)?r2-r1:-1.0f);
     osd_buf[4]='/';
     sprintf_dist(osd_buf+5, hyp);
     draw_string(conf.dof_pos.x+8*FONT_WIDTH, conf.dof_pos.y+FONT_HEIGHT, osd_buf, conf.osd_color);

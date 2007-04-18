@@ -278,7 +278,7 @@ const char* gui_histo_mode_enum(int change, int arg) {
 
 //-------------------------------------------------------------------
 const char* gui_histo_layout_enum(int change, int arg) {
-    static const char* modes[]={ "RGB", "Y", "RGB Y",  "R G B", "RGB all", "Y all"};
+    static const char* modes[]={ "RGB", "Y", "RGB Y",  "R G B", "RGB all", "Y all", "Blend"};
 
     conf.histo_layout+=change;
     if (conf.histo_layout<0)

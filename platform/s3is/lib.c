@@ -27,26 +27,3 @@ void debug_led(int state)
     else
 	p[0]=0x44;
 }
-
-
-long _GetFocusLensSubjectDistance()
-{
-    return -1;
-}
-
-void _kbd_pwr_on()
-{
-
-}
-
-void _kbd_pwr_off()
-{
-
-}
-
-void _Unmount_FileSystem()
-{
-}
-void _Mount_FileSystem()
-{
-}

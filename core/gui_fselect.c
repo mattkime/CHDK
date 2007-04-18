@@ -301,27 +301,57 @@ static void fselect_delete_cb(unsigned int btn) {
 }
 
 //-------------------------------------------------------------------
+static void fselect_goto_prev(int step) {
+    register int j;
+
+    for (j=0; j<step; ++j) {
+        if (selected->prev==top && top->prev) 
+            top=top->prev;
+        if (selected->prev) 
+            selected=selected->prev;
+    }
+}
+
+//-------------------------------------------------------------------
+static void fselect_goto_next(int step) {
+    register int j, i;
+    struct fitem  *ptr;
+
+    for (j=0; j<step; ++j) {
+        for (i=0, ptr=top; i<NUM_LINES-1 && ptr; ++i, ptr=ptr->next);
+        if (i==NUM_LINES-1 && ptr && ptr->prev==selected && ptr->next)
+            top=top->next;
+        if (selected->next) 
+            selected=selected->next;
+    }
+}
+
+//-------------------------------------------------------------------
 void gui_fselect_kbd_process() {
     int i;
-    struct fitem  *ptr;
     
     switch (kbd_get_clicked_key()) {
         case KEY_UP:
             if (selected) {
-                if (selected->prev==top && top->prev) 
-                    top=top->prev;
-                if (selected->prev) 
-                    selected=selected->prev;
+                fselect_goto_prev(1);
                 gui_fselect_redraw = 1;
             }
             break;
         case KEY_DOWN:
             if (selected) {
-                for (i=0, ptr=top; i<NUM_LINES-1 && ptr; ++i, ptr=ptr->next);
-                if (i==NUM_LINES-1 && ptr && ptr->prev==selected && ptr->next)
-                    top=top->next;
-                if (selected->next) 
-                    selected=selected->next;
+                fselect_goto_next(1);
+                gui_fselect_redraw = 1;
+            }
+            break;
+        case KEY_ZOOM_OUT:
+            if (selected) {
+                fselect_goto_prev(NUM_LINES-1);
+                gui_fselect_redraw = 1;
+            }
+            break;
+        case KEY_ZOOM_IN:
+            if (selected) {
+                fselect_goto_next(NUM_LINES-1);
                 gui_fselect_redraw = 1;
             }
             break;

@@ -11,7 +11,6 @@
 #define COLOR_BLUE		0xDF
 #define COLOR_YELLOW		0xEE
 #define COLOR_BLACK		0xFF
-
 //#define COLOR_BG 		0x0F
 #define COLOR_BG 		0x44
 #define COLOR_FG 		COLOR_WHITE

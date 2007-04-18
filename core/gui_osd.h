@@ -9,6 +9,7 @@
 #define OSD_HISTO_LAYOUT_R_G_B          3
 #define OSD_HISTO_LAYOUT_A_yrgb         4
 #define OSD_HISTO_LAYOUT_Y_argb         5
+#define OSD_HISTO_LAYOUT_BLEND          6
 
 //-------------------------------------------------------------------
 extern void gui_osd_init();

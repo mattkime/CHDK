@@ -84,6 +84,9 @@ void core_spytask()
     msleep(50);
     finished();
 
+    mkdir("A/FONTS");
+    mkdir("A/SCRIPTS");
+
     while (1){
 
 	if (raw_data_available){
