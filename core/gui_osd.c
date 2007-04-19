@@ -157,7 +157,7 @@ static void gui_osd_draw_single_histo(int hist, coord x, coord y, int small) {
 
 //-------------------------------------------------------------------
 void gui_osd_draw_zebra() {
-    register unsigned int i, j;
+    unsigned int v, s, x, y;
     static int timer = 0;
     static char *buf = NULL;
 
@@ -169,10 +169,17 @@ void gui_osd_draw_zebra() {
 
     if (buf) {
         if ((++timer)&4) {
-            memset(scr_buf, COLOR_TRANSPARENT, screen_size*2);
+            memset(scr_buf, COLOR_TRANSPARENT, screen_size*2-1);
         } else {
-            for (i=0, j=1; i<screen_size; ++i, j+=3) {
-                buf[i]=(img_buf[j]>254)?COLOR_RED:COLOR_TRANSPARENT;
+            v = s = 0;
+            for (y=1; y<=viewport_height; ++y) {
+                for (x=0; x<viewport_width; ++x, ++s, ++v) {
+                    buf[s]=(img_buf[v]>254)?COLOR_RED:COLOR_TRANSPARENT;
+                }
+                if (y*screen_height/viewport_height == (s+screen_width)/screen_width) {
+                    memcpy(buf+s, buf+s-screen_width, screen_width);
+                    s+=screen_width;
+                }
             }
             memcpy(scr_buf, buf, screen_size);
             memcpy(scr_buf+screen_size, buf, screen_size);

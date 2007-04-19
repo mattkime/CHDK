@@ -44,3 +44,14 @@ long vid_get_bitmap_height()
 {
     return 240;
 }
+
+long vid_get_viewport_width()
+{
+    return 360;
+}
+
+long vid_get_viewport_height()
+{
+    return 240;
+}
+

@@ -89,7 +89,7 @@ void histogram_process()
         case 1:
         case 2:
         case 3:
-            for (i=(histogram_stage-1)*6; i<screen_size*3; i+=6*3*2) {
+            for (i=(histogram_stage-1)*6; i<viewport_size*3; i+=6*3*2) {
                 y = img[i+1];
                 u = *(signed char*)(&img[i]);
                 if (u&0x00000080) u|=0xFFFFFF00;
