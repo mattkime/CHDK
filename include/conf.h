@@ -39,6 +39,11 @@ typedef struct {
     int histo_layout;
 
     int zebra_draw;
+    int zebra_mode;
+    int zebra_restore_screen;
+    int zebra_restore_osd;
+    int zebra_over;
+    int zebra_under;
 
     OSD_pos histo_pos;
     OSD_pos dof_pos;
@@ -54,6 +59,7 @@ typedef struct {
     color batt_icon_color;
     color menu_color;
     color reader_color;
+    color zebra_color; // under/over
 
     int font;
 

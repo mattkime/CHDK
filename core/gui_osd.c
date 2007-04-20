@@ -32,7 +32,7 @@ static int curr_item;
 static char osd_buf[40];
 static int step;
 static unsigned char *img_buf, *scr_buf;
-
+static int timer = 0;
 
 //-------------------------------------------------------------------
 void gui_osd_init() {
@@ -156,10 +156,16 @@ static void gui_osd_draw_single_histo(int hist, coord x, coord y, int small) {
 }
 
 //-------------------------------------------------------------------
-void gui_osd_draw_zebra() {
-    unsigned int v, s, x, y;
-    static int timer = 0;
+void gui_osd_zebra_init() {
+    timer = 0;
+}
+
+//-------------------------------------------------------------------
+int gui_osd_draw_zebra() {
+    unsigned int v, s, x, y, f, over;
+    color cl_under=conf.zebra_color>>8, cl_over=conf.zebra_color&0xFF;
     static char *buf = NULL;
+    static int need_restore=0;
 
     if (!buf) {
         buf = malloc(screen_size);
@@ -168,23 +174,67 @@ void gui_osd_draw_zebra() {
     }
 
     if (buf) {
-        if ((++timer)&4) {
-            memset(scr_buf, COLOR_TRANSPARENT, screen_size*2-1);
-        } else {
-            v = s = 0;
-            for (y=1; y<=viewport_height; ++y) {
-                for (x=0; x<viewport_width; ++x, ++s, ++v) {
-                    buf[s]=(img_buf[v]>254)?COLOR_RED:COLOR_TRANSPARENT;
+        ++timer;
+        switch (conf.zebra_mode) {
+            case ZEBRA_MODE_ZEBRA_1:
+                f = 4;
+                break;
+            case ZEBRA_MODE_ZEBRA_2:
+                f = 8;
+                break;
+            case ZEBRA_MODE_SOLID:
+                f = 1; 
+                break;
+            case ZEBRA_MODE_BLINKED_1:
+                f = timer&2; 
+                break;
+            case ZEBRA_MODE_BLINKED_3:
+                f = timer&8; 
+                break;
+            case ZEBRA_MODE_BLINKED_2:
+            default:
+                f = timer&4; 
+                break;
+        }
+        if (!f) {
+            if (need_restore) {
+                if (conf.zebra_restore_screen || conf.zebra_restore_osd) {
+                    draw_restore();
+                } else {
+                    memset(scr_buf, COLOR_TRANSPARENT, screen_size*2-1);
                 }
-                if (y*screen_height/viewport_height == (s+screen_width)/screen_width) {
-                    memcpy(buf+s, buf+s-screen_width, screen_width);
-                    s+=screen_width;
+                need_restore=0;
+            }
+            return !(conf.zebra_restore_screen && conf.zebra_restore_osd);
+        } else {
+            over = 255-conf.zebra_over;
+            if (conf.zebra_mode == ZEBRA_MODE_ZEBRA_1 || conf.zebra_mode == ZEBRA_MODE_ZEBRA_2) {
+                for (s=0, y=0; y<screen_height; ++y) {
+                    v=y*viewport_height/screen_height*screen_width*3+1;
+                    for (x=0; x<screen_width; ++x, ++s, v+=3) {
+                        buf[s]=(img_buf[v]>over && ((y-x-timer)&f))?cl_over:((img_buf[v]<conf.zebra_under && ((y-x-timer)&f))?cl_under:COLOR_TRANSPARENT);
+                    }
+                }
+            } else {
+                for (s=0, v=y=1; y<=viewport_height; ++y) {
+                    for (x=0; x<viewport_width; ++x, ++s, v+=3) {
+                        buf[s]=(img_buf[v]>over)?cl_over:((img_buf[v]<conf.zebra_under)?cl_under:COLOR_TRANSPARENT);
+                    }
+                    if (y*screen_height/viewport_height == (s+screen_width)/screen_width) {
+                        memcpy(buf+s, buf+s-screen_width, screen_width);
+                        s+=screen_width;
+                    }
                 }
             }
+
             memcpy(scr_buf, buf, screen_size);
             memcpy(scr_buf+screen_size, buf, screen_size);
+
+            need_restore=1;
+            return 1;
         }
     }
+    return 0;
 }
 
 //-------------------------------------------------------------------

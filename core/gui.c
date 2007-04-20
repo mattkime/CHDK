@@ -55,6 +55,7 @@ static void gui_menuproc_save(int arg);
 static void gui_menuproc_reset(int arg);
 static const char* gui_histo_mode_enum(int change, int arg);
 static const char* gui_histo_layout_enum(int change, int arg);
+static const char* gui_zebra_mode_enum(int change, int arg);
 static const char* gui_font_enum(int change, int arg);
 static const char* gui_raw_prefix_enum(int change, int arg);
 static const char* gui_raw_ext_enum(int change, int arg);
@@ -66,6 +67,8 @@ static void cb_step_25();
 static void cb_perc();
 static void cb_volts();
 static void cb_battery_menu_change(unsigned int item);
+static void cb_zebra_restore_screen();
+static void cb_zebra_restore_osd();
 
 // Menu definition
 //-------------------------------------------------------------------
@@ -162,6 +165,8 @@ static CMenuItem visual_submenu_items[] = {
     {"Histogram background",        MENUITEM_COLOR_BG,  (int*)&conf.histo_color },
     {"Histogram border",            MENUITEM_COLOR_FG,  (int*)&conf.histo_color2 },
     {"Histogram EXP markers",       MENUITEM_COLOR_BG,  (int*)&conf.histo_color2 },
+    {"Zebra Underexplosure",        MENUITEM_COLOR_BG,  (int*)&conf.zebra_color },
+    {"Zebra Overexplosure",         MENUITEM_COLOR_FG,  (int*)&conf.zebra_color },
     {"Battery icon",                MENUITEM_COLOR_FG,  (int*)&conf.batt_icon_color },
     {"Menu text",                   MENUITEM_COLOR_FG,  (int*)&conf.menu_color },
     {"Menu background",             MENUITEM_COLOR_BG,  (int*)&conf.menu_color },
@@ -197,7 +202,6 @@ static CMenuItem histo_submenu_items[] = {
     {"Show histogram over/under EXP", MENUITEM_BOOL,    &conf.show_overexp },
     {"Ignore boundary peaks",       MENUITEM_INT|MENUITEM_F_UNSIGNED|MENUITEM_F_MINMAX,  &conf.histo_ignore_boundary,   MENU_MINMAX(0, 32)},
     {"Auto magnify",                MENUITEM_BOOL,      &conf.histo_auto_ajust },
-    {"Draw Zebra (Top Priority)",   MENUITEM_BOOL,      &conf.zebra_draw },
     {"<- Back",                     MENUITEM_UP },
     {0}
 };
@@ -215,10 +219,24 @@ static CMenuItem raw_submenu_items[] = {
 static CMenu raw_submenu = { "RAW", NULL, raw_submenu_items };
 
 
+static CMenuItem zebra_submenu_items[] = {
+    {"Draw Zebra instead of histo", MENUITEM_BOOL,                            &conf.zebra_draw },
+    {"Zebra mode",                  MENUITEM_ENUM,                            (int*)gui_zebra_mode_enum },
+    {"Draw UnderExplosure",         MENUITEM_INT|MENUITEM_F_UNSIGNED|MENUITEM_F_MINMAX,  &conf.zebra_under,   MENU_MINMAX(0, 32)},
+    {"Draw OverExplosure",          MENUITEM_INT|MENUITEM_F_UNSIGNED|MENUITEM_F_MINMAX,  &conf.zebra_over,    MENU_MINMAX(0, 32)},
+    {"Restore original screen",     MENUITEM_BOOL|MENUITEM_ARG_CALLBACK,      &conf.zebra_restore_screen,     (int)cb_zebra_restore_screen },
+    {"Restore OSD",                 MENUITEM_BOOL|MENUITEM_ARG_CALLBACK,      &conf.zebra_restore_osd,        (int)cb_zebra_restore_osd },
+    {"<- Back",                     MENUITEM_UP },
+    {0}
+};
+static CMenu zebra_submenu = { "Zebra", NULL, zebra_submenu_items };
+
+
 static CMenuItem root_menu_items[] = {
     {"RAW parameters ->",           MENUITEM_SUBMENU,   (int*)&raw_submenu },
     {"OSD parameters ->",           MENUITEM_SUBMENU,   (int*)&osd_submenu },
     {"Histogram parameters ->",     MENUITEM_SUBMENU,   (int*)&histo_submenu },
+    {"Zebra parameters ->",         MENUITEM_SUBMENU,   (int*)&zebra_submenu },
     {"Scripting parameters ->",     MENUITEM_SUBMENU,   (int*)&script_submenu },
     {"Visual settings ->",          MENUITEM_SUBMENU,   (int*)&visual_submenu },
     {"Miscellaneous stuff ->",      MENUITEM_SUBMENU,   (int*)&misc_submenu },
@@ -259,6 +277,16 @@ void cb_battery_menu_change(unsigned int item) {
         default:
             break;
     }
+}
+
+void cb_zebra_restore_screen() {
+    if (!conf.zebra_restore_screen)
+        conf.zebra_restore_osd = 0;
+}
+
+void cb_zebra_restore_osd() {
+    if (conf.zebra_restore_osd)
+        conf.zebra_restore_screen = 1;
 }
 
 //-------------------------------------------------------------------
@@ -347,6 +375,19 @@ const char* gui_reader_codepage_enum(int change, int arg) {
         conf.reader_codepage=0;
 
     return cps[conf.reader_codepage];
+}
+
+//-------------------------------------------------------------------
+const char* gui_zebra_mode_enum(int change, int arg) {
+    static const char* modes[]={ "Blink 1", "Blink 2", "Blink 3", "Solid", "Zebra 1", "Zebra 2" };
+
+    conf.zebra_mode+=change;
+    if (conf.zebra_mode<0)
+        conf.zebra_mode=(sizeof(modes)/sizeof(modes[0]))-1;
+    else if (conf.zebra_mode>=(sizeof(modes)/sizeof(modes[0])))
+        conf.zebra_mode=0;
+
+    return modes[conf.zebra_mode];
 }
 
 //-------------------------------------------------------------------
@@ -618,9 +659,9 @@ extern long GetPropertyCase(long opt_id, void *buf, long bufsize);
 //extern int xxxx, eeee;
 //-------------------------------------------------------------------
 void gui_draw_osd() {
-    unsigned int m, n = 0;
+    unsigned int m, n = 0, mode_photo;
     coord x;
-    static int flashlight = 0, zebra = 0;
+    static int flashlight = 0, zebra = 0, zebra_init = 0;
     
     m = mode_get();
 
@@ -636,9 +677,19 @@ void gui_draw_osd() {
         return;
     }
 
-    if (conf.zebra_draw && gui_mode==GUI_MODE_NONE && kbd_is_key_pressed(KEY_SHOOT_HALF)) {
-        gui_osd_draw_zebra();
-        zebra = 1;
+    mode_photo = (m&MODE_MASK) == MODE_PLAY || 
+                 !((m&MODE_SHOOTING_MASK)==MODE_VIDEO_STD || (m&MODE_SHOOTING_MASK)==MODE_VIDEO_SPEED || (m&MODE_SHOOTING_MASK)==MODE_VIDEO_COMPACT ||
+                   (m&MODE_SHOOTING_MASK)==MODE_VIDEO_MY_COLORS || (m&MODE_SHOOTING_MASK)==MODE_VIDEO_COLOR_ACCENT || (m&MODE_SHOOTING_MASK)==MODE_STITCH);
+
+    if (conf.zebra_draw && gui_mode==GUI_MODE_NONE && kbd_is_key_pressed(KEY_SHOOT_HALF) && mode_photo) {
+        if (!zebra_init) {
+            zebra_init = 1;
+            gui_osd_zebra_init();
+        }
+        zebra = gui_osd_draw_zebra();
+    }
+    if (zebra_init && !kbd_is_key_pressed(KEY_SHOOT_HALF)) {
+        zebra_init = 0;
     }
     if (zebra) {
         if (!kbd_is_key_pressed(KEY_SHOOT_HALF)) {
@@ -648,19 +699,19 @@ void gui_draw_osd() {
         return;
     }
 
-    if (conf.show_histo && (gui_mode==GUI_MODE_NONE || gui_mode==GUI_MODE_ALT) && kbd_is_key_pressed(KEY_SHOOT_HALF)) {
+    if (conf.show_histo && (gui_mode==GUI_MODE_NONE || gui_mode==GUI_MODE_ALT) && kbd_is_key_pressed(KEY_SHOOT_HALF) && (mode_photo || (m&MODE_SHOOTING_MASK)==MODE_STITCH)) {
         gui_osd_draw_histo();
     }
 
     if (!conf.show_osd) return;
     
     if ((m&MODE_MASK) == MODE_REC) {
-        m &= MODE_SHOOTING_MASK;
+//        m &= MODE_SHOOTING_MASK;
 //        if (m==MODE_SCN_WATER || m==MODE_SCN_NIGHT || m==MODE_SCN_CHILD || m==MODE_SCN_PARTY || m==MODE_STITCH ||
 //            m==MODE_SCN_GRASS || m==MODE_SCN_SNOW  || m==MODE_SCN_BEACH || m==MODE_SCN_FIREWORK || m==MODE_VIDEO)
 //            ++n;
 
-        if (conf.show_dof && (gui_mode==GUI_MODE_NONE /*|| gui_mode==GUI_MODE_ALT*/) && kbd_is_key_pressed(KEY_SHOOT_HALF)) {
+        if (conf.show_dof && (gui_mode==GUI_MODE_NONE /*|| gui_mode==GUI_MODE_ALT*/) && kbd_is_key_pressed(KEY_SHOOT_HALF) && (mode_photo || (m&MODE_SHOOTING_MASK)==MODE_STITCH)) {
             gui_osd_draw_dof();
         }
 

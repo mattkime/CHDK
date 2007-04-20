@@ -106,6 +106,12 @@ static const ConfInfo conf_info[] = {
     CONF_INFO( 47, conf.splash_show,            CONF_DEF_VALUE, i:1, NULL),
     CONF_INFO( 48, conf.histo_color2,           CONF_DEF_VALUE, cl:MAKE_COLOR(COLOR_RED, COLOR_WHITE), NULL),
     CONF_INFO( 49, conf.zebra_draw,             CONF_DEF_VALUE, i:0, NULL),
+    CONF_INFO( 50, conf.zebra_mode,             CONF_DEF_VALUE, i:ZEBRA_MODE_BLINKED_2, NULL),
+    CONF_INFO( 51, conf.zebra_restore_screen,   CONF_DEF_VALUE, i:1, NULL),
+    CONF_INFO( 52, conf.zebra_restore_osd,      CONF_DEF_VALUE, i:1, NULL),
+    CONF_INFO( 53, conf.zebra_over,             CONF_DEF_VALUE, i:1, NULL),
+    CONF_INFO( 54, conf.zebra_under,            CONF_DEF_VALUE, i:0, NULL),
+    CONF_INFO( 55, conf.zebra_color,            CONF_DEF_VALUE, cl:MAKE_COLOR(COLOR_RED, COLOR_RED), NULL),
 };
 #define CONF_NUM (sizeof(conf_info)/sizeof(conf_info[0]))
 
