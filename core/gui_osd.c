@@ -33,6 +33,7 @@ static char osd_buf[40];
 static int step;
 static unsigned char *img_buf, *scr_buf;
 static int timer = 0;
+static char *buf = NULL;
 
 //-------------------------------------------------------------------
 void gui_osd_init() {
@@ -161,10 +162,14 @@ void gui_osd_zebra_init() {
 }
 
 //-------------------------------------------------------------------
+static void draw_pixel_buffered(unsigned int offset, color cl) {
+    buf[offset] = cl;
+}
+
+//-------------------------------------------------------------------
 int gui_osd_draw_zebra() {
     unsigned int v, s, x, y, f, over;
     color cl_under=conf.zebra_color>>8, cl_over=conf.zebra_color&0xFF;
-    static char *buf = NULL;
     static int need_restore=0;
 
     if (!buf) {
@@ -226,6 +231,12 @@ int gui_osd_draw_zebra() {
                     }
                 }
             }
+            
+            if (conf.zebra_draw_histo && conf.show_histo) {
+                draw_set_draw_proc(draw_pixel_buffered);
+                gui_osd_draw_histo();
+                draw_set_draw_proc(NULL);
+            }
 
             memcpy(scr_buf, buf, screen_size);
             memcpy(scr_buf+screen_size, buf, screen_size);
@@ -238,7 +249,6 @@ int gui_osd_draw_zebra() {
 }
 
 //-------------------------------------------------------------------
-
 static void gui_osd_draw_blended_histo(coord x, coord y) {
     register unsigned int i, v, red, grn, blu, sel;
     int m = ((mode_get()&MODE_MASK) == MODE_REC);

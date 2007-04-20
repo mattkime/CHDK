@@ -27,6 +27,7 @@ extern unsigned int		viewport_width, viewport_height, viewport_size;
 
 //-------------------------------------------------------------------
 void draw_init();
+void draw_set_draw_proc(void (*pixel_proc)(unsigned int offset, color cl));
 
 extern color draw_get_pixel(coord x, coord y);
 

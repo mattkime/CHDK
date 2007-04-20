@@ -8,12 +8,20 @@
 #include "gui_draw.h"
 
 //-------------------------------------------------------------------
-static char* 			frame_buffer[2];
-unsigned int			screen_width=0, screen_height=0, screen_size=0;
-unsigned int			viewport_width=0, viewport_height=0, viewport_size=0;
+static char*    frame_buffer[2];
+unsigned int    screen_width=0, screen_height=0, screen_size=0;
+unsigned int    viewport_width=0, viewport_height=0, viewport_size=0;
+void            (*draw_pixel_proc)(unsigned int offset, color cl);
 
 //-------------------------------------------------------------------
-extern void vid_bitmap_refresh();;
+static void draw_pixel_std(unsigned int offset, color cl) {
+    frame_buffer[0][offset] = frame_buffer[1][offset] = cl & 0xff;
+}
+
+//-------------------------------------------------------------------
+void draw_set_draw_proc(void (*pixel_proc)(unsigned int offset, color cl)) {
+    draw_pixel_proc = (pixel_proc)?pixel_proc:draw_pixel_std;
+}
 
 //-------------------------------------------------------------------
 void draw_init() {
@@ -27,13 +35,16 @@ void draw_init() {
     viewport_width = vid_get_viewport_width();
     viewport_height = vid_get_viewport_height();
     viewport_size = viewport_width * viewport_height;
+    draw_set_draw_proc(NULL);
 }
 
 //-------------------------------------------------------------------
 void draw_pixel(coord x, coord y, color cl) {
-    register unsigned int offset = y * screen_width + x;
     if (x >= screen_width || y >= screen_height) return;
-    frame_buffer[0][offset] = frame_buffer[1][offset] = cl & 0xff;
+    else {
+        register unsigned int offset = y * screen_width + x;
+        draw_pixel_proc(offset, cl);
+    }
 }
 
 //-------------------------------------------------------------------

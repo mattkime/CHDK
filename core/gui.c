@@ -226,6 +226,7 @@ static CMenuItem zebra_submenu_items[] = {
     {"Draw OverExplosure",          MENUITEM_INT|MENUITEM_F_UNSIGNED|MENUITEM_F_MINMAX,  &conf.zebra_over,    MENU_MINMAX(0, 32)},
     {"Restore original screen",     MENUITEM_BOOL|MENUITEM_ARG_CALLBACK,      &conf.zebra_restore_screen,     (int)cb_zebra_restore_screen },
     {"Restore OSD",                 MENUITEM_BOOL|MENUITEM_ARG_CALLBACK,      &conf.zebra_restore_osd,        (int)cb_zebra_restore_osd },
+    {"Draw histogram over zebra",   MENUITEM_BOOL,                            &conf.zebra_draw_histo },
     {"<- Back",                     MENUITEM_UP },
     {0}
 };
