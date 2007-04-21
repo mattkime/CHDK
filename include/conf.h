@@ -44,7 +44,7 @@ typedef struct {
     int zebra_restore_osd;
     int zebra_over;
     int zebra_under;
-    int zebra_draw_histo;
+    int zebra_draw_osd;
 
     OSD_pos histo_pos;
     OSD_pos dof_pos;

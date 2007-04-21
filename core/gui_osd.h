@@ -11,6 +11,10 @@
 #define OSD_HISTO_LAYOUT_Y_argb         5
 #define OSD_HISTO_LAYOUT_BLEND          6
 
+#define ZEBRA_DRAW_NONE                 0
+#define ZEBRA_DRAW_HISTO                1
+#define ZEBRA_DRAW_OSD                  2
+
 //-------------------------------------------------------------------
 extern void gui_osd_init();
 extern void gui_osd_kbd_process();

@@ -25,7 +25,18 @@ static int pause;
 //-------------------------------------------------------------------
 static void gui_read_draw_batt() {
     sprintf(buffer, "Batt:%3d%%", get_batt_perc());
-    draw_txt_string(screen_width/FONT_WIDTH-2-1-3-9, 0, buffer, MAKE_COLOR(COLOR_BLACK, COLOR_WHITE));
+    draw_txt_string(screen_width/FONT_WIDTH-2-1-1-9, 0, buffer, MAKE_COLOR(COLOR_BLACK, COLOR_WHITE));
+}
+
+//-------------------------------------------------------------------
+static void gui_read_draw_clock() {
+    unsigned long t;
+    static struct tm *ttm;
+
+    t = time(NULL);
+    ttm = localtime(&t);
+    sprintf(buffer, "%2u:%02u", ttm->tm_hour, ttm->tm_min);
+    draw_txt_string(screen_width/FONT_WIDTH-2-1-1-9-2-5, 0, buffer, MAKE_COLOR(COLOR_BLACK, COLOR_WHITE));
 }
 
 //-------------------------------------------------------------------
@@ -147,6 +158,7 @@ void gui_read_draw() {
         last_time = get_tick_count();
     }
     gui_read_draw_batt();
+    gui_read_draw_clock();
 }
 
 //-------------------------------------------------------------------

@@ -167,6 +167,43 @@ static void draw_pixel_buffered(unsigned int offset, color cl) {
 }
 
 //-------------------------------------------------------------------
+static void gui_osd_draw_zebra_osd() {
+    switch (conf.zebra_draw_osd) {
+        case ZEBRA_DRAW_NONE:
+            break;
+        case ZEBRA_DRAW_OSD:
+            if (conf.show_osd) {
+                draw_set_draw_proc(draw_pixel_buffered);
+                if ((mode_get()&MODE_MASK) == MODE_REC) {
+                    if (conf.show_dof) {
+                        gui_osd_draw_dof();
+                    }
+                    if (conf.show_state) {
+                        gui_osd_draw_state();
+                    }
+                    if (conf.show_values) {
+                        gui_osd_draw_values();
+                    }
+                }
+                gui_batt_draw_osd();
+                if (conf.show_clock) {
+                    gui_osd_draw_clock();
+                }
+                draw_set_draw_proc(NULL);
+            }
+            /* no break here */
+        case ZEBRA_DRAW_HISTO:
+        default:
+            if (conf.show_histo) {
+                draw_set_draw_proc(draw_pixel_buffered);
+                gui_osd_draw_histo();
+                draw_set_draw_proc(NULL);
+            }
+            break;
+    }
+}
+
+//-------------------------------------------------------------------
 int gui_osd_draw_zebra() {
     unsigned int v, s, x, y, f, over;
     color cl_under=conf.zebra_color>>8, cl_over=conf.zebra_color&0xFF;
@@ -206,7 +243,10 @@ int gui_osd_draw_zebra() {
                 if (conf.zebra_restore_screen || conf.zebra_restore_osd) {
                     draw_restore();
                 } else {
-                    memset(scr_buf, COLOR_TRANSPARENT, screen_size*2-1);
+                    memset(buf, COLOR_TRANSPARENT, screen_size);
+                    gui_osd_draw_zebra_osd();
+                    memcpy(scr_buf, buf, screen_size);
+                    memcpy(scr_buf+screen_size, buf, screen_size);
                 }
                 need_restore=0;
             }
@@ -232,12 +272,7 @@ int gui_osd_draw_zebra() {
                 }
             }
             
-            if (conf.zebra_draw_histo && conf.show_histo) {
-                draw_set_draw_proc(draw_pixel_buffered);
-                gui_osd_draw_histo();
-                draw_set_draw_proc(NULL);
-            }
-
+            gui_osd_draw_zebra_osd();
             memcpy(scr_buf, buf, screen_size);
             memcpy(scr_buf+screen_size, buf, screen_size);
 
@@ -424,11 +459,9 @@ void gui_osd_draw_values() {
     draw_string(conf.values_pos.x, conf.values_pos.y, osd_buf, conf.osd_color);
 
     lfp = lens_get_target_distance();
-    if (lfp == 0xFFFF) {
-        sprintf(osd_buf, "F:inf%8s", "");
-    } else {
-        sprintf(osd_buf, "F:%ld%8s", lfp, "");
-    }
+    strcpy(osd_buf, "F:");
+    sprintf_dist(osd_buf+2, lfp);
+    sprintf(osd_buf+strlen(osd_buf), "%8s", "");
     osd_buf[8]=0;
     draw_string(conf.values_pos.x, conf.values_pos.y+FONT_HEIGHT, osd_buf, conf.osd_color);
 

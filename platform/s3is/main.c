@@ -43,7 +43,7 @@ int mode_get() {
     int mode, i, t=0xFF;
 
     _GetPropertyCase(204, &t, 4);
-    mode  = (t==4)?MODE_REC:MODE_PLAY;
+    mode  = (t!=0)?MODE_REC:MODE_PLAY;
     mode |= (physw_status[1] & 0x00000001)?0:MODE_SCREEN_OPENED;
     mode |= (physw_status[1] & 0x00000002)?0:MODE_SCREEN_ROTATED;
     

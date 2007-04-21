@@ -56,6 +56,7 @@ static void gui_menuproc_reset(int arg);
 static const char* gui_histo_mode_enum(int change, int arg);
 static const char* gui_histo_layout_enum(int change, int arg);
 static const char* gui_zebra_mode_enum(int change, int arg);
+static const char* gui_zebra_draw_osd_enum(int change, int arg);
 static const char* gui_font_enum(int change, int arg);
 static const char* gui_raw_prefix_enum(int change, int arg);
 static const char* gui_raw_ext_enum(int change, int arg);
@@ -220,13 +221,13 @@ static CMenu raw_submenu = { "RAW", NULL, raw_submenu_items };
 
 
 static CMenuItem zebra_submenu_items[] = {
-    {"Draw Zebra instead of histo", MENUITEM_BOOL,                            &conf.zebra_draw },
+    {"Draw Zebra", 		    MENUITEM_BOOL,                            &conf.zebra_draw },
     {"Zebra mode",                  MENUITEM_ENUM,                            (int*)gui_zebra_mode_enum },
     {"Draw UnderExplosure",         MENUITEM_INT|MENUITEM_F_UNSIGNED|MENUITEM_F_MINMAX,  &conf.zebra_under,   MENU_MINMAX(0, 32)},
     {"Draw OverExplosure",          MENUITEM_INT|MENUITEM_F_UNSIGNED|MENUITEM_F_MINMAX,  &conf.zebra_over,    MENU_MINMAX(0, 32)},
     {"Restore original screen",     MENUITEM_BOOL|MENUITEM_ARG_CALLBACK,      &conf.zebra_restore_screen,     (int)cb_zebra_restore_screen },
     {"Restore OSD",                 MENUITEM_BOOL|MENUITEM_ARG_CALLBACK,      &conf.zebra_restore_osd,        (int)cb_zebra_restore_osd },
-    {"Draw histogram over zebra",   MENUITEM_BOOL,                            &conf.zebra_draw_histo },
+    {"Draw over zebra",             MENUITEM_ENUM,                            (int*)gui_zebra_draw_osd_enum },
     {"<- Back",                     MENUITEM_UP },
     {0}
 };
@@ -389,6 +390,19 @@ const char* gui_zebra_mode_enum(int change, int arg) {
         conf.zebra_mode=0;
 
     return modes[conf.zebra_mode];
+}
+
+//-------------------------------------------------------------------
+const char* gui_zebra_draw_osd_enum(int change, int arg) {
+    static const char* modes[]={ "Nothing", "Histo", "OSD" };
+
+    conf.zebra_draw_osd+=change;
+    if (conf.zebra_draw_osd<0)
+        conf.zebra_draw_osd=(sizeof(modes)/sizeof(modes[0]))-1;
+    else if (conf.zebra_draw_osd>=(sizeof(modes)/sizeof(modes[0])))
+        conf.zebra_draw_osd=0;
+
+    return modes[conf.zebra_draw_osd];
 }
 
 //-------------------------------------------------------------------
@@ -662,7 +676,7 @@ extern long GetPropertyCase(long opt_id, void *buf, long bufsize);
 void gui_draw_osd() {
     unsigned int m, n = 0, mode_photo;
     coord x;
-    static int flashlight = 0, zebra = 0, zebra_init = 0;
+    static int flashlight = 0, zebra = 0, zebra_init = 0, pressed = 0;
     
     m = mode_get();
 
@@ -678,6 +692,39 @@ void gui_draw_osd() {
         return;
     }
 
+    if (kbd_is_key_pressed(KEY_SHOOT_HALF)) {
+        if (kbd_is_key_pressed(KEY_LEFT)) {
+            if (!pressed) {
+                conf.zebra_draw = !conf.zebra_draw;
+                if (zebra && !conf.zebra_draw) {
+                    zebra = 0;
+                    draw_restore();
+                }
+                pressed = 1;
+            }
+        } else if (kbd_is_key_pressed(KEY_UP)) {
+            if (!pressed) {
+                conf.show_histo = !conf.show_histo;
+                if (!conf.show_histo) {
+                    draw_restore();
+                }
+                pressed = 1;
+            }
+        } else if (kbd_is_key_pressed(KEY_RIGHT)) {
+            if (!pressed) {
+                conf.show_osd = !conf.show_osd;
+                if (!conf.show_osd) {
+                    draw_restore();
+                }
+                pressed = 1;
+            }
+        } else {
+            pressed = 0;
+        }
+    } else {
+        pressed = 0;
+    }
+    
     mode_photo = (m&MODE_MASK) == MODE_PLAY || 
                  !((m&MODE_SHOOTING_MASK)==MODE_VIDEO_STD || (m&MODE_SHOOTING_MASK)==MODE_VIDEO_SPEED || (m&MODE_SHOOTING_MASK)==MODE_VIDEO_COMPACT ||
                    (m&MODE_SHOOTING_MASK)==MODE_VIDEO_MY_COLORS || (m&MODE_SHOOTING_MASK)==MODE_VIDEO_COLOR_ACCENT || (m&MODE_SHOOTING_MASK)==MODE_STITCH);
@@ -732,7 +779,7 @@ void gui_draw_osd() {
     }
 
     if (debug_vals_show) {
-//        long v=get_file_counter();
+        long v=get_file_counter();
 //	sprintf(osd_buf, "1:%03d-%04d  ", (v>>18)&0x3FF, (v>>4)&0x3FFF);
 //	sprintf(osd_buf, "1:%d, %08X  ", xxxx, eeee);
 	sprintf(osd_buf, "1:%8x  ", physw_status[0]);
@@ -743,6 +790,9 @@ void gui_draw_osd() {
 
 	sprintf(osd_buf, "3:%8x  ", physw_status[2]);
 	draw_txt_string(28, 12, osd_buf, conf.osd_color);
+
+	sprintf(osd_buf, "4:%8x  ", v);
+	draw_txt_string(28, 13, osd_buf, conf.osd_color);
     }
 
     if (debug_propcase_show){

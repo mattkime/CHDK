@@ -71,7 +71,7 @@ void core_rawdata_available()
 
 void core_spytask()
 {
-    int cnt = 0;
+    int cnt = 1;
 
     raw_need_postprocess = 0;
 

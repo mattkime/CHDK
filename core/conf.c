@@ -112,7 +112,7 @@ static const ConfInfo conf_info[] = {
     CONF_INFO( 53, conf.zebra_over,             CONF_DEF_VALUE, i:1, NULL),
     CONF_INFO( 54, conf.zebra_under,            CONF_DEF_VALUE, i:0, NULL),
     CONF_INFO( 55, conf.zebra_color,            CONF_DEF_VALUE, cl:MAKE_COLOR(COLOR_RED, COLOR_RED), NULL),
-    CONF_INFO( 56, conf.zebra_draw_histo,       CONF_DEF_VALUE, i:0, NULL),
+    CONF_INFO( 56, conf.zebra_draw_osd,         CONF_DEF_VALUE, i:ZEBRA_DRAW_HISTO, NULL),
 };
 #define CONF_NUM (sizeof(conf_info)/sizeof(conf_info[0]))
 
