@@ -18,6 +18,7 @@ PLATFORMSUB=100e
 #PLATFORM=s3is
 #PLATFORMSUB=100a
 
+include $(topdir)version.inc
 include $(topdir)platform/$(PLATFORM)/sub/$(PLATFORMSUB)/makefile.inc
 
 SILENT=SILENT
@@ -87,7 +88,7 @@ CFLAGS=-fno-inline -O9 -fno-strict-aliasing
 CTHUMB=-mthumb
 CFLAGS+=-mthumb-interwork
 CFLAGS+=-I$(topdir)include $(PLFLAGS) $(CPPFLAGS)
-CFLAGS+=-DPLATFORM=\"$(PLATFORM)\" -DPLATFORMSUB=\"$(PLATFORMSUB)\" -DHDK_VERSION=\"$(VER)\"
+CFLAGS+=-DPLATFORM=\"$(PLATFORM)\" -DPLATFORMSUB=\"$(PLATFORMSUB)\" -DHDK_VERSION=\"$(VER)\" -DBUILD_NUMBER=\"$(BUILD_NUMBER)\"
 CFLAGS+=-Wall -Wno-unused -Wno-format
 LDFLAGS=-L$(topdir)lib/math -L$(topdir)lib/font
 LDFLAGS+=-L$(topdir)lib/libc -L$(topdir)lib/ubasic

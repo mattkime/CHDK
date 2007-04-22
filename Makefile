@@ -3,13 +3,19 @@ srcdir=./
 
 include makefile.inc
 
+ifndef NO_INC_BUILD
+BUILD_NUMBER := $(shell expr $(BUILD_NUMBER) + 1)
+endif
+
 SUBDIRS=tools lib platform core loader
 
 all: all-recursive
 
 clean: clean-recursive
 
-fir: all
+fir: version firsub
+
+firsub: all
 	@echo \-\> $(PLATFORM)-$(PLATFORMSUB).FIR
 	cp $(topdir)loader/$(PLATFORM)/main.bin $(topdir)/bin/main.bin
 ifndef NOZERO100K
@@ -31,35 +37,43 @@ upload: fir
 	/home/vitalyb/Projects/ch/libptp2-1.1.0/src/ptpcam -u -m 0xbf01 --filename $(topdir)bin/PS.FIR
 
 infoline:
-	@echo "**** BUILDING HDK-$(VER) FOR $(PLATFORM)-$(PLATFORMSUB)"
+	@echo "**** BUILDING HDK-$(VER), #$(BUILD_NUMBER) FOR $(PLATFORM)-$(PLATFORMSUB)"
 
-firzip: infoline clean all fir
-	@echo \-\> $(VER)-$(PLATFORM)-$(PLATFORMSUB).zip
-	rm -f $(topdir)bin/$(VER)-$(PLATFORM)-$(PLATFORMSUB).zip
+version: FORCE
+	echo "**** Build: $(BUILD_NUMBER)"
+	echo "BUILD_NUMBER := $(BUILD_NUMBER)" > version.inc
+
+FORCE:
+
+firzip: version firzipsub
+
+firzipsub: infoline clean firsub
+	@echo \-\> $(VER)-$(PLATFORM)-$(PLATFORMSUB)-$(BUILD_NUMBER).zip
+	rm -f $(topdir)bin/$(VER)-$(PLATFORM)-$(PLATFORMSUB)-$(BUILD_NUMBER).zip
 	cp $(topdir)bin/$(PLATFORM)-$(PLATFORMSUB).FIR $(topdir)bin/PS.FIR
 	LANG=C echo -e "hdk-$(VER) for $(PLATFORM) fw:$(PLATFORMSUB) build:`date -R`" | \
-	    zip -9jc $(topdir)bin/$(VER)-$(PLATFORM)-$(PLATFORMSUB).zip $(topdir)bin/PS.FIR > $(DEVNULL)
-	zip -9j $(topdir)bin/$(VER)-$(PLATFORM)-$(PLATFORMSUB).zip $(topdir)bin/DISKBOOT.BIN > $(DEVNULL)
+	    zip -9jc $(topdir)bin/$(VER)-$(PLATFORM)-$(PLATFORMSUB)-$(BUILD_NUMBER).zip $(topdir)bin/PS.FIR > $(DEVNULL)
+	zip -9j $(topdir)bin/$(VER)-$(PLATFORM)-$(PLATFORMSUB)-$(BUILD_NUMBER).zip $(topdir)bin/DISKBOOT.BIN > $(DEVNULL)
 	rm -f $(topdir)bin/PS.FIR
 	rm -f $(topdir)bin/DISKBOOT.BIN
 
-batch-zip:
-	$(MAKE) -s --no-print-directory PLATFORM=a610 PLATFORMSUB=100e firzip
-	$(MAKE) -s --no-print-directory PLATFORM=a610 PLATFORMSUB=100f firzip
-	$(MAKE) -s --no-print-directory PLATFORM=a620 PLATFORMSUB=100f firzip
-	$(MAKE) -s --no-print-directory PLATFORM=a630 PLATFORMSUB=100c firzip
-	$(MAKE) -s --no-print-directory PLATFORM=a640 PLATFORMSUB=100b firzip
-	$(MAKE) -s --no-print-directory PLATFORM=a710 PLATFORMSUB=100a firzip
-	$(MAKE) -s --no-print-directory PLATFORM=s3is PLATFORMSUB=100a firzip
+batch-zip: version
+	$(MAKE) -s --no-print-directory PLATFORM=a610 PLATFORMSUB=100e NO_INC_BUILD=1 firzipsub
+	$(MAKE) -s --no-print-directory PLATFORM=a610 PLATFORMSUB=100f NO_INC_BUILD=1 firzipsub
+	$(MAKE) -s --no-print-directory PLATFORM=a620 PLATFORMSUB=100f NO_INC_BUILD=1 firzipsub
+	$(MAKE) -s --no-print-directory PLATFORM=a630 PLATFORMSUB=100c NO_INC_BUILD=1 firzipsub
+	$(MAKE) -s --no-print-directory PLATFORM=a640 PLATFORMSUB=100b NO_INC_BUILD=1 firzipsub
+	$(MAKE) -s --no-print-directory PLATFORM=a710 PLATFORMSUB=100a NO_INC_BUILD=1 firzipsub
+	$(MAKE) -s --no-print-directory PLATFORM=s3is PLATFORMSUB=100a NO_INC_BUILD=1 firzipsub
 	@echo "**** All firmwares created successfully"
 
 batch-clean:
-	$(MAKE) -s --no-print-directory PLATFORM=a610 PLATFORMSUB=100e clean
-	$(MAKE) -s --no-print-directory PLATFORM=a610 PLATFORMSUB=100f clean
-	$(MAKE) -s --no-print-directory PLATFORM=a620 PLATFORMSUB=100f clean
-	$(MAKE) -s --no-print-directory PLATFORM=a630 PLATFORMSUB=100c clean
-	$(MAKE) -s --no-print-directory PLATFORM=a640 PLATFORMSUB=100b clean
-	$(MAKE) -s --no-print-directory PLATFORM=a710 PLATFORMSUB=100a clean
-	$(MAKE) -s --no-print-directory PLATFORM=s3is PLATFORMSUB=100a clean
+	$(MAKE) -s --no-print-directory PLATFORM=a610 PLATFORMSUB=100e NO_INC_BUILD=1 clean
+	$(MAKE) -s --no-print-directory PLATFORM=a610 PLATFORMSUB=100f NO_INC_BUILD=1 clean
+	$(MAKE) -s --no-print-directory PLATFORM=a620 PLATFORMSUB=100f NO_INC_BUILD=1 clean
+	$(MAKE) -s --no-print-directory PLATFORM=a630 PLATFORMSUB=100c NO_INC_BUILD=1 clean
+	$(MAKE) -s --no-print-directory PLATFORM=a640 PLATFORMSUB=100b NO_INC_BUILD=1 clean
+	$(MAKE) -s --no-print-directory PLATFORM=a710 PLATFORMSUB=100a NO_INC_BUILD=1 clean
+	$(MAKE) -s --no-print-directory PLATFORM=s3is PLATFORMSUB=100a NO_INC_BUILD=1 clean
 
 .PHONY: fir upload

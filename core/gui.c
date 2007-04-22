@@ -852,7 +852,8 @@ void gui_draw_palette(int arg) {
 //-------------------------------------------------------------------
 void gui_show_build_info(int arg) {
     gui_mbox_init("*** Build Info ***", 
-                  "Date:    "   __DATE__ 
+                  "HDK Ver: " HDK_VERSION ", #" BUILD_NUMBER
+                  "\nDate:    "   __DATE__ 
                   "\nTime:    " __TIME__ 
                   "\nCamera:  " PLATFORM 
                   "\nFW Vers: " PLATFORMSUB, MBOX_FUNC_RESTORE|MBOX_TEXT_LEFT, NULL);
@@ -933,7 +934,7 @@ void gui_draw_debug(int arg) {
 void gui_draw_splash() {
     coord w, h, x, y;
     static const char *text[] = {
-        "HDK Firmware '" HDK_VERSION "'" , 
+        "HDK Firmware '" HDK_VERSION ", #" BUILD_NUMBER "'" , 
         "Build: " __DATE__ " " __TIME__ ,
         "Camera: " PLATFORM " - " PLATFORMSUB };
     int i, l;
