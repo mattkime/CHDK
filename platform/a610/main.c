@@ -10,8 +10,20 @@ long get_vbatt_max()
     return 5150;
 }
 
-const int dof_tbl[] = {7300, 8460, 9565, 10835, 12565, 14926, 17342, 21709, 29200};
-const int dof_tbl_size = sizeof(dof_tbl)/sizeof(dof_tbl[0]);
+static const int fl_tbl[] = {7300, 8460, 9565, 10835, 12565, 14926, 17342, 21709, 29200};
+#define NUM_FL (sizeof(fl_tbl)/sizeof(fl_tbl[0]))
+
+int get_focal_length(int zp) {
+    if (zp<0) return fl_tbl[0];
+    else if (zp>NUM_FL-1) return fl_tbl[NUM_FL-1];
+    else return fl_tbl[zp];
+}
+
+int get_zoom_x(int zp) {
+    if (zp<1) return 10;
+    else if (zp>NUM_FL-1) return fl_tbl[NUM_FL-1]*10/fl_tbl[0];
+    else return fl_tbl[zp]*10/fl_tbl[0];
+}
 
 static struct {
 	int hackmode;

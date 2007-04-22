@@ -60,7 +60,8 @@ typedef struct {
 
 /******************************************************************/
 
-extern const int dof_tbl[], dof_tbl_size;
+int get_focal_length(int zp);
+int get_zoom_x(int zp);
 
 /******************************************************************/
 

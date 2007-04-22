@@ -390,27 +390,17 @@ static void sprintf_dist(char *buf, float dist) {
 }
 
 //-------------------------------------------------------------------
-static int get_fl() {
-    long zp;
-
-    zp=lens_get_zoom_point();
-    if (zp<0) zp=0;
-    if (zp>=dof_tbl_size) zp=dof_tbl_size-1;
-    return dof_tbl[zp];
-}
-
-//-------------------------------------------------------------------
 void gui_osd_draw_dof() {
     long av, fp; 
     float r1=-1.0f, r2=-1.0f, hyp=-1.0f, fl, v;
     
-    fl=get_fl();
+    fl=get_focal_length(lens_get_zoom_point());
     av=shooting_get_real_av();
     fp=lens_get_target_distance();
 
     if (av) {
         hyp=(fl*fl)/(10*6*av);
-        if (fp>=0 && fp<65000) {
+        if (fp>=0 && fp<65500) {
             v = (hyp+fp);
             if (v!=0.0f)
                 r1=(hyp*fp)/v;
@@ -452,7 +442,7 @@ void gui_osd_draw_state() {
 
 //-------------------------------------------------------------------
 void gui_osd_draw_values() {
-    int av=shooting_get_real_av(), fl=get_fl()*10/dof_tbl[0], lfp;
+    int av=shooting_get_real_av(), fl=get_zoom_x(lens_get_zoom_point()), lfp;
 
     sprintf(osd_buf, "Z:%ld/%d.%dx%8s", lens_get_zoom_point(), fl/10, fl%10, "");
     osd_buf[8]=0;
