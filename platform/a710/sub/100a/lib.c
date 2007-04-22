@@ -32,7 +32,12 @@ void *vid_get_bitmap_fb()
 
 void *vid_get_viewport_fb()
 {
-    return (void*)0x105f25e0;
+    return (void*)0x1055A7E0; //0x105f25e0;
+}
+
+void *vid_get_viewport_fb_d()
+{
+    return (void*)(*(int*)0x70854);
 }
 
 long vid_get_bitmap_width()

@@ -35,6 +35,11 @@ void *vid_get_viewport_fb()
     return (void*)0x10559570;
 }
 
+void *vid_get_viewport_fb_d()
+{
+    return (void*)(*(int*)0x7279c);
+}
+
 long vid_get_bitmap_width()
 {
     return 360;

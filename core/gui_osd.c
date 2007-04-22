@@ -211,12 +211,12 @@ int gui_osd_draw_zebra() {
 
     if (!buf) {
         buf = malloc(screen_size);
-        img_buf = vid_get_viewport_fb();
         scr_buf = vid_get_bitmap_fb();
     }
 
     if (buf) {
         ++timer;
+        img_buf=((mode_get()&MODE_MASK) == MODE_PLAY)?vid_get_viewport_fb_d():vid_get_viewport_fb();
         switch (conf.zebra_mode) {
             case ZEBRA_MODE_ZEBRA_1:
                 f = 4;
@@ -376,7 +376,7 @@ void gui_osd_draw_histo() {
 //-------------------------------------------------------------------
 static void sprintf_dist(char *buf, float dist) {
 // length of printed string is always 4
-    if (dist<=0) {
+    if (dist<=0 || dist>65500) {
         sprintf(buf, " inf");
 //    } else if (dist<1000) {
 //        sprintf(buf, ".%03d", (int)dist);

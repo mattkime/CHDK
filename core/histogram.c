@@ -24,7 +24,7 @@ long histo_magnification;
 
 static unsigned int histogram_proc[5][HISTO_WIDTH];         // RGBYG
 static float histo_max_invw[5], histo_max_center_invw[5];   // RGBYG
-static long histogram_stage;
+static long histogram_stage=0;
 static unsigned int histo_max[5], histo_max_center[5];      // RGBYG
 static float (*histogram_transform)(float) = identity;
 static int histo_main = HISTO_RGB;
@@ -63,19 +63,20 @@ static int clip(int v) {
 
 void histogram_process()
 {
-    unsigned char *img;
+    static unsigned char *img;
     int i, hi, c;
     int y, v, u;
     unsigned int histo_fill[5];
 
 //    if (kbd_is_key_pressed(KEY_SHOOT_HALF)){
-        img = vid_get_viewport_fb();
+//        img = vid_get_viewport_fb();
 //    } else {
 //        img = vid_get_viewport_live_fb();
 //    }
 
     switch (histogram_stage) {
         case 0:
+            img=((mode_get()&MODE_MASK) == MODE_PLAY)?vid_get_viewport_fb_d():vid_get_viewport_fb();
             for (c=0; c<5; ++c) {
                 for (i=0; i<HISTO_WIDTH; ++i) {
                     histogram_proc[c][i]=0;

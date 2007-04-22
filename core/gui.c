@@ -166,8 +166,8 @@ static CMenuItem visual_submenu_items[] = {
     {"Histogram background",        MENUITEM_COLOR_BG,  (int*)&conf.histo_color },
     {"Histogram border",            MENUITEM_COLOR_FG,  (int*)&conf.histo_color2 },
     {"Histogram EXP markers",       MENUITEM_COLOR_BG,  (int*)&conf.histo_color2 },
-    {"Zebra Underexplosure",        MENUITEM_COLOR_BG,  (int*)&conf.zebra_color },
-    {"Zebra Overexplosure",         MENUITEM_COLOR_FG,  (int*)&conf.zebra_color },
+    {"Zebra Underexposure",         MENUITEM_COLOR_BG,  (int*)&conf.zebra_color },
+    {"Zebra Overexposure",          MENUITEM_COLOR_FG,  (int*)&conf.zebra_color },
     {"Battery icon",                MENUITEM_COLOR_FG,  (int*)&conf.batt_icon_color },
     {"Menu text",                   MENUITEM_COLOR_FG,  (int*)&conf.menu_color },
     {"Menu background",             MENUITEM_COLOR_BG,  (int*)&conf.menu_color },
@@ -223,8 +223,8 @@ static CMenu raw_submenu = { "RAW", NULL, raw_submenu_items };
 static CMenuItem zebra_submenu_items[] = {
     {"Draw Zebra", 		    MENUITEM_BOOL,                            &conf.zebra_draw },
     {"Zebra mode",                  MENUITEM_ENUM,                            (int*)gui_zebra_mode_enum },
-    {"Draw UnderExplosure",         MENUITEM_INT|MENUITEM_F_UNSIGNED|MENUITEM_F_MINMAX,  &conf.zebra_under,   MENU_MINMAX(0, 32)},
-    {"Draw OverExplosure",          MENUITEM_INT|MENUITEM_F_UNSIGNED|MENUITEM_F_MINMAX,  &conf.zebra_over,    MENU_MINMAX(0, 32)},
+    {"Draw UnderExposure",          MENUITEM_INT|MENUITEM_F_UNSIGNED|MENUITEM_F_MINMAX,  &conf.zebra_under,   MENU_MINMAX(0, 32)},
+    {"Draw OverExposure",           MENUITEM_INT|MENUITEM_F_UNSIGNED|MENUITEM_F_MINMAX,  &conf.zebra_over,    MENU_MINMAX(0, 32)},
     {"Restore original screen",     MENUITEM_BOOL|MENUITEM_ARG_CALLBACK,      &conf.zebra_restore_screen,     (int)cb_zebra_restore_screen },
     {"Restore OSD",                 MENUITEM_BOOL|MENUITEM_ARG_CALLBACK,      &conf.zebra_restore_osd,        (int)cb_zebra_restore_osd },
     {"Draw over zebra",             MENUITEM_ENUM,                            (int*)gui_zebra_draw_osd_enum },
@@ -779,7 +779,7 @@ void gui_draw_osd() {
     }
 
     if (debug_vals_show) {
-        long v=get_file_counter();
+//        long v=get_file_counter();
 //	sprintf(osd_buf, "1:%03d-%04d  ", (v>>18)&0x3FF, (v>>4)&0x3FFF);
 //	sprintf(osd_buf, "1:%d, %08X  ", xxxx, eeee);
 	sprintf(osd_buf, "1:%8x  ", physw_status[0]);
@@ -791,7 +791,7 @@ void gui_draw_osd() {
 	sprintf(osd_buf, "3:%8x  ", physw_status[2]);
 	draw_txt_string(28, 12, osd_buf, conf.osd_color);
 
-	sprintf(osd_buf, "4:%8x  ", v);
+	sprintf(osd_buf, "4:%8x  ", vid_get_viewport_fb_d());
 	draw_txt_string(28, 13, osd_buf, conf.osd_color);
     }
 
