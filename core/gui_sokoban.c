@@ -71,7 +71,7 @@ static void sokoban_set_level(int lvl) {
     for (y=(FIELD_HEIGHT-h)/2; y<FIELD_HEIGHT; ++y, ++p) {
         for (x=(FIELD_WIDTH-w)/2; x<FIELD_WIDTH && *p && *p!='|'; ++x, ++p) {
             field[y][x]=*p;
-            if (field[y][x] == MARKER_PLAYER) {
+            if (field[y][x] == MARKER_PLAYER || field[y][x] == MARKER_PLAYER_PLACE) {
               xPl = x; yPl = y;
             }
         }
