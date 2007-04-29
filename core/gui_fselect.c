@@ -290,10 +290,46 @@ void gui_fselect_draw() {
 }
 
 //-------------------------------------------------------------------
-static void fselect_delete_cb(unsigned int btn) {
+static void fselect_delete_file_cb(unsigned int btn) {
     if (btn==MBOX_BTN_YES) {
+        started();
         sprintf(selected_file, "%s/%s", current_dir, selected->name);
         remove(selected_file);
+        finished();
+        selected_file[0]=0;
+        gui_fselect_read_dir(current_dir);
+    }
+    gui_fselect_redraw = 1;
+}
+
+//-------------------------------------------------------------------
+static void fselect_delete_folder_cb(unsigned int btn) {
+    DIR           *d;
+    struct dirent *de;
+    int           i;
+
+    if (btn==MBOX_BTN_YES) {
+        sprintf(current_dir+strlen(current_dir), "/%s", selected->name);
+        d = opendir(current_dir);
+        if (d) {
+            de = readdir(d);
+            while (de) {
+                if (de->name[0] != 0xE5 /* deleted entry */ && (de->name[0]!='.' || (de->name[1]!='.' && de->name[1]!=0) || (de->name[1]=='.' && de->name[2]!=0))) {
+                    started();
+                    sprintf(selected_file, "%s/%s", current_dir, de->name);
+                    remove(selected_file);
+                    finished();
+                }
+                de = readdir(d);
+            }
+            closedir(d);
+        }
+        started();
+        remove(current_dir);
+        finished();
+        i=strlen(current_dir);
+        while (current_dir[--i] != '/');
+        current_dir[i]=0;
         selected_file[0]=0;
         gui_fselect_read_dir(current_dir);
     }
@@ -378,9 +414,15 @@ void gui_fselect_kbd_process() {
             }
             break;
         case KEY_ERASE:
-            if (selected && selected->attr != 0xFF && !(selected->attr & DOS_ATTR_DIRECTORY)) {
-                gui_mbox_init("*** Delete file ***", "Are you SURE to delete\nselected file?",
-                               MBOX_TEXT_CENTER|MBOX_BTN_YES_NO|MBOX_DEF_BTN2, fselect_delete_cb);
+            if (selected && selected->attr != 0xFF) {
+                if (selected->attr & DOS_ATTR_DIRECTORY) {
+                    if (selected->name[0]!='.' || selected->name[1]!='.' || selected->name[2]!=0)
+                        gui_mbox_init("*** Erase directory ***", "Are you SURE to delete\nALL files from\nselected directory?",
+                                      MBOX_TEXT_CENTER|MBOX_BTN_YES_NO|MBOX_DEF_BTN2, fselect_delete_folder_cb);
+                } else {
+                    gui_mbox_init("*** Delete file ***", "Are you SURE to delete\nselected file?",
+                                  MBOX_TEXT_CENTER|MBOX_BTN_YES_NO|MBOX_DEF_BTN2, fselect_delete_file_cb);
+                }
             }
             break;
         case KEY_MENU:
