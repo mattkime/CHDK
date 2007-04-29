@@ -349,6 +349,10 @@ void gui_osd_draw_histo() {
         case OSD_HISTO_LAYOUT_BLEND:
                 gui_osd_draw_blended_histo(conf.histo_pos.x, conf.histo_pos.y);
                 break;
+        case OSD_HISTO_LAYOUT_BLEND_Y:
+                gui_osd_draw_blended_histo(conf.histo_pos.x, conf.histo_pos.y);
+                gui_osd_draw_single_histo(HISTO_Y, conf.histo_pos.x, conf.histo_pos.y+HISTO_HEIGHT, 0);
+                break;
         case OSD_HISTO_LAYOUT_A:
         default:
                 gui_osd_draw_single_histo(HISTO_RGB, conf.histo_pos.x, conf.histo_pos.y, 0);

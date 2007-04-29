@@ -193,6 +193,8 @@ void gui_read_kbd_process() {
                 close(read_file);
                 read_file=-1;
             }
+            if (!rbf_load(conf.menu_rbf_file))
+                rbf_load_from_8x16(current_font);
             break;
     }
 }

@@ -63,6 +63,7 @@ typedef struct {
     color zebra_color; // under/over
 
     int font;
+    char menu_rbf_file[100];
 
     char reader_file[100];
     int  reader_pos;

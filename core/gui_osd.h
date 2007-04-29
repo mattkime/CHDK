@@ -10,6 +10,7 @@
 #define OSD_HISTO_LAYOUT_A_yrgb         4
 #define OSD_HISTO_LAYOUT_Y_argb         5
 #define OSD_HISTO_LAYOUT_BLEND          6
+#define OSD_HISTO_LAYOUT_BLEND_Y        7
 
 #define ZEBRA_DRAW_NONE                 0
 #define ZEBRA_DRAW_HISTO                1

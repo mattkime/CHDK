@@ -192,6 +192,16 @@ int rbf_char_width(int ch) {
 }
 
 //-------------------------------------------------------------------
+int rbf_str_width(const char *str) {
+    int l=0;
+
+    while (*str)
+        l+=rbf_char_width(*str++);
+
+    return l;
+}
+
+//-------------------------------------------------------------------
 int rbf_draw_char(int x, int y, int ch, color cl) {
     int xx, yy;
 
@@ -213,4 +223,50 @@ int rbf_draw_char(int x, int y, int ch, color cl) {
     return rbf_font.wTable[ch];
 }
 
+//-------------------------------------------------------------------
+int rbf_draw_string(int x, int y, const char *str, color cl) {
+    int l=0;
+
+    while (*str)
+        l+=rbf_draw_char(x+l, y, *str++, cl);
+
+    return l;
+}
+
+//-------------------------------------------------------------------
+int rbf_draw_string_len(int x, int y, int len, const char *str, color cl) {
+    int l=0, yy;
+
+    while (*str && l+rbf_char_width(*str)<=len)
+        l+=rbf_draw_char(x+l, y, *str++, cl);
+
+    for (; l<len; ++l) {
+        for (yy=y; yy<y+rbf_font.height; ++yy) {
+            draw_pixel(x+l, yy, cl>>8);
+        }
+    }
+
+    return l;
+}
+
+//-------------------------------------------------------------------
+int rbf_draw_string_right_len(int x, int y, int len, const char *str, color cl) {
+    int l=0, i, yy;
+    const char *s=str;
+
+    while (*s && l+rbf_char_width(*s)<=len)
+        l+=rbf_char_width(*s++);
+    l=len-l;
+
+    for (i=l-1; i>=0; --i) {
+        for (yy=y; yy<y+rbf_font.height; ++yy) {
+            draw_pixel(x+i, yy, cl>>8);
+        }
+    }
+
+    while (*str && l+rbf_char_width(*str)<=len)
+        l+=rbf_draw_char(x+l, y, *str++, cl);
+
+    return l;
+}
 //-------------------------------------------------------------------

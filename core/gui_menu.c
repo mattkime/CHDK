@@ -4,6 +4,7 @@
 #include "keyboard.h"
 #include "conf.h"
 #include "ubasic.h"
+#include "font.h"
 #include "gui.h"
 #include "gui_draw.h"
 #include "gui_palette.h"
@@ -11,8 +12,6 @@
 
 //-------------------------------------------------------------------
 #define MENUSTACK_MAXDEPTH  3
-
-#define NUM_LINES           8
 
 //-------------------------------------------------------------------
 typedef struct {
@@ -31,7 +30,8 @@ static int          gui_menu_top_item;
 static int          gui_menu_redraw;
 
 static int          count;
-static coord        x, y, w=37;
+static coord        x, y, w, num_lines;
+static int          len_bool, len_int, len_enum, len_space, len_br1, len_br2, cl_rect;
 static unsigned char *item_color;
 
 //-------------------------------------------------------------------
@@ -43,11 +43,22 @@ static void gui_menu_set_curr_menu(CMenu *menu_ptr, int top_item, int curr_item)
 
 //-------------------------------------------------------------------
 void gui_menu_init(CMenu *menu_ptr) {
-    gui_menu_set_curr_menu(menu_ptr, 0, -1);
-    gui_menu_stack_ptr = 0;
+    if (menu_ptr) {
+        gui_menu_set_curr_menu(menu_ptr, 0, -1);
+        gui_menu_stack_ptr = 0;
+    }
     
-    x = (screen_width/FONT_WIDTH-w)>>1;
-    y = (screen_height/FONT_HEIGHT-NUM_LINES)>>1;
+    num_lines = (screen_height-26-16)/rbf_font_height()-2;
+    w = screen_width-30-30;
+    x = (screen_width-w)>>1;
+    y = ((screen_height-num_lines*rbf_font_height())>>1);
+    len_bool = rbf_str_width("\xF9");
+    len_int = rbf_str_width("99999");
+    len_enum = rbf_str_width("WUBfS3a");
+    len_space = rbf_char_width(' ');
+    len_br1 = rbf_char_width('[');
+    len_br2 = rbf_char_width(']');
+    cl_rect = rbf_font_height() - 4;
     
     gui_menu_redraw=2;
 }
@@ -73,7 +84,7 @@ void gui_menu_kbd_process() {
                     int i;
                     while (curr_menu->menu[gui_menu_curr_item+1].text)
                         ++gui_menu_curr_item;
-                    gui_menu_top_item = gui_menu_curr_item - NUM_LINES +1;
+                    gui_menu_top_item = gui_menu_curr_item - num_lines +1;
                     if (gui_menu_top_item<0) gui_menu_top_item=0;
                 }
             } while ((curr_menu->menu[gui_menu_curr_item].type & MENUITEM_MASK)==MENUITEM_TEXT || 
@@ -84,8 +95,8 @@ void gui_menu_kbd_process() {
             do {
                 if (curr_menu->menu[gui_menu_curr_item+1].text) {
                     int i;
-                    for (i=0; i<NUM_LINES-1 && curr_menu->menu[gui_menu_top_item+i].text; ++i);
-                    if (i==NUM_LINES-1 && curr_menu->menu[gui_menu_top_item+i].text 
+                    for (i=0; i<num_lines-1 && curr_menu->menu[gui_menu_top_item+i].text; ++i);
+                    if (i==num_lines-1 && curr_menu->menu[gui_menu_top_item+i].text 
                         && gui_menu_top_item+i-1==gui_menu_curr_item && curr_menu->menu[gui_menu_top_item+i+1].text)
                         ++gui_menu_top_item;
                     ++gui_menu_curr_item;
@@ -264,97 +275,105 @@ void gui_menu_kbd_process() {
 //-------------------------------------------------------------------
 void gui_menu_draw_initial() {
     static const char *f=" *** ";
-    int l, xx;
+    int l, xx, yy;
     
-    l = strlen(curr_menu->title);
-    xx=x+((w-l)>>1);
-    draw_txt_string(xx-5, y-2, f, conf.menu_color);
-    draw_txt_string(xx, y-2, curr_menu->title, conf.menu_color);
-    draw_txt_string(xx+l, y-2, f, conf.menu_color);
+    l = rbf_str_width(curr_menu->title);
+    xx = x+((w-l)>>1)-rbf_str_width(f);
+    yy = y-rbf_font_height()-rbf_font_height()/2;
+    xx+=rbf_draw_string(xx, yy, f, conf.menu_color);
+    xx+=rbf_draw_string(xx, yy, curr_menu->title, conf.menu_color);
+    rbf_draw_string(xx, yy, f, conf.menu_color);
 
     for (count=0; curr_menu->menu[count].text; ++count);
 
     // scrollbar background
-    if (count>NUM_LINES) {
-        draw_filled_rect((x+w)*FONT_WIDTH, y*FONT_HEIGHT, 
-                         (x+w)*FONT_WIDTH+8, (y+NUM_LINES)*FONT_HEIGHT-1, MAKE_COLOR((conf.menu_color>>8)&0xFF, (conf.menu_color>>8)&0xFF));
+    if (count>num_lines) {
+        draw_filled_rect((x+w), y, (x+w)+8, y+num_lines*rbf_font_height()-1, MAKE_COLOR((conf.menu_color>>8)&0xFF, (conf.menu_color>>8)&0xFF));
     }
 }
 
 //-------------------------------------------------------------------
 void gui_menu_draw() {
     static char tbuf[64];
-    int imenu, i, j;
+    int imenu, i, j, yy, xx;
     color cl;
-    char cb, ce;
     const char *ch = "";
 
     if (gui_menu_redraw) {
         if (gui_menu_redraw==2)
             gui_menu_draw_initial();
 
-        for (imenu=gui_menu_top_item, i=0; curr_menu->menu[imenu].text && i<NUM_LINES; ++imenu, ++i){
+        for (imenu=gui_menu_top_item, i=0, yy=y; curr_menu->menu[imenu].text && i<num_lines; ++imenu, ++i, yy+=rbf_font_height()){
             cl = (gui_menu_curr_item==imenu)?MAKE_COLOR(COLOR_SELECTED_BG, COLOR_SELECTED_FG):conf.menu_color;
-            cb = (gui_menu_curr_item==imenu)?'\x10':' ';
-            ce = (gui_menu_curr_item==imenu)?'\x11':' ';
+            xx = x;
 
             switch (curr_menu->menu[imenu].type & MENUITEM_MASK) {
             case MENUITEM_BOOL:
-                sprintf(tbuf, "%c%-31s [%c]%c", cb, curr_menu->menu[imenu].text,
-                    (*(curr_menu->menu[imenu].value))?'\xfe':' ', ce);
-                draw_txt_string(x, y+i, tbuf, cl);
+                xx+=rbf_draw_char(xx, yy, ' ', cl);
+                xx+=rbf_draw_string_len(xx, yy, w-len_space-len_space-len_br1-len_bool-len_br2-len_space, curr_menu->menu[imenu].text, cl);
+                xx+=rbf_draw_string(xx, yy, " [", cl);
+                xx+=rbf_draw_string_len(xx, yy, len_bool, (*(curr_menu->menu[imenu].value))?"\xF9":"", cl);
+                rbf_draw_string(xx, yy, "] ", cl);
                 break;
             case MENUITEM_INT:
-                sprintf(tbuf, "%c%-27s [%5d]%c", cb, curr_menu->menu[imenu].text,
-                    *(curr_menu->menu[imenu].value), ce);
-                draw_txt_string(x, y+i, tbuf, cl);
+                xx+=rbf_draw_char(xx, yy, ' ', cl);
+                xx+=rbf_draw_string_len(xx, yy, w-len_space-len_space-len_br1-len_int-len_br2-len_space, curr_menu->menu[imenu].text, cl);
+                xx+=rbf_draw_string(xx, yy, " [", cl);
+                sprintf(tbuf, "%d", *(curr_menu->menu[imenu].value));
+                xx+=rbf_draw_string_right_len(xx, yy, len_int, tbuf, cl);
+                rbf_draw_string(xx, yy, "] ", cl);
                 break;
             case MENUITEM_UP:
             case MENUITEM_SUBMENU:
             case MENUITEM_PROC:
             case MENUITEM_TEXT:
-                sprintf(tbuf, "%c%-35s%c", cb, curr_menu->menu[imenu].text, ce);
-                draw_txt_string(x, y+i, tbuf, cl);
+                xx+=rbf_draw_char(xx, yy, ' ', cl);
+                xx+=rbf_draw_string_len(xx, yy, w-len_space-len_space, curr_menu->menu[imenu].text, cl);
+                rbf_draw_char(xx, yy, ' ', cl);
                 break;
             case MENUITEM_SEPARATOR:
-                strcpy(tbuf, " 컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴� ");
+            	draw_filled_rect(xx, yy, xx+w-1, yy+rbf_font_height()-1, MAKE_COLOR(cl>>8, cl>>8));
+            	draw_line(xx+len_space, yy+rbf_font_height()/2, xx+w-1-len_space, yy+rbf_font_height()/2, cl);
                 if (curr_menu->menu[imenu].text[0]) {
-                    j = strlen(curr_menu->menu[imenu].text);
-                    tbuf[((w-j)>>1)-1]=' ';
-                    strcpy(tbuf+((w-j)>>1), curr_menu->menu[imenu].text);
-                    tbuf[((w-j)>>1)+j]=' ';
+                    j = rbf_str_width(curr_menu->menu[imenu].text);
+                    xx+=(w-j-len_space*2)>>1;
+                    xx+=rbf_draw_char(xx, yy, ' ', cl);
+                    xx+=rbf_draw_string(xx, yy, curr_menu->menu[imenu].text, cl);
+                    rbf_draw_char(xx, yy, ' ', cl);
                 }
-                draw_txt_string(x, y+i, tbuf, conf.menu_color);
                 break;
             case MENUITEM_COLOR_FG:
             case MENUITEM_COLOR_BG:
-                sprintf(tbuf, "%c%-33s", cb, curr_menu->menu[imenu].text);
-                draw_txt_string(x, y+i, tbuf, cl);
-                draw_txt_string(x+34, y+i, "\xf9\xfa", (cl&0xFF00)|(((*(curr_menu->menu[imenu].value))>>(((curr_menu->menu[imenu].type & MENUITEM_MASK)==MENUITEM_COLOR_BG)?8:0))&0xFF));
-                draw_txt_char(x+36, y+i, ce, cl);
+                xx+=rbf_draw_char(xx, yy, ' ', cl);
+                xx+=rbf_draw_string_len(xx, yy, w-len_space, curr_menu->menu[imenu].text, cl);
+                draw_filled_rect(x+w-1-cl_rect-2-len_space, yy+2, x+w-1-2-len_space, yy+rbf_font_height()-1-2, 
+                                 MAKE_COLOR(((*(curr_menu->menu[imenu].value))>>(((curr_menu->menu[imenu].type & MENUITEM_MASK)==MENUITEM_COLOR_BG)?8:0))&0xFF, (cl>>8)&0xFF));
                 break;
             case MENUITEM_ENUM:
                 if (curr_menu->menu[imenu].value) {
                     ch=((const char* (*)(int change, int arg))(curr_menu->menu[imenu].value))(0, curr_menu->menu[imenu].arg);
                 }
-                sprintf(tbuf, "%c%-25s [%7s]%c", cb, curr_menu->menu[imenu].text, ch, ce);
-                draw_txt_string(x, y+i, tbuf, cl);
+                xx+=rbf_draw_char(xx, yy, ' ', cl);
+                xx+=rbf_draw_string_len(xx, yy, w-len_space-len_space-len_br1-len_enum-len_br2-len_space, curr_menu->menu[imenu].text, cl);
+                xx+=rbf_draw_string(xx, yy, " [", cl);
+                xx+=rbf_draw_string_right_len(xx, yy, len_enum, ch, cl);
+                rbf_draw_string(xx, yy, "] ", cl);
                 break;
             }
         }
         
         // scrollbar
-        if (count>NUM_LINES) {
-            i=NUM_LINES*FONT_HEIGHT-1 -1;           // full height
-            j=i*NUM_LINES/count;                    // bar height
+        if (count>num_lines) {
+            i=num_lines*rbf_font_height()-1 -1;           // full height
+            j=i*num_lines/count;                    // bar height
             if (j<20) j=20;
             i=(i-j)*((gui_menu_curr_item<0)?0:gui_menu_curr_item)/(count-1);   // top pos
-            draw_filled_rect((x+w)*FONT_WIDTH+2, y*FONT_HEIGHT+1, 
-                             (x+w)*FONT_WIDTH+6, y*FONT_HEIGHT+1+i, MAKE_COLOR(COLOR_BLACK, COLOR_BLACK));
-            draw_filled_rect((x+w)*FONT_WIDTH+2, y*FONT_HEIGHT+i+j, 
-                             (x+w)*FONT_WIDTH+6, (y+NUM_LINES)*FONT_HEIGHT-1-1, MAKE_COLOR(COLOR_BLACK, COLOR_BLACK));
-            draw_filled_rect((x+w)*FONT_WIDTH+2, y*FONT_HEIGHT+1+i, 
-                             (x+w)*FONT_WIDTH+6, y*FONT_HEIGHT+i+j, MAKE_COLOR(COLOR_WHITE, COLOR_WHITE));
+            draw_filled_rect((x+w)+2, y+1, 
+                             (x+w)+6, y+1+i, MAKE_COLOR(COLOR_BLACK, COLOR_BLACK));
+            draw_filled_rect((x+w)+2, y+i+j, 
+                             (x+w)+6, y+num_lines*rbf_font_height()-1-1, MAKE_COLOR(COLOR_BLACK, COLOR_BLACK));
+            draw_filled_rect((x+w)+2, y+1+i, 
+                             (x+w)+6, y+i+j, MAKE_COLOR(COLOR_WHITE, COLOR_WHITE));
 //        } else {
 //            draw_filled_rect((x+w)*FONT_WIDTH+2, y*FONT_HEIGHT+1, 
 //                             (x+w)*FONT_WIDTH+6, (y+count)*FONT_HEIGHT-1-1, MAKE_COLOR(COLOR_BLACK, COLOR_BLACK));

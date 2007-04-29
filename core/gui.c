@@ -46,6 +46,7 @@ static void gui_draw_osd_le(int arg);
 static void gui_load_script(int arg);
 static void gui_draw_read(int arg);
 static void gui_draw_read_last(int arg);
+static void gui_draw_load_menu_rbf(int arg);
 static void gui_draw_load_rbf(int arg);
 static void gui_draw_calendar(int arg);
 static void gui_menuproc_mkbootdisk(int arg);
@@ -158,7 +159,8 @@ static CMenu battery_submenu = { "Battery", cb_battery_menu_change, battery_subm
 
 
 static CMenuItem visual_submenu_items[] = {
-    {"Font",                        MENUITEM_ENUM,      (int*)gui_font_enum },
+    {"OSD font",                    MENUITEM_ENUM,      (int*)gui_font_enum },
+    {"Menu RBF font",               MENUITEM_PROC,      (int*)gui_draw_load_menu_rbf },
     {"Colors",                      MENUITEM_SEPARATOR },
     {"OSD text",                    MENUITEM_COLOR_FG,  (int*)&conf.osd_color },
     {"OSD background",              MENUITEM_COLOR_BG,  (int*)&conf.osd_color },
@@ -223,8 +225,8 @@ static CMenu raw_submenu = { "RAW", NULL, raw_submenu_items };
 static CMenuItem zebra_submenu_items[] = {
     {"Draw Zebra", 		    MENUITEM_BOOL,                            &conf.zebra_draw },
     {"Zebra mode",                  MENUITEM_ENUM,                            (int*)gui_zebra_mode_enum },
-    {"Draw UnderExposure",          MENUITEM_INT|MENUITEM_F_UNSIGNED|MENUITEM_F_MINMAX,  &conf.zebra_under,   MENU_MINMAX(0, 32)},
-    {"Draw OverExposure",           MENUITEM_INT|MENUITEM_F_UNSIGNED|MENUITEM_F_MINMAX,  &conf.zebra_over,    MENU_MINMAX(0, 32)},
+    {"UnderExposure threshold",     MENUITEM_INT|MENUITEM_F_UNSIGNED|MENUITEM_F_MINMAX,  &conf.zebra_under,   MENU_MINMAX(0, 32)},
+    {"OverExposure threshold",      MENUITEM_INT|MENUITEM_F_UNSIGNED|MENUITEM_F_MINMAX,  &conf.zebra_over,    MENU_MINMAX(0, 32)},
     {"Restore original screen",     MENUITEM_BOOL|MENUITEM_ARG_CALLBACK,      &conf.zebra_restore_screen,     (int)cb_zebra_restore_screen },
     {"Restore OSD",                 MENUITEM_BOOL|MENUITEM_ARG_CALLBACK,      &conf.zebra_restore_osd,        (int)cb_zebra_restore_osd },
     {"Draw over zebra",             MENUITEM_ENUM,                            (int*)gui_zebra_draw_osd_enum },
@@ -249,7 +251,7 @@ static CMenuItem root_menu_items[] = {
 #endif
     {0}
 };
-static CMenu root_menu = { "Main", NULL, root_menu_items };
+static CMenu root_menu = { "Main Menu", NULL, root_menu_items };
 
 //-------------------------------------------------------------------
 void cb_step_25() {
@@ -308,7 +310,7 @@ const char* gui_histo_mode_enum(int change, int arg) {
 
 //-------------------------------------------------------------------
 const char* gui_histo_layout_enum(int change, int arg) {
-    static const char* modes[]={ "RGB", "Y", "RGB Y",  "R G B", "RGB all", "Y all", "Blend"};
+    static const char* modes[]={ "RGB", "Y", "RGB Y",  "R G B", "RGB all", "Y all", "Blend", "Blend Y"};
 
     conf.histo_layout+=change;
     if (conf.histo_layout<0)
@@ -1045,6 +1047,31 @@ void gui_draw_load_rbf(int arg) {
     }
 
     gui_fselect_init(path, gui_draw_rbf_selected);
+}
+
+//-------------------------------------------------------------------
+static void gui_draw_menu_rbf_selected(const char *fn) {
+    if (fn) {
+        strcpy(conf.menu_rbf_file, fn);
+        if (!rbf_load(conf.menu_rbf_file))
+            rbf_load_from_8x16(current_font);
+        rbf_set_codepage(FONT_CP_DOS);
+        gui_menu_init(NULL);
+    }
+}
+void gui_draw_load_menu_rbf(int arg) {
+    DIR   *d;
+    char  *path="A/FONTS";
+
+    // if exists "A/FONTS" go into
+    d=opendir(path);
+    if (d) {
+        closedir(d);
+    } else {
+        path="A";
+    }
+
+    gui_fselect_init(path, gui_draw_menu_rbf_selected);
 }
 
 //-------------------------------------------------------------------

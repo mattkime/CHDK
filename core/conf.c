@@ -54,6 +54,7 @@ static void conf_change_script_file();
 static void conf_change_histo_mode();
 static void conf_change_histo_layout();
 static void conf_change_font();
+static void conf_change_menu_rbf_file();
 
 static const ConfInfo conf_info[] = {
 /* !!! Do NOT change ID for items defined already! Append a new one at the end! !!! */
@@ -113,6 +114,7 @@ static const ConfInfo conf_info[] = {
     CONF_INFO( 54, conf.zebra_under,            CONF_DEF_VALUE, i:0, NULL),
     CONF_INFO( 55, conf.zebra_color,            CONF_DEF_VALUE, cl:MAKE_COLOR(COLOR_RED, COLOR_RED), NULL),
     CONF_INFO( 56, conf.zebra_draw_osd,         CONF_DEF_VALUE, i:ZEBRA_DRAW_HISTO, NULL),
+    CONF_INFO( 57, conf.menu_rbf_file,          CONF_DEF_PTR,   ptr:"", conf_change_menu_rbf_file),
 };
 #define CONF_NUM (sizeof(conf_info)/sizeof(conf_info[0]))
 
@@ -135,6 +137,12 @@ static void conf_change_font() {
 
 static void conf_change_script_file() {
     script_load(conf.script_file);
+}
+
+static void conf_change_menu_rbf_file() {
+    if (!rbf_load(conf.menu_rbf_file))
+        rbf_load_from_8x16(current_font);
+    rbf_set_codepage(FONT_CP_DOS);
 }
 
 //-------------------------------------------------------------------
