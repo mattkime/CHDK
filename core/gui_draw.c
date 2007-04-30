@@ -10,7 +10,6 @@
 //-------------------------------------------------------------------
 static char*    frame_buffer[2];
 unsigned int    screen_width=0, screen_height=0, screen_size=0;
-unsigned int    viewport_width=0, viewport_height=0, viewport_size=0;
 void            (*draw_pixel_proc)(unsigned int offset, color cl);
 
 //-------------------------------------------------------------------
@@ -32,9 +31,6 @@ void draw_init() {
     screen_size = screen_width * screen_height;
     frame_buffer[0] = vid_get_bitmap_fb();
     frame_buffer[1] = frame_buffer[0] + screen_size;
-    viewport_width = vid_get_viewport_width();
-    viewport_height = vid_get_viewport_height();
-    viewport_size = viewport_width * viewport_height;
     draw_set_draw_proc(NULL);
 }
 

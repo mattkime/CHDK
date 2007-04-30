@@ -23,7 +23,6 @@
 
 //-------------------------------------------------------------------
 extern unsigned int		screen_width, screen_height, screen_size;
-extern unsigned int		viewport_width, viewport_height, viewport_size;
 
 //-------------------------------------------------------------------
 void draw_init();

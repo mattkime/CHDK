@@ -83,7 +83,7 @@ void gui_calendar_init() {
 
 //-------------------------------------------------------------------
 void gui_calendar_kbd_process() {
-    switch (kbd_get_clicked_key()) {
+    switch (kbd_get_autoclicked_key()) {
         case KEY_UP:
             ++cal_year;
             need_redraw = 1;

@@ -22,6 +22,11 @@ static const struct {
     { 128,  72000 },
 };
 #define NUM_FL (sizeof(fl_tbl)/sizeof(fl_tbl[0]))
+#define CF_EFL 6000
+
+int get_effective_focal_length(int zp) {
+    return (CF_EFL*get_focal_length(zp))/1000;
+}
 
 int get_focal_length(int zp) {
     int i;

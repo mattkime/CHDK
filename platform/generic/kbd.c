@@ -208,3 +208,30 @@ long kbd_get_clicked_key()
     return 0;
 }
 
+long kbd_get_autoclicked_key() {
+    static long last_kbd_time = 0, press_count = 0;
+    static long last_kbd_key = 0;
+    register long key, t;
+
+    key=kbd_get_clicked_key();
+    if (key) {
+        last_kbd_key = key;
+        press_count = 0;
+        last_kbd_time = get_tick_count();
+        return key;
+    } else {
+        if (last_kbd_key && kbd_is_key_pressed(last_kbd_key)) {
+            t = get_tick_count();
+            if (t-last_kbd_time>((press_count)?175:500)) {
+                ++press_count;
+                last_kbd_time = t;
+                return last_kbd_key;
+            } else {
+                return 0;
+            }
+        } else {
+            last_kbd_key = 0;
+            return 0;
+        }
+    }
+}

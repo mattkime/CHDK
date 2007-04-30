@@ -366,7 +366,7 @@ static void fselect_goto_next(int step) {
 void gui_fselect_kbd_process() {
     int i;
     
-    switch (kbd_get_clicked_key()) {
+    switch (kbd_get_autoclicked_key()) {
         case KEY_UP:
             if (selected) {
                 fselect_goto_prev(1);

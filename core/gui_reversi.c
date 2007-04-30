@@ -351,7 +351,7 @@ void gui_reversi_init() {
 
 //-------------------------------------------------------------------
 void gui_reversi_kbd_process() {
-    switch (kbd_get_clicked_key()) {
+    switch (kbd_get_autoclicked_key()) {
         case KEY_UP:
             yPos =(yPos-1)&7;
             need_redraw = 1;

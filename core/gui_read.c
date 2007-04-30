@@ -163,7 +163,7 @@ void gui_read_draw() {
 
 //-------------------------------------------------------------------
 void gui_read_kbd_process() {
-    switch (kbd_get_clicked_key()) {
+    switch (kbd_get_autoclicked_key()) {
         case KEY_ZOOM_OUT:
         case KEY_UP:
         case KEY_LEFT:

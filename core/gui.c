@@ -62,6 +62,7 @@ static const char* gui_font_enum(int change, int arg);
 static const char* gui_raw_prefix_enum(int change, int arg);
 static const char* gui_raw_ext_enum(int change, int arg);
 static const char* gui_reader_codepage_enum(int change, int arg);
+static const char* gui_zoom_value_enum(int change, int arg);
 
 // Menu callbacks
 //-------------------------------------------------------------------
@@ -185,6 +186,7 @@ static CMenuItem osd_submenu_items[] = {
     {"Show OSD",                    MENUITEM_BOOL,      &conf.show_osd },
     {"Show RAW/SCR/EXP state",      MENUITEM_BOOL,      &conf.show_state },
     {"Show misc values",            MENUITEM_BOOL,      &conf.show_values },
+    {"Zoom value",                  MENUITEM_ENUM,      (int*)gui_zoom_value_enum },
     {"Show DOF calculator",         MENUITEM_BOOL,      &conf.show_dof },
     {"Show clock",                  MENUITEM_BOOL,      &conf.show_clock },
     {"OSD layout editor",           MENUITEM_PROC,      (int*)gui_draw_osd_le },
@@ -405,6 +407,19 @@ const char* gui_zebra_draw_osd_enum(int change, int arg) {
         conf.zebra_draw_osd=0;
 
     return modes[conf.zebra_draw_osd];
+}
+
+//-------------------------------------------------------------------
+const char* gui_zoom_value_enum(int change, int arg) {
+    static const char* modes[]={ "X", "FL", "EFL" };
+
+    conf.zoom_value+=change;
+    if (conf.zoom_value<0)
+        conf.zoom_value=(sizeof(modes)/sizeof(modes[0]))-1;
+    else if (conf.zoom_value>=(sizeof(modes)/sizeof(modes[0])))
+        conf.zoom_value=0;
+
+    return modes[conf.zoom_value];
 }
 
 //-------------------------------------------------------------------

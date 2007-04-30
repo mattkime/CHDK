@@ -2,7 +2,7 @@
 
 #include "../generic/shooting.c"
 
-static long get_file_next_counter() {
+long get_file_next_counter() {
     return get_file_counter();
 }
 

@@ -143,7 +143,7 @@ void gui_sokoban_init() {
 
 //-------------------------------------------------------------------
 void gui_sokoban_kbd_process() {
-    switch (kbd_get_clicked_key()) {
+    switch (kbd_get_autoclicked_key()) {
         case KEY_UP:
             moves+=sokoban_move(0, -1);
             need_redraw = 1;

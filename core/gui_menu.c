@@ -73,7 +73,7 @@ static void gui_menu_color_selected(color clr) {
 
 //-------------------------------------------------------------------
 void gui_menu_kbd_process() {
-    switch (kbd_get_clicked_key()) {
+    switch (kbd_get_autoclicked_key()) {
         case KEY_UP:
             do {
                 if (gui_menu_curr_item>0) {
@@ -303,6 +303,8 @@ void gui_menu_draw() {
         if (gui_menu_redraw==2)
             gui_menu_draw_initial();
 
+        gui_menu_redraw=0;
+
         for (imenu=gui_menu_top_item, i=0, yy=y; curr_menu->menu[imenu].text && i<num_lines; ++imenu, ++i, yy+=rbf_font_height()){
             cl = (gui_menu_curr_item==imenu)?MAKE_COLOR(COLOR_SELECTED_BG, COLOR_SELECTED_FG):conf.menu_color;
             xx = x;
@@ -332,14 +334,29 @@ void gui_menu_draw() {
                 rbf_draw_char(xx, yy, ' ', cl);
                 break;
             case MENUITEM_SEPARATOR:
-            	draw_filled_rect(xx, yy, xx+w-1, yy+rbf_font_height()-1, MAKE_COLOR(cl>>8, cl>>8));
-            	draw_line(xx+len_space, yy+rbf_font_height()/2, xx+w-1-len_space, yy+rbf_font_height()/2, cl);
                 if (curr_menu->menu[imenu].text[0]) {
                     j = rbf_str_width(curr_menu->menu[imenu].text);
                     xx+=(w-j-len_space*2)>>1;
+
+                    rbf_draw_char(x, yy, ' ', cl);
+                    draw_filled_rect(x+len_space, yy, xx-1, yy+rbf_font_height()/2-1, MAKE_COLOR(cl>>8, cl>>8));
+                    draw_line(x+len_space, yy+rbf_font_height()/2, xx-1, yy+rbf_font_height()/2, cl);
+                    draw_filled_rect(x+len_space, yy+rbf_font_height()/2+1, xx-1, yy+rbf_font_height()-1, MAKE_COLOR(cl>>8, cl>>8));
+
                     xx+=rbf_draw_char(xx, yy, ' ', cl);
                     xx+=rbf_draw_string(xx, yy, curr_menu->menu[imenu].text, cl);
-                    rbf_draw_char(xx, yy, ' ', cl);
+                    xx+=rbf_draw_char(xx, yy, ' ', cl);
+                    
+                    draw_filled_rect(xx, yy, x+w-len_space-1, yy+rbf_font_height()/2-1, MAKE_COLOR(cl>>8, cl>>8));
+                    draw_line(xx, yy+rbf_font_height()/2, x+w-1-len_space, yy+rbf_font_height()/2, cl);
+                    draw_filled_rect(xx, yy+rbf_font_height()/2+1, x+w-len_space-1, yy+rbf_font_height()-1, MAKE_COLOR(cl>>8, cl>>8));
+                    rbf_draw_char(x+w-len_space, yy, ' ', cl);
+                } else {
+                    rbf_draw_char(x, yy, ' ', cl);
+                    draw_filled_rect(x+len_space, yy, x+w-len_space-1, yy+rbf_font_height()/2-1, MAKE_COLOR(cl>>8, cl>>8));
+                    draw_line(x+len_space, yy+rbf_font_height()/2, x+w-1-len_space, yy+rbf_font_height()/2, cl);
+                    draw_filled_rect(x+len_space, yy+rbf_font_height()/2+1, x+w-len_space-1, yy+rbf_font_height()-1, MAKE_COLOR(cl>>8, cl>>8));
+                    rbf_draw_char(x+w-len_space, yy, ' ', cl);
                 }
                 break;
             case MENUITEM_COLOR_FG:
@@ -378,8 +395,6 @@ void gui_menu_draw() {
 //            draw_filled_rect((x+w)*FONT_WIDTH+2, y*FONT_HEIGHT+1, 
 //                             (x+w)*FONT_WIDTH+6, (y+count)*FONT_HEIGHT-1-1, MAKE_COLOR(COLOR_BLACK, COLOR_BLACK));
         }
-        
-        gui_menu_redraw=0;
     }
 }
 

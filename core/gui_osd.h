@@ -16,6 +16,10 @@
 #define ZEBRA_DRAW_HISTO                1
 #define ZEBRA_DRAW_OSD                  2
 
+#define ZOOM_SHOW_X                     0
+#define ZOOM_SHOW_FL                    1
+#define ZOOM_SHOW_EFL                   2
+
 //-------------------------------------------------------------------
 extern void gui_osd_init();
 extern void gui_osd_kbd_process();

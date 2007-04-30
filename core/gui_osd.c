@@ -68,7 +68,7 @@ void gui_osd_draw() {
 
 //-------------------------------------------------------------------
 void gui_osd_kbd_process() {
-    switch (kbd_get_clicked_key()) {
+    switch (kbd_get_autoclicked_key()) {
     case KEY_LEFT:
         if (osd[curr_item].pos->x > 0) {
             osd[curr_item].pos->x-=(osd[curr_item].pos->x>=step)?step:osd[curr_item].pos->x;
@@ -208,6 +208,7 @@ int gui_osd_draw_zebra() {
     unsigned int v, s, x, y, f, over;
     color cl_under=conf.zebra_color>>8, cl_over=conf.zebra_color&0xFF;
     static int need_restore=0;
+    int viewport_height;
 
     if (!buf) {
         buf = malloc(screen_size);
@@ -217,6 +218,7 @@ int gui_osd_draw_zebra() {
     if (buf) {
         ++timer;
         img_buf=((mode_get()&MODE_MASK) == MODE_PLAY)?vid_get_viewport_fb_d():vid_get_viewport_fb();
+        viewport_height = vid_get_viewport_height();
         switch (conf.zebra_mode) {
             case ZEBRA_MODE_ZEBRA_1:
                 f = 4;
@@ -262,7 +264,7 @@ int gui_osd_draw_zebra() {
                 }
             } else {
                 for (s=0, v=y=1; y<=viewport_height; ++y) {
-                    for (x=0; x<viewport_width; ++x, ++s, v+=3) {
+                    for (x=0; x<screen_width; ++x, ++s, v+=3) {
                         buf[s]=(img_buf[v]>over)?cl_over:((img_buf[v]<conf.zebra_under)?cl_under:COLOR_TRANSPARENT);
                     }
                     if (y*screen_height/viewport_height == (s+screen_width)/screen_width) {
@@ -446,9 +448,23 @@ void gui_osd_draw_state() {
 
 //-------------------------------------------------------------------
 void gui_osd_draw_values() {
-    int av=shooting_get_real_av(), fl=get_zoom_x(lens_get_zoom_point()), lfp;
+    int zp=lens_get_zoom_point(), av=shooting_get_real_av(), fl, lfp;
 
-    sprintf(osd_buf, "Z:%ld/%d.%dx%8s", lens_get_zoom_point(), fl/10, fl%10, "");
+    switch (conf.zoom_value) {
+        case ZOOM_SHOW_FL:
+            fl=get_focal_length(zp);
+            sprintf(osd_buf, "Z:%d.%dmm%8s", fl/1000, fl%1000/100, "");
+            break;
+        case ZOOM_SHOW_EFL:
+            fl=get_effective_focal_length(zp);
+            sprintf(osd_buf, "Z:%3dmm%8s", fl/1000, "");
+            break;
+        case ZOOM_SHOW_X:
+        default:
+            fl=get_zoom_x(zp);
+            sprintf(osd_buf, "Z:%ld/%d.%dx%8s", zp, fl/10, fl%10, "");
+            break;
+    }
     osd_buf[8]=0;
     draw_string(conf.values_pos.x, conf.values_pos.y, osd_buf, conf.osd_color);
 

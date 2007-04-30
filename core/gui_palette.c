@@ -30,7 +30,7 @@ void gui_palette_init(int mode, color st_color, void (*on_select)(color clr)) {
 
 //-------------------------------------------------------------------
 void gui_palette_kbd_process() {
-    switch (kbd_get_clicked_key()) {
+    switch (kbd_get_autoclicked_key()) {
     case KEY_DOWN:
     	if (!full_palette) {
             cl = ((((cl>>4)+1)<<4)|(cl&0x0f))&0xFF;

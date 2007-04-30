@@ -29,6 +29,8 @@ typedef struct {
     int batt_icon_show;
     int show_clock;
 
+    int zoom_value;
+
     int show_state;
     int show_values;
     int show_overexp;

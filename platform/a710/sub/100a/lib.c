@@ -1,4 +1,5 @@
 #include "platform.h"
+#include "keyboard.h"
 
 void *hook_raw_fptr()
 {
@@ -50,12 +51,7 @@ long vid_get_bitmap_height()
     return 240;
 }
 
-long vid_get_viewport_width()
-{
-    return 360;
-}
-
 long vid_get_viewport_height()
 {
-    return 230;
+    return ((mode_get()&MODE_MASK) == MODE_PLAY)?240:230;
 }

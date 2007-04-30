@@ -66,6 +66,7 @@ void histogram_process()
     static unsigned char *img;
     int i, hi, c;
     int y, v, u;
+    static int viewport_size;
     unsigned int histo_fill[5];
 
 //    if (kbd_is_key_pressed(KEY_SHOOT_HALF)){
@@ -77,6 +78,7 @@ void histogram_process()
     switch (histogram_stage) {
         case 0:
             img=((mode_get()&MODE_MASK) == MODE_PLAY)?vid_get_viewport_fb_d():vid_get_viewport_fb();
+            viewport_size = vid_get_viewport_height() * screen_width;
             for (c=0; c<5; ++c) {
                 for (i=0; i<HISTO_WIDTH; ++i) {
                     histogram_proc[c][i]=0;

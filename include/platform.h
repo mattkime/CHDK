@@ -61,6 +61,7 @@ typedef struct {
 /******************************************************************/
 
 int get_focal_length(int zp);
+int get_effective_focal_length(int zp);
 int get_zoom_x(int zp);
 
 /******************************************************************/
@@ -79,6 +80,7 @@ long get_property_case(long id, void *buf, long bufsize);
 long set_property_case(long id, void *buf, long bufsize);
 
 long get_file_counter();
+long get_file_next_counter();
 long get_target_dir_num();
 long get_target_file_num();
 
@@ -91,6 +93,7 @@ long kbd_is_key_pressed(long key);
 long kbd_is_key_clicked(long key);
 long kbd_get_pressed_key();
 long kbd_get_clicked_key();
+long kbd_get_autoclicked_key();
 
 /******************************************************************/
 
@@ -102,7 +105,6 @@ void *vid_get_viewport_fb();
 void *vid_get_viewport_fb_d();
 void *vid_get_viewport_live_fb();
 void vid_bitmap_refresh();
-long vid_get_viewport_width();
 long vid_get_viewport_height();
 
 /******************************************************************/

@@ -94,7 +94,7 @@ void gui_debug_draw() {
 
 //-------------------------------------------------------------------
 void gui_debug_kbd_process() {
-    switch (kbd_get_clicked_key()) {
+    switch (kbd_get_autoclicked_key()) {
     case KEY_DOWN:
         break;
     case KEY_UP:

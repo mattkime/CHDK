@@ -19,16 +19,20 @@ static char exts[][4] = { "JPG", "CRW", "CR2", "THM", "WAV" };
 int raw_savefile() {
     int fd;
     static struct utimbuf t;
+    static long last_saved_raw_number = 0;
 
     // got here second time in a row. Skip second RAW saving.
-    if (state_shooting_progress == SHOOTING_PROGRESS_PROCESSING){
-        return 0;
-    }
+//    if (state_shooting_progress == SHOOTING_PROGRESS_PROCESSING){
+//        return 0;
+//    }
 
     state_shooting_progress = SHOOTING_PROGRESS_PROCESSING;
 
-    if (conf.save_raw) {
+    if (conf.save_raw && last_saved_raw_number!=get_file_next_counter()) {
         long v;
+
+        last_saved_raw_number = get_file_next_counter();
+        
         started();
 
         t.actime = t.modtime = time(NULL);
