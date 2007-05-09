@@ -161,6 +161,7 @@ void gui_mbox_kbd_process() {
         gui_mbox_draw_buttons();
         break;
     case KEY_SET:
+        kbd_reset_autoclicked_key();
         gui_set_mode(gui_mbox_mode_old);
         if (mbox_flags & MBOX_FUNC_RESTORE)
             draw_restore();

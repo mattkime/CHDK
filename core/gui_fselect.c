@@ -299,7 +299,7 @@ static void fselect_delete_file_cb(unsigned int btn) {
         selected_file[0]=0;
         gui_fselect_read_dir(current_dir);
     }
-    gui_fselect_redraw = 1;
+    gui_fselect_redraw = 2;
 }
 
 //-------------------------------------------------------------------
@@ -333,7 +333,7 @@ static void fselect_delete_folder_cb(unsigned int btn) {
         selected_file[0]=0;
         gui_fselect_read_dir(current_dir);
     }
-    gui_fselect_redraw = 1;
+    gui_fselect_redraw = 2;
 }
 
 //-------------------------------------------------------------------

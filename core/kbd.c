@@ -254,6 +254,10 @@ long kbd_process()
 	if ((key_pressed == 2) && !kbd_is_key_pressed(KEY_PRINT)){
 	    key_pressed = 0;
 	}
+	
+	if (conf.use_zoom_mf && kbd_use_zoom_as_mf()) {
+	    return 1;
+	}
     }
 
     return kbd_blocked;

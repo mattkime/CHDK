@@ -13,6 +13,7 @@ static long kbd_new_state[3];
 static long kbd_prev_state[3];
 static long kbd_mod_state;
 static KeyMap keymap[];
+static long last_kbd_key = 0;
 
 #define NEW_SS (0x2000)
 #define SD_READONLY_FLAG (0x20000)
@@ -208,9 +209,12 @@ long kbd_get_clicked_key()
     return 0;
 }
 
+void kbd_reset_autoclicked_key() {
+    last_kbd_key = 0;
+}
+
 long kbd_get_autoclicked_key() {
     static long last_kbd_time = 0, press_count = 0;
-    static long last_kbd_key = 0;
     register long key, t;
 
     key=kbd_get_clicked_key();
@@ -234,4 +238,41 @@ long kbd_get_autoclicked_key() {
             return 0;
         }
     }
+}
+
+long kbd_use_zoom_as_mf() {
+    static long v;
+    static long zoom_key_pressed = 0;
+
+    if (kbd_is_key_pressed(KEY_ZOOM_IN) && (mode_get()&MODE_MASK) == MODE_REC) {
+        get_property_case(12, &v, 4);
+        if (v) {
+            kbd_key_release_all();
+            kbd_key_press(KEY_RIGHT);
+            zoom_key_pressed = KEY_ZOOM_IN;
+            return 1;
+        }
+    } else {
+        if (zoom_key_pressed==KEY_ZOOM_IN) {
+            kbd_key_release(KEY_RIGHT);
+            zoom_key_pressed = 0;
+            return 1;
+        }
+    }
+    if (kbd_is_key_pressed(KEY_ZOOM_OUT) && (mode_get()&MODE_MASK) == MODE_REC) {
+        get_property_case(12, &v, 4);
+        if (v) {
+            kbd_key_release_all();
+            kbd_key_press(KEY_LEFT);
+            zoom_key_pressed = KEY_ZOOM_OUT;
+            return 1;
+        }
+    } else {
+        if (zoom_key_pressed==KEY_ZOOM_OUT) {
+            kbd_key_release(KEY_LEFT);
+            zoom_key_pressed = 0;
+            return 1;
+        }
+    }
+    return 0;
 }

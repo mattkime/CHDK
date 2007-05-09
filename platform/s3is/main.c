@@ -48,9 +48,7 @@ int get_focal_length(int zp) {
 }
 
 int get_zoom_x(int zp) {
-    if (zp<1) return 10;
-    else if (zp>NUM_FL-1) return fl_tbl[NUM_FL-1].fl*10/fl_tbl[0].fl;
-    else return get_focal_length(zp)*10/fl_tbl[0].fl;
+    return get_focal_length(zp)*10/fl_tbl[0].fl;
 }
 
 static struct {

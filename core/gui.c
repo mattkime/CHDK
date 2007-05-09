@@ -122,6 +122,7 @@ static CMenuItem misc_submenu_items[] = {
     {"Games ->",                    MENUITEM_SUBMENU, (int*)&games_submenu },
     {"Flash-light",                 MENUITEM_BOOL,    &conf.flashlight },
     {"Show splash screen on load",  MENUITEM_BOOL,    &conf.splash_show },
+    {"Use zoom buttons for MF",     MENUITEM_BOOL,    &conf.use_zoom_mf },
     {"Draw palette",                MENUITEM_PROC,    (int*)gui_draw_palette },
     {"Show build info",             MENUITEM_PROC,    (int*)gui_show_build_info },
     {"Show memory info",            MENUITEM_PROC,    (int*)gui_show_memory_info },

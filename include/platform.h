@@ -94,6 +94,8 @@ long kbd_is_key_clicked(long key);
 long kbd_get_pressed_key();
 long kbd_get_clicked_key();
 long kbd_get_autoclicked_key();
+void kbd_reset_autoclicked_key();
+long kbd_use_zoom_as_mf();
 
 /******************************************************************/
 

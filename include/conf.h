@@ -79,6 +79,8 @@ typedef struct {
     int flashlight;
     int splash_show;
 
+    int use_zoom_mf;
+
     int ns_enable_memdump;
 } Conf;
 
