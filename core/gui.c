@@ -685,6 +685,8 @@ void gui_kbd_leave()
 #endif
     ubasic_error = 0;
     draw_restore();
+    if (gui_mode == GUI_MODE_READ && !rbf_load(conf.menu_rbf_file))
+        rbf_load_from_8x16(current_font);
     gui_mode = GUI_MODE_NONE;
 }
 
