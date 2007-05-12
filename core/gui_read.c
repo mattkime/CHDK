@@ -204,6 +204,7 @@ void gui_read_kbd_process() {
         case KEY_ZOOM_IN:
         case KEY_DOWN:
         case KEY_RIGHT:
+        case KEY_SHOOT_HALF:
             if ((conf.reader_pos+read_on_screen)<read_file_size) {
                 conf.reader_pos += read_on_screen;
                 read_to_draw = 1;
