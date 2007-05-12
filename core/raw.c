@@ -22,9 +22,9 @@ int raw_savefile() {
     static long last_saved_raw_number = 0;
 
     // got here second time in a row. Skip second RAW saving.
-//    if (state_shooting_progress == SHOOTING_PROGRESS_PROCESSING){
-//        return 0;
-//    }
+    if (conf.raw_save_first_only && state_shooting_progress == SHOOTING_PROGRESS_PROCESSING) {
+        return 0;
+    }
 
     state_shooting_progress = SHOOTING_PROGRESS_PROCESSING;
 

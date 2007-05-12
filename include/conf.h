@@ -13,6 +13,7 @@ typedef struct {
     int raw_in_dir;
     int raw_prefix;
     int raw_ext;
+    int raw_save_first_only;
 
     int show_osd;
     int script_shoot_delay;
@@ -73,6 +74,7 @@ typedef struct {
     int  reader_autoscroll_delay;
     char reader_rbf_file[100];
     int  reader_codepage;
+    int  reader_wrap_by_words;
 
     int sokoban_level;
 

@@ -107,6 +107,7 @@ static CMenuItem reader_submenu_items[] = {
     {"Open last opened file",       MENUITEM_PROC,    (int*)gui_draw_read_last },
     {"Select RBF font",             MENUITEM_PROC,    (int*)gui_draw_load_rbf },
     {"Codepage",                    MENUITEM_ENUM,    (int*)gui_reader_codepage_enum },
+    {"Wrap by words",               MENUITEM_BOOL,    &conf.reader_wrap_by_words },
     {"Enable autoscroll",           MENUITEM_BOOL,    &conf.reader_autoscroll },
     {"Autoscroll delay (sec)",      MENUITEM_INT|MENUITEM_F_UNSIGNED|MENUITEM_F_MINMAX, &conf.reader_autoscroll_delay, MENU_MINMAX(0, 60) },
     {"<- Back",                     MENUITEM_UP },
@@ -216,6 +217,7 @@ static CMenu histo_submenu = { "Histogram", NULL, histo_submenu_items };
 
 static CMenuItem raw_submenu_items[] = {
     {"Save RAW",                    MENUITEM_BOOL,      &conf.save_raw },
+    {"Only first RAW in series",    MENUITEM_BOOL,      &conf.raw_save_first_only },
     {"RAW file in dir with JPEG",   MENUITEM_BOOL,      &conf.raw_in_dir },
     {"RAW file prefix",             MENUITEM_ENUM,      (int*)gui_raw_prefix_enum },
     {"RAW file extension",          MENUITEM_ENUM,      (int*)gui_raw_ext_enum },

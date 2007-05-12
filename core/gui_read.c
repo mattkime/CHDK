@@ -93,7 +93,7 @@ void gui_read_draw() {
         read_to_draw = 1;
     }
     if (read_to_draw) {
-        int n, i;
+        int n, i, ii, ll, new_word=1;
         
         xx=x; yy=y;
 
@@ -112,14 +112,42 @@ void gui_read_draw() {
             while (i<n && yy<=y+h-rbf_font_height()) {
                 switch (buffer[i]) {
                     case '\r':
+                        new_word = 1;
                         break;
                     case '\n':
                         read_goto_next_line();
+                        new_word = 1;
                         break;
                     case '\t':
                         buffer[i] = ' ';
-                        continue;
+                        // no break here
                     default:
+                        if (conf.reader_wrap_by_words) {
+                            if (buffer[i] == ' ') {
+                                new_word = 1;
+                                if (xx==x) //ignore leading spaces
+                                    break;
+                            } else if (new_word) {
+                                new_word = 0;
+                                for (ii=i, ll=0; ii<n && buffer[ii]!=' ' && buffer[ii]!='\t' && buffer[ii]!='\r' && buffer[ii]!='\n'; ++ii) {
+                                    ll+=rbf_char_width(buffer[ii]);
+                                }
+                                if (ii==n) {
+                                    memcpy(buffer, buffer+i, n-i);
+                                    n=ii=n-i;
+                                    read_on_screen+=i;
+                                    i=0;
+                                    n+=read(read_file, buffer+n, READ_BUFFER_SIZE-n);
+                                    for (; ii<n && buffer[ii]!=' ' && buffer[ii]!='\t' && buffer[ii]!='\r' && buffer[ii]!='\n'; ++ii) {
+                                        ll+=rbf_char_width(buffer[ii]);
+                                    }
+                                }
+                                if (xx+ll>=x+w && ll<w) {
+                                    read_goto_next_line();
+                                    continue;
+                                }
+                            }
+                        }
                         if (!read_fit_next_char(buffer[i])) {
                             read_goto_next_line();
                             continue;
