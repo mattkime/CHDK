@@ -61,7 +61,7 @@ main(int argc, char * argv[])
         program = (char *) program_static;
     } else {
         assert(argc == 2);
-        FILE * f = fopen(argv[1], "r");
+        FILE * f = fopen(argv[1], "rb");
 
         fseek(f,0, SEEK_END);
         int sz = ftell(f);
@@ -77,7 +77,7 @@ main(int argc, char * argv[])
         program[sz+1] = 0;
     }
 
-    printf("Program:\n%s", program);
+    printf("Program:\n%s\n", program);
     ubasic_init(program);
     do {
         ubasic_run();
@@ -90,7 +90,7 @@ main(int argc, char * argv[])
         } else {
             msg = ubasic_errstrings[ubasic_error];
         }
-        fprintf(stderr, "Ubasic error in Line %d: %s\n", ubasic_linenumber(), msg);
+        fprintf(stderr, "Ubasic error near Line %d: %s\n", ubasic_linenumber(), msg);
     }
 
   return 0;

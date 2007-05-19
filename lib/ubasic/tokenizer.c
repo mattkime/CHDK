@@ -104,6 +104,8 @@ singlechar(void)
     return TOKENIZER_AND;
   } else if(*ptr == '|') {
     return TOKENIZER_OR;
+  } else if(*ptr == '^') {
+    return TOKENIZER_XOR;
   } else if(*ptr == '*') {
     return TOKENIZER_ASTR;
   } else if(*ptr == '/') {

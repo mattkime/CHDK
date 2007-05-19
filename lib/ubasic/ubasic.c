@@ -153,6 +153,14 @@ factor(void)
     r = expr();
     accept(TOKENIZER_RIGHTPAREN);
     break;
+  case TOKENIZER_PLUS:
+    accept(TOKENIZER_PLUS);
+    r = factor();
+    break;
+  case TOKENIZER_MINUS:
+    accept(TOKENIZER_MINUS);
+    r = - factor();
+    break;
   default:
     r = varfactor();
     break;
@@ -204,7 +212,8 @@ expr(void)
   while(op == TOKENIZER_PLUS ||
 	op == TOKENIZER_MINUS ||
 	op == TOKENIZER_AND ||
-	op == TOKENIZER_OR) {
+        op == TOKENIZER_OR ||
+	op == TOKENIZER_XOR) {
     tokenizer_next();
     t2 = term();
     DEBUG_PRINTF("expr: %d %d %d\n", t1, op, t2);
@@ -220,6 +229,9 @@ expr(void)
       break;
     case TOKENIZER_OR:
       t1 = t1 | t2;
+      break;
+    case TOKENIZER_XOR:
+      t1 = t1 ^ t2;
       break;
     }
     op = tokenizer_token();
@@ -698,6 +710,7 @@ line_statement(void)
       DEBUG_PRINTF("line_statement: label: %s\n", string );
 #endif
       accept(TOKENIZER_LABEL);
+      accept(TOKENIZER_CR);
       return;
   }
   statement();
