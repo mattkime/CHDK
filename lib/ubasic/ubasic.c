@@ -366,11 +366,8 @@ print_statement(void)
       tokenizer_next();
     } else if(tokenizer_token() == TOKENIZER_SEMICOLON) {
       tokenizer_next();
-    } else if(tokenizer_token() == TOKENIZER_VARIABLE ||
-	      tokenizer_token() == TOKENIZER_NUMBER) {
-      sprintf(buf+strlen(buf), "%d", expr());
     } else {
-      break;
+      sprintf(buf+strlen(buf), "%d", expr());
     }
   } while(tokenizer_token() != TOKENIZER_CR &&
 	  tokenizer_token() != TOKENIZER_ENDOFINPUT);
