@@ -2660,6 +2660,30 @@ static FuncSig func_sig_GetCurrentTargetDistance_1[] = {
 	/* 14/32 */
 };
 
+static FuncSig func_sig_strpbrk_1[] = {
+	{   0, 0xe1a02000, 0xfdffffff }, // mov:6:0xE1A02000
+	{   3, 0xe1500000, 0xfdffffff }, // cmp:7:0xE3500000
+	{   4, 0x0a000000, 0xff000000 }, // b, bl:3:0x0A000007
+	{   5, 0xe1a0b001, 0xfdffffff }, // mov:6:0xE1A0B001
+	{   7, 0xe15a0000, 0xfdffffff }, // cmp:7:0xE35A0000
+	{   8, 0x0a000000, 0xff000000 }, // b, bl:3:0x0AFFFFF8
+	{   9, 0xe15a0000, 0xfdffffff }, // cmp:7:0xE15A0000
+	{  10, 0x1a000000, 0xff000000 }, // b, bl:3:0x1AFFFFFA
+	{  11, 0xe0420001, 0xfdffffff }, // sub:6:0xE2420001
+	{  12, 0xea000000, 0xff000000 }, // b, bl:3:0xEA000000
+	{  13, 0xe1a00000, 0xfdffffff }, // mov:6:0xE3A00000
+	{  15, 0xe1a02000, 0xfdffffff }, // mov:6:0xE3A02000
+	{  16, 0xe00110ff, 0xfdffffff }, // and:6:0xE20110FF
+	{  18, 0xe15c0001, 0xfdffffff }, // cmp:7:0xE15C0001
+	{  19, 0x01a02000, 0xfdffffff }, // mov:6:0x01A02000
+	{  21, 0xe15c0000, 0xfdffffff }, // cmp:7:0xE35C0000
+	{  22, 0x1a000000, 0xff000000 }, // b, bl:3:0x1AFFFFF9
+	{  23, 0xe1a00002, 0xfdffffff }, // mov:6:0xE1A00002
+	{  24, 0xe1a0f00e, 0xfdffffff }, // mov:6:0xE1A0F00E	/* RET found, stopping... */
+	{ -1, -1, -1 },
+	/* 19/32 */
+};
+
 static FuncSig func_sig_GetSystemTime_2[] = {
 	{   1, 0xe59f6030, 0xfdffffff }, // ldr:4:0xE59F6030
 	{   2, 0xe5965000, 0xfdffffff }, // ldr:4:0xE5965000
@@ -3792,6 +3816,7 @@ FuncsList func_list[] = {
 	{ "strncmp", func_sig_strncmp_1 },
 	{ "strncpy", func_sig_strncpy_1 },
 	{ "strncpy", func_sig_strncpy_2 },
+	{ "strpbrk", func_sig_strpbrk_1 },
 	{ "strrchr", func_sig_strrchr_1 },
 	{ "strrchr", func_sig_strrchr_2 },
 	{ "strtol", func_sig_strtol_1 },

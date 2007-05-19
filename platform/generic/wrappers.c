@@ -173,6 +173,10 @@ long strtol(const char *nptr, char **endptr, int base) {
     return _strtol(nptr, endptr, base);
 }
 
+char *strpbrk(const char *s, const char *accept) {
+    return _strpbrk(s, accept);
+}
+
 long sprintf(char *s, const char *st, ...)
 {
     long res;

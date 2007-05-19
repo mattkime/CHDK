@@ -47,5 +47,8 @@ int shooting_get_av()
     return 0;
 }
 
+void script_console_add_line(const char *str) {
+    printf(">>> %s\n", str);
+}
 
 #endif

@@ -103,6 +103,7 @@ NSTUB(strlen, 0xffeb6174)
 NSTUB(strncmp, 0xffeb61d8)
 NSTUB(strncpy, 0xffeb621c)
 // ALT: NSTUB(strncpy, 0xffeb621c) // 24/0
+NSTUB(strpbrk, 0xffeb6264)
 NSTUB(strrchr, 0xffeb62a0)
 // ALT: NSTUB(strrchr, 0xffeb62a0) // 8/0
 NSTUB(strtol, 0xffeb59f4)

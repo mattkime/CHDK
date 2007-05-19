@@ -271,23 +271,13 @@ void
 tokenizer_label(char *dest, int len)
 {
   char *string_end;
-  char *string_end2;
   int string_len;
   
   if(tokenizer_token() != TOKENIZER_LABEL) {
     return;
   }
-  // allow string \n and space to end labels
-  // TODO: allow tabs as well
-  string_end = strchr(ptr + 1, ' ');
-  string_end2 = strchr(ptr + 1, '\n');
-  if (string_end == NULL)
-    string_end = string_end2;
-  else if (string_end2 == NULL) {
-
-  }
-  else if (string_end2 < string_end)
-    string_end = string_end2;
+  // allow string \r, \n, tabulation and space to end labels
+  string_end = strpbrk(ptr + 1, " \t\r\n");
 
   if(string_end == NULL) {
     return;

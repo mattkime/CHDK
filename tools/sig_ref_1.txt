@@ -96,3 +96,4 @@ Read 0xFFC5C7A0
 Write 0xFFC5C7AC
 Remove 0xFFC5C72C
 GetCurrentTargetDistance 0xFFE736BC
+strpbrk 0xFFEB5EDC

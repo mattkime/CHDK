@@ -11,7 +11,7 @@ all: libubasic.a
 libubasic.a: $(OBJS)
 
 check:
-	gcc -Wall -DTEST -o test$(EXE) *.c
+	gcc -g -Wall -DTEST -o ubasic_test$(EXE) *.c
 
 clean:
-	rm -f $(OBJS) libubasic.a test$(EXE)
+	rm -f $(OBJS) libubasic.a ubasic_test$(EXE)

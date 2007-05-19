@@ -68,6 +68,7 @@ extern char *_strcpy(char *dest, const char *src);
 extern char *_strncpy(char *dest, const char *src, long n);
 extern char *_strcat(char *dest, const char *app);
 extern char *_strrchr(const char *s, int c);
+extern char *_strpbrk(const char *s, const char *accept);
 
 extern long _strtol(const char *nptr, char **endptr, int base);
 

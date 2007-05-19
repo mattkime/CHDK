@@ -33,7 +33,7 @@ typedef struct {
 //-------------------------------------------------------------------
 Conf conf;
 
-int state_shooting_progress;
+int state_shooting_progress = SHOOTING_PROGRESS_NONE;
 int state_save_raw_nth_only;
 int state_expos_recalculated;
 int state_expos_under;

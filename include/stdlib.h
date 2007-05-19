@@ -33,6 +33,7 @@ extern char *strcpy(char *dest, const char *src);
 extern char *strncpy(char *dest, const char *src, long n);
 extern char *strcat(char *dest, const char *app);
 extern char *strrchr(const char *s, int c);
+extern char *strpbrk(const char *s, const char *accept);
 
 extern long strtol(const char *nptr, char **endptr, int base);
 #define atoi(n) strtol((n),NULL,0)

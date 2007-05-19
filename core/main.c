@@ -96,10 +96,12 @@ void core_spytask()
 	    continue;
 	}
 
-	if (((cnt++) & 3) == 0)
-	    gui_redraw();
+	if (state_shooting_progress != SHOOTING_PROGRESS_PROCESSING) {
+	    if (((cnt++) & 3) == 0)
+	        gui_redraw();
 
-	histogram_process();
+	    histogram_process();
+	}
 
 	hook_raw_install();
 
