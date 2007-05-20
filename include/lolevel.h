@@ -105,6 +105,8 @@ void __attribute__((naked,noinline))
 
 void kbd_fetch_data(long *dst);
 
+extern long playrec_mode; //used on S-series only
+
 /* math */
 extern int _rand(void);
 extern void* _srand(unsigned int seed);
