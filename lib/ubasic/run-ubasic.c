@@ -62,6 +62,10 @@ main(int argc, char * argv[])
     } else {
         assert(argc == 2);
         FILE * f = fopen(argv[1], "rb");
+        if (!f) {
+            perror("Error opening file");
+            exit(-1);
+        }
 
         fseek(f,0, SEEK_END);
         int sz = ftell(f);

@@ -120,7 +120,7 @@ void my_kbd_read_keys()
 			  (kbd_mod_state[2] & KEYS_MASK2);
     }
 
-    physw_status[1] = physw_status[1] | KEY_PRINT_MASK;
+//    physw_status[1] = physw_status[1] | KEY_PRINT_MASK;
 
     _kbd_read_keys_r2(physw_status);
     physw_status[2] = physw_status[2] & ~SD_READONLY_FLAG;

@@ -170,7 +170,7 @@ void my_kbd_read_keys_cont(long *canon_key_state)
 			  (kbd_mod_state[2] & KEYS_MASK2);
     }
 
-    physw_status[1] = physw_status[1] | KEY_PRINT_MASK;
+//    physw_status[1] = physw_status[1] | KEY_PRINT_MASK;
 
     canon_key_state[0] = physw_status[0];
     canon_key_state[1] = physw_status[1];
