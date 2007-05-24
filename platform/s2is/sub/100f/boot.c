@@ -15,6 +15,78 @@ void __attribute__((naked,noinline)) h_usrInit();
 void __attribute__((naked,noinline)) h_usrKernelInit();
 void __attribute__((naked,noinline)) h_usrRoot();
 
+extern void mykbd_task_proceed_2();
+
+
+void __attribute__((naked,noinline)) h_kbd_p2_f()
+{
+    asm volatile (
+                 "LDR     R4, =0x10390\n"
+                 "LDR     R1, [R4,#0x30]\n"
+                 "TST     R1, #0x8000\n"
+                 "BEQ     loc_FF829394\n"
+                 "MOV     R1, #0\n"
+                 "MOV     R0, #0xF\n"
+                 "MOV     R2, #0x8000\n"
+                 "BL      sub_FF829978\n"
+                 "LDR     R3, [R4,#0x30]\n"
+                 "BIC     R3, R3, #0x8000\n"
+                 "STR     R3, [R4,#0x30]\n"
+                 "MOV     R1, R3\n"
+  "loc_FF829394:\n"
+                 "TST     R1, #1\n"
+                 "BEQ     loc_FF8293BC\n"
+                 "MOV     R0, #0\n"
+                 "MOV     R1, R0\n"
+                 "MOV     R2, R5\n"
+                 "BL      sub_FF829978\n"
+                 "LDR     R3, [R4,#0x30]\n"
+                 "BIC     R3, R3, #1\n"
+                 "STR     R3, [R4,#0x30]\n"
+                 "MOV     R1, R3\n"
+  "loc_FF8293BC:\n"
+                 "TST     R1, #2\n"
+                 "BEQ     loc_FF8293E4\n"
+                 "MOV     R1, #0\n"
+                 "MOV     R0, R5\n"
+                 "MOV     R2, #2\n"
+                 "BL      sub_FF829978\n"
+                 "LDR     R3, [R4,#0x30]\n"
+                 "BIC     R3, R3, #2\n"
+                 "STR     R3, [R4,#0x30]\n"
+                 "MOV     R1, R3\n"
+  "loc_FF8293E4:\n"
+                 "LDR     R3, [R4,#0x34]\n"
+                 "LDR     R2, [R4,#0x38]\n"
+                 "ADD     R3, R1, R3\n"
+                 "CMN     R3, R2\n"
+                 "BEQ     loc_FF8293FC\n"
+                 "BL      sub_FF8299D8\n"
+  "loc_FF8293FC:\n"
+                 "LDR     R3, =0x1FC0\n"
+                 "LDR     R1, [R3]\n"
+                 "CMP     R1, #1\n"
+                 "BNE     loc_FF829418\n"
+                 "MOV     R0, #0x28\n"
+                 "MOV     R2, #0x100\n"
+                 "BL      sub_FF829978\n"
+  "loc_FF829418:\n"
+                 "LDR     R3, =0x1038C\n"
+                 "LDR     R0, [R3]\n"
+                 "CMP     R0, #1\n"
+                 "BNE     loc_FF829440\n"
+                 "MOV     R3, #0x30\n"
+                 "STRH    R3, [SP,#2]\n"
+                 "MOV     R1, R6\n"
+                 "LDR     R3, =0x103F0\n"
+                 "MOV     LR, PC\n"
+                 "LDR     PC, [R3]\n"
+  "loc_FF829440:\n"
+                 "BL      sub_FF82A37C\n"
+                 "B       mykbd_task_proceed_2\n"
+    );
+}
+
 
 void boot()
 {

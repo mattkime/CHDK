@@ -22,6 +22,7 @@ static long last_kbd_key = 0;
 
 #define NEW_SS (0x2000)
 #define SD_READONLY_FLAG (0x20000)
+#define KEY_PRINT_MASK 0x00004000
 
 #ifndef MALLOCD_STACK
 static char kbd_stack[NEW_SS];
@@ -118,6 +119,8 @@ void my_kbd_read_keys()
 	physw_status[2] = (kbd_new_state[2] & (~KEYS_MASK2)) |
 			  (kbd_mod_state[2] & KEYS_MASK2);
     }
+
+    physw_status[1] = physw_status[1] | KEY_PRINT_MASK;
 
     _kbd_read_keys_r2(physw_status);
     physw_status[2] = physw_status[2] & ~SD_READONLY_FLAG;

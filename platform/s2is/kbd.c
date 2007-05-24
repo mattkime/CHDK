@@ -13,6 +13,7 @@ typedef struct {
 static long kbd_new_state[3];
 static long kbd_prev_state[3];
 static long kbd_mod_state[3];
+long physw_copy[3];
 static KeyMap keymap[];
 static long last_kbd_key = 0;
 
@@ -22,13 +23,16 @@ static long last_kbd_key = 0;
 
 #define NEW_SS (0x2000)
 #define SD_READONLY_FLAG (0x20000)
+#define KEY_PRINT_MASK 0x00004000
 
 #ifndef MALLOCD_STACK
 static char kbd_stack[NEW_SS];
 #endif
 
 extern void _platformsub_kbd_fetch_data(long*);
-long __attribute__((naked)) wrap_kbd_p1_f() ;
+long __attribute__((naked)) wrap_kbd_p1_f();
+void __attribute__((naked,noinline)) mykbd_task_proceed_2();
+extern void h_kbd_p2_f();
 
 
 static void __attribute__((noinline)) mykbd_task_proceed()
@@ -37,6 +41,14 @@ static void __attribute__((noinline)) mykbd_task_proceed()
                  "STMFD   SP!, {R4-R6,LR}\n"
                  "SUB     SP, SP, #4\n"
                  "ADD     R6, SP, #2\n"
+		 "B	  mykbd_task_proceed_2\n"
+	);
+}
+
+
+void mykbd_task_proceed_2()
+{
+    asm volatile(
   "loc_FF82934C:"
                  "MOV     R0, #0xA\n"
                  "BL      _SleepTask\n"
@@ -44,71 +56,10 @@ static void __attribute__((noinline)) mykbd_task_proceed()
                  "MOV     R5, R0\n"
                  "CMP     R5, #1\n"
 	         "BNE     loc_FF82934C\n"
-                 "LDR     R4, =0x10390\n"
-                 "LDR     R1, [R4,#0x30]\n"
-                 "TST     R1, #0x8000\n"
-                 "BEQ     loc_FF829394\n"
-                 "MOV     R1, #0\n"
-                 "MOV     R0, #0xF\n"
-                 "MOV     R2, #0x8000\n"
-                 "BL      sub_FF829978\n"
-                 "LDR     R3, [R4,#0x30]\n"
-                 "BIC     R3, R3, #0x8000\n"
-                 "STR     R3, [R4,#0x30]\n"
-                 "MOV     R1, R3\n"
-  "loc_FF829394:\n"
-                 "TST     R1, #1\n"
-                 "BEQ     loc_FF8293BC\n"
-                 "MOV     R0, #0\n"
-                 "MOV     R1, R0\n"
-                 "MOV     R2, R5\n"
-                 "BL      sub_FF829978\n"
-                 "LDR     R3, [R4,#0x30]\n"
-                 "BIC     R3, R3, #1\n"
-                 "STR     R3, [R4,#0x30]\n"
-                 "MOV     R1, R3\n"
-  "loc_FF8293BC:\n"
-                 "TST     R1, #2\n"
-                 "BEQ     loc_FF8293E4\n"
-                 "MOV     R1, #0\n"
-                 "MOV     R0, R5\n"
-                 "MOV     R2, #2\n"
-                 "BL      sub_FF829978\n"
-                 "LDR     R3, [R4,#0x30]\n"
-                 "BIC     R3, R3, #2\n"
-                 "STR     R3, [R4,#0x30]\n"
-                 "MOV     R1, R3\n"
-  "loc_FF8293E4:\n"
-                 "LDR     R3, [R4,#0x34]\n"
-                 "LDR     R2, [R4,#0x38]\n"
-                 "ADD     R3, R1, R3\n"
-                 "CMN     R3, R2\n"
-                 "BEQ     loc_FF8293FC\n"
-                 "BL      sub_FF8299D8\n"
-  "loc_FF8293FC:\n"
-                 "LDR     R3, =0x1FC0\n"
-                 "LDR     R1, [R3]\n"
-                 "CMP     R1, #1\n"
-                 "BNE     loc_FF829418\n"
-                 "MOV     R0, #0x28\n"
-                 "MOV     R2, #0x100\n"
-                 "BL      sub_FF829978\n"
-  "loc_FF829418:\n"
-                 "LDR     R3, =0x1038C\n"
-                 "LDR     R0, [R3]\n"
-                 "CMP     R0, #1\n"
-                 "BNE     loc_FF829440\n"
-                 "MOV     R3, #0x30\n"
-                 "STRH    R3, [SP,#2]\n"
-                 "MOV     R1, R6\n"
-                 "LDR     R3, =0x103F0\n"
-                 "MOV     LR, PC\n"
-                 "LDR     PC, [R3]\n"
-  "loc_FF829440:\n"
-                 "BL      sub_FF82A37C\n"
-                 "B       loc_FF82934C\n"
+		 "B	  h_kbd_p2_f\n"
 	);
 }
+
 
 void __attribute__((naked,noinline))
 mykbd_task(long ua, long ub, long uc, long ud, long ue, long uf)
@@ -158,13 +109,13 @@ long __attribute__((naked,noinline)) wrap_kbd_p1_f()
 
     asm volatile(
                 "STMFD   SP!, {R4-R10,LR}\n"
-                "LDR     R4, =0x10390\n"
+                "LDR     R4, =physw_status-0x30\n"
                 "MOV     R0, R4\n"
                 "SUB     SP, SP, #0x18\n"
                 "BL      my_kbd_read_keys\n"
     );
 
-    physw_status[2] = physw_status[2] & ~SD_READONLY_FLAG;
+//    physw_status[0] = physw_status[0] & ~SD_READONLY_FLAG;
 
     asm volatile(
 		"B	 _kbd_p1_f_cont\n"
@@ -177,7 +128,7 @@ void __attribute__((naked,noinline)) my_kbd_read_keys()
 {
     asm volatile(
                 "STMFD   SP!, {R4-R11,LR}\n"
-                "LDR     R3, =0x10464\n"
+                "LDR     R3, =kbd_const_1\n"
                 "SUB     SP, SP, #0x18\n"
                 "MOV     R5, R0\n"
                 "ADD     R0, SP, #0x0C\n"
@@ -196,9 +147,11 @@ void my_kbd_read_keys_cont(long *canon_key_state)
     kbd_new_state[1] = canon_key_state[1];
     kbd_new_state[2] = canon_key_state[2];
 
-//    physw_copy[0] = kbd_new_state[0];
-//    physw_copy[1] = kbd_new_state[1];
-//    physw_copy[2] = kbd_new_state[2];
+    kbd_new_state[0] = kbd_new_state[0] & ~SD_READONLY_FLAG;
+
+    physw_copy[0] = kbd_new_state[0];
+    physw_copy[1] = kbd_new_state[1];
+    physw_copy[2] = kbd_new_state[2];
 
     if (kbd_process() == 0){
 	// leave it alone...
@@ -216,6 +169,9 @@ void my_kbd_read_keys_cont(long *canon_key_state)
 	physw_status[2] = (kbd_new_state[2] & (~KEYS_MASK2)) |
 			  (kbd_mod_state[2] & KEYS_MASK2);
     }
+
+    physw_status[1] = physw_status[1] | KEY_PRINT_MASK;
+
     canon_key_state[0] = physw_status[0];
     canon_key_state[1] = physw_status[1];
     canon_key_state[2] = physw_status[2];

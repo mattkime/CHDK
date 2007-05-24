@@ -2,12 +2,12 @@
 
 void *hook_raw_fptr()
 {
-    return (void*)0x2F490;
+    return (void*)0x2F4B0;
 }
 
 void *hook_raw_ret_addr()
 {
-    return (void*)0xFF8D8BB4;
+    return (void*)0xFF8D8940;
 }
 
 char *hook_raw_image_addr()
@@ -37,7 +37,7 @@ void *vid_get_viewport_fb()
 
 void *vid_get_viewport_fb_d()
 {
-    return (void*)(*(int*)0x5BAEC);   //0x5BAD8, 0x5BAEC, 0x5BB00
+    return (void*)(*(int*)0x5BAF8);
 }
 
 long vid_get_bitmap_width()

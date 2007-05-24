@@ -119,6 +119,7 @@ static const ConfInfo conf_info[] = {
     CONF_INFO( 59, conf.use_zoom_mf,            CONF_DEF_VALUE, i:0, NULL),
     CONF_INFO( 60, conf.raw_save_first_only,    CONF_DEF_VALUE, i:0, NULL),
     CONF_INFO( 61, conf.reader_wrap_by_words,   CONF_DEF_VALUE, i:0, NULL),
+    CONF_INFO( 62, conf.raw_save_second,        CONF_DEF_VALUE, i:0, NULL),
 };
 #define CONF_NUM (sizeof(conf_info)/sizeof(conf_info[0]))
 

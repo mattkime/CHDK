@@ -7,7 +7,7 @@ void *hook_raw_fptr()
 
 void *hook_raw_ret_addr()
 {
-    return (void*)0xFF8D8BB4;
+    return (void*)0xFF8D8BDC;
 }
 
 char *hook_raw_image_addr()
@@ -37,7 +37,7 @@ void *vid_get_viewport_fb()
 
 void *vid_get_viewport_fb_d()
 {
-    return (void*)(*(int*)0x5BAEC);   //0x5BAD8, 0x5BAEC, 0x5BB00
+    return (void*)(*(int*)0x5BAEC);
 }
 
 long vid_get_bitmap_width()

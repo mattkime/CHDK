@@ -217,6 +217,7 @@ static CMenu histo_submenu = { "Histogram", NULL, histo_submenu_items };
 
 static CMenuItem raw_submenu_items[] = {
     {"Save RAW",                    MENUITEM_BOOL,      &conf.save_raw },
+    {"After dark frame substract",  MENUITEM_BOOL,      &conf.raw_save_second },
     {"Only first RAW in series",    MENUITEM_BOOL,      &conf.raw_save_first_only },
     {"RAW file in dir with JPEG",   MENUITEM_BOOL,      &conf.raw_in_dir },
     {"RAW file prefix",             MENUITEM_ENUM,      (int*)gui_raw_prefix_enum },

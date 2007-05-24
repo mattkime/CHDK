@@ -99,7 +99,7 @@ extern void _kbd_p2_f();
 extern void _kbd_pwr_on();
 extern void _kbd_pwr_off();
 extern void _kbd_read_keys_r2(void*p);
-extern long physw_status[3];
+extern long physw_status[3], physw_copy[3];
 void __attribute__((naked,noinline))
     mykbd_task(long ua, long ub, long uc, long ud, long ue, long uf);
 

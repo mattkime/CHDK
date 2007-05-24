@@ -28,7 +28,7 @@ int raw_savefile() {
 
     state_shooting_progress = SHOOTING_PROGRESS_PROCESSING;
 
-    if (conf.save_raw && last_saved_raw_number!=get_file_next_counter()) {
+    if (conf.save_raw && (last_saved_raw_number!=get_file_next_counter() || conf.raw_save_second)) {
         long v;
 
         last_saved_raw_number = get_file_next_counter();
