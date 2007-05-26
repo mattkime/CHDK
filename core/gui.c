@@ -63,6 +63,9 @@ static const char* gui_raw_prefix_enum(int change, int arg);
 static const char* gui_raw_ext_enum(int change, int arg);
 static const char* gui_reader_codepage_enum(int change, int arg);
 static const char* gui_zoom_value_enum(int change, int arg);
+#if defined(CAMERA_s2is) || defined(CAMERA_s3is)
+static const char* gui_alt_mode_button_enum(int change, int arg);
+#endif
 
 // Menu callbacks
 //-------------------------------------------------------------------
@@ -121,9 +124,14 @@ static CMenuItem misc_submenu_items[] = {
     {"Calendar",                    MENUITEM_PROC,    (int*)gui_draw_calendar },
     {"Text file reader ->",         MENUITEM_SUBMENU, (int*)&reader_submenu },
     {"Games ->",                    MENUITEM_SUBMENU, (int*)&games_submenu },
+#ifndef CAMERA_a710
     {"Flash-light",                 MENUITEM_BOOL,    &conf.flashlight },
+#endif
     {"Show splash screen on load",  MENUITEM_BOOL,    &conf.splash_show },
     {"Use zoom buttons for MF",     MENUITEM_BOOL,    &conf.use_zoom_mf },
+#if defined(CAMERA_s2is) || defined(CAMERA_s3is)
+    {"<ALT> mode button",           MENUITEM_ENUM,    (int*)gui_alt_mode_button_enum },
+#endif
     {"Draw palette",                MENUITEM_PROC,    (int*)gui_draw_palette },
     {"Show build info",             MENUITEM_PROC,    (int*)gui_show_build_info },
     {"Show memory info",            MENUITEM_PROC,    (int*)gui_show_memory_info },
@@ -425,6 +433,31 @@ const char* gui_zoom_value_enum(int change, int arg) {
 
     return modes[conf.zoom_value];
 }
+
+//-------------------------------------------------------------------
+#if defined(CAMERA_s2is) || defined(CAMERA_s3is)
+const char* gui_alt_mode_button_enum(int change, int arg) {
+    static const char* names[]={ "Shrtcut", "Flash", "Timer", "ISO", "Video" };
+    static const int keys[]={ KEY_PRINT, KEY_FLASH, KEY_TIMER, KEY_ISO, KEY_VIDEO };
+    int i;
+
+    for (i=0; i<sizeof(names)/sizeof(names[0]); ++i) {
+        if (conf.alt_mode_button==keys[i]) {
+            break;
+        }
+    }
+
+    i+=change;
+    if (i<0)
+        i=(sizeof(names)/sizeof(names[0]))-1;
+    else if (i>=(sizeof(names)/sizeof(names[0])))
+        i=0;
+
+    conf.alt_mode_button = keys[i];
+    kbd_set_alt_mode_key_mask(conf.alt_mode_button);
+    return names[i];
+}
+#endif
 
 //-------------------------------------------------------------------
 void gui_update_script_submenu() {

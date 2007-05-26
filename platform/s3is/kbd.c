@@ -15,14 +15,14 @@ static long kbd_prev_state[3];
 static long kbd_mod_state[3];
 static KeyMap keymap[];
 static long last_kbd_key = 0;
+static long alt_mode_key_mask = 0x00004000;
 
 #define KEYS_MASK0 (0x00000003)
-#define KEYS_MASK1 (0x1d3f6000)
+#define KEYS_MASK1 (0x5f7f7038)
 #define KEYS_MASK2 (0x00000000)
 
 #define NEW_SS (0x2000)
 #define SD_READONLY_FLAG (0x20000)
-#define KEY_PRINT_MASK 0x00004000
 
 #ifndef MALLOCD_STACK
 static char kbd_stack[NEW_SS];
@@ -108,6 +108,7 @@ void my_kbd_read_keys()
 	physw_status[0] = kbd_new_state[0];
 	physw_status[1] = kbd_new_state[1];
 	physw_status[2] = kbd_new_state[2];
+        physw_status[1] |= alt_mode_key_mask;
     } else {
 	// override keys
 	physw_status[0] = (kbd_new_state[0] & (~KEYS_MASK0)) |
@@ -120,8 +121,6 @@ void my_kbd_read_keys()
 			  (kbd_mod_state[2] & KEYS_MASK2);
     }
 
-//    physw_status[1] = physw_status[1] | KEY_PRINT_MASK;
-
     _kbd_read_keys_r2(physw_status);
     physw_status[2] = physw_status[2] & ~SD_READONLY_FLAG;
 
@@ -129,6 +128,16 @@ void my_kbd_read_keys()
 
 /****************/
 
+void kbd_set_alt_mode_key_mask(long key)
+{
+    int i;
+    for (i=0; keymap[i].hackkey; ++i) {
+	if (keymap[i].hackkey == key) {
+	    alt_mode_key_mask = keymap[i].canonkey;
+	    return;
+	}
+    }
+}
 
 void kbd_key_press(long key)
 {
@@ -240,7 +249,7 @@ long kbd_use_zoom_as_mf() {
     static long v;
     static long zoom_key_pressed = 0;
 
-    if (kbd_is_key_pressed(KEY_ZOOM_IN) && (mode_get()&MODE_MASK) == MODE_REC) {
+    if (kbd_is_key_pressed(KEY_ZOOM_IN) && kbd_is_key_pressed(KEY_MF) && (mode_get()&MODE_MASK) == MODE_REC) {
         get_property_case(12, &v, 4);
         if (v) {
             kbd_key_release_all();
@@ -255,7 +264,7 @@ long kbd_use_zoom_as_mf() {
             return 1;
         }
     }
-    if (kbd_is_key_pressed(KEY_ZOOM_OUT) && (mode_get()&MODE_MASK) == MODE_REC) {
+    if (kbd_is_key_pressed(KEY_ZOOM_OUT) && kbd_is_key_pressed(KEY_MF) && (mode_get()&MODE_MASK) == MODE_REC) {
         get_property_case(12, &v, 4);
         if (v) {
             kbd_key_release_all();
@@ -292,6 +301,13 @@ static KeyMap keymap[] = {
 	{ 1, KEY_DISPLAY	, 0x00002000 },
 	{ 1, KEY_PRINT		, 0x00004000 },
 	{ 1, KEY_ERASE		, 0x00400000 },
+        { 1, KEY_ISO		, 0x00001000 },
+        { 1, KEY_FLASH		, 0x00000008 },
+        { 1, KEY_MF		, 0x00000010 },
+        { 1, KEY_MACRO		, 0x00000020 },
+        { 1, KEY_VIDEO		, 0x40000000 },
+        { 1, KEY_TIMER		, 0x02000000 },
+        { 1, KEY_DUMMY   	, 0x02004000 },
 	{ 0, 0, 0 }
 };
 

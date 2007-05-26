@@ -209,12 +209,25 @@ long kbd_process()
 
     if (kbd_blocked){
 	if (key_pressed){
-	    if (kbd_get_pressed_key() == 0)
-		key_pressed = 0;
+            if (kbd_is_key_pressed(conf.alt_mode_button)) {
+                ++key_pressed;
+                if (key_pressed==40) {
+                    kbd_key_press(conf.alt_mode_button);
+                } else if (key_pressed==45) {
+                    kbd_key_release_all();
+                    key_pressed = 2;
+        	    kbd_blocked = 0;
+//        	    gui_kbd_leave();
+                }
+            } else if (kbd_get_pressed_key() == 0) {
+                if (key_pressed!=100)
+                    gui_kbd_enter();
+        	key_pressed = 0;
+            }    
 	    return 1;
 	}
 
-	if (kbd_is_key_pressed(KEY_PRINT)){
+	if (kbd_is_key_pressed(conf.alt_mode_button)){
 	    key_pressed = 2;
 	    kbd_blocked = 0;
 	    gui_kbd_leave();
@@ -222,7 +235,7 @@ long kbd_process()
 	}
 
 	if (kbd_is_key_pressed(KEY_SHOOT_FULL)){
-	    key_pressed = 1;
+	    key_pressed = 100;
 	    if (!state_kbd_script_run){
                 script_console_clear();
                 script_console_add_line("*** STARTED ***");
@@ -241,17 +254,17 @@ long kbd_process()
         if (kbd_get_pressed_key() != 0 && !state_kbd_script_run) {
             // emulate presskey to avoid camera turn off due to timeout
             kbd_key_release_all();
-            kbd_key_press(KEY_PRINT);
+            kbd_key_press(KEY_DUMMY);
         }
     } else {
-	if (!key_pressed && kbd_is_key_pressed(KEY_PRINT)){
+	if (!key_pressed && kbd_is_key_pressed(conf.alt_mode_button)){
 	    kbd_blocked = 1;
 	    key_pressed = 1;
 	    kbd_key_release_all();
-	    gui_kbd_enter();
+//	    gui_kbd_enter();
 	    return 1;
 	} else 
-	if ((key_pressed == 2) && !kbd_is_key_pressed(KEY_PRINT)){
+	if ((key_pressed == 2) && !kbd_is_key_pressed(conf.alt_mode_button)){
 	    key_pressed = 0;
 	}
 	
@@ -280,6 +293,12 @@ const struct Keynames {
     { KEY_DISPLAY, "display" },
     { KEY_PRINT, "print" },
     { KEY_ERASE, "erase" },
+    { KEY_ISO, "iso" },
+    { KEY_FLASH, "flash" },
+    { KEY_MF, "mf" },
+    { KEY_MACRO, "macro" },
+    { KEY_VIDEO, "video" },
+    { KEY_TIMER, "timer" },
 };
 
 int keyid_by_name (const char *n)

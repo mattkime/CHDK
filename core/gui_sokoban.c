@@ -32,6 +32,8 @@
 #define MARKER_PLAYER_PLACE     '+'
 #define MARKER_EMPTY            ' '
 
+#define UNDO_SIZE               1000
+
 //-------------------------------------------------------------------
 #include "gui_sokoban_levels.h"
 #define NUM_LEVELS (sizeof(fields)/sizeof(fields[0]))
@@ -42,6 +44,83 @@ static char field[FIELD_HEIGHT][FIELD_WIDTH];
 
 static int cell_size;
 static int xPl, yPl;
+
+static int undo[UNDO_SIZE/10];
+static int undo_begin, undo_end, undo_curr;
+
+//-------------------------------------------------------------------
+static void sokoban_undo_add(int dx, int dy, int box) {
+    int offs, bits, value;
+
+    value = ((box)?1:0)<<2;
+    if (dx) {
+        value |= ((dx<0)?1:0)<<1;
+    } else {
+        value |= (((dy<0)?1:0)<<1)|1;
+    }
+    
+    offs = undo_curr/10;
+    bits = (undo_curr%10)*3;
+    undo[offs] &= ~(7<<bits);
+    undo[offs] |= (value&7)<<bits;
+
+    if (++undo_curr==UNDO_SIZE) undo_curr=0;
+    if (undo_curr==undo_begin) {
+        if (++undo_begin==UNDO_SIZE) undo_begin=0;
+    }
+    undo_end=undo_curr;
+} 
+
+//-------------------------------------------------------------------
+static void sokoban_undo() {
+    int dx=0, dy=0, value;
+    
+    if (undo_curr!=undo_begin) {
+        if (undo_curr==0) undo_curr=UNDO_SIZE;
+        --undo_curr;
+        
+        value = (undo[undo_curr/10]>>((undo_curr%10)*3))&7;
+        if (value&1) dy=1; else dx=1;
+        if (value&2) {dy=-dy; dx=-dx;}
+
+        field[yPl][xPl]=(field[yPl][xPl]==MARKER_PLAYER_PLACE)?MARKER_PLACE:MARKER_EMPTY;
+        if (value&4) {
+            field[yPl+dy][xPl+dx]=(field[yPl+dy][xPl+dx]==MARKER_BOX_PLACE)?MARKER_PLACE:MARKER_EMPTY;
+            field[yPl][xPl]=(field[yPl][xPl]==MARKER_PLACE)?MARKER_BOX_PLACE:MARKER_BOX;
+        }
+        xPl-=dx; yPl-=dy;
+        field[yPl][xPl]=(field[yPl][xPl]==MARKER_PLACE)?MARKER_PLAYER_PLACE:MARKER_PLAYER;
+        --moves;
+    }
+}
+
+//-------------------------------------------------------------------
+static void sokoban_redo() {
+    int dx=0, dy=0, value;
+    
+    if (undo_curr!=undo_end) {
+        value = (undo[undo_curr/10]>>((undo_curr%10)*3))&7;
+        if (value&1) dy=1; else dx=1;
+        if (value&2) {dy=-dy; dx=-dx;}
+
+        field[yPl][xPl]=(field[yPl][xPl]==MARKER_PLAYER_PLACE)?MARKER_PLACE:MARKER_EMPTY;
+        xPl+=dx; yPl+=dy;
+        if (value&4) {
+            field[yPl][xPl]=(field[yPl][xPl]==MARKER_BOX_PLACE)?MARKER_PLACE:MARKER_EMPTY;
+            field[yPl+dy][xPl+dx]=(field[yPl+dy][xPl+dx]==MARKER_PLACE)?MARKER_BOX_PLACE:MARKER_BOX;
+        }
+        field[yPl][xPl]=(field[yPl][xPl]==MARKER_PLACE)?MARKER_PLAYER_PLACE:MARKER_PLAYER;
+        ++moves;
+
+        ++undo_curr;
+        if (undo_curr==UNDO_SIZE) undo_curr=0;
+    }
+}
+
+//-------------------------------------------------------------------
+static void sokoban_undo_reset() {
+    undo_begin=undo_end=undo_curr=0;
+}
 
 //-------------------------------------------------------------------
 static void sokoban_set_level(int lvl) {
@@ -80,6 +159,7 @@ static void sokoban_set_level(int lvl) {
 
     conf.sokoban_level = lvl;
     moves = 0;
+    sokoban_undo_reset();
 }
 
 //-------------------------------------------------------------------
@@ -120,6 +200,9 @@ static int sokoban_move(int dx, int dy) {
     if (field[yPl][xPl]==MARKER_BOX || field[yPl][xPl]==MARKER_BOX_PLACE) {
         field[yPl][xPl]=(field[yPl][xPl]==MARKER_BOX_PLACE)?MARKER_PLACE:MARKER_EMPTY;
         field[yPl+dy][xPl+dx]=(field[yPl+dy][xPl+dx]==MARKER_PLACE)?MARKER_BOX_PLACE:MARKER_BOX;
+        sokoban_undo_add(dx, dy, 1);
+    } else {
+        sokoban_undo_add(dx, dy, 0);
     }
     field[yPl][xPl]=(field[yPl][xPl]==MARKER_PLACE)?MARKER_PLAYER_PLACE:MARKER_PLAYER;
     return 1;
@@ -164,6 +247,14 @@ void gui_sokoban_kbd_process() {
             if (moves == 0) {
                 sokoban_next_level();
             }
+            break;
+        case KEY_ZOOM_OUT:
+            sokoban_undo();
+            need_redraw = 1;
+            break;
+        case KEY_ZOOM_IN:
+            sokoban_redo();
+            need_redraw = 1;
             break;
         case KEY_ERASE:
             sokoban_set_level(conf.sokoban_level);

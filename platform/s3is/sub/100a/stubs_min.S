@@ -2,4 +2,5 @@
 
 DEF(physw_status, 0xF218)
 DEF(physw_run, 0x1FB0)
+DEF(playrec_mode, 0x6924)
 

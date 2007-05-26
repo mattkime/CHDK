@@ -96,6 +96,7 @@ long kbd_get_clicked_key();
 long kbd_get_autoclicked_key();
 void kbd_reset_autoclicked_key();
 long kbd_use_zoom_as_mf();
+void kbd_set_alt_mode_key_mask(long key);
 
 /******************************************************************/
 
@@ -143,6 +144,8 @@ void shooting_set_av(int v);
 void shooting_set_av_rel(int v);
 
 int shooting_get_real_av();
+
+extern int circle_of_confusion;
 
 /******************************************************************/
 

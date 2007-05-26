@@ -1,4 +1,5 @@
 #include "platform.h"
+#include "keyboard.h"
 #include "conf.h"
 #include "histogram.h"
 #include "font.h"
@@ -55,6 +56,7 @@ static void conf_change_histo_mode();
 static void conf_change_histo_layout();
 static void conf_change_font();
 static void conf_change_menu_rbf_file();
+static void conf_change_alt_mode_button();
 
 static const ConfInfo conf_info[] = {
 /* !!! Do NOT change ID for items defined already! Append a new one at the end! !!! */
@@ -120,6 +122,7 @@ static const ConfInfo conf_info[] = {
     CONF_INFO( 60, conf.raw_save_first_only,    CONF_DEF_VALUE, i:0, NULL),
     CONF_INFO( 61, conf.reader_wrap_by_words,   CONF_DEF_VALUE, i:0, NULL),
     CONF_INFO( 62, conf.raw_save_second,        CONF_DEF_VALUE, i:0, NULL),
+    CONF_INFO( 63, conf.alt_mode_button,        CONF_DEF_VALUE, i:KEY_PRINT, conf_change_alt_mode_button),
 };
 #define CONF_NUM (sizeof(conf_info)/sizeof(conf_info[0]))
 
@@ -148,6 +151,14 @@ static void conf_change_menu_rbf_file() {
     if (!rbf_load(conf.menu_rbf_file))
         rbf_load_from_8x16(current_font);
     rbf_set_codepage(FONT_CP_DOS);
+}
+
+static void conf_change_alt_mode_button() {
+#if defined(CAMERA_s2is) || defined(CAMERA_s3is)
+    kbd_set_alt_mode_key_mask(conf.alt_mode_button);
+#else
+    conf.alt_mode_button = KEY_PRINT;
+#endif
 }
 
 //-------------------------------------------------------------------

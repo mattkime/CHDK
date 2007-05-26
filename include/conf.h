@@ -83,6 +83,7 @@ typedef struct {
     int splash_show;
 
     int use_zoom_mf;
+    long alt_mode_button; //for S-series
 
     int ns_enable_memdump;
 } Conf;

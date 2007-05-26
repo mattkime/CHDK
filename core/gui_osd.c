@@ -405,7 +405,7 @@ void gui_osd_draw_dof() {
     fp=lens_get_target_distance();
 
     if (av) {
-        hyp=(fl*fl)/(10*6*av);
+        hyp=(fl*fl)/(10*circle_of_confusion*av);
         if (fp>=0 && fp<65500) {
             v = (hyp+fp);
             if (v!=0.0f)
