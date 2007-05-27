@@ -5,6 +5,7 @@
 #include "conf.h"
 #include "ubasic.h"
 #include "font.h"
+#include "lang.h"
 #include "gui.h"
 #include "gui_draw.h"
 #include "gui_palette.h"
@@ -52,7 +53,7 @@ void gui_menu_init(CMenu *menu_ptr) {
     w = screen_width-30-30;
     x = (screen_width-w)>>1;
     y = ((screen_height-num_lines*rbf_font_height())>>1);
-    len_bool = rbf_str_width("\xF9");
+    len_bool = rbf_str_width("\xf9"); //0x95
     len_int = rbf_str_width("99999");
     len_enum = rbf_str_width("WUBfS3a");
     len_space = rbf_char_width(' ');
@@ -277,11 +278,11 @@ void gui_menu_draw_initial() {
     static const char *f=" *** ";
     int l, xx, yy;
     
-    l = rbf_str_width(curr_menu->title);
+    l = rbf_str_width(lang_str(curr_menu->title));
     xx = x+((w-l)>>1)-rbf_str_width(f);
     yy = y-rbf_font_height()-rbf_font_height()/2;
     xx+=rbf_draw_string(xx, yy, f, conf.menu_color);
-    xx+=rbf_draw_string(xx, yy, curr_menu->title, conf.menu_color);
+    xx+=rbf_draw_string(xx, yy, lang_str(curr_menu->title), conf.menu_color);
     rbf_draw_string(xx, yy, f, conf.menu_color);
 
     for (count=0; curr_menu->menu[count].text; ++count);
@@ -312,14 +313,14 @@ void gui_menu_draw() {
             switch (curr_menu->menu[imenu].type & MENUITEM_MASK) {
             case MENUITEM_BOOL:
                 xx+=rbf_draw_char(xx, yy, ' ', cl);
-                xx+=rbf_draw_string_len(xx, yy, w-len_space-len_space-len_br1-len_bool-len_br2-len_space, curr_menu->menu[imenu].text, cl);
+                xx+=rbf_draw_string_len(xx, yy, w-len_space-len_space-len_br1-len_bool-len_br2-len_space, lang_str(curr_menu->menu[imenu].text), cl);
                 xx+=rbf_draw_string(xx, yy, " [", cl);
                 xx+=rbf_draw_string_len(xx, yy, len_bool, (*(curr_menu->menu[imenu].value))?"\xF9":"", cl);
                 rbf_draw_string(xx, yy, "] ", cl);
                 break;
             case MENUITEM_INT:
                 xx+=rbf_draw_char(xx, yy, ' ', cl);
-                xx+=rbf_draw_string_len(xx, yy, w-len_space-len_space-len_br1-len_int-len_br2-len_space, curr_menu->menu[imenu].text, cl);
+                xx+=rbf_draw_string_len(xx, yy, w-len_space-len_space-len_br1-len_int-len_br2-len_space, lang_str(curr_menu->menu[imenu].text), cl);
                 xx+=rbf_draw_string(xx, yy, " [", cl);
                 sprintf(tbuf, "%d", *(curr_menu->menu[imenu].value));
                 xx+=rbf_draw_string_right_len(xx, yy, len_int, tbuf, cl);
@@ -330,12 +331,12 @@ void gui_menu_draw() {
             case MENUITEM_PROC:
             case MENUITEM_TEXT:
                 xx+=rbf_draw_char(xx, yy, ' ', cl);
-                xx+=rbf_draw_string_len(xx, yy, w-len_space-len_space, curr_menu->menu[imenu].text, cl);
+                xx+=rbf_draw_string_len(xx, yy, w-len_space-len_space, lang_str(curr_menu->menu[imenu].text), cl);
                 rbf_draw_char(xx, yy, ' ', cl);
                 break;
             case MENUITEM_SEPARATOR:
-                if (curr_menu->menu[imenu].text[0]) {
-                    j = rbf_str_width(curr_menu->menu[imenu].text);
+                if (lang_str(curr_menu->menu[imenu].text)[0]) {
+                    j = rbf_str_width(lang_str(curr_menu->menu[imenu].text));
                     xx+=(w-j-len_space*2)>>1;
 
                     rbf_draw_char(x, yy, ' ', cl);
@@ -344,7 +345,7 @@ void gui_menu_draw() {
                     draw_filled_rect(x+len_space, yy+rbf_font_height()/2+1, xx-1, yy+rbf_font_height()-1, MAKE_COLOR(cl>>8, cl>>8));
 
                     xx+=rbf_draw_char(xx, yy, ' ', cl);
-                    xx+=rbf_draw_string(xx, yy, curr_menu->menu[imenu].text, cl);
+                    xx+=rbf_draw_string(xx, yy, lang_str(curr_menu->menu[imenu].text), cl);
                     xx+=rbf_draw_char(xx, yy, ' ', cl);
                     
                     draw_filled_rect(xx, yy, x+w-len_space-1, yy+rbf_font_height()/2-1, MAKE_COLOR(cl>>8, cl>>8));
@@ -362,7 +363,7 @@ void gui_menu_draw() {
             case MENUITEM_COLOR_FG:
             case MENUITEM_COLOR_BG:
                 xx+=rbf_draw_char(xx, yy, ' ', cl);
-                xx+=rbf_draw_string_len(xx, yy, w-len_space, curr_menu->menu[imenu].text, cl);
+                xx+=rbf_draw_string_len(xx, yy, w-len_space, lang_str(curr_menu->menu[imenu].text), cl);
                 draw_filled_rect(x+w-1-cl_rect-2-len_space, yy+2, x+w-1-2-len_space, yy+rbf_font_height()-1-2, 
                                  MAKE_COLOR(((*(curr_menu->menu[imenu].value))>>(((curr_menu->menu[imenu].type & MENUITEM_MASK)==MENUITEM_COLOR_BG)?8:0))&0xFF, (cl>>8)&0xFF));
                 break;
@@ -371,7 +372,7 @@ void gui_menu_draw() {
                     ch=((const char* (*)(int change, int arg))(curr_menu->menu[imenu].value))(0, curr_menu->menu[imenu].arg);
                 }
                 xx+=rbf_draw_char(xx, yy, ' ', cl);
-                xx+=rbf_draw_string_len(xx, yy, w-len_space-len_space-len_br1-len_enum-len_br2-len_space, curr_menu->menu[imenu].text, cl);
+                xx+=rbf_draw_string_len(xx, yy, w-len_space-len_space-len_br1-len_enum-len_br2-len_space, lang_str(curr_menu->menu[imenu].text), cl);
                 xx+=rbf_draw_string(xx, yy, " [", cl);
                 xx+=rbf_draw_string_right_len(xx, yy, len_enum, ch, cl);
                 rbf_draw_string(xx, yy, "] ", cl);

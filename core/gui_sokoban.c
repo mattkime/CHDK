@@ -2,9 +2,11 @@
 #include "keyboard.h"
 #include "platform.h"
 #include "core.h"
+#include "lang.h"
 #include "conf.h"
 #include "gui.h"
 #include "gui_draw.h"
+#include "gui_lang.h"
 #include "gui_batt.h"
 #include "gui_mbox.h"
 #include "gui_sokoban.h"
@@ -13,7 +15,7 @@
 #define FIELD_WIDTH             15
 #define FIELD_HEIGHT            15
 
-#define SCREEN_COLOR            0xDB
+#define SCREEN_COLOR            0xF7
 #define WALL_COLOR_1            COLOR_GREY
 #define WALL_COLOR_2            COLOR_BLACK
 #define BOX_COLOR_1             0x26
@@ -261,7 +263,7 @@ void gui_sokoban_kbd_process() {
             need_redraw = 1;
             break;
         case KEY_DISPLAY:
-            gui_mbox_init("*** About ***", "SOKOBAN\n(c) GrAnd, 2007", MBOX_TEXT_CENTER, NULL);
+            gui_mbox_init(LANG_MBOX_ABOUT_TITLE, (int)"SOKOBAN\n(c) GrAnd, 2007", MBOX_TEXT_CENTER, NULL);
             need_redraw = 1;
             break;
     }
@@ -308,15 +310,15 @@ void gui_sokoban_draw() {
 
         draw_filled_rect(cell_size*FIELD_WIDTH+2, 0, screen_width-1, 7, MAKE_COLOR(SCREEN_COLOR, SCREEN_COLOR));
 
-        sprintf(str, "  Level: %-6d", conf.sokoban_level+1);
+        sprintf(str, "%s: %-6d", lang_str(LANG_SOKOBAN_TEXT_LEVEL), conf.sokoban_level+1);
         draw_string(cell_size*FIELD_WIDTH+2, 8, str, MAKE_COLOR(SCREEN_COLOR, COLOR_WHITE));
-        sprintf(str, "  Moves: %-6d", moves);
+        sprintf(str, "%s: %-6d", lang_str(LANG_SOKOBAN_TEXT_MOVES), moves);
         draw_string(cell_size*FIELD_WIDTH+2, 8+FONT_HEIGHT, str, MAKE_COLOR(SCREEN_COLOR, COLOR_WHITE));
 
         draw_filled_rect(cell_size*FIELD_WIDTH+2, 8+FONT_HEIGHT*2, screen_width-1, screen_height-1, MAKE_COLOR(SCREEN_COLOR, SCREEN_COLOR));
 
         if (sokoban_finished()) {
-            gui_mbox_init("*** Finished ***", "YES!\n  You did it!  ", MBOX_TEXT_CENTER, NULL);
+            gui_mbox_init(LANG_SOKOBAN_MSG_FINISH_TITLE, LANG_SOKOBAN_MSG_FINISH_TEXT, MBOX_TEXT_CENTER, NULL);
             sokoban_next_level();
         }
     }

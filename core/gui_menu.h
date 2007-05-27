@@ -29,14 +29,14 @@
 
 //-------------------------------------------------------------------
 typedef struct {
-    const char          *text;
+    int                 text;
     int                 type;
     int                 *value;
     int                 arg;
 } CMenuItem;
 
 typedef struct {
-    const char          *title;
+    int                 title;
     void                (*on_change)(unsigned int item);
     const CMenuItem     *menu;
 } CMenu;

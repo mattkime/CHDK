@@ -15,7 +15,7 @@ static long dummy=0;
 static unsigned int step;
 
 //-------------------------------------------------------------------
-#define SCREEN_COLOR            0xDB
+#define SCREEN_COLOR            0xF7
 
 //-------------------------------------------------------------------
 void gui_debug_init(void *st_addr) {

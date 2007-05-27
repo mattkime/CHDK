@@ -2,8 +2,10 @@
 #include "keyboard.h"
 #include "platform.h"
 #include "core.h"
+#include "lang.h"
 #include "gui.h"
 #include "gui_draw.h"
+#include "gui_lang.h"
 #include "gui_mbox.h"
 #include "gui_fselect.h"
 
@@ -31,7 +33,7 @@ static struct fitem *head=NULL, *top, *selected;
 static unsigned int count;
 static coord x, y, w, h;
 static int gui_fselect_redraw;
-static const char *fselect_title = "Select file";
+static char *fselect_title;
 static void (*fselect_on_select)(const char *fn);
 
 //-------------------------------------------------------------------
@@ -148,7 +150,7 @@ static void gui_fselect_read_dir(const char* dir) {
 }
 
 //-------------------------------------------------------------------
-void gui_fselect_init(const char* dir, void (*on_select)(const char *fn)) {
+void gui_fselect_init(int title, const char* dir, void (*on_select)(const char *fn)) {
     int i;
     
     w = (1+NAME_SIZE+SPACING+SIZE_SIZE+SPACING+TIME_SIZE+1+1)*FONT_WIDTH;
@@ -156,6 +158,7 @@ void gui_fselect_init(const char* dir, void (*on_select)(const char *fn)) {
     x = (screen_width-w)>>1;
     y = (screen_height-h)>>1;
 
+    fselect_title = lang_str(title);
     strcpy(current_dir, dir);
     gui_fselect_read_dir(current_dir);
     top = selected = head;
@@ -417,10 +420,10 @@ void gui_fselect_kbd_process() {
             if (selected && selected->attr != 0xFF) {
                 if (selected->attr & DOS_ATTR_DIRECTORY) {
                     if (selected->name[0]!='.' || selected->name[1]!='.' || selected->name[2]!=0)
-                        gui_mbox_init("*** Erase directory ***", "Are you SURE to delete\nALL files from\nselected directory?",
+                        gui_mbox_init(LANG_BROWSER_ERASE_DIR_TITLE, LANG_BROWSER_ERASE_DIR_TEXT,
                                       MBOX_TEXT_CENTER|MBOX_BTN_YES_NO|MBOX_DEF_BTN2, fselect_delete_folder_cb);
                 } else {
-                    gui_mbox_init("*** Delete file ***", "Are you SURE to delete\nselected file?",
+                    gui_mbox_init(LANG_BROWSER_DELETE_FILE_TITLE, LANG_BROWSER_DELETE_FILE_TEXT,
                                   MBOX_TEXT_CENTER|MBOX_BTN_YES_NO|MBOX_DEF_BTN2, fselect_delete_file_cb);
                 }
             }

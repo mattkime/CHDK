@@ -2,8 +2,10 @@
 #include "keyboard.h"
 #include "platform.h"
 #include "core.h"
+#include "lang.h"
 #include "gui.h"
 #include "gui_draw.h"
+#include "gui_lang.h"
 #include "gui_mbox.h"
 
 
@@ -19,12 +21,12 @@ static unsigned int     mbox_flags;
 #define SPACING_BTN     4
 static struct {
         unsigned int    flag;
-        const char      *text;
+        int             text;
 } buttons[] = {
-        { MBOX_BTN_OK,          "Ok"    },
-        { MBOX_BTN_YES,         "Yes"   },
-        { MBOX_BTN_NO,          "No"    },
-        { MBOX_BTN_CANCEL,      "Cancel"}
+        { MBOX_BTN_OK,          LANG_MBOX_BTN_OK    },
+        { MBOX_BTN_YES,         LANG_MBOX_BTN_YES   },
+        { MBOX_BTN_NO,          LANG_MBOX_BTN_NO    },
+        { MBOX_BTN_CANCEL,      LANG_MBOX_BTN_CANCEL}
 };
 #define BUTTON_SIZE     6
 #define BUTTONSNUM      (sizeof(buttons)/sizeof(buttons[0]))
@@ -35,7 +37,7 @@ static coord    mbox_buttons_x, mbox_buttons_y;
 static void (*mbox_on_select)(unsigned int btn);
 
 //-------------------------------------------------------------------
-void gui_mbox_init(const char* title, const char* msg, const unsigned int flags, void (*on_select)(unsigned int btn)) {
+void gui_mbox_init(int title, int msg, const unsigned int flags, void (*on_select)(unsigned int btn)) {
     int i;
 
     mbox_buttons_num = 0;
@@ -54,13 +56,12 @@ void gui_mbox_init(const char* title, const char* msg, const unsigned int flags,
     }
 
     gui_mbox_mode_old = gui_get_mode();
-    mbox_title = title;
-    mbox_msg = msg;
+    mbox_title = lang_str(title);
+    mbox_msg = lang_str(msg);
     mbox_to_draw = 1;
     mbox_flags = flags;
     mbox_on_select = on_select;
     gui_set_mode(GUI_MODE_MBOX);
-
 }
 
 //-------------------------------------------------------------------
@@ -78,7 +79,7 @@ static void gui_mbox_draw_buttons() {
         cl = MAKE_COLOR((mbox_button_active==i)?COLOR_RED:COLOR_BLACK, COLOR_WHITE);
         draw_rect(x-1, mbox_buttons_y-1, x+BUTTON_SIZE*FONT_WIDTH+3, mbox_buttons_y+FONT_HEIGHT+3, COLOR_BLACK); //shadow
         draw_filled_rect(x-2, mbox_buttons_y-2, x+BUTTON_SIZE*FONT_WIDTH+2, mbox_buttons_y+FONT_HEIGHT+2, cl);
-        draw_string(x+(((BUTTON_SIZE-strlen(buttons[mbox_buttons[i]].text))*FONT_WIDTH)>>1), mbox_buttons_y, buttons[mbox_buttons[i]].text, cl);
+        draw_string(x+(((BUTTON_SIZE-strlen(lang_str(buttons[mbox_buttons[i]].text)))*FONT_WIDTH)>>1), mbox_buttons_y, lang_str(buttons[mbox_buttons[i]].text), cl);
         x+=BUTTON_SIZE*FONT_WIDTH+BUTTON_SEP;
     }
 }

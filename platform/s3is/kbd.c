@@ -253,6 +253,7 @@ long kbd_use_zoom_as_mf() {
         get_property_case(12, &v, 4);
         if (v) {
             kbd_key_release_all();
+            kbd_key_press(KEY_MF);
             kbd_key_press(KEY_UP);
             zoom_key_pressed = KEY_ZOOM_IN;
             return 1;
@@ -268,6 +269,7 @@ long kbd_use_zoom_as_mf() {
         get_property_case(12, &v, 4);
         if (v) {
             kbd_key_release_all();
+            kbd_key_press(KEY_MF);
             kbd_key_press(KEY_DOWN);
             zoom_key_pressed = KEY_ZOOM_OUT;
             return 1;
@@ -307,7 +309,7 @@ static KeyMap keymap[] = {
         { 1, KEY_MACRO		, 0x00000020 },
         { 1, KEY_VIDEO		, 0x40000000 },
         { 1, KEY_TIMER		, 0x02000000 },
-        { 1, KEY_DUMMY   	, 0x02004000 },
+//        { 1, KEY_DUMMY   	, 0x00000000 },
 	{ 0, 0, 0 }
 };
 

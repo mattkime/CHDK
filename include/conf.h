@@ -69,6 +69,8 @@ typedef struct {
     int font;
     char menu_rbf_file[100];
 
+    char lang_file[100];
+
     char reader_file[100];
     int  reader_pos;
     int  reader_autoscroll;

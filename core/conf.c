@@ -123,6 +123,7 @@ static const ConfInfo conf_info[] = {
     CONF_INFO( 61, conf.reader_wrap_by_words,   CONF_DEF_VALUE, i:0, NULL),
     CONF_INFO( 62, conf.raw_save_second,        CONF_DEF_VALUE, i:0, NULL),
     CONF_INFO( 63, conf.alt_mode_button,        CONF_DEF_VALUE, i:KEY_PRINT, conf_change_alt_mode_button),
+    CONF_INFO( 64, conf.lang_file,              CONF_DEF_PTR,   ptr:"", NULL),
 };
 #define CONF_NUM (sizeof(conf_info)/sizeof(conf_info[0]))
 

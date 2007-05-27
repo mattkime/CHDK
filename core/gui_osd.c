@@ -3,28 +3,30 @@
 #include "platform.h"
 #include "histogram.h"
 #include "core.h"
+#include "lang.h"
 #include "conf.h"
 #include "gui.h"
 #include "gui_draw.h"
+#include "gui_lang.h"
 #include "gui_batt.h"
 #include "gui_osd.h"
 
 
 //-------------------------------------------------------------------
 typedef struct {
-    char    *title;
+    int     title;
     OSD_pos *pos;
     OSD_pos size;
 } OSD_elem;
 
 static OSD_elem osd[]={
-    {"Histogram",       &conf.histo_pos,        {HISTO_WIDTH+2, HISTO_HEIGHT}   },
-    {"DOF calc",        &conf.dof_pos,          {17*FONT_WIDTH, 2*FONT_HEIGHT}  },
-    {"RAW/SCR/EXP",     &conf.mode_state_pos,   {3*FONT_WIDTH, 3*FONT_HEIGHT}   },
-    {"Misc values",     &conf.values_pos,       {8*FONT_WIDTH, 3*FONT_HEIGHT}   },
-    {"Batt icon",       &conf.batt_icon_pos,    {28, 12}                        },
-    {"Batt text",       &conf.batt_txt_pos,     {8*FONT_WIDTH, FONT_HEIGHT}     },
-    {"Clock",           &conf.clock_pos,        {5*FONT_WIDTH, FONT_HEIGHT}     },
+    {LANG_OSD_LAYOUT_EDITOR_HISTO,      &conf.histo_pos,        {HISTO_WIDTH+2, HISTO_HEIGHT}   },
+    {LANG_OSD_LAYOUT_EDITOR_DOF_CALC,   &conf.dof_pos,          {17*FONT_WIDTH, 2*FONT_HEIGHT}  },
+    {LANG_OSD_LAYOUT_EDITOR_STATES,     &conf.mode_state_pos,   {3*FONT_WIDTH, 3*FONT_HEIGHT}   },
+    {LANG_OSD_LAYOUT_EDITOR_MISC,       &conf.values_pos,       {8*FONT_WIDTH, 3*FONT_HEIGHT}   },
+    {LANG_OSD_LAYOUT_EDITOR_BAT_ICON,   &conf.batt_icon_pos,    {28, 12}                        },
+    {LANG_OSD_LAYOUT_EDITOR_BAT_TEXT,   &conf.batt_txt_pos,     {8*FONT_WIDTH, FONT_HEIGHT}     },
+    {LANG_OSD_LAYOUT_EDITOR_CLOCK,      &conf.clock_pos,        {5*FONT_WIDTH, FONT_HEIGHT}     },
     {0}
 };
 static int osd_to_draw;
@@ -59,7 +61,7 @@ void gui_osd_draw() {
                       osd[curr_item].pos->x+osd[curr_item].size.x+i-1, osd[curr_item].pos->y+osd[curr_item].size.y+i-1,
                       COLOR_GREEN);
         }
-        sprintf(osd_buf, " %s:  x:%d y:%d s:%d ", osd[curr_item].title, osd[curr_item].pos->x, osd[curr_item].pos->y, step);
+        sprintf(osd_buf, " %s:  x:%d y:%d s:%d ", lang_str(osd[curr_item].title), osd[curr_item].pos->x, osd[curr_item].pos->y, step);
         draw_string(0, (osd[curr_item].pos->x<strlen(osd_buf)*FONT_WIDTH+4 && osd[curr_item].pos->y<FONT_HEIGHT+4)?screen_height-FONT_HEIGHT:0,
                     osd_buf, MAKE_COLOR(COLOR_RED, COLOR_WHITE));
         osd_to_draw = 0;

@@ -2,8 +2,10 @@
 #include "keyboard.h"
 #include "platform.h"
 #include "core.h"
+#include "lang.h"
 #include "gui.h"
 #include "gui_draw.h"
+#include "gui_lang.h"
 #include "gui_batt.h"
 #include "gui_mbox.h"
 #include "gui_reversi.h"
@@ -15,7 +17,7 @@
 #define COMPUTER_ONLY           3
 
 
-#define SCREEN_COLOR            0xDB
+#define SCREEN_COLOR            0xF7
 #define FIELD_COLOR_WHITE       0xF3
 #define FIELD_COLOR_BLACK       0xFE
 #define MARKER_COLOR_WHITE      0x33
@@ -173,11 +175,11 @@ static uchar CanPlace(uchar Player) {
 //-------------------------------------------------------------------
 static void Result() {
     if (NumPl1>NumPl2)
-        gui_mbox_init("*** Game Results ***", "You won the game! :)", MBOX_TEXT_CENTER, NULL);
+        gui_mbox_init(LANG_REVERSI_MSG_RESULTS_TITLE, LANG_REVERSI_MSG_RESULTS_WON, MBOX_TEXT_CENTER, NULL);
     else if (NumPl1<NumPl2)
-        gui_mbox_init("*** Game Results ***", "You lost the game! :(", MBOX_TEXT_CENTER, NULL);
+        gui_mbox_init(LANG_REVERSI_MSG_RESULTS_TITLE, LANG_REVERSI_MSG_RESULTS_LOST, MBOX_TEXT_CENTER, NULL);
     else
-        gui_mbox_init("*** Game Results ***", "Draw! :/", MBOX_TEXT_CENTER, NULL);
+        gui_mbox_init(LANG_REVERSI_MSG_RESULTS_TITLE, LANG_REVERSI_MSG_RESULTS_DRAW, MBOX_TEXT_CENTER, NULL);
     redraw();
     redrawstatus();
     need_redraw_all = 1;
@@ -247,10 +249,10 @@ static void Clk(uchar x, uchar y) {
     else {
         Placed=Place(x,y ,CurrPlayer,0);
         if (Placed==0) { 
-            gui_mbox_init("*** Wrong move ***", "You can't place here!", MBOX_TEXT_CENTER, NULL);
+            gui_mbox_init(LANG_REVERSI_MSG_WRONG_TITLE, LANG_REVERSI_MSG_WRONG_TEXT_1, MBOX_TEXT_CENTER, NULL);
             need_redraw_all = 1;
         } else if (Placed==0xFF) { 
-            gui_mbox_init("*** Wrong move ***", "This cell is not empty!", MBOX_TEXT_CENTER, NULL);
+            gui_mbox_init(LANG_REVERSI_MSG_WRONG_TITLE, LANG_REVERSI_MSG_WRONG_TEXT_2, MBOX_TEXT_CENTER, NULL);
             need_redraw_all = 1;
         } else {
             Placed=Place(x, y, CurrPlayer,1);
@@ -324,14 +326,14 @@ static void redrawstatus() {
     uchar x=field_size+FONT_WIDTH*2+23, y = 25;
     if (InGame) { 
         if (CurrPlayer==FIELD_PLAYER1) { 
-            draw_string(x+1, y, "Move: You     ", MAKE_COLOR(SCREEN_COLOR, COLOR_WHITE)); 
+            draw_string(x+1, y, lang_str(LANG_REVERSI_MOVE_WHITE), MAKE_COLOR(SCREEN_COLOR, COLOR_WHITE)); 
         } else { 
-            draw_string(x+1, y, "Move: Computer", MAKE_COLOR(SCREEN_COLOR, COLOR_WHITE)); 
+            draw_string(x+1, y, lang_str(LANG_REVERSI_MOVE_BLACK), MAKE_COLOR(SCREEN_COLOR, COLOR_WHITE)); 
         }
     } else { 
-        draw_string(x, y, "  GAME  OVER  ", MAKE_COLOR(SCREEN_COLOR, COLOR_WHITE)); 
+        draw_string(x, y, lang_str(LANG_REVERSI_GAME_OVER), MAKE_COLOR(SCREEN_COLOR, COLOR_WHITE)); 
     }
-    draw_string(x, y+FONT_HEIGHT+8, " White  Black ", MAKE_COLOR(SCREEN_COLOR, COLOR_WHITE));
+    draw_string(x, y+FONT_HEIGHT+8, lang_str(LANG_REVERSI_WHITE_BLACK), MAKE_COLOR(SCREEN_COLOR, COLOR_WHITE));
     sprintf(buf, " %d ", NumPl1);
     draw_string(x+FONT_WIDTH*(7-strlen(buf))/2, y+FONT_HEIGHT*2+8, buf, MAKE_COLOR(SCREEN_COLOR, COLOR_WHITE));
     sprintf(buf, " %d ", NumPl2);
@@ -383,7 +385,7 @@ void gui_reversi_kbd_process() {
             need_redraw = 1;
             break;
         case KEY_DISPLAY:
-            gui_mbox_init("*** About ***", "REVERSI\n(c) GrAnd, 2007", MBOX_TEXT_CENTER, NULL);
+            gui_mbox_init(LANG_MBOX_ABOUT_TITLE, (int)"REVERSI\n(c) GrAnd, 2007", MBOX_TEXT_CENTER, NULL);
             need_redraw_all = 1;
             break;
     }

@@ -3,12 +3,14 @@
 #include "platform.h"
 #include "core.h"
 #include "conf.h"
+#include "lang.h"
 #include "gui.h"
 #include "gui_draw.h"
+#include "gui_lang.h"
 #include "gui_calendar.h"
 
 //-------------------------------------------------------------------
-#define SCREEN_COLOR            0xDB
+#define SCREEN_COLOR            0xF7
 #define TITLE_COLOR             (MAKE_COLOR(COLOR_BLACK, COLOR_WHITE))
 #define CALENDAR_COLOR          (MAKE_COLOR(COLOR_GREY, COLOR_WHITE))
 #define WEEKEND_COLOR           (MAKE_COLOR(0x6E, COLOR_RED))
@@ -17,10 +19,12 @@
 static int need_redraw;
 static int cal_year, cal_month;
 static coord cal_x, cal_y, cal_w, cal_h;
-static const char *months[] = {"January", "February", "March", "April",
-                               "May", "June", "July", "August",
-                               "September", "October", "November", "December"};
-static const char *days[] = {"Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"};                            
+static int months[] = {LANG_CALENDAR_JANUARY, LANG_CALENDAR_FEBRUARY, LANG_CALENDAR_MARCH,
+                       LANG_CALENDAR_APRIL, LANG_CALENDAR_MAY, LANG_CALENDAR_JUNE,
+                       LANG_CALENDAR_JULY, LANG_CALENDAR_AUGUST, LANG_CALENDAR_SEPTEMBER,
+                       LANG_CALENDAR_OCTOBER, LANG_CALENDAR_NOVEMBER, LANG_CALENDAR_DECEMBER};
+static int days[] = {LANG_CALENDAR_MON, LANG_CALENDAR_TUE, LANG_CALENDAR_WED, LANG_CALENDAR_THU,
+                     LANG_CALENDAR_FRI, LANG_CALENDAR_SAT, LANG_CALENDAR_SUN};
 //-------------------------------------------------------------------
 static void calendar_goto_today() {
     unsigned long t;
@@ -59,14 +63,14 @@ static void gui_calendar_initial_draw() {
     int x, i;
 
     draw_filled_rect(0, 0, screen_width-1, screen_height-1, MAKE_COLOR(SCREEN_COLOR, SCREEN_COLOR));
-    draw_txt_string(1, 0, "Today:", MAKE_COLOR(SCREEN_COLOR, COLOR_WHITE));
+    draw_txt_string(1, 0, lang_str(LANG_CALENDAR_TODAY), MAKE_COLOR(SCREEN_COLOR, COLOR_WHITE));
     draw_rect(cal_x-3, cal_y-3, cal_x+cal_w+2, cal_y+cal_h+2, CALENDAR_COLOR);
     draw_filled_rect(cal_x-1, cal_y-1, cal_x+cal_w, cal_y+FONT_HEIGHT+8, TITLE_COLOR);
     draw_filled_rect(cal_x-1, cal_y+FONT_HEIGHT+8, cal_x+cal_w, cal_y+cal_h, CALENDAR_COLOR);
 
     draw_filled_rect(cal_x+cal_w-FONT_WIDTH*4*2, cal_y+FONT_HEIGHT+8+1, cal_x+cal_w-1, cal_y+cal_h-1, MAKE_COLOR(((WEEKEND_COLOR)>>8), ((WEEKEND_COLOR)>>8)));
     for (x=cal_x+FONT_WIDTH/2, i=0; i<7; x+=FONT_WIDTH*4, ++i) {
-        draw_string(x, cal_y+4+FONT_HEIGHT+4+4, days[i], (i<5)?CALENDAR_COLOR:WEEKEND_COLOR);
+        draw_string(x, cal_y+4+FONT_HEIGHT+4+4, lang_str(days[i]), (i<5)?CALENDAR_COLOR:WEEKEND_COLOR);
     }
 }
 
@@ -123,17 +127,17 @@ void gui_calendar_draw() {
 
     t = time(NULL);
     ttm = localtime(&t);
-    sprintf(str, " %2u %s %04u  %2u:%02u:%02u   ", ttm->tm_mday, months[ttm->tm_mon], 1900+ttm->tm_year, ttm->tm_hour, ttm->tm_min, ttm->tm_sec);
+    sprintf(str, " %2u %s %04u  %2u:%02u:%02u   ", ttm->tm_mday, lang_str(months[ttm->tm_mon]), 1900+ttm->tm_year, ttm->tm_hour, ttm->tm_min, ttm->tm_sec);
     draw_txt_string(8, 0, str, MAKE_COLOR(SCREEN_COLOR, COLOR_WHITE));
 
     if (need_redraw) {
         need_redraw = 0;
         
-        i = strlen(months[cal_month]);
+        i = strlen(lang_str(months[cal_month]));
         x = cal_x + (cal_w-FONT_WIDTH*2-FONT_WIDTH*4-FONT_WIDTH*2-i*FONT_WIDTH)/2;
         y = cal_y + 4;
         draw_filled_rect(cal_x+FONT_WIDTH, y, cal_x+cal_w-FONT_WIDTH-FONT_WIDTH*4-FONT_WIDTH, y+FONT_HEIGHT, MAKE_COLOR(((TITLE_COLOR)>>8), ((TITLE_COLOR)>>8)));
-        draw_string(x+FONT_WIDTH, y, months[cal_month], TITLE_COLOR);
+        draw_string(x+FONT_WIDTH, y, lang_str(months[cal_month]), TITLE_COLOR);
         
         sprintf(str, "%04d", cal_year);
         draw_string(cal_x+cal_w-FONT_WIDTH*2-FONT_WIDTH*4, y, str, TITLE_COLOR);

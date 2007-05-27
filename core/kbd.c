@@ -3,9 +3,11 @@
 #include "core.h"
 #include "keyboard.h"
 #include "conf.h"
+#include "lang.h"
 #include "ubasic.h"
 #include "histogram.h"
 #include "script.h"
+#include "gui_lang.h"
 
 static int keyid_by_name (const char *n);
 
@@ -176,7 +178,7 @@ void process_script()
     ubasic_run();
 
     if (ubasic_finished()) {
-        script_console_add_line("*** FINISHED ***");
+        script_console_add_line(lang_str(LANG_CONSOLE_TEXT_FINISHED));
 	script_end();
     }    
 }
@@ -238,10 +240,10 @@ long kbd_process()
 	    key_pressed = 100;
 	    if (!state_kbd_script_run){
                 script_console_clear();
-                script_console_add_line("*** STARTED ***");
+                script_console_add_line(lang_str(LANG_CONSOLE_TEXT_STARTED));
 		script_start();
 	    } else {
-                script_console_add_line("*** INTERRUPTED ***");
+                script_console_add_line(lang_str(LANG_CONSOLE_TEXT_INTERRUPTED));
 		script_end();
 	    }
 	}

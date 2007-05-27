@@ -3,9 +3,11 @@
 #include "core.h"
 #include "keyboard.h"
 #include "conf.h"
+#include "lang.h"
 #include "ubasic.h"
 #include "gui.h"
 #include "gui_draw.h"
+#include "gui_lang.h"
 #include "gui_palette.h"
 
 //-------------------------------------------------------------------
@@ -74,7 +76,7 @@ void gui_palette_draw() {
     unsigned int x, y;
     char f=0;
     color c;
-    static char buf[16];
+    static char buf[64];
 
     switch (palette_mode) {
         case PALETTE_MODE_DEFAULT:
@@ -87,8 +89,8 @@ void gui_palette_draw() {
                         }
                     }
                     if (counter) {
-                        draw_txt_string(6, 7, "Press SET to draw particular color", MAKE_COLOR(COLOR_BLACK, COLOR_WHITE));
-                        draw_txt_string(6, 8, "       Press MENU to exit         ", MAKE_COLOR(COLOR_BLACK, COLOR_WHITE));
+                        draw_txt_string(6, 7, lang_str(LANG_PALETTE_TEXT_1), MAKE_COLOR(COLOR_BLACK, COLOR_WHITE));
+                        draw_txt_string(6, 8, lang_str(LANG_PALETTE_TEXT_2), MAKE_COLOR(COLOR_BLACK, COLOR_WHITE));
                     }
                 }
                 if (counter)
@@ -97,10 +99,11 @@ void gui_palette_draw() {
             }
             
             if (!full_palette) {
-                sprintf(buf, " Color: 0x%02X ", cl);
+                sprintf(buf, " %s: 0x%02X ", lang_str(LANG_PALETTE_TEXT_COLOR), cl);
                 draw_txt_string(0, 0, buf, MAKE_COLOR(COLOR_BLACK, COLOR_WHITE));
                 draw_filled_rect(20, 20, screen_width-20, screen_height-20, MAKE_COLOR(cl, COLOR_WHITE));
-                draw_txt_string(0, 14, "Use \x18\x19\x1b\x1a to select color", MAKE_COLOR(COLOR_BLACK, COLOR_WHITE));
+                sprintf(buf, lang_str(LANG_PALETTE_TEXT_SELECT_COLOR), "\x18\x19\x1b\x1a");
+                draw_txt_string(0, 14, buf, MAKE_COLOR(COLOR_BLACK, COLOR_WHITE));
             }
             break;
         case PALETTE_MODE_SELECT:
@@ -109,7 +112,7 @@ void gui_palette_draw() {
                 #define BORDER_SIZE 8
                 #define CELL_ZOOM   5
                 draw_string(screen_width-29*FONT_WIDTH, 0, "    Use \x18\x19\x1b\x1a to change color ", MAKE_COLOR(COLOR_BLACK, COLOR_WHITE));
-                sprintf(buf, " Color: 0x%02hX    ", (unsigned char)cl);
+                sprintf(buf, " %s: 0x%02hX    ", lang_str(LANG_PALETTE_TEXT_COLOR), (unsigned char)cl);
                 draw_txt_string(0, 0, buf, MAKE_COLOR(COLOR_BLACK, COLOR_WHITE));
                 for (y=0; y<16; ++y) {
                     for (x=0; x<16; ++x) {

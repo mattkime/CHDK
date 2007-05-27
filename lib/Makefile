@@ -1,7 +1,7 @@
 topdir=../
 include $(topdir)makefile.inc
 
-SUBDIRS=font math ubasic
+SUBDIRS=font math ubasic lang
 
 all: all-recursive
 

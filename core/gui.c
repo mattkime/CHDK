@@ -5,7 +5,9 @@
 #include "conf.h"
 #include "ubasic.h"
 #include "font.h"
+#include "lang.h"
 #include "gui.h"
+#include "gui_lang.h"
 #include "gui_draw.h"
 #include "gui_menu.h"
 #include "gui_palette.h"
@@ -49,6 +51,7 @@ static void gui_draw_read_last(int arg);
 static void gui_draw_load_menu_rbf(int arg);
 static void gui_draw_load_rbf(int arg);
 static void gui_draw_calendar(int arg);
+static void gui_draw_load_lang(int arg);
 static void gui_menuproc_mkbootdisk(int arg);
 #ifndef OPTIONS_AUTOSAVE
 static void gui_menuproc_save(int arg);
@@ -79,193 +82,194 @@ static void cb_zebra_restore_osd();
 // Menu definition
 //-------------------------------------------------------------------
 static CMenuItem script_submenu_items_top[] = {
-    {"Load script from file...",    MENUITEM_PROC,                      (int*)gui_load_script },
-    {"Script shoot delay (.1s)",    MENUITEM_INT|MENUITEM_F_UNSIGNED,   &conf.script_shoot_delay },
-    {"Current script",              MENUITEM_SEPARATOR },
-    {script_title,                  MENUITEM_TEXT },
-    {"Script parameters",           MENUITEM_SEPARATOR }
+    {LANG_MENU_SCRIPT_LOAD,             MENUITEM_PROC,                      (int*)gui_load_script },
+    {LANG_MENU_SCRIPT_DELAY,            MENUITEM_INT|MENUITEM_F_UNSIGNED,   &conf.script_shoot_delay },
+    {LANG_MENU_SCRIPT_CURRENT,          MENUITEM_SEPARATOR },
+    {(int)script_title,                 MENUITEM_TEXT },
+    {LANG_MENU_SCRIPT_PARAMS,           MENUITEM_SEPARATOR }
 };
 
 static CMenuItem script_submenu_items_bottom[] = {
-    {"<- Back",                     MENUITEM_UP },
+    {LANG_MENU_BACK,                    MENUITEM_UP },
     {0}
 };
 
 static CMenuItem script_submenu_items[sizeof(script_submenu_items_top)/sizeof(script_submenu_items_top[0])+SCRIPT_NUM_PARAMS+
                                sizeof(script_submenu_items_bottom)/sizeof(script_submenu_items_bottom[0])];
-static CMenu script_submenu = { "Script", NULL, script_submenu_items };
+static CMenu script_submenu = { LANG_MENU_SCRIPT_TITLE, NULL, script_submenu_items };
 
 
 static CMenuItem games_submenu_items[] = {
-    {"Reversi",                     MENUITEM_PROC,  (int*)gui_draw_reversi },
-    {"Sokoban",                     MENUITEM_PROC,  (int*)gui_draw_sokoban },
-    {"<- Back",                     MENUITEM_UP },
+    {LANG_MENU_GAMES_REVERSI,           MENUITEM_PROC,  (int*)gui_draw_reversi },
+    {LANG_MENU_GAMES_SOKOBAN,           MENUITEM_PROC,  (int*)gui_draw_sokoban },
+    {LANG_MENU_BACK,                    MENUITEM_UP },
     {0}
 };
-static CMenu games_submenu = { "Games", NULL, games_submenu_items };
+static CMenu games_submenu = { LANG_MENU_GAMES_TITLE, NULL, games_submenu_items };
 
 
 static CMenuItem reader_submenu_items[] = {
-    {"Open new file...",            MENUITEM_PROC,    (int*)gui_draw_read },
-    {"Open last opened file",       MENUITEM_PROC,    (int*)gui_draw_read_last },
-    {"Select RBF font",             MENUITEM_PROC,    (int*)gui_draw_load_rbf },
-    {"Codepage",                    MENUITEM_ENUM,    (int*)gui_reader_codepage_enum },
-    {"Wrap by words",               MENUITEM_BOOL,    &conf.reader_wrap_by_words },
-    {"Enable autoscroll",           MENUITEM_BOOL,    &conf.reader_autoscroll },
-    {"Autoscroll delay (sec)",      MENUITEM_INT|MENUITEM_F_UNSIGNED|MENUITEM_F_MINMAX, &conf.reader_autoscroll_delay, MENU_MINMAX(0, 60) },
-    {"<- Back",                     MENUITEM_UP },
+    {LANG_MENU_READ_OPEN_NEW,           MENUITEM_PROC,    (int*)gui_draw_read },
+    {LANG_MENU_READ_OPEN_LAST,          MENUITEM_PROC,    (int*)gui_draw_read_last },
+    {LANG_MENU_READ_SELECT_FONT,        MENUITEM_PROC,    (int*)gui_draw_load_rbf },
+    {LANG_MENU_READ_CODEPAGE,           MENUITEM_ENUM,    (int*)gui_reader_codepage_enum },
+    {LANG_MENU_READ_WORD_WRAP,          MENUITEM_BOOL,    &conf.reader_wrap_by_words },
+    {LANG_MENU_READ_AUTOSCROLL,         MENUITEM_BOOL,    &conf.reader_autoscroll },
+    {LANG_MENU_READ_AUTOSCROLL_DELAY,   MENUITEM_INT|MENUITEM_F_UNSIGNED|MENUITEM_F_MINMAX, &conf.reader_autoscroll_delay, MENU_MINMAX(0, 60) },
+    {LANG_MENU_BACK,                    MENUITEM_UP },
     {0}
 };
-static CMenu reader_submenu = { "Text file reader", NULL, reader_submenu_items };
+static CMenu reader_submenu = { LANG_MENU_READ_TITLE, NULL, reader_submenu_items };
 
 
 static CMenuItem misc_submenu_items[] = {
-    {"File browser",                MENUITEM_PROC,    (int*)gui_draw_fselect },
-    {"Calendar",                    MENUITEM_PROC,    (int*)gui_draw_calendar },
-    {"Text file reader ->",         MENUITEM_SUBMENU, (int*)&reader_submenu },
-    {"Games ->",                    MENUITEM_SUBMENU, (int*)&games_submenu },
+    {LANG_MENU_MISC_FILE_BROWSER,       MENUITEM_PROC,    (int*)gui_draw_fselect },
+    {LANG_MENU_MISC_CALENDAR,           MENUITEM_PROC,    (int*)gui_draw_calendar },
+    {LANG_MENU_MISC_TEXT_READER,        MENUITEM_SUBMENU, (int*)&reader_submenu },
+    {LANG_MENU_MISC_GAMES,              MENUITEM_SUBMENU, (int*)&games_submenu },
 #ifndef CAMERA_a710
-    {"Flash-light",                 MENUITEM_BOOL,    &conf.flashlight },
+    {LANG_MENU_MISC_FLASHLIGHT,         MENUITEM_BOOL,    &conf.flashlight },
 #endif
-    {"Show splash screen on load",  MENUITEM_BOOL,    &conf.splash_show },
-    {"Use zoom buttons for MF",     MENUITEM_BOOL,    &conf.use_zoom_mf },
+    {LANG_MENU_MISC_SHOW_SPLASH,        MENUITEM_BOOL,    &conf.splash_show },
+    {LANG_MENU_MISC_ZOOM_FOR_MF,        MENUITEM_BOOL,    &conf.use_zoom_mf },
 #if defined(CAMERA_s2is) || defined(CAMERA_s3is)
-    {"<ALT> mode button",           MENUITEM_ENUM,    (int*)gui_alt_mode_button_enum },
+    {LANG_MENU_MISC_ALT_BUTTON,         MENUITEM_ENUM,    (int*)gui_alt_mode_button_enum },
 #endif
-    {"Draw palette",                MENUITEM_PROC,    (int*)gui_draw_palette },
-    {"Show build info",             MENUITEM_PROC,    (int*)gui_show_build_info },
-    {"Show memory info",            MENUITEM_PROC,    (int*)gui_show_memory_info },
-    {"<- Back",                     MENUITEM_UP },
+    {LANG_MENU_MISC_PALETTE,            MENUITEM_PROC,    (int*)gui_draw_palette },
+    {LANG_MENU_MISC_BUILD_INFO,         MENUITEM_PROC,    (int*)gui_show_build_info },
+    {LANG_MENU_MISC_MEMORY_INFO,        MENUITEM_PROC,    (int*)gui_show_memory_info },
+    {LANG_MENU_BACK,                    MENUITEM_UP },
     {0}
 };
-static CMenu misc_submenu = { "Miscellaneous", NULL, misc_submenu_items };
+static CMenu misc_submenu = { LANG_MENU_MISC_TITLE, NULL, misc_submenu_items };
 
 
 static CMenuItem debug_submenu_items[] = {
-    {"Show PropCases",              MENUITEM_BOOL,                      &debug_propcase_show },
-    {"PropCase page",               MENUITEM_INT|MENUITEM_F_UNSIGNED|MENUITEM_F_MINMAX,   &debug_propcase_page, MENU_MINMAX(0, 128) },
-    {"Show misc. values",           MENUITEM_BOOL,                      &debug_vals_show },
-    {"Memory browser",              MENUITEM_PROC,                      (int*)gui_draw_debug },
-    {"Dump RAM on ALT +/- press",   MENUITEM_BOOL,                      &conf.ns_enable_memdump },
-    {"Make card bootable...",       MENUITEM_PROC, 			(int*)gui_menuproc_mkbootdisk },
-    {"<- Back",                     MENUITEM_UP },
+    {LANG_MENU_DEBUG_SHOW_PROPCASES,    MENUITEM_BOOL,                      &debug_propcase_show },
+    {LANG_MENU_DEBUG_PROPCASE_PAGE,     MENUITEM_INT|MENUITEM_F_UNSIGNED|MENUITEM_F_MINMAX,   &debug_propcase_page, MENU_MINMAX(0, 128) },
+    {LANG_MENU_DEBUG_SHOW_MISC_VALS,    MENUITEM_BOOL,                      &debug_vals_show },
+    {LANG_MENU_DEBUG_MEMORY_BROWSER,    MENUITEM_PROC,                      (int*)gui_draw_debug },
+    {LANG_MENU_DEBUG_DUMP_RAM,          MENUITEM_BOOL,                      &conf.ns_enable_memdump },
+    {LANG_MENU_DEBUG_MAKE_BOOTABLE,     MENUITEM_PROC, 			(int*)gui_menuproc_mkbootdisk },
+    {LANG_MENU_BACK,                    MENUITEM_UP },
     {0}
 };
-static CMenu debug_submenu = { "Debug", NULL, debug_submenu_items };
+static CMenu debug_submenu = { LANG_MENU_DEBUG_TITLE, NULL, debug_submenu_items };
 
 
 static int voltage_step;
 static CMenuItem battery_submenu_items[] = {
-    {"Voltage MAX",                 MENUITEM_INT|MENUITEM_ARG_ADDR_INC,     &conf.batt_volts_max,   (int)&voltage_step },
-    {"Voltage MIN",                 MENUITEM_INT|MENUITEM_ARG_ADDR_INC,     &conf.batt_volts_min,   (int)&voltage_step },
-    {"25+ step",                    MENUITEM_BOOL|MENUITEM_ARG_CALLBACK,    &conf.batt_step_25,     (int)cb_step_25 },	
-    {"",                            MENUITEM_SEPARATOR },
-    {"Show percent",                MENUITEM_BOOL|MENUITEM_ARG_CALLBACK,    &conf.batt_perc_show,   (int)cb_perc },
-    {"Show volts",                  MENUITEM_BOOL|MENUITEM_ARG_CALLBACK,    &conf.batt_volts_show,  (int)cb_volts },
-    {"Show icon",                   MENUITEM_BOOL,                          &conf.batt_icon_show },	
-    {"<- Back",                     MENUITEM_UP },
+    {LANG_MENU_BATT_VOLT_MAX,           MENUITEM_INT|MENUITEM_ARG_ADDR_INC,     &conf.batt_volts_max,   (int)&voltage_step },
+    {LANG_MENU_BATT_VOLT_MIN,           MENUITEM_INT|MENUITEM_ARG_ADDR_INC,     &conf.batt_volts_min,   (int)&voltage_step },
+    {LANG_MENU_BATT_STEP_25,            MENUITEM_BOOL|MENUITEM_ARG_CALLBACK,    &conf.batt_step_25,     (int)cb_step_25 },	
+    {(int)"",                           MENUITEM_SEPARATOR },
+    {LANG_MENU_BATT_SHOW_PERCENT,       MENUITEM_BOOL|MENUITEM_ARG_CALLBACK,    &conf.batt_perc_show,   (int)cb_perc },
+    {LANG_MENU_BATT_SHOW_VOLTS,         MENUITEM_BOOL|MENUITEM_ARG_CALLBACK,    &conf.batt_volts_show,  (int)cb_volts },
+    {LANG_MENU_BATT_SHOW_ICON,          MENUITEM_BOOL,                          &conf.batt_icon_show },	
+    {LANG_MENU_BACK,                    MENUITEM_UP },
     {0}
 };
-static CMenu battery_submenu = { "Battery", cb_battery_menu_change, battery_submenu_items };
+static CMenu battery_submenu = { LANG_MENU_BATT_TITLE, cb_battery_menu_change, battery_submenu_items };
 
 
 static CMenuItem visual_submenu_items[] = {
-    {"OSD font",                    MENUITEM_ENUM,      (int*)gui_font_enum },
-    {"Menu RBF font",               MENUITEM_PROC,      (int*)gui_draw_load_menu_rbf },
-    {"Colors",                      MENUITEM_SEPARATOR },
-    {"OSD text",                    MENUITEM_COLOR_FG,  (int*)&conf.osd_color },
-    {"OSD background",              MENUITEM_COLOR_BG,  (int*)&conf.osd_color },
-    {"Histogram",                   MENUITEM_COLOR_FG,  (int*)&conf.histo_color },
-    {"Histogram background",        MENUITEM_COLOR_BG,  (int*)&conf.histo_color },
-    {"Histogram border",            MENUITEM_COLOR_FG,  (int*)&conf.histo_color2 },
-    {"Histogram EXP markers",       MENUITEM_COLOR_BG,  (int*)&conf.histo_color2 },
-    {"Zebra Underexposure",         MENUITEM_COLOR_BG,  (int*)&conf.zebra_color },
-    {"Zebra Overexposure",          MENUITEM_COLOR_FG,  (int*)&conf.zebra_color },
-    {"Battery icon",                MENUITEM_COLOR_FG,  (int*)&conf.batt_icon_color },
-    {"Menu text",                   MENUITEM_COLOR_FG,  (int*)&conf.menu_color },
-    {"Menu background",             MENUITEM_COLOR_BG,  (int*)&conf.menu_color },
-    {"Text reader text",            MENUITEM_COLOR_FG,  (int*)&conf.reader_color },
-    {"Text reader background",      MENUITEM_COLOR_BG,  (int*)&conf.reader_color },
-    {"<- Back",                     MENUITEM_UP },
+    {LANG_MENU_VIS_LANG,                MENUITEM_PROC,      (int*)gui_draw_load_lang },
+    {LANG_MENU_VIS_OSD_FONT,            MENUITEM_ENUM,      (int*)gui_font_enum },
+    {LANG_MENU_VIS_MENU_FONT,           MENUITEM_PROC,      (int*)gui_draw_load_menu_rbf },
+    {LANG_MENU_VIS_COLORS,              MENUITEM_SEPARATOR },
+    {LANG_MENU_VIS_OSD_TEXT,            MENUITEM_COLOR_FG,  (int*)&conf.osd_color },
+    {LANG_MENU_VIS_OSD_BKG,             MENUITEM_COLOR_BG,  (int*)&conf.osd_color },
+    {LANG_MENU_VIS_HISTO,               MENUITEM_COLOR_FG,  (int*)&conf.histo_color },
+    {LANG_MENU_VIS_HISTO_BKG,           MENUITEM_COLOR_BG,  (int*)&conf.histo_color },
+    {LANG_MENU_VIS_HISTO_BORDER,        MENUITEM_COLOR_FG,  (int*)&conf.histo_color2 },
+    {LANG_MENU_VIS_HISTO_MARKERS,       MENUITEM_COLOR_BG,  (int*)&conf.histo_color2 },
+    {LANG_MENU_VIS_ZEBRA_UNDER,         MENUITEM_COLOR_BG,  (int*)&conf.zebra_color },
+    {LANG_MENU_VIS_ZEBRA_OVER,          MENUITEM_COLOR_FG,  (int*)&conf.zebra_color },
+    {LANG_MENU_VIS_BATT_ICON,           MENUITEM_COLOR_FG,  (int*)&conf.batt_icon_color },
+    {LANG_MENU_VIS_MENU_TEXT,           MENUITEM_COLOR_FG,  (int*)&conf.menu_color },
+    {LANG_MENU_VIS_MENU_BKG,            MENUITEM_COLOR_BG,  (int*)&conf.menu_color },
+    {LANG_MENU_VIS_READER_TEXT,         MENUITEM_COLOR_FG,  (int*)&conf.reader_color },
+    {LANG_MENU_VIS_READER_BKG,          MENUITEM_COLOR_BG,  (int*)&conf.reader_color },
+    {LANG_MENU_BACK,                    MENUITEM_UP },
     {0}
 };
-static CMenu visual_submenu = { "Visual settings", NULL, visual_submenu_items };
+static CMenu visual_submenu = { LANG_MENU_VIS_TITLE, NULL, visual_submenu_items };
 
 
 static CMenuItem osd_submenu_items[] = {
-    {"Show OSD",                    MENUITEM_BOOL,      &conf.show_osd },
-    {"Show RAW/SCR/EXP state",      MENUITEM_BOOL,      &conf.show_state },
-    {"Show misc values",            MENUITEM_BOOL,      &conf.show_values },
-    {"Zoom value",                  MENUITEM_ENUM,      (int*)gui_zoom_value_enum },
-    {"Show DOF calculator",         MENUITEM_BOOL,      &conf.show_dof },
-    {"Show clock",                  MENUITEM_BOOL,      &conf.show_clock },
-    {"OSD layout editor",           MENUITEM_PROC,      (int*)gui_draw_osd_le },
-    {"Battery parameters ->",       MENUITEM_SUBMENU,   (int*)&battery_submenu },
+    {LANG_MENU_OSD_SHOW,                MENUITEM_BOOL,      &conf.show_osd },
+    {LANG_MENU_OSD_SHOW_STATES,         MENUITEM_BOOL,      &conf.show_state },
+    {LANG_MENU_OSD_SHOW_MISC_VALUES,    MENUITEM_BOOL,      &conf.show_values },
+    {LANG_MENU_OSD_ZOOM_VALUE,          MENUITEM_ENUM,      (int*)gui_zoom_value_enum },
+    {LANG_MENU_OSD_SHOW_DOF_CALC,       MENUITEM_BOOL,      &conf.show_dof },
+    {LANG_MENU_OSD_SHOW_CLOCK,          MENUITEM_BOOL,      &conf.show_clock },
+    {LANG_MENU_OSD_LAYOUT_EDITOR,       MENUITEM_PROC,      (int*)gui_draw_osd_le },
+    {LANG_MENU_OSD_BATT_PARAMS,         MENUITEM_SUBMENU,   (int*)&battery_submenu },
 #ifndef OPTIONS_AUTOSAVE
-    {"Save options now...",         MENUITEM_PROC,      (int*)gui_menuproc_save },
+    {LANG_MENU_MAIN_SAVE_OPTIONS,       MENUITEM_PROC,      (int*)gui_menuproc_save },
 #endif
-    {"<- Back",                     MENUITEM_UP },
+    {LANG_MENU_BACK,                    MENUITEM_UP },
     {0}
 };
-static CMenu osd_submenu = { "OSD", NULL, osd_submenu_items };
+static CMenu osd_submenu = { LANG_MENU_OSD_TITLE, NULL, osd_submenu_items };
 
 
 static CMenuItem histo_submenu_items[] = {
-    {"Show live histogram",         MENUITEM_BOOL,      &conf.show_histo },
-    {"Histogram layout",            MENUITEM_ENUM,      (int*)gui_histo_layout_enum },
-    {"Histogram mode",              MENUITEM_ENUM,      (int*)gui_histo_mode_enum },
-    {"Show histogram over/under EXP", MENUITEM_BOOL,    &conf.show_overexp },
-    {"Ignore boundary peaks",       MENUITEM_INT|MENUITEM_F_UNSIGNED|MENUITEM_F_MINMAX,  &conf.histo_ignore_boundary,   MENU_MINMAX(0, 32)},
-    {"Auto magnify",                MENUITEM_BOOL,      &conf.histo_auto_ajust },
-    {"<- Back",                     MENUITEM_UP },
+    {LANG_MENU_HISTO_SHOW,              MENUITEM_BOOL,      &conf.show_histo },
+    {LANG_MENU_HISTO_LAYOUT,            MENUITEM_ENUM,      (int*)gui_histo_layout_enum },
+    {LANG_MENU_HISTO_MODE,              MENUITEM_ENUM,      (int*)gui_histo_mode_enum },
+    {LANG_MENU_HISTO_EXP,               MENUITEM_BOOL,    &conf.show_overexp },
+    {LANG_MENU_HISTO_IGNORE_PEAKS,      MENUITEM_INT|MENUITEM_F_UNSIGNED|MENUITEM_F_MINMAX,  &conf.histo_ignore_boundary,   MENU_MINMAX(0, 32)},
+    {LANG_MENU_HISTO_MAGNIFY,           MENUITEM_BOOL,      &conf.histo_auto_ajust },
+    {LANG_MENU_BACK,                    MENUITEM_UP },
     {0}
 };
-static CMenu histo_submenu = { "Histogram", NULL, histo_submenu_items };
+static CMenu histo_submenu = { LANG_MENU_HISTO_TITLE, NULL, histo_submenu_items };
 
 
 static CMenuItem raw_submenu_items[] = {
-    {"Save RAW",                    MENUITEM_BOOL,      &conf.save_raw },
-    {"After dark frame substract",  MENUITEM_BOOL,      &conf.raw_save_second },
-    {"Only first RAW in series",    MENUITEM_BOOL,      &conf.raw_save_first_only },
-    {"RAW file in dir with JPEG",   MENUITEM_BOOL,      &conf.raw_in_dir },
-    {"RAW file prefix",             MENUITEM_ENUM,      (int*)gui_raw_prefix_enum },
-    {"RAW file extension",          MENUITEM_ENUM,      (int*)gui_raw_ext_enum },
-    {"<- Back",                     MENUITEM_UP },
+    {LANG_MENU_RAW_SAVE,                MENUITEM_BOOL,      &conf.save_raw },
+    {LANG_MENU_RAW_AFTER_DFS,           MENUITEM_BOOL,      &conf.raw_save_second },
+    {LANG_MENU_RAW_FIRST_ONLY,          MENUITEM_BOOL,      &conf.raw_save_first_only },
+    {LANG_MENU_RAW_SAVE_IN_DIR,         MENUITEM_BOOL,      &conf.raw_in_dir },
+    {LANG_MENU_RAW_PREFIX,              MENUITEM_ENUM,      (int*)gui_raw_prefix_enum },
+    {LANG_MENU_RAW_EXTENSION,           MENUITEM_ENUM,      (int*)gui_raw_ext_enum },
+    {LANG_MENU_BACK,                    MENUITEM_UP },
     {0}
 };
-static CMenu raw_submenu = { "RAW", NULL, raw_submenu_items };
+static CMenu raw_submenu = { LANG_MENU_RAW_TITLE, NULL, raw_submenu_items };
 
 
 static CMenuItem zebra_submenu_items[] = {
-    {"Draw Zebra", 		    MENUITEM_BOOL,                            &conf.zebra_draw },
-    {"Zebra mode",                  MENUITEM_ENUM,                            (int*)gui_zebra_mode_enum },
-    {"UnderExposure threshold",     MENUITEM_INT|MENUITEM_F_UNSIGNED|MENUITEM_F_MINMAX,  &conf.zebra_under,   MENU_MINMAX(0, 32)},
-    {"OverExposure threshold",      MENUITEM_INT|MENUITEM_F_UNSIGNED|MENUITEM_F_MINMAX,  &conf.zebra_over,    MENU_MINMAX(0, 32)},
-    {"Restore original screen",     MENUITEM_BOOL|MENUITEM_ARG_CALLBACK,      &conf.zebra_restore_screen,     (int)cb_zebra_restore_screen },
-    {"Restore OSD",                 MENUITEM_BOOL|MENUITEM_ARG_CALLBACK,      &conf.zebra_restore_osd,        (int)cb_zebra_restore_osd },
-    {"Draw over zebra",             MENUITEM_ENUM,                            (int*)gui_zebra_draw_osd_enum },
-    {"<- Back",                     MENUITEM_UP },
+    {LANG_MENU_ZEBRA_DRAW,              MENUITEM_BOOL,                            &conf.zebra_draw },
+    {LANG_MENU_ZEBRA_MODE,              MENUITEM_ENUM,                            (int*)gui_zebra_mode_enum },
+    {LANG_MENU_ZEBRA_UNDER,             MENUITEM_INT|MENUITEM_F_UNSIGNED|MENUITEM_F_MINMAX,  &conf.zebra_under,   MENU_MINMAX(0, 32)},
+    {LANG_MENU_ZEBRA_OVER,              MENUITEM_INT|MENUITEM_F_UNSIGNED|MENUITEM_F_MINMAX,  &conf.zebra_over,    MENU_MINMAX(0, 32)},
+    {LANG_MENU_ZEBRA_RESTORE_SCREEN,    MENUITEM_BOOL|MENUITEM_ARG_CALLBACK,      &conf.zebra_restore_screen,     (int)cb_zebra_restore_screen },
+    {LANG_MENU_ZEBRA_RESTORE_OSD,       MENUITEM_BOOL|MENUITEM_ARG_CALLBACK,      &conf.zebra_restore_osd,        (int)cb_zebra_restore_osd },
+    {LANG_MENU_ZEBRA_DRAW_OVER,         MENUITEM_ENUM,                            (int*)gui_zebra_draw_osd_enum },
+    {LANG_MENU_BACK,                    MENUITEM_UP },
     {0}
 };
-static CMenu zebra_submenu = { "Zebra", NULL, zebra_submenu_items };
+static CMenu zebra_submenu = { LANG_MENU_ZEBRA_TITLE, NULL, zebra_submenu_items };
 
 
 static CMenuItem root_menu_items[] = {
-    {"RAW parameters ->",           MENUITEM_SUBMENU,   (int*)&raw_submenu },
-    {"OSD parameters ->",           MENUITEM_SUBMENU,   (int*)&osd_submenu },
-    {"Histogram parameters ->",     MENUITEM_SUBMENU,   (int*)&histo_submenu },
-    {"Zebra parameters ->",         MENUITEM_SUBMENU,   (int*)&zebra_submenu },
-    {"Scripting parameters ->",     MENUITEM_SUBMENU,   (int*)&script_submenu },
-    {"Visual settings ->",          MENUITEM_SUBMENU,   (int*)&visual_submenu },
-    {"Miscellaneous stuff ->",      MENUITEM_SUBMENU,   (int*)&misc_submenu },
-    {"Debug parameters ->",         MENUITEM_SUBMENU,   (int*)&debug_submenu },
-    {"Reset options to default...", MENUITEM_PROC,      (int*)gui_menuproc_reset },
+    {LANG_MENU_MAIN_RAW_PARAM,          MENUITEM_SUBMENU,   (int*)&raw_submenu },
+    {LANG_MENU_MAIN_OSD_PARAM,          MENUITEM_SUBMENU,   (int*)&osd_submenu },
+    {LANG_MENU_MAIN_HISTO_PARAM,        MENUITEM_SUBMENU,   (int*)&histo_submenu },
+    {LANG_MENU_MAIN_ZEBRA_PARAM,        MENUITEM_SUBMENU,   (int*)&zebra_submenu },
+    {LANG_MENU_MAIN_SCRIPT_PARAM,       MENUITEM_SUBMENU,   (int*)&script_submenu },
+    {LANG_MENU_MAIN_VISUAL_PARAM,       MENUITEM_SUBMENU,   (int*)&visual_submenu },
+    {LANG_MENU_MAIN_MISC,               MENUITEM_SUBMENU,   (int*)&misc_submenu },
+    {LANG_MENU_MAIN_DEBUG,              MENUITEM_SUBMENU,   (int*)&debug_submenu },
+    {LANG_MENU_MAIN_RESET_OPTIONS,      MENUITEM_PROC,      (int*)gui_menuproc_reset },
 #ifndef OPTIONS_AUTOSAVE
-    {"Save options now...",         MENUITEM_PROC,      (int*)gui_menuproc_save },
+    {LANG_MENU_MAIN_SAVE_OPTIONS,       MENUITEM_PROC,      (int*)gui_menuproc_save },
 #endif
     {0}
 };
-static CMenu root_menu = { "Main Menu", NULL, root_menu_items };
+static CMenu root_menu = { LANG_MENU_MAIN_TITLE, NULL, root_menu_items };
 
 //-------------------------------------------------------------------
 void cb_step_25() {
@@ -468,7 +472,7 @@ void gui_update_script_submenu() {
     }
     for (i=0; i<SCRIPT_NUM_PARAMS; ++i) {
         if (script_params[i][0]) {
-            script_submenu_items[p].text=script_params[i];
+            script_submenu_items[p].text=(int)script_params[i];
             script_submenu_items[p].type=MENUITEM_INT;
             script_submenu_items[p].value=&conf.ubasic_vars[i];
             ++p;
@@ -496,6 +500,7 @@ void gui_init()
     gui_restore = 0;
     gui_in_redraw = 0;
     gui_splash = (conf.splash_show)?SPLASH_TIME:0;
+    gui_lang_init();
     draw_init();
 
     exposition_thresh = screen_size/500;
@@ -663,6 +668,10 @@ void gui_kbd_process()
                     conf.save_raw = !conf.save_raw;
                     draw_restore();
                 }
+            } else if (kbd_is_key_clicked(KEY_SET)) {
+                gui_menu_init(&script_submenu);
+                gui_mode = GUI_MODE_MENU;
+                draw_restore();
             }
             break;
     	case GUI_MODE_MENU:
@@ -721,6 +730,7 @@ void gui_kbd_leave()
     draw_restore();
     if (gui_mode == GUI_MODE_READ && !rbf_load(conf.menu_rbf_file))
         rbf_load_from_8x16(current_font);
+    rbf_set_codepage(FONT_CP_DOS);
     gui_mode = GUI_MODE_NONE;
 }
 
@@ -893,8 +903,8 @@ static void gui_menuproc_reset_selected(unsigned int btn) {
 
 void gui_menuproc_reset(int arg)
 {
-    gui_mbox_init("*** Reset options ***", 
-                  "Are you SURE to reset\noptions to default?",
+    gui_mbox_init(LANG_MSG_RESET_OPTIONS_TITLE, 
+                  LANG_MSG_RESET_OPTIONS_TEXT,
                   MBOX_FUNC_RESTORE|MBOX_TEXT_CENTER|MBOX_BTN_YES_NO|MBOX_DEF_BTN2, gui_menuproc_reset_selected);
 }
 
@@ -907,17 +917,15 @@ void gui_draw_palette(int arg) {
 
 //-------------------------------------------------------------------
 void gui_show_build_info(int arg) {
-    gui_mbox_init("*** Build Info ***", 
-                  "HDK Ver: " HDK_VERSION ", #" BUILD_NUMBER
-                  "\nDate:    "   __DATE__ 
-                  "\nTime:    " __TIME__ 
-                  "\nCamera:  " PLATFORM 
-                  "\nFW Vers: " PLATFORMSUB, MBOX_FUNC_RESTORE|MBOX_TEXT_LEFT, NULL);
+    char buf[128];
+
+    sprintf(buf, lang_str(LANG_MSG_BUILD_INFO_TEXT), HDK_VERSION, BUILD_NUMBER, __DATE__, __TIME__, PLATFORM, PLATFORMSUB);
+    gui_mbox_init(LANG_MSG_BUILD_INFO_TITLE, (int)buf, MBOX_FUNC_RESTORE|MBOX_TEXT_LEFT, NULL);
 }
 
 //-------------------------------------------------------------------
 void gui_show_memory_info(int arg) {
-    static char buf[128];
+    char buf[64];
     int size, l_size, d;
     char* ptr;
 
@@ -951,14 +959,14 @@ void gui_show_memory_info(int arg) {
         
     }
     
-    sprintf(buf, "Free memory: %d bytes", size);
-    gui_mbox_init("*** Memory Info ***", buf, MBOX_FUNC_RESTORE|MBOX_TEXT_CENTER, NULL);
+    sprintf(buf, lang_str(LANG_MSG_MEMORY_INFO_TEXT), size);
+    gui_mbox_init(LANG_MSG_MEMORY_INFO_TITLE, (int)buf, MBOX_FUNC_RESTORE|MBOX_TEXT_CENTER, NULL);
 }
 
 //-------------------------------------------------------------------
 void gui_draw_reversi(int arg) {
     if ((mode_get()&MODE_MASK) != MODE_PLAY) {
-        gui_mbox_init("*** Information ***", "Please switch your camera\nto PLAY mode\nand try again. :)",
+        gui_mbox_init(LANG_MSG_INFO_TITLE, LANG_MSG_SWITCH_TO_PLAY_MODE,
                       MBOX_FUNC_RESTORE|MBOX_TEXT_CENTER, NULL);
         return;
     }
@@ -969,7 +977,7 @@ void gui_draw_reversi(int arg) {
 //-------------------------------------------------------------------
 void gui_draw_sokoban(int arg) {
     if ((mode_get()&MODE_MASK) != MODE_PLAY) {
-        gui_mbox_init("*** Information ***", "Please switch your camera\nto PLAY mode\nand try again. :)",
+        gui_mbox_init(LANG_MSG_INFO_TITLE, LANG_MSG_SWITCH_TO_PLAY_MODE,
                       MBOX_FUNC_RESTORE|MBOX_TEXT_CENTER, NULL);
         return;
     }
@@ -990,7 +998,7 @@ void gui_draw_debug(int arg) {
 void gui_draw_splash() {
     coord w, h, x, y;
     static const char *text[] = {
-        "HDK Firmware '" HDK_VERSION ", #" BUILD_NUMBER "'" , 
+        "CHDK Firmware '" HDK_VERSION ", #" BUILD_NUMBER "'" , 
         "Build: " __DATE__ " " __TIME__ ,
         "Camera: " PLATFORM " - " PLATFORMSUB };
     int i, l;
@@ -1015,7 +1023,7 @@ void gui_draw_splash() {
 
 //-------------------------------------------------------------------
 void gui_draw_fselect(int arg) {
-    gui_fselect_init("A", NULL);
+    gui_fselect_init(LANG_STR_FILE_BROWSER, "A", NULL);
 }
 
 //-------------------------------------------------------------------
@@ -1035,7 +1043,7 @@ void gui_load_script(int arg) {
         path="A";
     }
 
-    gui_fselect_init(path, gui_load_script_selected);
+    gui_fselect_init(LANG_STR_SELECT_SCRIPT_FILE, path, gui_load_script_selected);
 }
 
 //-------------------------------------------------------------------
@@ -1055,7 +1063,7 @@ static void gui_draw_read_selected(const char *fn) {
     }
 }
 void gui_draw_read(int arg) {
-    gui_fselect_init("A", gui_draw_read_selected);
+    gui_fselect_init(LANG_STR_SELECT_TEXT_FILE, "A", gui_draw_read_selected);
 }
 
 //-------------------------------------------------------------------
@@ -1100,7 +1108,7 @@ void gui_draw_load_rbf(int arg) {
         path="A";
     }
 
-    gui_fselect_init(path, gui_draw_rbf_selected);
+    gui_fselect_init(LANG_STR_SELECT_FONT_FILE, path, gui_draw_rbf_selected);
 }
 
 //-------------------------------------------------------------------
@@ -1125,7 +1133,30 @@ void gui_draw_load_menu_rbf(int arg) {
         path="A";
     }
 
-    gui_fselect_init(path, gui_draw_menu_rbf_selected);
+    gui_fselect_init(LANG_STR_SELECT_FONT_FILE, path, gui_draw_menu_rbf_selected);
+}
+
+//-------------------------------------------------------------------
+static void gui_draw_lang_selected(const char *fn) {
+    if (fn) {
+        strcpy(conf.lang_file, fn);
+        lang_load_from_file(conf.lang_file);
+        gui_menu_init(NULL);
+    }
+}
+void gui_draw_load_lang(int arg) {
+    DIR   *d;
+    char  *path="A/LANG";
+
+    // if exists "A/LANG" go into
+    d=opendir(path);
+    if (d) {
+        closedir(d);
+    } else {
+        path="A";
+    }
+
+    gui_fselect_init(LANG_STR_SELECT_LANG_FILE, path, gui_draw_lang_selected);
 }
 
 //-------------------------------------------------------------------
