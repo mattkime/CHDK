@@ -53,7 +53,7 @@ void gui_menu_init(CMenu *menu_ptr) {
     w = screen_width-30-30;
     x = (screen_width-w)>>1;
     y = ((screen_height-num_lines*rbf_font_height())>>1);
-    len_bool = rbf_str_width("\xf9"); //0x95
+    len_bool = rbf_str_width("\x95");
     len_int = rbf_str_width("99999");
     len_enum = rbf_str_width("WUBfS3a");
     len_space = rbf_char_width(' ');
@@ -315,7 +315,7 @@ void gui_menu_draw() {
                 xx+=rbf_draw_char(xx, yy, ' ', cl);
                 xx+=rbf_draw_string_len(xx, yy, w-len_space-len_space-len_br1-len_bool-len_br2-len_space, lang_str(curr_menu->menu[imenu].text), cl);
                 xx+=rbf_draw_string(xx, yy, " [", cl);
-                xx+=rbf_draw_string_len(xx, yy, len_bool, (*(curr_menu->menu[imenu].value))?"\xF9":"", cl);
+                xx+=rbf_draw_string_len(xx, yy, len_bool, (*(curr_menu->menu[imenu].value))?"\x95":"", cl);
                 rbf_draw_string(xx, yy, "] ", cl);
                 break;
             case MENUITEM_INT:

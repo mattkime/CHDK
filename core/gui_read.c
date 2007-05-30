@@ -224,7 +224,7 @@ void gui_read_kbd_process() {
             }
             if (!rbf_load(conf.menu_rbf_file))
                 rbf_load_from_8x16(current_font);
-            rbf_set_codepage(FONT_CP_DOS);
+            rbf_set_codepage(FONT_CP_WIN);
             break;
     }
 }

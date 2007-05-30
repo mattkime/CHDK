@@ -241,3 +241,17 @@
 172 "Are you SURE to delete\nALL files from\nselected directory?"
 173 "*** Delete file ***"
 174 "Are you SURE to delete\nselected file?"
+
+// benchmark
+175 "Benchmark"
+176 "Calculating..."
+177 "Camera benchmark   Press [set] to start"
+178 "Screen"
+179 "Write       :"
+180 "Read        :"
+181 "Memory"
+182 "Flash-card"
+183 "Write (RAW) :"
+184 "Write (Mem) :"
+185 "Write (64k) :"
+186 "Read  (64k) :"

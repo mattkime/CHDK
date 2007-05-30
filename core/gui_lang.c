@@ -232,6 +232,19 @@ static char* gui_lang_default = \
 "173 \"*** Delete file ***\"\n"
 "174 \"Are you SURE to delete\\nselected file?\"\n"
 
+"175 \"Benchmark\"\n"
+"176 \"Calculating...\"\n"
+"177 \"Camera benchmark   Press [set] to start\"\n"
+"178 \"Screen\"\n"
+"179 \"Write       :\"\n"
+"180 \"Read        :\"\n"
+"181 \"Memory\"\n"
+"182 \"Flash-card\"\n"
+"183 \"Write (RAW) :\"\n"
+"184 \"Write (Mem) :\"\n"
+"185 \"Write (64k) :\"\n"
+"186 \"Read  (64k) :\"\n"
+
 ;
 
 //-------------------------------------------------------------------

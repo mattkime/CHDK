@@ -20,6 +20,7 @@
 #include "gui_osd.h"
 #include "gui_read.h"
 #include "gui_calendar.h"
+#include "gui_bench.h"
 #include "histogram.h"
 #include "script.h"
 
@@ -43,6 +44,7 @@ static void gui_draw_palette(int arg);
 static void gui_draw_reversi(int arg);
 static void gui_draw_sokoban(int arg);
 static void gui_draw_debug(int arg);
+static void gui_draw_bench(int arg);
 static void gui_draw_fselect(int arg);
 static void gui_draw_osd_le(int arg);
 static void gui_load_script(int arg);
@@ -145,12 +147,13 @@ static CMenu misc_submenu = { LANG_MENU_MISC_TITLE, NULL, misc_submenu_items };
 
 
 static CMenuItem debug_submenu_items[] = {
-    {LANG_MENU_DEBUG_SHOW_PROPCASES,    MENUITEM_BOOL,                      &debug_propcase_show },
+    {LANG_MENU_DEBUG_SHOW_PROPCASES,    MENUITEM_BOOL,          &debug_propcase_show },
     {LANG_MENU_DEBUG_PROPCASE_PAGE,     MENUITEM_INT|MENUITEM_F_UNSIGNED|MENUITEM_F_MINMAX,   &debug_propcase_page, MENU_MINMAX(0, 128) },
-    {LANG_MENU_DEBUG_SHOW_MISC_VALS,    MENUITEM_BOOL,                      &debug_vals_show },
-    {LANG_MENU_DEBUG_MEMORY_BROWSER,    MENUITEM_PROC,                      (int*)gui_draw_debug },
-    {LANG_MENU_DEBUG_DUMP_RAM,          MENUITEM_BOOL,                      &conf.ns_enable_memdump },
-    {LANG_MENU_DEBUG_MAKE_BOOTABLE,     MENUITEM_PROC, 			(int*)gui_menuproc_mkbootdisk },
+    {LANG_MENU_DEBUG_SHOW_MISC_VALS,    MENUITEM_BOOL,          &debug_vals_show },
+    {LANG_MENU_DEBUG_MEMORY_BROWSER,    MENUITEM_PROC,          (int*)gui_draw_debug },
+    {LANG_MENU_DEBUG_BENCHMARK,         MENUITEM_PROC,          (int*)gui_draw_bench },
+    {LANG_MENU_DEBUG_DUMP_RAM,          MENUITEM_BOOL,          &conf.ns_enable_memdump },
+    {LANG_MENU_DEBUG_MAKE_BOOTABLE,     MENUITEM_PROC, 		(int*)gui_menuproc_mkbootdisk },
     {LANG_MENU_BACK,                    MENUITEM_UP },
     {0}
 };
@@ -347,17 +350,23 @@ const char* gui_histo_layout_enum(int change, int arg) {
 
 //-------------------------------------------------------------------
 const char* gui_font_enum(int change, int arg) {
-    static const char* fonts[]={ "Default", "UniRus", "VgaKbr", "KeyRus"};
+    static const char* fonts[]={ "Win1250", "Win1251", "Win1252", "Win1254", "Win1257"};
 
-    conf.font+=change;
-    if (conf.font<0)
-        conf.font=(sizeof(fonts)/sizeof(fonts[0]))-1;
-    else if (conf.font>=(sizeof(fonts)/sizeof(fonts[0])))
-        conf.font=0;
+    conf.font_cp+=change;
+    if (conf.font_cp<0)
+        conf.font_cp=(sizeof(fonts)/sizeof(fonts[0]))-1;
+    else if (conf.font_cp>=(sizeof(fonts)/sizeof(fonts[0])))
+        conf.font_cp=0;
 
-    font_set(conf.font);
+    if (change != 0) {
+        font_set(conf.font_cp);
+        if (!rbf_load(conf.menu_rbf_file))
+            rbf_load_from_8x16(current_font);
+        rbf_set_codepage(FONT_CP_WIN);
+        gui_menu_init(NULL);
+    }
 
-    return fonts[conf.font];
+    return fonts[conf.font_cp];
 }
 
 //-------------------------------------------------------------------
@@ -588,6 +597,9 @@ void gui_redraw()
         case GUI_MODE_CALENDAR:
             gui_calendar_draw();
             break;
+        case GUI_MODE_BENCH:
+            gui_bench_draw();
+            break;
         default:
             break;
     }
@@ -642,6 +654,7 @@ void gui_kbd_process()
             case GUI_MODE_DEBUG:
             case GUI_MODE_OSD:
             case GUI_MODE_CALENDAR:
+            case GUI_MODE_BENCH:
                 draw_restore();
                 gui_mode = GUI_MODE_MENU;
                 break;
@@ -704,6 +717,9 @@ void gui_kbd_process()
     	case GUI_MODE_CALENDAR:
             gui_calendar_kbd_process();
             break;
+    	case GUI_MODE_BENCH:
+            gui_bench_kbd_process();
+            break;
         default:
             break;
     }
@@ -730,7 +746,7 @@ void gui_kbd_leave()
     draw_restore();
     if (gui_mode == GUI_MODE_READ && !rbf_load(conf.menu_rbf_file))
         rbf_load_from_8x16(current_font);
-    rbf_set_codepage(FONT_CP_DOS);
+    rbf_set_codepage(FONT_CP_WIN);
     gui_mode = GUI_MODE_NONE;
 }
 
@@ -995,6 +1011,12 @@ void gui_draw_debug(int arg) {
 }
 
 //-------------------------------------------------------------------
+void gui_draw_bench(int arg) {
+    gui_mode = GUI_MODE_BENCH;
+    gui_bench_init();
+}
+
+//-------------------------------------------------------------------
 void gui_draw_splash() {
     coord w, h, x, y;
     static const char *text[] = {
@@ -1117,7 +1139,7 @@ static void gui_draw_menu_rbf_selected(const char *fn) {
         strcpy(conf.menu_rbf_file, fn);
         if (!rbf_load(conf.menu_rbf_file))
             rbf_load_from_8x16(current_font);
-        rbf_set_codepage(FONT_CP_DOS);
+        rbf_set_codepage(FONT_CP_WIN);
         gui_menu_init(NULL);
     }
 }

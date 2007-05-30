@@ -10,3 +10,6 @@ NHSTUB(kbd_read_keys_r2, 0xFF827BC0)
 
 NHSTUB(free, 0xFFB571E4)
 NHSTUB(malloc, 0xFFB571D8)
+
+NHSTUB(UniqueLedOn, 0xFF82DC3C)
+NHSTUB(UniqueLedOff, 0xFF82DCA0)

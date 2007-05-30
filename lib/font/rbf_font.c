@@ -116,7 +116,7 @@ int rbf_load(char *file) {
 }
 
 //-------------------------------------------------------------------
-static void rbf_assign_char_8x16(char **dst, const char *font_ch, int height) {
+static void rbf_assign_char_8x16(char **dst, char *font_ch, int height) {
     int c, b;
 
     *dst=malloc(height);
@@ -128,7 +128,7 @@ static void rbf_assign_char_8x16(char **dst, const char *font_ch, int height) {
 }
 
 //-------------------------------------------------------------------
-void rbf_load_from_8x16(const char *font) {
+void rbf_load_from_8x16(unsigned char font[256][16]) {
     int i, c, b;
 
     rbf_font.charSize  = 16;
@@ -149,22 +149,8 @@ void rbf_load_from_8x16(const char *font) {
     }
     need_free = 0;
     
-    for (i=176; i<224; ++i) {
-        rbf_assign_char_8x16(&rbf_font.cTable[dos2win(i)], font+i*rbf_font.charSize, rbf_font.height);
-    }
-    for (i=240; i<256; ++i) {
-        rbf_assign_char_8x16(&rbf_font.cTable[dos2win(i)], font+i*rbf_font.charSize, rbf_font.height);
-    }
-    // Standard symbols
-    for (i=0; i<128; ++i) {
-        rbf_assign_char_8x16(&rbf_font.cTable[dos2win(i)], font+i*rbf_font.charSize, rbf_font.height);
-    }
-    // Russian symbols
-    for (i=128; i<176; ++i) {
-        rbf_assign_char_8x16(&rbf_font.cTable[dos2win(i)], font+i*rbf_font.charSize, rbf_font.height);
-    }
-    for (i=224; i<240; ++i) {
-        rbf_assign_char_8x16(&rbf_font.cTable[dos2win(i)], font+i*rbf_font.charSize, rbf_font.height);
+    for (i=0; i<256; ++i) {
+        rbf_assign_char_8x16(&rbf_font.cTable[i], font[i], rbf_font.height);
     }
     need_free = 1;
 }

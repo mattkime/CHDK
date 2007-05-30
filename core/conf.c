@@ -54,7 +54,7 @@ static OSD_pos def_histo_pos, def_dof_pos, def_batt_icon_pos, def_batt_txt_pos,
 static void conf_change_script_file();
 static void conf_change_histo_mode();
 static void conf_change_histo_layout();
-static void conf_change_font();
+static void conf_change_font_cp();
 static void conf_change_menu_rbf_file();
 static void conf_change_alt_mode_button();
 
@@ -91,7 +91,7 @@ static const ConfInfo conf_info[] = {
     CONF_INFO( 29, conf.batt_icon_color,        CONF_DEF_VALUE, cl:COLOR_WHITE, NULL),
     CONF_INFO( 30, conf.menu_color,             CONF_DEF_VALUE, cl:MAKE_COLOR(COLOR_BG, COLOR_FG), NULL),
     CONF_INFO( 31, conf.reader_color,           CONF_DEF_VALUE, cl:MAKE_COLOR(COLOR_GREY, COLOR_WHITE), NULL),
-    CONF_INFO( 32, conf.font,                   CONF_DEF_VALUE, i:FONT_DEFAULT, conf_change_font),
+//  32 is not used anymore
     CONF_INFO( 33, conf.flashlight,             CONF_DEF_VALUE, i:0, NULL),
     CONF_INFO( 34, conf.ns_enable_memdump,      CONF_DEF_VALUE, i:0, NULL),
     CONF_INFO( 35, conf.raw_in_dir,             CONF_DEF_VALUE, i:0, NULL),
@@ -116,7 +116,7 @@ static const ConfInfo conf_info[] = {
     CONF_INFO( 54, conf.zebra_under,            CONF_DEF_VALUE, i:0, NULL),
     CONF_INFO( 55, conf.zebra_color,            CONF_DEF_VALUE, cl:MAKE_COLOR(COLOR_RED, COLOR_RED), NULL),
     CONF_INFO( 56, conf.zebra_draw_osd,         CONF_DEF_VALUE, i:ZEBRA_DRAW_HISTO, NULL),
-    CONF_INFO( 57, conf.menu_rbf_file,          CONF_DEF_PTR,   ptr:"", conf_change_menu_rbf_file),
+//  57 is not used anymore
     CONF_INFO( 58, conf.zoom_value,             CONF_DEF_VALUE, i:ZOOM_SHOW_X, NULL),
     CONF_INFO( 59, conf.use_zoom_mf,            CONF_DEF_VALUE, i:0, NULL),
     CONF_INFO( 60, conf.raw_save_first_only,    CONF_DEF_VALUE, i:0, NULL),
@@ -124,6 +124,8 @@ static const ConfInfo conf_info[] = {
     CONF_INFO( 62, conf.raw_save_second,        CONF_DEF_VALUE, i:0, NULL),
     CONF_INFO( 63, conf.alt_mode_button,        CONF_DEF_VALUE, i:KEY_PRINT, conf_change_alt_mode_button),
     CONF_INFO( 64, conf.lang_file,              CONF_DEF_PTR,   ptr:"", NULL),
+    CONF_INFO( 65, conf.font_cp,                CONF_DEF_VALUE, i:FONT_CP_WIN_1251, conf_change_font_cp),
+    CONF_INFO( 66, conf.menu_rbf_file,          CONF_DEF_PTR,   ptr:"", conf_change_menu_rbf_file),
 };
 #define CONF_NUM (sizeof(conf_info)/sizeof(conf_info[0]))
 
@@ -140,8 +142,9 @@ static void conf_change_histo_layout() {
     }
 }
 
-static void conf_change_font() {
-    font_set(conf.font);
+static void conf_change_font_cp() {
+    font_init();
+    font_set(conf.font_cp);
 }
 
 static void conf_change_script_file() {
@@ -151,7 +154,7 @@ static void conf_change_script_file() {
 static void conf_change_menu_rbf_file() {
     if (!rbf_load(conf.menu_rbf_file))
         rbf_load_from_8x16(current_font);
-    rbf_set_codepage(FONT_CP_DOS);
+    rbf_set_codepage(FONT_CP_WIN);
 }
 
 static void conf_change_alt_mode_button() {

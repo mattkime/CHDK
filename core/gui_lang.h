@@ -241,10 +241,22 @@
 #define LANG_BROWSER_DELETE_FILE_TITLE  173
 #define LANG_BROWSER_DELETE_FILE_TEXT   174
 
+#define LANG_MENU_DEBUG_BENCHMARK       175
 
+#define LANG_BENCH_CALCULATING          176
+#define LANG_BENCH_TITLE                177
+#define LANG_BENCH_SCREEN               178
+#define LANG_BENCH_WRITE                179
+#define LANG_BENCH_READ                 180
+#define LANG_BENCH_MEMORY               181
+#define LANG_BENCH_FLASH_CARD           182
+#define LANG_BENCH_WRITE_RAW            183
+#define LANG_BENCH_WRITE_MEM            184
+#define LANG_BENCH_WRITE_64K            185
+#define LANG_BENCH_READ_64K             186
 
 //-------------------------------------------------------------------
-#define GUI_LANG_ITEMS                  174
+#define GUI_LANG_ITEMS                  186
 
 //-------------------------------------------------------------------
 extern void gui_lang_init();

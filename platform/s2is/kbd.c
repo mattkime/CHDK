@@ -360,6 +360,6 @@ static KeyMap keymap[] = {
         { 1, KEY_MACRO		, 0x00000020 },
         { 1, KEY_VIDEO		, 0x40000000 },
         { 1, KEY_TIMER		, 0x02000000 },
-        { 1, KEY_DUMMY   	, 0x02004000 },
+//        { 1, KEY_DUMMY   	, 0x00000000 },
 	{ 0, 0, 0 }
 };

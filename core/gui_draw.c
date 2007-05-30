@@ -137,7 +137,7 @@ void draw_filled_rect(coord x1, coord y1, coord x2, coord y2, color cl) {
 
 //-------------------------------------------------------------------
 void draw_char(coord x, coord y, const char ch, color cl) {
-    const unsigned char *sym = current_font +
+    const unsigned char *sym = (unsigned char*)current_font +
 	    ((const unsigned char)ch)*FONT_HEIGHT;
     int i, ii;
     char c;

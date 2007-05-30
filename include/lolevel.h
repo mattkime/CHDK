@@ -107,6 +107,10 @@ void kbd_fetch_data(long *dst);
 
 extern long playrec_mode; //used on S-series only
 
+extern void *led_table;
+extern void _UniqueLedOn(void *addr, long brightness);
+extern void _UniqueLedOff(void *addr);
+
 /* math */
 extern int _rand(void);
 extern void* _srand(unsigned int seed);
