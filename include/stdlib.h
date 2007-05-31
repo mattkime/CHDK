@@ -40,6 +40,8 @@ extern long strtol(const char *nptr, char **endptr, int base);
 
 extern void *malloc(long size);
 extern void free(void *p);
+extern void *umalloc(long size);
+extern void ufree(void *p);
 
 extern void *memcpy(void *dest, const void *src, long n);
 extern void *memset(void *s, int c, int n);

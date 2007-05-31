@@ -76,6 +76,8 @@ extern int _vsprintf(char *buf, const char *fmt, __builtin_va_list va_list);
 
 extern void *_malloc(long size);
 extern void _free(void *p);
+extern void *_AllocateUncacheableMemory(long size);
+extern void _FreeUncacheableMemory(void *p);
 
 extern void *_memcpy(void *dest, const void *src, long n);
 extern void *_memset(void *s, int c, int n);

@@ -74,7 +74,7 @@ static char* gui_lang_default = \
 " 49 \"Visual settings\"\n"
 
 " 50 \"Language...\"\n"
-" 51 \"OSD font\"\n"
+" 51 \"OSD codepage\"\n"
 " 52 \"Menu RBF font...\"\n"
 " 53 \"Colors\"\n"
 " 54 \"OSD text\"\n"

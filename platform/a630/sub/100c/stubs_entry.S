@@ -2,6 +2,7 @@
 #include "stubs_asm.h"
 
 NSTUB(AllocateMemory, 0xffc01ab0)
+NSTUB(AllocateUncacheableMemory, 0xffc04b00)
 NSTUB(Close, 0xffc614e8)
 NSTUB(CreatePhysicalVram, 0xffd2e820)
 NSTUB(CreateTask, 0xffc11abc)
@@ -13,6 +14,7 @@ NSTUB(EnableDispatch, 0xffc1196c)
 NSTUB(ExecuteEventProcedure, 0xffc0699c)
 NSTUB(ExitTask, 0xffc11e7c)
 NSTUB(FreeMemory, 0xffc01abc)
+NSTUB(FreeUncacheableMemory, 0xffc04b34)
 NSTUB(GetCurrentAvValue, 0xffea6ffc)
 // ALT: NSTUB(GetCurrentAvValue, 0xffea70f4) // 13/0
 // ALT: NSTUB(GetCurrentAvValue, 0xffea9528) // 13/0

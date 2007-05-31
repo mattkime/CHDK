@@ -3,6 +3,7 @@
 
 // Best match: 79%
 NSTUB(AllocateMemory, 0xff811ba0)
+NSTUB(AllocateUncacheableMemory, 0xff814810)
 // ERROR: Close is not found!
 NSTUB(CreatePhysicalVram, 0xff93e4cc)
 NSTUB(CreateTask, 0xff82239c)
@@ -14,6 +15,7 @@ NSTUB(ExecuteEventProcedure, 0xff816ab4)
 NSTUB(ExitTask, 0xff82275c)
 // Best match: 66%
 NSTUB(FreeMemory, 0xff811bac)
+NSTUB(FreeUncacheableMemory, 0xff814844)
 NSTUB(GetCurrentAvValue, 0xffaa6d44)
 // ALT: NSTUB(GetCurrentAvValue, 0xffaa8cf8) // 13/0
 NSTUB(GetCurrentTargetDistance, 0xffaa8ca0)

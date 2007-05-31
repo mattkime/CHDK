@@ -90,12 +90,12 @@ void lang_load_from_file(const char *filename) {
     if (f>=0) {
         size = (stat((char*)filename, &st)==0)?st.st_size:0;
         if (size) {
-            buf = malloc(size+1);
+            buf = umalloc(size+1);
             if (buf) {
                 size = read(f, buf, size);
                 buf[size]=0;
                 lang_load_from_mem(buf);
-                free(buf);
+                ufree(buf);
             }
         }
         close(f);

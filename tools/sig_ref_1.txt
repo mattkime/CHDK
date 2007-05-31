@@ -97,3 +97,5 @@ Write 0xFFC5C7AC
 Remove 0xFFC5C72C
 GetCurrentTargetDistance 0xFFE736BC
 strpbrk 0xFFEB5EDC
+AllocateUncacheableMemory 0xFFC048D8
+FreeUncacheableMemory 0xFFC0490C

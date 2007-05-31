@@ -267,3 +267,10 @@ int stat(char *name, void *pStat) {
     return _stat(name, pStat);
 }
 
+void *umalloc(long size) {
+    return _AllocateUncacheableMemory(size);
+}
+
+void ufree(void *p) {
+    return _FreeUncacheableMemory(p);
+}

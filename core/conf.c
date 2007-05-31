@@ -256,7 +256,7 @@ void conf_restore() {
 
                 for (i=0; i<CONF_NUM; ++i) {
                     if (conf_info[i].id==id && conf_info[i].size==size) {
-                        ptr=malloc(size);
+                        ptr=umalloc(size);
                         if (ptr) {
                             rcnt = read(fd, ptr, size);
                             if (rcnt == size) {
@@ -265,7 +265,7 @@ void conf_restore() {
                                    conf_info[i].func();
                                }
                             }
-                            free(ptr);
+                            ufree(ptr);
                         }
                         break;
                     }

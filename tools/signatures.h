@@ -2684,6 +2684,60 @@ static FuncSig func_sig_strpbrk_1[] = {
 	/* 19/32 */
 };
 
+static FuncSig func_sig_AllocateUncacheableMemory_1[] = {
+	{   1, 0xe0804040, 0xfdffffff }, // add:6:0xE2804040
+	{   2, 0xe1a00004, 0xfdffffff }, // mov:6:0xE1A00004
+	{   3, 0xeb000000, 0xff000000 }, // b, bl:3:0xEBFFF48C
+	{   4, 0xe1a02004, 0xfdffffff }, // mov:6:0xE1A02004
+	{   5, 0xe0504000, 0xfdffffff }, // sub:6:0xE2504000
+	{   6, 0xe1a01004, 0xfdffffff }, // mov:6:0xE1A01004
+	{   8, 0xe1a00001, 0xfdffffff }, // mov:6:0xE3A00001
+	{   9, 0xeb000000, 0xff000000 }, // b, bl:3:0xEB0ACADF
+	{  11, 0xe0800020, 0xfdffffff }, // add:6:0xE2800020
+	{  13, 0xe1500000, 0xfdffffff }, // cmp:7:0xE3500000
+	{  14, 0xe0400020, 0xfdffffff }, // sub:6:0xE2400020
+	{  15, 0xe52de004, 0xfdffffff }, // str:4:0xE52DE004
+	{  17, 0x049df004, 0xfdffffff }, // ldr:4:0x049DF004
+	{  18, 0xe49de004, 0xfdffffff }, // ldr:4:0xE49DE004
+	{  19, 0xea000000, 0xff000000 }, // b, bl:3:0xEAFFF47F
+	{  22, 0x00000064, 0xfdffffff }, // and:6:0x00000064
+	{  24, 0x00632e65, 0xfdffffff }, // rsb:6:0x00632E65
+	{  26, 0xe1a04000, 0xfdffffff }, // mov:6:0xE1A04000
+	{  27, 0xeb000000, 0xff000000 }, // b, bl:3:0xEBFFFFE3
+	{  28, 0xe1a01004, 0xfdffffff }, // mov:6:0xE1A01004
+	{  29, 0xe0504000, 0xfdffffff }, // sub:6:0xE2504000
+	{  30, 0xe59f0018, 0xfdffffff }, // ldr:4:0xE59F0018
+	{  31, 0x1a000000, 0xff000000 }, // b, bl:3:0x1A000003
+	{ -1, -1, -1 },
+	/* 23/32 */
+};
+
+static FuncSig func_sig_FreeUncacheableMemory_1[] = {
+	{   0, 0xe1500000, 0xfdffffff }, // cmp:7:0xE3500000
+	{   1, 0xe0400020, 0xfdffffff }, // sub:6:0xE2400020
+	{   2, 0xe52de004, 0xfdffffff }, // str:4:0xE52DE004
+	{   4, 0x049df004, 0xfdffffff }, // ldr:4:0x049DF004
+	{   5, 0xe49de004, 0xfdffffff }, // ldr:4:0xE49DE004
+	{   6, 0xea000000, 0xff000000 }, // b, bl:3:0xEAFFF47F
+	{   9, 0x00000064, 0xfdffffff }, // and:6:0x00000064
+	{  11, 0x00632e65, 0xfdffffff }, // rsb:6:0x00632E65
+	{  13, 0xe1a04000, 0xfdffffff }, // mov:6:0xE1A04000
+	{  14, 0xeb000000, 0xff000000 }, // b, bl:3:0xEBFFFFE3
+	{  15, 0xe1a01004, 0xfdffffff }, // mov:6:0xE1A01004
+	{  16, 0xe0504000, 0xfdffffff }, // sub:6:0xE2504000
+	{  17, 0xe59f0018, 0xfdffffff }, // ldr:4:0xE59F0018
+	{  18, 0x1a000000, 0xff000000 }, // b, bl:3:0x1A000003
+	{  19, 0xeb000000, 0xff000000 }, // b, bl:3:0xEB0AD45E
+	{  20, 0xe59f0010, 0xfdffffff }, // ldr:4:0xE59F0010
+	{  21, 0xe1a01041, 0xfdffffff }, // mov:6:0xE3A01041
+	{  22, 0xeb000000, 0xff000000 }, // b, bl:3:0xEBFFFC59
+	{  23, 0xe1a00004, 0xfdffffff }, // mov:6:0xE1A00004
+	{  29, 0x00007061, 0xfdffffff }, // and:6:0x00007061
+	{  31, 0xe0505000, 0xfdffffff }, // sub:6:0xE2505000
+	{ -1, -1, -1 },
+	/* 21/32 */
+};
+
 static FuncSig func_sig_GetSystemTime_2[] = {
 	{   1, 0xe59f6030, 0xfdffffff }, // ldr:4:0xE59F6030
 	{   2, 0xe5965000, 0xfdffffff }, // ldr:4:0xE5965000
@@ -3700,6 +3754,7 @@ static FuncSig func_sig_Mount_FileSystem_2[] = {
 FuncsList func_list[] = {
 	{ "AllocateMemory", func_sig_AllocateMemory_1 },
 	{ "AllocateMemory", func_sig_AllocateMemory_2 },
+	{ "AllocateUncacheableMemory", func_sig_AllocateUncacheableMemory_1 },
 	{ "Close", func_sig_Close_1 },
 	{ "CreatePhysicalVram", func_sig_CreatePhysicalVram_1 },
 	{ "CreatePhysicalVram", func_sig_CreatePhysicalVram_2 },
@@ -3713,6 +3768,7 @@ FuncsList func_list[] = {
 	{ "ExitTask", func_sig_ExitTask_1 },
 	{ "FreeMemory", func_sig_FreeMemory_1 },
 	{ "FreeMemory", func_sig_FreeMemory_2 },
+	{ "FreeUncacheableMemory", func_sig_FreeUncacheableMemory_1 },
 	{ "GetCurrentAvValue", func_sig_GetCurrentAvValue_1 },
 	{ "GetCurrentAvValue", func_sig_GetCurrentAvValue_2 },
 	{ "GetCurrentTargetDistance", func_sig_GetCurrentTargetDistance_1 },
