@@ -44,18 +44,29 @@ static void kbd_sched_delay(long msec)
     KBD_STACK_PUSH(SCRIPT_SLEEP);
 }
 
-static void kbd_sched_click(long key)
+static void kbd_sched_press(long key)
+{
+// WARNING stack program flow is reversed
+    kbd_sched_delay(20);
+
+    KBD_STACK_PUSH(key);
+    KBD_STACK_PUSH(SCRIPT_PRESS);
+}
+
+static void kbd_sched_release(long key)
 {
 // WARNING stack program flow is reversed
     kbd_sched_delay(20);
 
     KBD_STACK_PUSH(key);
     KBD_STACK_PUSH(SCRIPT_RELEASE);
+}
 
-    kbd_sched_delay(20);
-
-    KBD_STACK_PUSH(key);
-    KBD_STACK_PUSH(SCRIPT_PRESS);
+static void kbd_sched_click(long key)
+{
+// WARNING stack program flow is reversed
+    kbd_sched_release(key);
+    kbd_sched_press(key);
 }
 
 void kbd_sched_shoot()
@@ -104,6 +115,7 @@ void script_start()
 
 void script_end()
 {
+    kbd_key_release_all();
     state_kbd_script_run = 0;
     vid_bitmap_refresh();
 }
@@ -181,6 +193,26 @@ void process_script()
         script_console_add_line(lang_str(LANG_CONSOLE_TEXT_FINISHED));
 	script_end();
     }    
+}
+
+void ubasic_camera_press(const char *s)
+{
+    long k = keyid_by_name(s);
+    if (k > 0) {
+	kbd_sched_press(k);
+    } else {
+	ubasic_error = 3;
+    }
+}
+
+void ubasic_camera_release(const char *s)
+{
+    long k = keyid_by_name(s);
+    if (k > 0) {
+	kbd_sched_release(k);
+    } else {
+	ubasic_error = 3;
+    }
 }
 
 void ubasic_camera_click(const char *s)

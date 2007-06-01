@@ -536,6 +536,28 @@ click_statement(void)
 }
 /*---------------------------------------------------------------------------*/
 static void
+press_statement(void)
+{
+  accept(TOKENIZER_PRESS);
+  tokenizer_string(string, sizeof(string));
+  ubasic_camera_press(string);
+  tokenizer_next();
+  DEBUG_PRINTF("End of press\n");
+  accept(TOKENIZER_CR);
+}
+/*---------------------------------------------------------------------------*/
+static void
+release_statement(void)
+{
+  accept(TOKENIZER_RELEASE);
+  tokenizer_string(string, sizeof(string));
+  ubasic_camera_release(string);
+  tokenizer_next();
+  DEBUG_PRINTF("End of release\n");
+  accept(TOKENIZER_CR);
+}
+/*---------------------------------------------------------------------------*/
+static void
 sleep_statement(void)
 {
   int val;
@@ -633,6 +655,12 @@ statement(void)
     break;
   case TOKENIZER_CLICK:
     click_statement();
+    break;
+  case TOKENIZER_PRESS:
+    press_statement();
+    break;
+  case TOKENIZER_RELEASE:
+    release_statement();
     break;
   case TOKENIZER_SHOOT:
     shoot_statement();
