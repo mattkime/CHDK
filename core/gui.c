@@ -71,6 +71,7 @@ static const char* gui_zoom_value_enum(int change, int arg);
 #if defined(CAMERA_s2is) || defined(CAMERA_s3is)
 static const char* gui_alt_mode_button_enum(int change, int arg);
 #endif
+static const char* gui_alt_power_enum(int change, int arg);
 
 // Menu callbacks
 //-------------------------------------------------------------------
@@ -137,6 +138,8 @@ static CMenuItem misc_submenu_items[] = {
 #if defined(CAMERA_s2is) || defined(CAMERA_s3is)
     {LANG_MENU_MISC_ALT_BUTTON,         MENUITEM_ENUM,    (int*)gui_alt_mode_button_enum },
 #endif
+    {LANG_MENU_MISC_DISABLE_LCD_OFF,    MENUITEM_ENUM,    (int*)gui_alt_power_enum },
+
     {LANG_MENU_MISC_PALETTE,            MENUITEM_PROC,    (int*)gui_draw_palette },
     {LANG_MENU_MISC_BUILD_INFO,         MENUITEM_PROC,    (int*)gui_show_build_info },
     {LANG_MENU_MISC_MEMORY_INFO,        MENUITEM_PROC,    (int*)gui_show_memory_info },
@@ -473,6 +476,19 @@ const char* gui_alt_mode_button_enum(int change, int arg) {
 #endif
 
 //-------------------------------------------------------------------
+const char* gui_alt_power_enum(int change, int arg) {
+    static const char* modes[]={ "No", "Alt", "Script" };
+
+    conf.alt_prevent_shutdown+=change;
+    if (conf.alt_prevent_shutdown<0)
+        conf.alt_prevent_shutdown=(sizeof(modes)/sizeof(modes[0]))-1;
+    else if (conf.alt_prevent_shutdown>=(sizeof(modes)/sizeof(modes[0])))
+        conf.alt_prevent_shutdown=0;
+
+    return modes[conf.alt_prevent_shutdown];
+}
+
+//-------------------------------------------------------------------
 void gui_update_script_submenu() {
     register int p=0, i;
 
@@ -732,6 +748,10 @@ void gui_kbd_enter()
 #ifdef OPTIONS_AUTOSAVE
     conf_store_old_settings();
 #endif
+    if ((conf.alt_prevent_shutdown == ALT_PREVENT_SHUTDOWN_ALT && !state_kbd_script_run) 
+        || conf.alt_prevent_shutdown == ALT_PREVENT_SHUTDOWN_ALT_SCRIPT) {
+        disable_shutdown();
+    }
     gui_mode = GUI_MODE_ALT;
 }
 
@@ -747,6 +767,7 @@ void gui_kbd_leave()
     if (gui_mode == GUI_MODE_READ && !rbf_load(conf.menu_rbf_file))
         rbf_load_from_8x16(current_font);
     rbf_set_codepage(FONT_CP_WIN);
+    enable_shutdown();
     gui_mode = GUI_MODE_NONE;
 }
 

@@ -157,6 +157,10 @@ long stat_get_vbatt();
 long get_vbatt_min();
 long get_vbatt_max();
 
+void disable_shutdown();
+void enable_shutdown();
+
+
 /******************************************************************/
 void __attribute__((noreturn)) shutdown();
 void debug_led(int state);

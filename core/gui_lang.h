@@ -255,8 +255,10 @@
 #define LANG_BENCH_WRITE_64K            185
 #define LANG_BENCH_READ_64K             186
 
+#define LANG_MENU_MISC_DISABLE_LCD_OFF  187
+
 //-------------------------------------------------------------------
-#define GUI_LANG_ITEMS                  186
+#define GUI_LANG_ITEMS                  187
 
 //-------------------------------------------------------------------
 extern void gui_lang_init();

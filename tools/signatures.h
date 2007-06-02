@@ -2738,6 +2738,76 @@ static FuncSig func_sig_FreeUncacheableMemory_1[] = {
 	/* 21/32 */
 };
 
+static FuncSig func_sig_LockMainPower_1[] = {
+	{   1, 0xe59f3088, 0xfdffffff }, // ldr:4:0xE59F3088
+	{   2, 0xe5932000, 0xfdffffff }, // ldr:4:0xE5932000
+	{   3, 0xe1520001, 0xfdffffff }, // cmp:7:0xE3520001
+	{   4, 0xe59f6080, 0xfdffffff }, // ldr:4:0xE59F6080
+	{   5, 0xe59f5080, 0xfdffffff }, // ldr:4:0xE59F5080
+	{   6, 0xe1a04000, 0xfdffffff }, // mov:6:0xE3A04000
+	{   7, 0xe59f007c, 0xfdffffff }, // ldr:4:0xE59F007C
+	{   8, 0xe1a010b1, 0xfdffffff }, // mov:6:0xE3A010B1
+	{   9, 0x0a000000, 0xff000000 }, // b, bl:3:0x0A000000
+	{  10, 0xeb000000, 0xff000000 }, // b, bl:3:0xEBFAEAF0
+	{  11, 0xe1a01000, 0xfdffffff }, // mov:6:0xE3A01000
+	{  12, 0xe5960000, 0xfdffffff }, // ldr:4:0xE5960000
+	{  13, 0xeb000000, 0xff000000 }, // b, bl:3:0xEBFB24D9
+	{  14, 0xe59f2064, 0xfdffffff }, // ldr:4:0xE59F2064
+	{  15, 0xe5923000, 0xfdffffff }, // ldr:4:0xE5923000
+	{  16, 0xe0833001, 0xfdffffff }, // add:6:0xE2833001
+	{  17, 0xe1530001, 0xfdffffff }, // cmp:7:0xE3530001
+	{  18, 0xe59f1058, 0xfdffffff }, // ldr:4:0xE59F1058
+	{  19, 0xe5823000, 0xfdffffff }, // str:4:0xE5823000
+	{  20, 0x1a000000, 0xff000000 }, // b, bl:3:0x1A000001
+	{  21, 0xe1a0e00f, 0xfdffffff }, // mov:6:0xE1A0E00F
+	{  22, 0xe591f000, 0xfdffffff }, // ldr:4:0xE591F000
+	{  23, 0xe59fc048, 0xfdffffff }, // ldr:4:0xE59FC048
+	{  24, 0xe59c3000, 0xfdffffff }, // ldr:4:0xE59C3000
+	{  25, 0xe1a02001, 0xfdffffff }, // mov:6:0xE3A02001
+	{  26, 0xe59f1040, 0xfdffffff }, // ldr:4:0xE59F1040
+	{  27, 0xe1530002, 0xfdffffff }, // cmp:7:0xE1530002
+	{  28, 0xe5812000, 0xfdffffff }, // str:4:0xE5812000
+	{  29, 0x1a000000, 0xff000000 }, // b, bl:3:0x1A000003
+	{  30, 0xe5950000, 0xfdffffff }, // ldr:4:0xE5950000
+	{  31, 0xe58c4000, 0xfdffffff }, // str:4:0xE58C4000
+	{ -1, -1, -1 },
+	/* 31/32 */
+};
+
+static FuncSig func_sig_UnlockMainPower_1[] = {
+	{   1, 0xe59f30d0, 0xfdffffff }, // ldr:4:0xE59F30D0
+	{   2, 0xe5932000, 0xfdffffff }, // ldr:4:0xE5932000
+	{   3, 0xe1520001, 0xfdffffff }, // cmp:7:0xE3520001
+	{   4, 0xe59f50c8, 0xfdffffff }, // ldr:4:0xE59F50C8
+	{   5, 0xe59f40c8, 0xfdffffff }, // ldr:4:0xE59F40C8
+	{   6, 0xe59f00c8, 0xfdffffff }, // ldr:4:0xE59F00C8
+	{   7, 0xe1a010c5, 0xfdffffff }, // mov:6:0xE3A010C5
+	{   8, 0x0a000000, 0xff000000 }, // b, bl:3:0x0A000000
+	{   9, 0xeb000000, 0xff000000 }, // b, bl:3:0xEBFAEAC4
+	{  10, 0xe5943000, 0xfdffffff }, // ldr:4:0xE5943000
+	{  11, 0xe1a01000, 0xfdffffff }, // mov:6:0xE3A01000
+	{  12, 0xe1530001, 0xfdffffff }, // cmp:7:0xE1530001
+	{  14, 0xe5950000, 0xfdffffff }, // ldr:4:0xE5950000
+	{  15, 0xeb000000, 0xff000000 }, // b, bl:3:0xEBFB24AA
+	{  16, 0xe5943000, 0xfdffffff }, // ldr:4:0xE5943000
+	{  17, 0xe0432001, 0xfdffffff }, // sub:6:0xE2432001
+	{  18, 0xe1520000, 0xfdffffff }, // cmp:7:0xE3520000
+	{  19, 0xe59f1098, 0xfdffffff }, // ldr:4:0xE59F1098
+	{  20, 0xe5842000, 0xfdffffff }, // str:4:0xE5842000
+	{  21, 0x0a000000, 0xff000000 }, // b, bl:3:0x0A000002
+	{  22, 0xe5950000, 0xfdffffff }, // ldr:4:0xE5950000
+	{  24, 0xea000000, 0xff000000 }, // b, bl:3:0xEAFB24CB
+	{  25, 0xe59f3084, 0xfdffffff }, // ldr:4:0xE59F3084
+	{  26, 0xe5832000, 0xfdffffff }, // str:4:0xE5832000
+	{  27, 0xe1a0e00f, 0xfdffffff }, // mov:6:0xE1A0E00F
+	{  28, 0xe591f000, 0xfdffffff }, // ldr:4:0xE591F000
+	{  29, 0xe59f3078, 0xfdffffff }, // ldr:4:0xE59F3078
+	{  30, 0xe5932000, 0xfdffffff }, // ldr:4:0xE5932000
+	{  31, 0xe1520000, 0xfdffffff }, // cmp:7:0xE3520000
+	{ -1, -1, -1 },
+	/* 29/32 */
+};
+
 static FuncSig func_sig_GetSystemTime_2[] = {
 	{   1, 0xe59f6030, 0xfdffffff }, // ldr:4:0xE59F6030
 	{   2, 0xe5965000, 0xfdffffff }, // ldr:4:0xE5965000
@@ -3751,6 +3821,75 @@ static FuncSig func_sig_Mount_FileSystem_2[] = {
 	/* 30/32 */
 };
 
+static FuncSig func_sig_LockMainPower_2[] = {
+	{   1, 0xe59f3074, 0xfdffffff }, // ldr:4:0xE59F3074
+	{   2, 0xe5932000, 0xfdffffff }, // ldr:4:0xE5932000
+	{   3, 0xe1520001, 0xfdffffff }, // cmp:7:0xE3520001
+	{   4, 0xe59f406c, 0xfdffffff }, // ldr:4:0xE59F406C
+	{   5, 0xe59f006c, 0xfdffffff }, // ldr:4:0xE59F006C
+	{   6, 0xe1a010bf, 0xfdffffff }, // mov:6:0xE3A010BF
+	{   7, 0x0a000000, 0xff000000 }, // b, bl:3:0x0A000000
+	{   8, 0xeb000000, 0xff000000 }, // b, bl:3:0xEBFA4B62
+	{   9, 0xe5940000, 0xfdffffff }, // ldr:4:0xE5940000
+	{  10, 0xe1a01000, 0xfdffffff }, // mov:6:0xE3A01000
+	{  11, 0xeb000000, 0xff000000 }, // b, bl:3:0xEBFA86AA
+	{  12, 0xe59f2054, 0xfdffffff }, // ldr:4:0xE59F2054
+	{  13, 0xe5923000, 0xfdffffff }, // ldr:4:0xE5923000
+	{  14, 0xe0833001, 0xfdffffff }, // add:6:0xE2833001
+	{  15, 0xe1530001, 0xfdffffff }, // cmp:7:0xE3530001
+	{  16, 0xe5823000, 0xfdffffff }, // str:4:0xE5823000
+	{  17, 0x1a000000, 0xff000000 }, // b, bl:3:0x1A000000
+	{  18, 0xeb000000, 0xff000000 }, // b, bl:3:0xEBFFFF11
+	{  19, 0xe59f003c, 0xfdffffff }, // ldr:4:0xE59F003C
+	{  20, 0xe5903000, 0xfdffffff }, // ldr:4:0xE5903000
+	{  21, 0xe1a02001, 0xfdffffff }, // mov:6:0xE3A02001
+	{  22, 0xe59f1034, 0xfdffffff }, // ldr:4:0xE59F1034
+	{  23, 0xe1530002, 0xfdffffff }, // cmp:7:0xE1530002
+	{  24, 0xe5812000, 0xfdffffff }, // str:4:0xE5812000
+	{  25, 0x1a000000, 0xff000000 }, // b, bl:3:0x1A000002
+	{  26, 0xe1a03000, 0xfdffffff }, // mov:6:0xE3A03000
+	{  27, 0xe5803000, 0xfdffffff }, // str:4:0xE5803000
+	{  28, 0xeb000000, 0xff000000 }, // b, bl:3:0xEBFFFEBA
+	{  29, 0xe5940000, 0xfdffffff }, // ldr:4:0xE5940000
+	{  31, 0xea000000, 0xff000000 }, // b, bl:3:0xEAFA86C0
+	{ -1, -1, -1 },
+	/* 30/32 */
+};
+
+static FuncSig func_sig_UnlockMainPower_2[] = {
+	{   1, 0xe59f30c8, 0xfdffffff }, // ldr:4:0xE59F30C8
+	{   2, 0xe5932000, 0xfdffffff }, // ldr:4:0xE5932000
+	{   3, 0xe1520001, 0xfdffffff }, // cmp:7:0xE3520001
+	{   4, 0xe59f50c0, 0xfdffffff }, // ldr:4:0xE59F50C0
+	{   5, 0xe59f40c0, 0xfdffffff }, // ldr:4:0xE59F40C0
+	{   6, 0xe59f00c0, 0xfdffffff }, // ldr:4:0xE59F00C0
+	{   7, 0xe1a010d2, 0xfdffffff }, // mov:6:0xE3A010D2
+	{   8, 0x0a000000, 0xff000000 }, // b, bl:3:0x0A000000
+	{   9, 0xeb000000, 0xff000000 }, // b, bl:3:0xEBFA4B3B
+	{  10, 0xe5943000, 0xfdffffff }, // ldr:4:0xE5943000
+	{  11, 0xe1a01000, 0xfdffffff }, // mov:6:0xE3A01000
+	{  12, 0xe1530001, 0xfdffffff }, // cmp:7:0xE1530001
+	{  14, 0xe5950000, 0xfdffffff }, // ldr:4:0xE5950000
+	{  15, 0xeb000000, 0xff000000 }, // b, bl:3:0xEBFA8680
+	{  16, 0xe5943000, 0xfdffffff }, // ldr:4:0xE5943000
+	{  17, 0xe0432001, 0xfdffffff }, // sub:6:0xE2432001
+	{  18, 0xe1520000, 0xfdffffff }, // cmp:7:0xE3520000
+	{  19, 0xe5842000, 0xfdffffff }, // str:4:0xE5842000
+	{  20, 0x0a000000, 0xff000000 }, // b, bl:3:0x0A000002
+	{  21, 0xe5950000, 0xfdffffff }, // ldr:4:0xE5950000
+	{  23, 0xea000000, 0xff000000 }, // b, bl:3:0xEAFA86A2
+	{  24, 0xe59f307c, 0xfdffffff }, // ldr:4:0xE59F307C
+	{  25, 0xe5832000, 0xfdffffff }, // str:4:0xE5832000
+	{  26, 0xeb000000, 0xff000000 }, // b, bl:3:0xEBFFFEEA
+	{  27, 0xe59f3074, 0xfdffffff }, // ldr:4:0xE59F3074
+	{  28, 0xe5932000, 0xfdffffff }, // ldr:4:0xE5932000
+	{  29, 0xe1520000, 0xfdffffff }, // cmp:7:0xE3520000
+	{  30, 0x0a000000, 0xff000000 }, // b, bl:3:0x0A000011
+	{  31, 0xe59fc068, 0xfdffffff }, // ldr:4:0xE59FC068
+	{ -1, -1, -1 },
+	/* 29/32 */
+};
+
 FuncsList func_list[] = {
 	{ "AllocateMemory", func_sig_AllocateMemory_1 },
 	{ "AllocateMemory", func_sig_AllocateMemory_2 },
@@ -3786,6 +3925,8 @@ FuncsList func_list[] = {
 	{ "GetZoomLensCurrentPosition", func_sig_GetZoomLensCurrentPosition_2 },
 	{ "IsStrobeChargeCompleted", func_sig_IsStrobeChargeCompleted_1 },
 	{ "IsStrobeChargeCompleted", func_sig_IsStrobeChargeCompleted_2 },
+	{ "LockMainPower", func_sig_LockMainPower_1 },
+	{ "LockMainPower", func_sig_LockMainPower_2 },
 	{ "MakeDirectory", func_sig_MakeDirectory_1 },
 	{ "Mount_FileSystem", func_sig_Mount_FileSystem_1 },
 	{ "Mount_FileSystem", func_sig_Mount_FileSystem_2 },
@@ -3803,6 +3944,8 @@ FuncsList func_list[] = {
 	{ "SetPropertyCase", func_sig_SetPropertyCase_2 },
 	{ "SleepTask", func_sig_SleepTask_1 },
 	{ "TakeSemaphore", func_sig_TakeSemaphore_1 },
+	{ "UnlockMainPower", func_sig_UnlockMainPower_1 },
+	{ "UnlockMainPower", func_sig_UnlockMainPower_2 },
 	{ "Unmount_FileSystem", func_sig_Unmount_FileSystem_1 },
 	{ "UpdateMBROnFlash", func_sig_UpdateMBROnFlash_1 },
 	{ "VbattGet", func_sig_VbattGet_1 },

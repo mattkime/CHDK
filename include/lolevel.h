@@ -113,6 +113,10 @@ extern void *led_table;
 extern void _UniqueLedOn(void *addr, long brightness);
 extern void _UniqueLedOff(void *addr);
 
+extern long _LockMainPower();
+extern long _UnlockMainPower();
+
+
 /* math */
 extern int _rand(void);
 extern void* _srand(unsigned int seed);

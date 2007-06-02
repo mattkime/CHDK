@@ -34,6 +34,7 @@ NSTUB(GetZoomLensCurrentPoint, 0xffae8474)
 NSTUB(GetZoomLensCurrentPosition, 0xffae8488)
 // ALT: NSTUB(GetZoomLensCurrentPosition, 0xffae8488) // 15/14
 NSTUB(IsStrobeChargeCompleted, 0xff91d8c0)
+NSTUB(LockMainPower, 0xff98f118)
 NSTUB(MakeDirectory, 0xff871668)
 // Best match: 73%
 NSTUB(Mount_FileSystem, 0xff870190)
@@ -50,6 +51,7 @@ NSTUB(SetParameterData, 0xff994a88)
 NSTUB(SetPropertyCase, 0xff824870)
 NSTUB(SleepTask, 0xff82156c)
 NSTUB(TakeSemaphore, 0xff821068)
+NSTUB(UnlockMainPower, 0xff98f1b0)
 NSTUB(Unmount_FileSystem, 0xff870244)
 NSTUB(UpdateMBROnFlash, 0xff8703ec)
 // ERROR: VbattGet is not found!

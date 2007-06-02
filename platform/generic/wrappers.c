@@ -274,3 +274,18 @@ void *umalloc(long size) {
 void ufree(void *p) {
     return _FreeUncacheableMemory(p);
 }
+
+static int shutdown_disabled = 0;
+void disable_shutdown() {
+    if (!shutdown_disabled) {
+        _LockMainPower();
+        shutdown_disabled = 1;
+    }
+}
+
+void enable_shutdown() {
+    if (shutdown_disabled) {
+        _UnlockMainPower();
+        shutdown_disabled = 0;
+    }
+}

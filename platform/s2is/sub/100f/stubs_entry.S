@@ -37,6 +37,8 @@ NSTUB(GetZoomLensCurrentPoint, 0xffa881f4)
 NSTUB(GetZoomLensCurrentPosition, 0xffa88208)
 // ALT: NSTUB(GetZoomLensCurrentPosition, 0xffa88208) // 15/14
 NSTUB(IsStrobeChargeCompleted, 0xff912ee0)
+// Best match: 96%
+NSTUB(LockMainPower, 0xff9834c8)
 // Best match: 70%
 NSTUB(MakeDirectory, 0xff8775b0)
 // ERROR: Mount_FileSystem is not found!
@@ -52,6 +54,8 @@ NSTUB(SetParameterData, 0xff987fb4)
 NSTUB(SleepTask, 0xff8221fc)
 // ALT: NSTUB(SleepTask, 0xff8222b0) // 31/0
 NSTUB(TakeSemaphore, 0xff821b6c)
+// Best match: 96%
+NSTUB(UnlockMainPower, 0xff98357c)
 NSTUB(Unmount_FileSystem, 0xff8762d4)
 // Best match: 96%
 NSTUB(UpdateMBROnFlash, 0xff876480)

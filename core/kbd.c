@@ -111,10 +111,17 @@ void script_start()
     for (i=0; i<SCRIPT_NUM_PARAMS; ++i) {
         ubasic_set_variable(i, conf.ubasic_vars[i]);
     }
+
+    if (conf.alt_prevent_shutdown != ALT_PREVENT_SHUTDOWN_ALT_SCRIPT) {
+        enable_shutdown();
+    }
 }
 
 void script_end()
 {
+    if (conf.alt_prevent_shutdown != ALT_PREVENT_SHUTDOWN_NO) {
+        disable_shutdown();
+    }
     kbd_key_release_all();
     state_kbd_script_run = 0;
     vid_bitmap_refresh();
@@ -285,11 +292,11 @@ long kbd_process()
 	else {
 	    gui_kbd_process();
 	}
-        if (kbd_get_pressed_key() != 0 && !state_kbd_script_run) {
+/*        if (kbd_get_pressed_key() != 0 && !state_kbd_script_run) {
             // emulate presskey to avoid camera turn off due to timeout
             kbd_key_release_all();
             kbd_key_press(KEY_DUMMY);
-        }
+        } */
     } else {
 	if (!key_pressed && kbd_is_key_pressed(conf.alt_mode_button)){
 	    kbd_blocked = 1;

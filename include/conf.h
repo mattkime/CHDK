@@ -86,16 +86,21 @@ typedef struct {
 
     int use_zoom_mf;
     long alt_mode_button; //for S-series
+    int alt_prevent_shutdown;
 
     int ns_enable_memdump;
 } Conf;
 
 extern Conf conf;
 
-#define SHOOTING_PROGRESS_NONE 0
-#define SHOOTING_PROGRESS_STARTED 1
-#define SHOOTING_PROGRESS_PROCESSING 2
-#define SHOOTING_PROGRESS_DONE 3
+#define ALT_PREVENT_SHUTDOWN_NO         0
+#define ALT_PREVENT_SHUTDOWN_ALT        1
+#define ALT_PREVENT_SHUTDOWN_ALT_SCRIPT 2
+
+#define SHOOTING_PROGRESS_NONE          0
+#define SHOOTING_PROGRESS_STARTED       1
+#define SHOOTING_PROGRESS_PROCESSING    2
+#define SHOOTING_PROGRESS_DONE          3
 
 extern int state_kbd_script_run;
 extern int state_shooting_progress;

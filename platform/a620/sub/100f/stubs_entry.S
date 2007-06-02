@@ -29,6 +29,8 @@ NSTUB(GetZoomLensCurrentPoint, 0xffe59d18)
 NSTUB(GetZoomLensCurrentPosition, 0xffe59d2c)
 // ALT: NSTUB(GetZoomLensCurrentPosition, 0xffe59d2c) // 27/2
 NSTUB(IsStrobeChargeCompleted, 0xffcec238)
+// Best match: 96%
+NSTUB(LockMainPower, 0xffd49d9c)
 NSTUB(MakeDirectory, 0xffc5d130)
 // Best match: 90%
 NSTUB(Mount_FileSystem, 0xffc5c140)
@@ -43,6 +45,8 @@ NSTUB(SetParameterData, 0xffd4f270)
 NSTUB(SetPropertyCase, 0xffc1406c)
 NSTUB(SleepTask, 0xffc11144)
 NSTUB(TakeSemaphore, 0xffc10c40)
+// Best match: 96%
+NSTUB(UnlockMainPower, 0xffd49e50)
 NSTUB(Unmount_FileSystem, 0xffc5c248)
 NSTUB(UpdateMBROnFlash, 0xffc5c3a0)
 // Best match: 96%

@@ -255,3 +255,5 @@
 184 "Write (Mem) :"
 185 "Write (64k) :"
 186 "Read  (64k) :"
+
+187 "Disable LCD off"
