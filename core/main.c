@@ -84,8 +84,11 @@ void core_spytask()
     msleep(50);
     finished();
 
-    mkdir("A/FONTS");
-    mkdir("A/SCRIPTS");
+    mkdir("A/CHDK");
+    mkdir("A/CHDK/FONTS");
+    mkdir("A/CHDK/SCRIPTS");
+    mkdir("A/CHDK/LANG");
+    mkdir("A/CHDK/BOOKS");
 
     while (1){
 

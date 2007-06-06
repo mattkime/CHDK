@@ -2,6 +2,8 @@ topdir=../../
 
 include $(topdir)makefile.inc
 
+CFLAGS+=$(CTHUMB)
+
 OBJS = font_8x16.o rbf_font.o
 
 all: libfont.a

@@ -33,7 +33,7 @@ static char* gui_lang_default = \
 " 20 \"OSD\"\n"
 
 " 21 \"Show OSD\"\n"
-" 22 \"Show RAW/SCR/EXP state\"\n"
+" 22 \"Show RAW/EXP state\"\n"
 " 23 \"Show misc values\"\n"
 " 24 \"Zoom value\"\n"
 " 25 \"Show DOF calculator\"\n"
@@ -191,7 +191,7 @@ static char* gui_lang_default = \
 
 "141 \"Histogram\"\n"
 "142 \"DOF calc\"\n"
-"143 \"RAW/SCR/EXP\"\n"
+"143 \"RAW/EXP\"\n"
 "144 \"Misc values\"\n"
 "145 \"Batt icon\"\n"
 "146 \"Batt text\"\n"
@@ -246,6 +246,19 @@ static char* gui_lang_default = \
 "186 \"Read  (64k) :\"\n"
 
 "187 \"Disable LCD off\"\n"
+
+"188 \"Cut\"\n"
+"189 \"Copy\"\n"
+"190 \"Paste\"\n"
+"191 \"Delete\"\n"
+"192 \"Select inverse\"\n"
+"193 \"*** Cut files ***\"\n"
+"194 \"Are you SURE to cut\\n%d selected files\\nfrom %s/?\"\n"
+"195 \"*** Copy files ***\"\n"
+"196 \"Are you SURE to copy\\n%d selected files\\nfrom %s/?\"\n"
+"197 \"*** Delete files ***\"\n"
+"198 \"Are you SURE to delete\\n%d selected files?\"\n"
+"199 \"Please wait...\"\n"
 
 ;
 

@@ -12,6 +12,7 @@
 #include "gui_menu.h"
 #include "gui_palette.h"
 #include "gui_mbox.h"
+#include "gui_mpopup.h"
 #include "gui_reversi.h"
 #include "gui_sokoban.h"
 #include "gui_debug.h"
@@ -616,12 +617,15 @@ void gui_redraw()
         case GUI_MODE_BENCH:
             gui_bench_draw();
             break;
+        case GUI_MODE_MPOPUP:
+            gui_mpopup_draw();
+            break;
         default:
             break;
     }
     
     gui_in_redraw = 0;
-    if ((gui_mode_old != gui_mode && (gui_mode_old != GUI_MODE_NONE && gui_mode_old != GUI_MODE_ALT) && (gui_mode != GUI_MODE_MBOX)) || gui_restore) {
+    if ((gui_mode_old != gui_mode && (gui_mode_old != GUI_MODE_NONE && gui_mode_old != GUI_MODE_ALT) && (gui_mode != GUI_MODE_MBOX && gui_mode != GUI_MODE_MPOPUP)) || gui_restore) {
         gui_restore = 0;
         if (gui_mode != GUI_MODE_REVERSI && gui_mode != GUI_MODE_SOKOBAN)
             draw_restore();
@@ -736,6 +740,9 @@ void gui_kbd_process()
     	case GUI_MODE_BENCH:
             gui_bench_kbd_process();
             break;
+        case GUI_MODE_MPOPUP:
+            gui_mpopup_kbd_process();
+             break;
         default:
             break;
     }
@@ -1076,9 +1083,9 @@ static void gui_load_script_selected(const char *fn) {
 }
 void gui_load_script(int arg) {
     DIR   *d;
-    char  *path="A/SCRIPTS";
+    char  *path="A/CHDK/SCRIPTS";
 
-    // if exists "A/SCRIPTS" go into
+    // if exists "A/CHDK/SCRIPTS" go into
     d=opendir(path);
     if (d) {
         closedir(d);
@@ -1106,7 +1113,17 @@ static void gui_draw_read_selected(const char *fn) {
     }
 }
 void gui_draw_read(int arg) {
-    gui_fselect_init(LANG_STR_SELECT_TEXT_FILE, "A", gui_draw_read_selected);
+    DIR   *d;
+    char  *path="A/CHDK/BOOKS";
+
+    // if exists "A/CHDK/BOOKS" go into
+    d=opendir(path);
+    if (d) {
+        closedir(d);
+    } else {
+        path="A";
+    }
+    gui_fselect_init(LANG_STR_SELECT_TEXT_FILE, path, gui_draw_read_selected);
 }
 
 //-------------------------------------------------------------------
@@ -1141,9 +1158,9 @@ static void gui_draw_rbf_selected(const char *fn) {
 }
 void gui_draw_load_rbf(int arg) {
     DIR   *d;
-    char  *path="A/FONTS";
+    char  *path="A/CHDK/FONTS";
 
-    // if exists "A/FONTS" go into
+    // if exists "A/CHDK/FONTS" go into
     d=opendir(path);
     if (d) {
         closedir(d);
@@ -1166,9 +1183,9 @@ static void gui_draw_menu_rbf_selected(const char *fn) {
 }
 void gui_draw_load_menu_rbf(int arg) {
     DIR   *d;
-    char  *path="A/FONTS";
+    char  *path="A/CHDK/FONTS";
 
-    // if exists "A/FONTS" go into
+    // if exists "A/CHDK/FONTS" go into
     d=opendir(path);
     if (d) {
         closedir(d);
@@ -1189,9 +1206,9 @@ static void gui_draw_lang_selected(const char *fn) {
 }
 void gui_draw_load_lang(int arg) {
     DIR   *d;
-    char  *path="A/LANG";
+    char  *path="A/CHDK/LANG";
 
-    // if exists "A/LANG" go into
+    // if exists "A/CHDK/LANG" go into
     d=opendir(path);
     if (d) {
         closedir(d);

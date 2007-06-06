@@ -20,7 +20,7 @@ const char *state_ubasic_script;
 
 static char ubasic_script_buf[SCRIPT_BUF_SIZE];
 static const char *ubasic_script_default =
-#if 1
+#if 0
     "@title Default script\n"
     "@param a Shoot count\n"
     "@default a 2\n"
@@ -46,12 +46,26 @@ static const char *ubasic_script_default =
 
     "end\n";
 #else
-    "sleep 1000\n"
-    "for s=1 to 999\n"
-      "shoot\n"
-      "sleep 2000\n"
-    "next s\n"
-    "shoot\n"
+    "@title Default Script\n"
+    "@param a Times to Repeat\n"
+    "@default a 5\n"
+    "@param b Display Delay\n"
+    "@default b 3\n"
+
+    "if a<1 let a=1\n"
+    "if b<1 let b=1\n"
+
+    "for n=1 to a\n"
+        "print \"This is a default script.\"\n"
+        "sleep 1000\n"
+        "print \"Scripts run when shutter\"\n"
+        "sleep 1000\n"
+        "print \"is pressed in ALT mode.\"\n"
+        "sleep 1000\n"
+        "print \"Press shutter to exit.\"\n"
+        "sleep b*1000\n"
+    "next n\n"
+
     "end\n";
 #endif
 

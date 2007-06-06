@@ -257,8 +257,21 @@
 
 #define LANG_MENU_MISC_DISABLE_LCD_OFF  187
 
+#define LANG_POPUP_CUT                  188
+#define LANG_POPUP_COPY                 189
+#define LANG_POPUP_PASTE                190
+#define LANG_POPUP_DELETE               191
+#define LANG_POPUP_SELINV               192
+#define LANG_FSELECT_CUT_TITLE          193
+#define LANG_FSELECT_CUT_TEXT           194
+#define LANG_FSELECT_COPY_TITLE         195
+#define LANG_FSELECT_COPY_TEXT          196
+#define LANG_FSELECT_DELETE_TITLE       197
+#define LANG_FSELECT_DELETE_TEXT        198
+#define LANG_FSELECT_PROGRESS_TITLE     199
+
 //-------------------------------------------------------------------
-#define GUI_LANG_ITEMS                  187
+#define GUI_LANG_ITEMS                  199
 
 //-------------------------------------------------------------------
 extern void gui_lang_init();

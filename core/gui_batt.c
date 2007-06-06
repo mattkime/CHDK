@@ -59,8 +59,8 @@ static void gui_batt_draw_icon () {
 
 //-------------------------------------------------------------------
 static void gui_batt_draw_charge(){
-    sprintf(osd_buf, "Chg:%3d%%", get_batt_perc());
-    osd_buf[8]=0;
+    sprintf(osd_buf, "%3d%%", get_batt_perc());
+    osd_buf[5]=0;
     draw_string(conf.batt_txt_pos.x, conf.batt_txt_pos.y, osd_buf, conf.osd_color);
 }
 
@@ -69,8 +69,8 @@ static void gui_batt_draw_volts() {
     unsigned long v;
 
     v = get_batt_average();
-    sprintf(osd_buf, "V:%ld.%03ld", v/1000, v%1000);
-    osd_buf[7]=0;
+    sprintf(osd_buf, "%ld.%03ld", v/1000, v%1000);
+    osd_buf[5]=0;
     draw_string(conf.batt_txt_pos.x, conf.batt_txt_pos.y, osd_buf, conf.osd_color);
 }
 

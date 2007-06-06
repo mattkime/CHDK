@@ -150,7 +150,16 @@ void gui_menu_kbd_process() {
                         }
                         gui_menu_redraw=1;
                         break;
-                    }
+                    case MENUITEM_UP:
+                        if (gui_menu_stack_ptr > 0){
+                            gui_menu_stack_ptr--;
+                            gui_menu_set_curr_menu(gui_menu_stack[gui_menu_stack_ptr].menu, gui_menu_stack[gui_menu_stack_ptr].toppos, gui_menu_stack[gui_menu_stack_ptr].curpos);
+                            gui_menu_redraw=2;
+                            draw_restore();
+                            gui_force_restore();
+                        }
+                        break;
+                }
             }
             break;
         case KEY_RIGHT:
@@ -192,6 +201,21 @@ void gui_menu_kbd_process() {
                             ((const char* (*)(int change, int arg))(curr_menu->menu[gui_menu_curr_item].value))(+1, curr_menu->menu[gui_menu_curr_item].arg);
                         }
                         gui_menu_redraw=1;
+                        break;
+                    case MENUITEM_SUBMENU:
+                        gui_menu_stack[gui_menu_stack_ptr].menu = curr_menu;
+                        gui_menu_stack[gui_menu_stack_ptr].curpos = gui_menu_curr_item;
+                        gui_menu_stack[gui_menu_stack_ptr].toppos = gui_menu_top_item;
+                        gui_menu_set_curr_menu((CMenu*)(curr_menu->menu[gui_menu_curr_item].value), 0, -1);
+                        gui_menu_stack_ptr++;
+                        // FIXME check on stack overrun;
+                        if (gui_menu_stack_ptr > MENUSTACK_MAXDEPTH){
+                            draw_txt_string(0, 0, "E1", MAKE_COLOR(COLOR_RED, COLOR_YELLOW));
+                            gui_menu_stack_ptr = 0;
+                        }
+                        gui_menu_redraw=2;
+                        draw_restore();
+                        gui_force_restore();
                         break;
                 }
             }

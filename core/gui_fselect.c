@@ -7,8 +7,8 @@
 #include "gui_draw.h"
 #include "gui_lang.h"
 #include "gui_mbox.h"
+#include "gui_mpopup.h"
 #include "gui_fselect.h"
-
 
 //-------------------------------------------------------------------
 #define NUM_LINES               7
@@ -17,9 +17,15 @@
 #define TIME_SIZE               14
 #define SPACING                 1
 
+#define MARKED_OP_NONE          0
+#define MARKED_OP_CUT           1
+#define MARKED_OP_COPY          2
+#define MARKED_BUF_SIZE         0x10000
 
 //-------------------------------------------------------------------
 static char current_dir[100], selected_file[100];
+static char buf[100];
+static char marked_dir[100];
 static enum Gui_Mode    gui_fselect_mode_old;
 struct fitem {
     unsigned int    n;
@@ -27,10 +33,14 @@ struct fitem {
     unsigned char   attr;
     unsigned long   size;
     unsigned long   mtime;
+    unsigned char   marked;
     struct fitem    *prev, *next;
 };
 static struct fitem *head=NULL, *top, *selected;
 static unsigned int count;
+static struct fitem *marked_head=NULL;
+static unsigned int marked_count;
+static char marked_operation;
 static coord x, y, w, h;
 static int gui_fselect_redraw;
 static char *fselect_title;
@@ -83,7 +93,6 @@ static void gui_fselect_read_dir(const char* dir) {
     struct dirent *de;
     static struct stat   st;
     struct fitem  **ptr = &head, *prev = NULL;
-    static char   buf[100];
     int    i;
 
     gui_fselect_free_data();
@@ -108,6 +117,7 @@ static void gui_fselect_read_dir(const char* dir) {
                         (*ptr)->attr=(de->name[0]=='.' && de->name[1]=='.' && de->name[2]==0)?DOS_ATTR_DIRECTORY:0xFF;
                         (*ptr)->size=(*ptr)->mtime=0;
                     }
+                    (*ptr)->marked=0;
                     (*ptr)->prev=prev;
                     prev=*ptr;
                     ptr = &((*ptr)->next);
@@ -164,10 +174,10 @@ void gui_fselect_init(int title, const char* dir, void (*on_select)(const char *
     top = selected = head;
     selected_file[0]=0;
     fselect_on_select = on_select;
+    marked_operation = MARKED_OP_NONE;
     gui_fselect_mode_old = gui_get_mode();
     gui_fselect_redraw = 2;
     gui_set_mode(GUI_MODE_FSELECT);
-
 }
 
 //-------------------------------------------------------------------
@@ -200,6 +210,7 @@ void gui_fselect_draw() {
     struct fitem  *ptr;
     char buf[48];
     struct tm *time;
+    color cl_markered = ((mode_get()&MODE_MASK) == MODE_REC)?COLOR_YELLOW:0x66;
 
     if (gui_fselect_redraw) {
         if (gui_fselect_redraw==2)
@@ -220,7 +231,7 @@ void gui_fselect_draw() {
             }
             for (; j<NAME_SIZE && (buf[j++]=' '););
             buf[NAME_SIZE]=0;
-            draw_string(x+FONT_WIDTH, y+FONT_HEIGHT+4+i*FONT_HEIGHT, buf, MAKE_COLOR((ptr==selected)?COLOR_RED:COLOR_GREY, COLOR_WHITE));
+            draw_string(x+FONT_WIDTH, y+FONT_HEIGHT+4+i*FONT_HEIGHT, buf, MAKE_COLOR((ptr==selected)?COLOR_RED:COLOR_GREY, (ptr->marked)?cl_markered:COLOR_WHITE));
 
             draw_string(x+(1+NAME_SIZE)*FONT_WIDTH, y+FONT_HEIGHT+4+i*FONT_HEIGHT, "\x06", MAKE_COLOR((ptr==selected)?COLOR_RED:COLOR_GREY, COLOR_WHITE));
 
@@ -241,7 +252,7 @@ void gui_fselect_draw() {
                 else
                     sprintf(buf, "%6luM", ptr->size>>20);
             }
-            draw_string(x+(1+NAME_SIZE+SPACING)*FONT_WIDTH, y+FONT_HEIGHT+4+i*FONT_HEIGHT, buf, MAKE_COLOR((ptr==selected)?COLOR_RED:COLOR_GREY, COLOR_WHITE));
+            draw_string(x+(1+NAME_SIZE+SPACING)*FONT_WIDTH, y+FONT_HEIGHT+4+i*FONT_HEIGHT, buf, MAKE_COLOR((ptr==selected)?COLOR_RED:COLOR_GREY, (ptr->marked)?cl_markered:COLOR_WHITE));
 
             draw_string(x+(1+NAME_SIZE+SPACING+SIZE_SIZE)*FONT_WIDTH, y+FONT_HEIGHT+4+i*FONT_HEIGHT, "\x06", MAKE_COLOR((ptr==selected)?COLOR_RED:COLOR_GREY, COLOR_WHITE));
 
@@ -252,7 +263,7 @@ void gui_fselect_draw() {
             } else {
                 sprintf(buf, "%14s", "");
             }
-            draw_string(x+(1+NAME_SIZE+SPACING+SIZE_SIZE+SPACING)*FONT_WIDTH, y+FONT_HEIGHT+4+i*FONT_HEIGHT, buf, MAKE_COLOR((ptr==selected)?COLOR_RED:COLOR_GREY, COLOR_WHITE));
+            draw_string(x+(1+NAME_SIZE+SPACING+SIZE_SIZE+SPACING)*FONT_WIDTH, y+FONT_HEIGHT+4+i*FONT_HEIGHT, buf, MAKE_COLOR((ptr==selected)?COLOR_RED:COLOR_GREY, (ptr->marked)?cl_markered:COLOR_WHITE));
         }
 
         if (i<NUM_LINES) {
@@ -366,6 +377,230 @@ static void fselect_goto_next(int step) {
 }
 
 //-------------------------------------------------------------------
+static void fselect_marked_toggle() {
+    if (selected && selected->attr != 0xFF && !(selected->attr & DOS_ATTR_DIRECTORY)) {
+        selected->marked = !selected->marked;
+    }
+}
+
+//-------------------------------------------------------------------
+static void gui_fselect_marked_free_data() {
+    struct fitem  *ptr = marked_head, *prev;
+
+    while (ptr) {
+        if (ptr->name)
+            free(ptr->name);
+        prev=ptr;
+        ptr=ptr->next;
+        free(prev);
+    }
+    marked_head=NULL;
+    marked_count=0;
+    marked_operation = MARKED_OP_NONE;
+}
+
+//-------------------------------------------------------------------
+static void fselect_marked_copy_list() {
+    gui_fselect_marked_free_data();
+
+    struct fitem  *ptr, **marked_ptr=&marked_head, *prev = NULL;
+
+    for (ptr=head; ptr; ptr=ptr->next) {
+        if (ptr->marked) {
+            *marked_ptr = malloc(sizeof(struct fitem));
+            if (*marked_ptr) {
+                (*marked_ptr)->n = ptr->n;
+                (*marked_ptr)->name = malloc(strlen(ptr->name)+1);
+                if ((*marked_ptr)->name)
+                   strcpy((*marked_ptr)->name, ptr->name);
+                (*marked_ptr)->attr=ptr->attr;
+                (*marked_ptr)->size=ptr->size;
+                (*marked_ptr)->mtime=ptr->mtime;
+                (*marked_ptr)->marked=ptr->marked;
+                (*marked_ptr)->prev=prev;
+                prev=*marked_ptr;
+                marked_ptr = &((*marked_ptr)->next);
+                *marked_ptr=NULL;
+                ++marked_count;
+            }
+        }
+    }
+
+    if (!marked_count)
+        if (selected && selected->attr != 0xFF)
+            if (!(selected->attr & DOS_ATTR_DIRECTORY)) {
+                *marked_ptr = malloc(sizeof(struct fitem));
+                if (*marked_ptr) {
+                    (*marked_ptr)->n = selected->n;
+                    (*marked_ptr)->name = malloc(strlen(selected->name)+1);
+                    if ((*marked_ptr)->name)
+                        strcpy((*marked_ptr)->name, selected->name);
+                    (*marked_ptr)->attr=selected->attr;
+                    (*marked_ptr)->size=selected->size;
+                    (*marked_ptr)->mtime=selected->mtime;
+                    (*marked_ptr)->marked=!(0);
+                    (*marked_ptr)->prev=prev;
+                    prev=*marked_ptr;
+                    marked_ptr = &((*marked_ptr)->next);
+                    *marked_ptr=NULL;
+                    ++marked_count;
+                }
+            }
+
+    sprintf(marked_dir, "%s", current_dir);
+}
+
+//-------------------------------------------------------------------
+static void fselect_marked_paste_cb(unsigned int btn) {
+    struct fitem  *ptr;
+    int ss, sd, fsrc, fdst, i=0;
+    register int *buf;
+    unsigned char fend;
+    static struct utimbuf t;
+
+    if (btn != MBOX_BTN_YES) return;
+
+    if (strcmp(marked_dir, current_dir) != 0) {
+        buf = umalloc(MARKED_BUF_SIZE);
+        if (buf) {
+            for (ptr=marked_head; ptr; ptr=ptr->next) {
+                if (ptr->attr != 0xFF && !(ptr->attr & DOS_ATTR_DIRECTORY)) {
+                    started();
+                    ++i;
+                    if (marked_count)
+                        gui_browser_progress_show(i*100/marked_count);
+                    sprintf(selected_file, "%s/%s", marked_dir, ptr->name);
+                    fsrc = open(selected_file, O_RDONLY, 0777);
+                    if (fsrc>=0) {
+                        sprintf(selected_file, "%s/%s", current_dir, ptr->name);
+                        // trying to open for read to check if file exists
+                        fdst = open(selected_file, O_RDONLY, 0777);
+                        if (fdst<0) {
+                            fdst = open(selected_file, O_WRONLY|O_CREAT, 0777);
+                            if (fdst>=0) {
+                                do {
+                                    ss=read(fsrc, buf, MARKED_BUF_SIZE);
+                                    if (ss) sd=write(fdst, buf, ss);
+                                } while (ss && ss==sd);
+                                close(fdst);
+                                t.actime = t.modtime = ptr->mtime;
+                                utime(selected_file, &t);
+                                if (marked_operation == MARKED_OP_CUT && ss==0) {
+                                    close(fsrc); fsrc = -1;
+                                    sprintf(selected_file, "%s/%s", marked_dir, ptr->name);
+                                    remove(selected_file);
+                                }
+                            }
+                        } else {
+                            close(fdst);
+                        }
+                        if (fsrc>=0) close(fsrc);
+                    }
+                    finished();
+                    selected_file[0]=0;
+                }
+            }
+            ufree(buf);
+            if (marked_operation == MARKED_OP_CUT) {
+                gui_fselect_marked_free_data();
+            }
+        }
+        gui_fselect_read_dir(current_dir);
+    }
+    gui_fselect_redraw = 2;
+}
+
+//-------------------------------------------------------------------
+static unsigned int fselect_marked_count() {
+    struct fitem  *ptr;
+    register unsigned int cnt=0;
+
+    for (ptr=head; ptr; ptr=ptr->next)
+        if (ptr->attr != 0xFF && !(ptr->attr & DOS_ATTR_DIRECTORY))
+            if (ptr->marked) ++cnt;
+    return cnt;
+}
+
+//-------------------------------------------------------------------
+static void fselect_marked_delete_cb(unsigned int btn) {
+    struct fitem  *ptr;
+    unsigned int del_cnt=0, cnt;
+
+    if (btn != MBOX_BTN_YES) return;
+
+    cnt=fselect_marked_count();
+    for (ptr=head; ptr; ptr=ptr->next)
+        if (ptr->marked && ptr->attr != 0xFF && !(ptr->attr & DOS_ATTR_DIRECTORY)) {
+            started();
+            ++del_cnt;
+            if (cnt)
+                gui_browser_progress_show(del_cnt*100/cnt);
+            sprintf(selected_file, "%s/%s", current_dir, ptr->name);
+            remove(selected_file);
+            finished();
+            selected_file[0]=0;
+        }
+
+    if (del_cnt == 0 && selected) {
+        started();
+        sprintf(selected_file, "%s/%s", current_dir, selected->name);
+        remove(selected_file);
+        finished();
+        selected_file[0]=0;
+    }
+    gui_fselect_read_dir(current_dir);
+    gui_fselect_redraw = 2;
+}
+
+//-------------------------------------------------------------------
+static void fselect_marked_inverse_selection() {
+    struct fitem  *ptr;
+
+    for (ptr=head; ptr; ptr=ptr->next)
+        if (ptr->attr != 0xFF && !(ptr->attr & DOS_ATTR_DIRECTORY))
+            ptr->marked = !ptr->marked;
+
+    gui_fselect_redraw = 2;
+}
+
+//-------------------------------------------------------------------
+static void fselect_mpopup_cb(unsigned int actn) {
+    switch (actn) {
+        case MPOPUP_CUT:
+            fselect_marked_copy_list();
+            marked_operation=MARKED_OP_CUT;
+            break;
+        case MPOPUP_COPY:
+            fselect_marked_copy_list();
+            marked_operation=MARKED_OP_COPY;
+            break;
+        case MPOPUP_PASTE:
+            if (marked_operation == MARKED_OP_CUT) {
+                sprintf(buf, lang_str(LANG_FSELECT_CUT_TEXT), marked_count, marked_dir);
+                gui_mbox_init(LANG_FSELECT_CUT_TITLE, (int)buf,
+                              MBOX_TEXT_CENTER|MBOX_BTN_YES_NO|MBOX_DEF_BTN2, fselect_marked_paste_cb);
+            }
+            else {
+                sprintf(buf, lang_str(LANG_FSELECT_COPY_TEXT), marked_count, marked_dir);
+                gui_mbox_init(LANG_FSELECT_COPY_TITLE, (int)buf,
+                              MBOX_TEXT_CENTER|MBOX_BTN_YES_NO|MBOX_DEF_BTN2, fselect_marked_paste_cb);
+            }
+            break;
+        case MPOPUP_DELETE:
+            sprintf(buf, lang_str(LANG_FSELECT_DELETE_TEXT), fselect_marked_count());
+            gui_mbox_init(LANG_FSELECT_DELETE_TITLE, (int)buf,
+                          MBOX_TEXT_CENTER|MBOX_BTN_YES_NO|MBOX_DEF_BTN2, fselect_marked_delete_cb);
+            break;
+        case MPOPUP_SELINV:
+            fselect_marked_inverse_selection();
+            break;
+        case MPOPUP_CANCEL:
+            break;
+    }
+    gui_fselect_redraw = 2;
+}
+
+//-------------------------------------------------------------------
 void gui_fselect_kbd_process() {
     int i;
     
@@ -394,6 +629,21 @@ void gui_fselect_kbd_process() {
                 gui_fselect_redraw = 1;
             }
             break;
+        case KEY_RIGHT:
+            if (selected) {
+                fselect_marked_toggle();
+                fselect_goto_next(1);
+                gui_fselect_redraw = 1;
+            }
+            break;
+        case KEY_LEFT:
+            if (selected && selected->attr != 0xFF) {
+                i=MPOPUP_CUT|MPOPUP_COPY|MPOPUP_DELETE|MPOPUP_SELINV;
+                if (marked_operation == MARKED_OP_CUT || marked_operation == MARKED_OP_COPY)
+                    i |= MPOPUP_PASTE;
+                gui_mpopup_init(i, fselect_mpopup_cb);
+            }
+            break;
         case KEY_SET:
             if (selected && selected->attr != 0xFF) {
                 if (selected->attr & DOS_ATTR_DIRECTORY) {
@@ -409,6 +659,7 @@ void gui_fselect_kbd_process() {
                 } else  {
                     sprintf(selected_file, "%s/%s", current_dir, selected->name);
                     gui_fselect_free_data();
+                    gui_fselect_marked_free_data();
                     gui_set_mode(gui_fselect_mode_old);
                     draw_restore();
                     if (fselect_on_select) 
@@ -430,6 +681,7 @@ void gui_fselect_kbd_process() {
             break;
         case KEY_MENU:
             gui_fselect_free_data();
+            gui_fselect_marked_free_data();
             gui_set_mode(gui_fselect_mode_old);
             draw_restore();
             if (fselect_on_select) 

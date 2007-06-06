@@ -22,16 +22,16 @@ typedef struct {
 static OSD_elem osd[]={
     {LANG_OSD_LAYOUT_EDITOR_HISTO,      &conf.histo_pos,        {HISTO_WIDTH+2, HISTO_HEIGHT}   },
     {LANG_OSD_LAYOUT_EDITOR_DOF_CALC,   &conf.dof_pos,          {17*FONT_WIDTH, 2*FONT_HEIGHT}  },
-    {LANG_OSD_LAYOUT_EDITOR_STATES,     &conf.mode_state_pos,   {3*FONT_WIDTH, 3*FONT_HEIGHT}   },
+    {LANG_OSD_LAYOUT_EDITOR_STATES,     &conf.mode_state_pos,   {3*FONT_WIDTH, 2*FONT_HEIGHT}   },
     {LANG_OSD_LAYOUT_EDITOR_MISC,       &conf.values_pos,       {8*FONT_WIDTH, 3*FONT_HEIGHT}   },
     {LANG_OSD_LAYOUT_EDITOR_BAT_ICON,   &conf.batt_icon_pos,    {28, 12}                        },
-    {LANG_OSD_LAYOUT_EDITOR_BAT_TEXT,   &conf.batt_txt_pos,     {8*FONT_WIDTH, FONT_HEIGHT}     },
+    {LANG_OSD_LAYOUT_EDITOR_BAT_TEXT,   &conf.batt_txt_pos,     {5*FONT_WIDTH, FONT_HEIGHT}     },
     {LANG_OSD_LAYOUT_EDITOR_CLOCK,      &conf.clock_pos,        {5*FONT_WIDTH, FONT_HEIGHT}     },
     {0}
 };
 static int osd_to_draw;
 static int curr_item;
-static char osd_buf[40];
+static char osd_buf[64];
 static int step;
 static unsigned char *img_buf, *scr_buf;
 static int timer = 0;
@@ -437,10 +437,6 @@ void gui_osd_draw_state() {
 
     if (conf.save_raw || gui_mode==GUI_MODE_OSD){
         draw_string(conf.mode_state_pos.x, conf.mode_state_pos.y, "RAW", conf.osd_color);
-        n+=FONT_HEIGHT;
-    }
-    if (state_kbd_script_run || gui_mode==GUI_MODE_OSD){
-        draw_string(conf.mode_state_pos.x, conf.mode_state_pos.y+n, "SCR", conf.osd_color);
         n+=FONT_HEIGHT;
     }
     if (((gui_mode==GUI_MODE_NONE || gui_mode==GUI_MODE_ALT) && conf.show_histo && conf.show_overexp && kbd_is_key_pressed(KEY_SHOOT_HALF)) || gui_mode==GUI_MODE_OSD) {

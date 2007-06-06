@@ -2,6 +2,8 @@ topdir=../../
 
 include $(topdir)makefile.inc
 
+CFLAGS+=$(CTHUMB)
+
 OBJS = lang.o
 
 all: liblang.a
