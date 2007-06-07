@@ -52,10 +52,11 @@ static const char *ubasic_script_default =
     "@param b Display Delay\n"
     "@default b 3\n"
 
-    "if a<1 let a=1\n"
-    "if b<1 let b=1\n"
+    "if a<1 then let a=1\n"
+    "if b<1 then let b=1\n"
 
     "for n=1 to a\n"
+        "if n>1 then print \"*****\"\n"
         "print \"This is a default script.\"\n"
         "sleep 1000\n"
         "print \"Scripts run when shutter\"\n"

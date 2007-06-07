@@ -515,9 +515,16 @@ static unsigned int fselect_marked_count() {
     struct fitem  *ptr;
     register unsigned int cnt=0;
 
-    for (ptr=head; ptr; ptr=ptr->next)
-        if (ptr->attr != 0xFF && !(ptr->attr & DOS_ATTR_DIRECTORY))
-            if (ptr->marked) ++cnt;
+    for (ptr=head; ptr; ptr=ptr->next) {
+        if (ptr->attr != 0xFF && !(ptr->attr & DOS_ATTR_DIRECTORY) && ptr->marked) 
+            ++cnt;
+    }
+
+    if (!cnt) {
+        if (selected && selected->attr != 0xFF && !(selected->attr & DOS_ATTR_DIRECTORY)) 
+            ++cnt;
+    }
+
     return cnt;
 }
 
@@ -638,7 +645,9 @@ void gui_fselect_kbd_process() {
             break;
         case KEY_LEFT:
             if (selected && selected->attr != 0xFF) {
-                i=MPOPUP_CUT|MPOPUP_COPY|MPOPUP_DELETE|MPOPUP_SELINV;
+                i=MPOPUP_CUT|MPOPUP_COPY|MPOPUP_SELINV;
+                if (fselect_marked_count() > 0)
+                    i |= MPOPUP_DELETE;
                 if (marked_operation == MARKED_OP_CUT || marked_operation == MARKED_OP_COPY)
                     i |= MPOPUP_PASTE;
                 gui_mpopup_init(i, fselect_mpopup_cb);

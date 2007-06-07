@@ -73,6 +73,17 @@ static void gui_menu_color_selected(color clr) {
 }
 
 //-------------------------------------------------------------------
+static void gui_menu_back() {
+    if (gui_menu_stack_ptr > 0){
+        gui_menu_stack_ptr--;
+        gui_menu_set_curr_menu(gui_menu_stack[gui_menu_stack_ptr].menu, gui_menu_stack[gui_menu_stack_ptr].toppos, gui_menu_stack[gui_menu_stack_ptr].curpos);
+        gui_menu_redraw=2;
+        draw_restore();
+        gui_force_restore();
+    }
+}
+
+//-------------------------------------------------------------------
 void gui_menu_kbd_process() {
     switch (kbd_get_autoclicked_key()) {
         case KEY_UP:
@@ -151,15 +162,11 @@ void gui_menu_kbd_process() {
                         gui_menu_redraw=1;
                         break;
                     case MENUITEM_UP:
-                        if (gui_menu_stack_ptr > 0){
-                            gui_menu_stack_ptr--;
-                            gui_menu_set_curr_menu(gui_menu_stack[gui_menu_stack_ptr].menu, gui_menu_stack[gui_menu_stack_ptr].toppos, gui_menu_stack[gui_menu_stack_ptr].curpos);
-                            gui_menu_redraw=2;
-                            draw_restore();
-                            gui_force_restore();
-                        }
+                        gui_menu_back();
                         break;
                 }
+            } else {
+                gui_menu_back();
             }
             break;
         case KEY_RIGHT:
@@ -260,13 +267,7 @@ void gui_menu_kbd_process() {
                         gui_force_restore();
                         break;
                     case MENUITEM_UP:
-                        if (gui_menu_stack_ptr > 0){
-                            gui_menu_stack_ptr--;
-                            gui_menu_set_curr_menu(gui_menu_stack[gui_menu_stack_ptr].menu, gui_menu_stack[gui_menu_stack_ptr].toppos, gui_menu_stack[gui_menu_stack_ptr].curpos);
-                            gui_menu_redraw=2;
-                            draw_restore();
-                            gui_force_restore();
-                        }
+                        gui_menu_back();
                         break;
                     case MENUITEM_COLOR_FG:
                     case MENUITEM_COLOR_BG:

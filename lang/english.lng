@@ -257,3 +257,16 @@
 186 "Read  (64k) :"
 
 187 "Disable LCD off"
+
+188 "Cut"
+189 "Copy"
+190 "Paste"
+191 "Delete"
+192 "Select inverse"
+193 "*** Cut files ***"
+194 "Are you SURE to cut\n%d selected files\nfrom %s/?"
+195 "*** Copy files ***"
+196 "Are you SURE to copy\n%d selected files\nfrom %s/?"
+197 "*** Delete files ***"
+198 "Are you SURE to delete\n%d selected files?"
+199 "Please wait..."

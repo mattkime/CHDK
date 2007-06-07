@@ -961,7 +961,7 @@ void gui_draw_palette(int arg) {
 
 //-------------------------------------------------------------------
 void gui_show_build_info(int arg) {
-    char buf[192];
+    static char buf[192];
 
     sprintf(buf, lang_str(LANG_MSG_BUILD_INFO_TEXT), HDK_VERSION, BUILD_NUMBER, __DATE__, __TIME__, PLATFORM, PLATFORMSUB);
     gui_mbox_init(LANG_MSG_BUILD_INFO_TITLE, (int)buf, MBOX_FUNC_RESTORE|MBOX_TEXT_LEFT, NULL);
@@ -969,7 +969,7 @@ void gui_show_build_info(int arg) {
 
 //-------------------------------------------------------------------
 void gui_show_memory_info(int arg) {
-    char buf[64];
+    static char buf[64];
     int size, l_size, d;
     char* ptr;
 
