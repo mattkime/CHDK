@@ -1,4 +1,5 @@
 #include "lolevel.h"
+#include "platform.h"
 
 void msleep(long msec)
 {
@@ -69,6 +70,12 @@ long lens_get_zoom_point()
 
 void lens_set_zoom_point(long newpt)
 {
+    if (newpt < 0) {
+        newpt = 0;
+    } else if (newpt >= zoom_points) {
+        newpt = zoom_points-1;
+    }
+    _MoveZoomLensWithPoint((short*)&newpt);
 }
 
 void lens_set_focus_pos(long newpos)

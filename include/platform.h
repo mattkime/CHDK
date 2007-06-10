@@ -147,6 +147,11 @@ int shooting_get_real_av();
 
 extern int circle_of_confusion;
 
+extern const int zoom_points;
+int shooting_get_zoom();
+void shooting_set_zoom(int v);
+void shooting_set_zoom_rel(int v);
+
 /******************************************************************/
 
 int mode_get();

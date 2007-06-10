@@ -35,6 +35,8 @@ NSTUB(MakeDirectory, 0xffc5d130)
 // Best match: 90%
 NSTUB(Mount_FileSystem, 0xffc5c140)
 // ALT: NSTUB(Mount_FileSystem, 0xffc5c140) // 27/3
+NSTUB(MoveZoomLensWithPoint, 0xffe59bf8)
+// ALT: NSTUB(MoveZoomLensWithPoint, 0xffe59bf8) // 25/0
 NSTUB(Open, 0xffc5ce64)
 NSTUB(PhySw_testgpio, 0xffc17638)
 NSTUB(ProtectFile, 0xffc55aac)

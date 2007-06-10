@@ -101,3 +101,4 @@ AllocateUncacheableMemory 0xFFC048D8
 FreeUncacheableMemory 0xFFC0490C
 LockMainPower 0xFFD48EE0
 UnlockMainPower 0xFFD48F94
+MoveZoomLensWithPoint 0xFFE52F3C

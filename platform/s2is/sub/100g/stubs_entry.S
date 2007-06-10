@@ -42,6 +42,7 @@ NSTUB(LockMainPower, 0xff983254)
 // Best match: 70%
 NSTUB(MakeDirectory, 0xff87733c)
 // ERROR: Mount_FileSystem is not found!
+// ERROR: MoveZoomLensWithPoint is not found!
 // ERROR: Open is not found!
 // ERROR: PhySw_testgpio is not found!
 NSTUB(ProtectFile, 0xff86f0ec)

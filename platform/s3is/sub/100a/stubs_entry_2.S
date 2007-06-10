@@ -3,6 +3,7 @@
 NHSTUB(VbattGet, 0xFF82C328)
 NHSTUB(GetZoomLensCurrentPosition, 0xFFAE8474)
 NHSTUB(GetZoomLensCurrentPoint, 0xFFAE8460)
+NHSTUB(MoveZoomLensWithPoint, 0xFFAE8280)
 //NHSTUB(GetFocusLensSubjectDistance, 0xFFEA2F3C)
 
 NHSTUB(platformsub_kbd_fetch_data, 0xFF8281C4)

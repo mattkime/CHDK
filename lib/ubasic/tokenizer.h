@@ -77,7 +77,10 @@ typedef enum {
   TOKENIZER_SET_TV_REL,
   TOKENIZER_GET_AV,
   TOKENIZER_SET_AV,
-  TOKENIZER_SET_AV_REL
+  TOKENIZER_SET_AV_REL,
+  TOKENIZER_GET_ZOOM,
+  TOKENIZER_SET_ZOOM,
+  TOKENIZER_SET_ZOOM_REL,
 } ubasic_token;
 
 void tokenizer_init(const char *program);

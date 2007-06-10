@@ -24,6 +24,8 @@ static const struct {
 #define NUM_FL (sizeof(fl_tbl)/sizeof(fl_tbl[0]))
 #define CF_EFL 6000
 
+const int zoom_points = 129;
+
 int get_effective_focal_length(int zp) {
     return (CF_EFL*get_focal_length(zp))/1000;
 }

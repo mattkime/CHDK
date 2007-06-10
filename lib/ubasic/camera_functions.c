@@ -57,6 +57,21 @@ int shooting_get_av()
     return 0;
 }
 
+int shooting_get_zoom()
+{
+    return 0;
+}
+
+void shooting_set_zoom(int v)
+{
+    printf("*** set zoom %d ***\n",v);
+}
+
+void shooting_set_zoom_rel(int v)
+{
+    printf("*** set zoom rel %d ***\n",v);
+}
+
 void script_console_add_line(const char *str) {
     printf(">>> %s\n", str);
 }

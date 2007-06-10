@@ -14,6 +14,7 @@ NHSTUB(GetPropertyCase, 0xFF825D08)
 NHSTUB(SetPropertyCase, 0xFF825C00)
 NHSTUB(GetZoomLensCurrentPosition, 0xFFAA8838)
 NHSTUB(GetZoomLensCurrentPoint, 0xFFAA8824)
+NHSTUB(MoveZoomLensWithPoint, 0xFFAA884C)
 
 NHSTUB(kbd_p1_f, 0xFF829470)
 NHSTUB(kbd_p1_f_cont, 0xFF829484)

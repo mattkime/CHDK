@@ -14,6 +14,8 @@ static const int fl_tbl[] = {5800, 6420, 7060, 7700, 8340, 9950, 11550, 13160, 1
 #define NUM_FL (sizeof(fl_tbl)/sizeof(fl_tbl[0]))
 #define CF_EFL 60345
 
+const int zoom_points = NUM_FL;
+
 int get_effective_focal_length(int zp) {
     return (CF_EFL*get_focal_length(zp))/10000;
 }

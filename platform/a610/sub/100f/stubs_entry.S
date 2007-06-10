@@ -27,6 +27,8 @@ NSTUB(IsStrobeChargeCompleted, 0xffcec188)
 NSTUB(LockMainPower, 0xffd49268)
 NSTUB(MakeDirectory, 0xffc5cd38)
 NSTUB(Mount_FileSystem, 0xffc5bd48)
+NSTUB(MoveZoomLensWithPoint, 0xffe532c4)
+// ALT: NSTUB(MoveZoomLensWithPoint, 0xffe532c4) // 25/0
 NSTUB(Open, 0xffc5ca6c)
 NSTUB(PhySw_testgpio, 0xffc17658)
 NSTUB(ProtectFile, 0xffc55520)

@@ -9,7 +9,7 @@
 
 //-------------------------------------------------------------------
 
-#define SCRIPT_BUF_SIZE             2048
+#define SCRIPT_BUF_SIZE             8192
 #define SCRIPT_CONSOLE_NUM_LINES    5
 #define SCRIPT_CONSOLE_LINE_LENGTH  25
 #define SCRIPT_CONSOLE_X            0

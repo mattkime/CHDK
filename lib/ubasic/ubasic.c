@@ -638,6 +638,36 @@ void set_av_rel_statement()
 }
 
 /*---------------------------------------------------------------------------*/
+
+void get_zoom_statement()
+{
+    int var;
+    accept(TOKENIZER_GET_ZOOM);
+    var = tokenizer_variable_num();
+    accept(TOKENIZER_VARIABLE);
+    ubasic_set_variable(var, shooting_get_zoom());
+    accept(TOKENIZER_CR);
+}
+
+void set_zoom_statement()
+{
+    int to;
+    accept(TOKENIZER_SET_ZOOM);
+    to = expr();
+    shooting_set_zoom(to);
+    accept(TOKENIZER_CR);
+}
+
+void set_zoom_rel_statement()
+{
+    int to;
+    accept(TOKENIZER_SET_ZOOM_REL);
+    to = expr();
+    shooting_set_zoom_rel(to);
+    accept(TOKENIZER_CR);
+}
+
+/*---------------------------------------------------------------------------*/
 static void
 statement(void)
 {
@@ -684,6 +714,16 @@ statement(void)
     break;
   case TOKENIZER_SET_AV_REL:
     set_av_rel_statement();
+    break;
+
+  case TOKENIZER_GET_ZOOM:
+    get_zoom_statement();
+    break;
+  case TOKENIZER_SET_ZOOM:
+    set_zoom_statement();
+    break;
+  case TOKENIZER_SET_ZOOM_REL:
+    set_zoom_rel_statement();
     break;
 
   case TOKENIZER_IF:

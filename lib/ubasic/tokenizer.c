@@ -50,42 +50,46 @@ static ubasic_token current_token = TOKENIZER_ERROR;
 static int current_line = 0;
 
 static const struct keyword_token keywords[] = {
-  {"let", TOKENIZER_LET},
-  {"print", TOKENIZER_PRINT},
-  {"if", TOKENIZER_IF},
-  {"then", TOKENIZER_THEN},
-  {"else", TOKENIZER_ELSE},
-  {"for", TOKENIZER_FOR},
-  {"to", TOKENIZER_TO},
-  {"next", TOKENIZER_NEXT},
-  {"goto", TOKENIZER_GOTO},
-  {"gosub", TOKENIZER_GOSUB},
-  {"return", TOKENIZER_RETURN},
-  {"call", TOKENIZER_CALL},
-  {"rem", TOKENIZER_REM},
+  {"let",           TOKENIZER_LET},
+  {"print",         TOKENIZER_PRINT},
+  {"if",            TOKENIZER_IF},
+  {"then",          TOKENIZER_THEN},
+  {"else",          TOKENIZER_ELSE},
+  {"for",           TOKENIZER_FOR},
+  {"to",            TOKENIZER_TO},
+  {"next",          TOKENIZER_NEXT},
+  {"goto",          TOKENIZER_GOTO},
+  {"gosub",         TOKENIZER_GOSUB},
+  {"return",        TOKENIZER_RETURN},
+  {"call",          TOKENIZER_CALL},
+  {"rem",           TOKENIZER_REM},
 
-  {"click", TOKENIZER_CLICK},
-  {"press", TOKENIZER_PRESS},
-  {"release", TOKENIZER_RELEASE},
-  {"shot", TOKENIZER_SHOOT}, // for compatibility
-  {"shoot", TOKENIZER_SHOOT},
-  {"sleep", TOKENIZER_SLEEP}, 
+  {"click",         TOKENIZER_CLICK},
+  {"press",         TOKENIZER_PRESS},
+  {"release",       TOKENIZER_RELEASE},
+  {"shot",          TOKENIZER_SHOOT}, // for compatibility
+  {"shoot",         TOKENIZER_SHOOT},
+  {"sleep",         TOKENIZER_SLEEP}, 
 
-  {"get_tv", TOKENIZER_GET_TV},
+  {"get_tv",        TOKENIZER_GET_TV},
   /* WARNING due to tokenizer limitation longest match must be first */
-  {"set_tv_rel", TOKENIZER_SET_TV_REL},
-  {"set_tv", TOKENIZER_SET_TV},
+  {"set_tv_rel",    TOKENIZER_SET_TV_REL},
+  {"set_tv",        TOKENIZER_SET_TV},
 
-  {"get_av", TOKENIZER_GET_AV},
-  {"set_av_rel", TOKENIZER_SET_AV_REL},
-  {"set_av", TOKENIZER_SET_AV},
+  {"get_av",        TOKENIZER_GET_AV},
+  {"set_av_rel",    TOKENIZER_SET_AV_REL},
+  {"set_av",        TOKENIZER_SET_AV},
 
-  {"@title", TOKENIZER_REM},
-  {"@param", TOKENIZER_REM},
-  {"@default", TOKENIZER_REM},
+  {"get_zoom",      TOKENIZER_GET_ZOOM},
+  {"set_zoom_rel",  TOKENIZER_SET_ZOOM_REL},
+  {"set_zoom",      TOKENIZER_SET_ZOOM},
 
-  {"end", TOKENIZER_END},
-  {NULL, TOKENIZER_ERROR}
+  {"@title",        TOKENIZER_REM},
+  {"@param",        TOKENIZER_REM},
+  {"@default",      TOKENIZER_REM},
+
+  {"end",           TOKENIZER_END},
+  {NULL,            TOKENIZER_ERROR}
 };
 
 /*---------------------------------------------------------------------------*/
