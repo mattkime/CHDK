@@ -3,7 +3,7 @@
 #include "platform.h"
 
 const ApertureSize aperture_sizes_table[] = {
-    {  9, 288, "2.8" },
+    {  9, 283, "2.8" },
     { 10, 320, "3.2" },
     { 11, 352, "3.5" },
     { 12, 384, "4.0" },

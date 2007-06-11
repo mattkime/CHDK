@@ -76,6 +76,17 @@ void lens_set_zoom_point(long newpt)
         newpt = zoom_points-1;
     }
     _MoveZoomLensWithPoint((short*)&newpt);
+    while (zoom_busy);
+}
+
+void lens_set_zoom_speed(long newspd)
+{
+    if (newspd < 5) {
+        newspd = 5;
+    } else if (newspd > 100) {
+        newspd = 100;
+    }
+    _SetZoomActuatorSpeedPercent((short*)&newspd);
 }
 
 void lens_set_focus_pos(long newpos)

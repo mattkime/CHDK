@@ -14,6 +14,8 @@ extern long *_GetSystemTime(long *t);
 extern long _GetZoomLensCurrentPosition();
 extern long _GetZoomLensCurrentPoint();
 extern long _MoveZoomLensWithPoint(short *pos);
+extern long _SetZoomActuatorSpeedPercent(short *perc);
+extern volatile long zoom_busy;
 extern long _GetFocusLensCurrentPosition();
 extern long _GetFocusLensSubjectDistance();
 extern long _GetFocusLensSubjectDistanceFromLens();

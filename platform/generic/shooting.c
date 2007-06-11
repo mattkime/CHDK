@@ -146,3 +146,7 @@ void shooting_set_zoom_rel(int v) {
     int cv = shooting_get_zoom();
     shooting_set_zoom(cv+v);
 }
+
+void shooting_set_zoom_speed(int v) {
+    lens_set_zoom_speed(v);
+}

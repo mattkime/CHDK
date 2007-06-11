@@ -24,3 +24,5 @@ NHSTUB(free, 0xFFEF3284)
 //NHSTUB(RefreshPhysicalScreen, 0xFFD7F49C)
 //NHSTUB(kbd_pwr_off, 0xFFC188F0)
 //NHSTUB(kbd_pwr_on, 0xFFC188C8)
+
+NHSTUB(SetZoomActuatorSpeedPercent, 0xFFD2CF98)  //null stub

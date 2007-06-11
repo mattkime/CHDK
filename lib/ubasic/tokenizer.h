@@ -81,6 +81,7 @@ typedef enum {
   TOKENIZER_GET_ZOOM,
   TOKENIZER_SET_ZOOM,
   TOKENIZER_SET_ZOOM_REL,
+  TOKENIZER_SET_ZOOM_SPEED,
 } ubasic_token;
 
 void tokenizer_init(const char *program);

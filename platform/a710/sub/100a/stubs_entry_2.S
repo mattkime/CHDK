@@ -27,3 +27,5 @@
 //NHSTUB(srand, 0xFFEF8384)
 
 //NHSTUB(IsStrobeChargeCompleted, 0xFFD11B24)
+
+NHSTUB(SetZoomActuatorSpeedPercent, 0xFFE97EB0)  //null stub

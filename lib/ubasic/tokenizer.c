@@ -82,6 +82,7 @@ static const struct keyword_token keywords[] = {
 
   {"get_zoom",      TOKENIZER_GET_ZOOM},
   {"set_zoom_rel",  TOKENIZER_SET_ZOOM_REL},
+  {"set_zoom_speed",TOKENIZER_SET_ZOOM_SPEED},
   {"set_zoom",      TOKENIZER_SET_ZOOM},
 
   {"@title",        TOKENIZER_REM},

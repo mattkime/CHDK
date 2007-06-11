@@ -15,3 +15,5 @@ NHSTUB(free, 0xFFEC5BCC)
 //NHSTUB(isupper, 0xFFEB8B54)
 //NHSTUB(rand, 0xFFEBBF78)
 //NHSTUB(srand, 0xFFEBBF9C)
+
+NHSTUB(SetZoomActuatorSpeedPercent, 0xFFC19688)  //null stub

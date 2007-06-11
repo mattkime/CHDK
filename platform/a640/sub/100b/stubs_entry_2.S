@@ -16,3 +16,4 @@ NHSTUB(free, 0xFFEFD1AC)
 //NHSTUB(GetZoomLensCurrentPoint, 0xFFE912A0)
 //NHSTUB(GetFocusLensSubjectDistance, 0xFFEA4E74)
 
+NHSTUB(SetZoomActuatorSpeedPercent, 0xFFEBDC9C)  //null stub

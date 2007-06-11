@@ -667,6 +667,15 @@ void set_zoom_rel_statement()
     accept(TOKENIZER_CR);
 }
 
+void set_zoom_speed_statement()
+{
+    int to;
+    accept(TOKENIZER_SET_ZOOM_SPEED);
+    to = expr();
+    shooting_set_zoom_speed(to);
+    accept(TOKENIZER_CR);
+}
+
 /*---------------------------------------------------------------------------*/
 static void
 statement(void)
@@ -724,6 +733,9 @@ statement(void)
     break;
   case TOKENIZER_SET_ZOOM_REL:
     set_zoom_rel_statement();
+    break;
+  case TOKENIZER_SET_ZOOM_SPEED:
+    set_zoom_speed_statement();
     break;
 
   case TOKENIZER_IF:

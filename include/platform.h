@@ -125,6 +125,7 @@ long lens_get_zoom_pos();
 void lens_set_zoom_pos(long newpos);
 long lens_get_zoom_point();
 void lens_set_zoom_point(long newpt);
+void lens_set_zoom_speed(long newspd); //for S-series
 long lens_get_focus_pos();
 void lens_set_focus_pos(long newpos);
 long lens_get_target_distance();
@@ -151,6 +152,7 @@ extern const int zoom_points;
 int shooting_get_zoom();
 void shooting_set_zoom(int v);
 void shooting_set_zoom_rel(int v);
+void shooting_set_zoom_speed(int v);
 
 /******************************************************************/
 
