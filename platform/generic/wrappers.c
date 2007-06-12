@@ -91,6 +91,8 @@ void lens_set_zoom_speed(long newspd)
 
 void lens_set_focus_pos(long newpos)
 {
+    _MoveFocusLensToDistance((short*)&newpos);
+    while (focus_busy);
 }
 
 long stat_get_vbatt()

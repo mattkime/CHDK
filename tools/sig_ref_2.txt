@@ -38,3 +38,4 @@ Mount_FileSystem 0xffc602ec
 LockMainPower 0xFFD70F48
 UnlockMainPower 0xFFD70FE0
 MoveZoomLensWithPoint 0xFFE8F550
+MoveFocusLensToDistance 0xFFEB64D4

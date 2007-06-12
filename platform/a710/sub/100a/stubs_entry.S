@@ -28,6 +28,7 @@ NSTUB(IsStrobeChargeCompleted, 0xffd11b24)
 NSTUB(LockMainPower, 0xffd70f48)
 NSTUB(MakeDirectory, 0xffc612d8)
 NSTUB(Mount_FileSystem, 0xffc602ec)
+NSTUB(MoveFocusLensToDistance, 0xffeb64d4)
 NSTUB(MoveZoomLensWithPoint, 0xffe8f550)
 // ALT: NSTUB(MoveZoomLensWithPoint, 0xffe8f550) // 25/0
 NSTUB(Open, 0xffc60f9c)

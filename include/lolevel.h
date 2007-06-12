@@ -19,6 +19,8 @@ extern volatile long zoom_busy;
 extern long _GetFocusLensCurrentPosition();
 extern long _GetFocusLensSubjectDistance();
 extern long _GetFocusLensSubjectDistanceFromLens();
+extern void _MoveFocusLensToDistance(short *dist); 
+extern volatile long focus_busy;
 extern long _GetCurrentAvValue();
 extern long _GetCurrentTargetDistance();
 extern long _GetPropertyCase(long opt_id, void *buf, long bufsize);

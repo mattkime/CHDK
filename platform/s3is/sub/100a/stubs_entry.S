@@ -39,6 +39,8 @@ NSTUB(MakeDirectory, 0xff871668)
 // Best match: 73%
 NSTUB(Mount_FileSystem, 0xff870190)
 // ALT: NSTUB(Mount_FileSystem, 0xff870190) // 22/8
+// Best match: 96%
+NSTUB(MoveFocusLensToDistance, 0xffb0c824)
 // ERROR: MoveZoomLensWithPoint is not found!
 NSTUB(Open, 0xff87139c)
 // Best match: 89%

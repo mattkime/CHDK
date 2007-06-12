@@ -102,6 +102,37 @@ void shooting_set_av_rel(int v)
     shooting_set_av(cv+v);
 }
 
+int shooting_get_iso()
+{
+    short int isov;
+    long i;
+    _GetPropertyCase(21, &isov, sizeof(isov));
+    for (i=0;i<ISO_SIZE;i++){
+	if (iso_table[i].prop_id == isov)
+	    return iso_table[i].id;
+    }
+    return 0;
+}
+
+void shooting_set_iso(int v)
+{
+    long i;
+
+    for (i=0;i<ISO_SIZE;i++){
+	if (iso_table[i].id == v){
+	    short int vv = iso_table[i].prop_id;
+	    _SetPropertyCase(21, &vv, sizeof(vv));
+	    return;
+	}
+    }
+}
+
+void shooting_set_iso_direct(int v)
+{
+    short int vv = v;
+    _SetPropertyCase(21, &vv, sizeof(vv));
+}
+
 int shooting_in_progress()
 {
     int t = 0;
@@ -139,7 +170,11 @@ int shooting_get_zoom() {
 }
 
 void shooting_set_zoom(int v) {
+    long dist;
+
+    dist = lens_get_focus_pos();
     lens_set_zoom_point(v);
+    lens_set_focus_pos(dist);
 }
 
 void shooting_set_zoom_rel(int v) {
@@ -150,3 +185,12 @@ void shooting_set_zoom_rel(int v) {
 void shooting_set_zoom_speed(int v) {
     lens_set_zoom_speed(v);
 }
+
+int shooting_get_focus() {
+    return lens_get_focus_pos();
+}
+
+void shooting_set_focus(int v) {
+    lens_set_focus_pos(v);
+}
+

@@ -2838,6 +2838,36 @@ static FuncSig func_sig_MoveZoomLensWithPoint_1[] = {
 	/* 25/32 */
 };
 
+static FuncSig func_sig_MoveFocusLensToDistance_1[] = {
+	{   1, 0xe59f5030, 0xfdffffff }, // ldr:4:0xE59F5030
+	{   2, 0xe5904000, 0xfdffffff }, // ldr:4:0xE5904000
+	{   3, 0xe1a01001, 0xfdffffff }, // mov:6:0xE3A01001
+	{   4, 0xe5950000, 0xfdffffff }, // ldr:4:0xE5950000
+	{   5, 0xeb000000, 0xff000000 }, // b, bl:3:0xEBF6703E
+	{   6, 0xe1a00004, 0xfdffffff }, // mov:6:0xE1A00004
+	{   7, 0xe59f101c, 0xfdffffff }, // ldr:4:0xE59F101C
+	{   8, 0xe1a02000, 0xfdffffff }, // mov:6:0xE3A02000
+	{   9, 0xeb000000, 0xff000000 }, // b, bl:3:0xEB000006
+	{  10, 0xe5950000, 0xfdffffff }, // ldr:4:0xE5950000
+	{  11, 0xe1a01001, 0xfdffffff }, // mov:6:0xE3A01001
+	{  12, 0xe1a02000, 0xfdffffff }, // mov:6:0xE3A02000
+	{  14, 0xea000000, 0xff000000 }, // b, bl:3:0xEAF66FC6
+	{  15, 0x0000b22c, 0xfdffffff }, // and:6:0x0000B22C
+	{  18, 0xe1a05001, 0xfdffffff }, // mov:6:0xE1A05001
+	{  19, 0xe1a06002, 0xfdffffff }, // mov:6:0xE1A06002
+	{  20, 0xe1a04000, 0xfdffffff }, // mov:6:0xE1A04000
+	{  21, 0xeb000000, 0xff000000 }, // b, bl:3:0xEBFFCAB3
+	{  22, 0xe1a01800, 0xfdffffff }, // mov:6:0xE1A01800
+	{  23, 0xe1a01821, 0xfdffffff }, // mov:6:0xE1A01821
+	{  24, 0xe1a00004, 0xfdffffff }, // mov:6:0xE1A00004
+	{  25, 0xe1a02005, 0xfdffffff }, // mov:6:0xE1A02005
+	{  26, 0xe1a03006, 0xfdffffff }, // mov:6:0xE1A03006
+	{  28, 0xea000000, 0xff000000 }, // b, bl:3:0xEAFFFFFF
+	{  30, 0xe04dd00c, 0xfdffffff }, // sub:6:0xE24DD00C
+	{ -1, -1, -1 },
+	/* 25/32 */
+};
+
 static FuncSig func_sig_GetSystemTime_2[] = {
 	{   1, 0xe59f6030, 0xfdffffff }, // ldr:4:0xE59F6030
 	{   2, 0xe5965000, 0xfdffffff }, // ldr:4:0xE5965000
@@ -3950,6 +3980,37 @@ static FuncSig func_sig_MoveZoomLensWithPoint_2[] = {
 	/* 25/32 */
 };
 
+static FuncSig func_sig_MoveFocusLensToDistance_2[] = {
+	{   1, 0xe59f5030, 0xfdffffff }, // ldr:4:0xE59F5030
+	{   2, 0xe5904000, 0xfdffffff }, // ldr:4:0xE5904000
+	{   3, 0xe1a01001, 0xfdffffff }, // mov:6:0xE3A01001
+	{   4, 0xe5950000, 0xfdffffff }, // ldr:4:0xE5950000
+	{   5, 0xeb000000, 0xff000000 }, // b, bl:3:0xEBF567AD
+	{   6, 0xe1a00004, 0xfdffffff }, // mov:6:0xE1A00004
+	{   7, 0xe59f101c, 0xfdffffff }, // ldr:4:0xE59F101C
+	{   8, 0xe1a02000, 0xfdffffff }, // mov:6:0xE3A02000
+	{   9, 0xeb000000, 0xff000000 }, // b, bl:3:0xEB000006
+	{  10, 0xe5950000, 0xfdffffff }, // ldr:4:0xE5950000
+	{  11, 0xe1a01001, 0xfdffffff }, // mov:6:0xE3A01001
+	{  12, 0xe1a02000, 0xfdffffff }, // mov:6:0xE3A02000
+	{  14, 0xea000000, 0xff000000 }, // b, bl:3:0xEAF56735
+	{  15, 0x0000a2e0, 0xfdffffff }, // and:6:0x0000A2E0
+	{  17, 0xe1a03002, 0xfdffffff }, // mov:6:0xE1A03002
+	{  18, 0xe1a02001, 0xfdffffff }, // mov:6:0xE1A02001
+	{  19, 0xe1a01000, 0xfdffffff }, // mov:6:0xE3A01000
+	{  20, 0xe52de004, 0xfdffffff }, // str:4:0xE52DE004
+	{  21, 0xe49de004, 0xfdffffff }, // ldr:4:0xE49DE004
+	{  22, 0xea000000, 0xff000000 }, // b, bl:3:0xEAFFFFFF
+	{  24, 0xe04dd00c, 0xfdffffff }, // sub:6:0xE24DD00C
+	{  26, 0xe1a05801, 0xfdffffff }, // mov:6:0xE1A05801
+	{  28, 0xe052e000, 0xfdffffff }, // sub:6:0xE252E000
+	{  29, 0xe1a00800, 0xfdffffff }, // mov:6:0xE1A00800
+	{  30, 0xe1a0c86c, 0xfdffffff }, // mov:6:0xE1A0C86C
+	{  31, 0xe1a02000, 0xfdffffff }, // mov:6:0xE3A02000
+	{ -1, -1, -1 },
+	/* 26/32 */
+};
+
 FuncsList func_list[] = {
 	{ "AllocateMemory", func_sig_AllocateMemory_1 },
 	{ "AllocateMemory", func_sig_AllocateMemory_2 },
@@ -3990,6 +4051,8 @@ FuncsList func_list[] = {
 	{ "MakeDirectory", func_sig_MakeDirectory_1 },
 	{ "Mount_FileSystem", func_sig_Mount_FileSystem_1 },
 	{ "Mount_FileSystem", func_sig_Mount_FileSystem_2 },
+	{ "MoveFocusLensToDistance", func_sig_MoveFocusLensToDistance_1 },
+	{ "MoveFocusLensToDistance", func_sig_MoveFocusLensToDistance_2 },
 	{ "MoveZoomLensWithPoint", func_sig_MoveZoomLensWithPoint_1 },
 	{ "MoveZoomLensWithPoint", func_sig_MoveZoomLensWithPoint_2 },
 	{ "Open", func_sig_Open_1 },

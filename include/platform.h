@@ -154,6 +154,13 @@ void shooting_set_zoom(int v);
 void shooting_set_zoom_rel(int v);
 void shooting_set_zoom_speed(int v);
 
+int shooting_get_focus();
+void shooting_set_focus(int v);
+
+int shooting_get_iso();
+void shooting_set_iso(int v);
+void shooting_set_iso_direct(int v);
+
 /******************************************************************/
 
 int mode_get();

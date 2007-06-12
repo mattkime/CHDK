@@ -677,6 +677,57 @@ void set_zoom_speed_statement()
 }
 
 /*---------------------------------------------------------------------------*/
+
+void get_focus_statement()
+{
+    int var;
+    accept(TOKENIZER_GET_FOCUS);
+    var = tokenizer_variable_num();
+    accept(TOKENIZER_VARIABLE);
+    ubasic_set_variable(var, shooting_get_focus());
+    accept(TOKENIZER_CR);
+}
+
+void set_focus_statement()
+{
+    int to;
+    accept(TOKENIZER_SET_FOCUS);
+    to = expr();
+    shooting_set_focus(to);
+    accept(TOKENIZER_CR);
+}
+
+/*---------------------------------------------------------------------------*/
+
+void get_iso_statement()
+{
+    int var;
+    accept(TOKENIZER_GET_ISO);
+    var = tokenizer_variable_num();
+    accept(TOKENIZER_VARIABLE);
+    ubasic_set_variable(var, shooting_get_iso());
+    accept(TOKENIZER_CR);
+}
+
+void set_iso_statement()
+{
+    int to;
+    accept(TOKENIZER_SET_ISO);
+    to = expr();
+    shooting_set_iso(to);
+    accept(TOKENIZER_CR);
+}
+
+void set_iso_direct_statement()
+{
+    int to;
+    accept(TOKENIZER_SET_ISO_DIRECT);
+    to = expr();
+    shooting_set_iso_direct(to);
+    accept(TOKENIZER_CR);
+}
+
+/*---------------------------------------------------------------------------*/
 static void
 statement(void)
 {
@@ -736,6 +787,23 @@ statement(void)
     break;
   case TOKENIZER_SET_ZOOM_SPEED:
     set_zoom_speed_statement();
+    break;
+
+  case TOKENIZER_GET_FOCUS:
+    get_focus_statement();
+    break;
+  case TOKENIZER_SET_FOCUS:
+    set_focus_statement();
+    break;
+
+  case TOKENIZER_GET_ISO:
+    get_iso_statement();
+    break;
+  case TOKENIZER_SET_ISO:
+    set_iso_statement();
+    break;
+  case TOKENIZER_SET_ISO_DIRECT:
+    set_iso_direct_statement();
     break;
 
   case TOKENIZER_IF:
