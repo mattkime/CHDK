@@ -579,7 +579,7 @@ shoot_statement(void)
 
 /*---------------------------------------------------------------------------*/
 
-void get_tv_statement()
+static void get_tv_statement()
 {
     int var;
     accept(TOKENIZER_GET_TV);
@@ -589,7 +589,7 @@ void get_tv_statement()
     accept(TOKENIZER_CR);
 }
 
-void set_tv_statement()
+static void set_tv_statement()
 {
     int to;
     accept(TOKENIZER_SET_TV);
@@ -598,7 +598,7 @@ void set_tv_statement()
     accept(TOKENIZER_CR);
 }
 
-void set_tv_rel_statement()
+static void set_tv_rel_statement()
 {
     int to;
     accept(TOKENIZER_SET_TV_REL);
@@ -609,7 +609,7 @@ void set_tv_rel_statement()
 
 /*---------------------------------------------------------------------------*/
 
-void get_av_statement()
+static void get_av_statement()
 {
     int var;
     accept(TOKENIZER_GET_AV);
@@ -619,7 +619,7 @@ void get_av_statement()
     accept(TOKENIZER_CR);
 }
 
-void set_av_statement()
+static void set_av_statement()
 {
     int to;
     accept(TOKENIZER_SET_AV);
@@ -628,7 +628,7 @@ void set_av_statement()
     accept(TOKENIZER_CR);
 }
 
-void set_av_rel_statement()
+static void set_av_rel_statement()
 {
     int to;
     accept(TOKENIZER_SET_AV_REL);
@@ -639,7 +639,7 @@ void set_av_rel_statement()
 
 /*---------------------------------------------------------------------------*/
 
-void get_zoom_statement()
+static void get_zoom_statement()
 {
     int var;
     accept(TOKENIZER_GET_ZOOM);
@@ -649,7 +649,7 @@ void get_zoom_statement()
     accept(TOKENIZER_CR);
 }
 
-void set_zoom_statement()
+static void set_zoom_statement()
 {
     int to;
     accept(TOKENIZER_SET_ZOOM);
@@ -658,7 +658,7 @@ void set_zoom_statement()
     accept(TOKENIZER_CR);
 }
 
-void set_zoom_rel_statement()
+static void set_zoom_rel_statement()
 {
     int to;
     accept(TOKENIZER_SET_ZOOM_REL);
@@ -667,7 +667,7 @@ void set_zoom_rel_statement()
     accept(TOKENIZER_CR);
 }
 
-void set_zoom_speed_statement()
+static void set_zoom_speed_statement()
 {
     int to;
     accept(TOKENIZER_SET_ZOOM_SPEED);
@@ -678,7 +678,7 @@ void set_zoom_speed_statement()
 
 /*---------------------------------------------------------------------------*/
 
-void get_focus_statement()
+static void get_focus_statement()
 {
     int var;
     accept(TOKENIZER_GET_FOCUS);
@@ -688,7 +688,7 @@ void get_focus_statement()
     accept(TOKENIZER_CR);
 }
 
-void set_focus_statement()
+static void set_focus_statement()
 {
     int to;
     accept(TOKENIZER_SET_FOCUS);
@@ -699,7 +699,7 @@ void set_focus_statement()
 
 /*---------------------------------------------------------------------------*/
 
-void get_iso_statement()
+static void get_iso_statement()
 {
     int var;
     accept(TOKENIZER_GET_ISO);
@@ -709,7 +709,7 @@ void get_iso_statement()
     accept(TOKENIZER_CR);
 }
 
-void set_iso_statement()
+static void set_iso_statement()
 {
     int to;
     accept(TOKENIZER_SET_ISO);
@@ -718,12 +718,34 @@ void set_iso_statement()
     accept(TOKENIZER_CR);
 }
 
-void set_iso_direct_statement()
+static void set_iso_direct_statement()
 {
     int to;
     accept(TOKENIZER_SET_ISO_DIRECT);
     to = expr();
     shooting_set_iso_direct(to);
+    accept(TOKENIZER_CR);
+}
+
+/*---------------------------------------------------------------------------*/
+
+static void wait_click_statement()
+{
+    accept(TOKENIZER_WAIT_CLICK);
+    ubasic_camera_wait_click();;
+    accept(TOKENIZER_CR);
+}
+
+static void is_key_statement(void)
+{
+    int var;
+    accept(TOKENIZER_IS_KEY);
+    var = tokenizer_variable_num();
+    accept(TOKENIZER_VARIABLE);
+    tokenizer_string(string, sizeof(string));
+    tokenizer_next();
+    ubasic_set_variable(var, ubasic_camera_is_clicked(string));
+    DEBUG_PRINTF("End of is_key\n");
     accept(TOKENIZER_CR);
 }
 
@@ -804,6 +826,13 @@ statement(void)
     break;
   case TOKENIZER_SET_ISO_DIRECT:
     set_iso_direct_statement();
+    break;
+
+  case TOKENIZER_WAIT_CLICK:
+    wait_click_statement();
+    break;
+  case TOKENIZER_IS_KEY:
+    is_key_statement();
     break;
 
   case TOKENIZER_IF:

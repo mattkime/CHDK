@@ -5,10 +5,12 @@
 
 long lens_get_focus_pos()
 {
-    return (kbd_is_key_pressed(KEY_SHOOT_HALF) || state_kbd_script_run)?_GetFocusLensSubjectDistance():65535;
+    static long v=65535;
+    return (kbd_is_key_pressed(KEY_SHOOT_HALF) || state_kbd_script_run)?v=_GetFocusLensSubjectDistance():v;
 }
 
 long lens_get_target_distance()
 {
-    return (kbd_is_key_pressed(KEY_SHOOT_HALF) || state_kbd_script_run)?_GetCurrentTargetDistance():65535;
+    static long v=65535;
+    return (kbd_is_key_pressed(KEY_SHOOT_HALF) || state_kbd_script_run)?v=_GetCurrentTargetDistance():v;
 }

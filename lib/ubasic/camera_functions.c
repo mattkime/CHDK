@@ -29,6 +29,17 @@ void ubasic_camera_shoot()
     printf("*** shoot ***\n");
 }
 
+void ubasic_camera_wait_click()
+{
+    printf("*** wait_click ***\n");
+}
+
+int ubasic_camera_is_clicked(const char *s)
+{
+    printf("*** is_key '%s' ***\n", s);
+    return 1;
+}
+
 int shooting_get_tv()
 {
     return tv;

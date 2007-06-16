@@ -12,18 +12,18 @@
 static int keyid_by_name (const char *n);
 
 
-#define SCRIPT_END	0
-#define SCRIPT_CLICK	1
-#define SCRIPT_SHOOT	2
-#define SCRIPT_SLEEP	3
-#define SCRIPT_PRESS	4
-#define SCRIPT_RELEASE	5
-#define SCRIPT_PR_WAIT_SAVE	6
-#define SCRIPT_WAIT_SAVE	7
-#define SCRIPT_WAIT_FLASH	8
-#define SCRIPT_WAIT_EXPHIST	9
-#define SCRIPT_PR_WAIT_EXPHIST	10
-
+#define SCRIPT_END              0
+#define SCRIPT_CLICK            1
+#define SCRIPT_SHOOT            2
+#define SCRIPT_SLEEP            3
+#define SCRIPT_PRESS            4
+#define SCRIPT_RELEASE          5
+#define SCRIPT_PR_WAIT_SAVE     6
+#define SCRIPT_WAIT_SAVE        7
+#define SCRIPT_WAIT_FLASH       8
+#define SCRIPT_WAIT_EXPHIST     9
+#define SCRIPT_PR_WAIT_EXPHIST  10
+#define SCRIPT_WAIT_CLICK       11
 
 #define KBD_STACK_SIZE 24
 
@@ -37,6 +37,7 @@ static int kbd_blocked;
 static int key_pressed;
 int state_kbd_script_run;
 static long delay_target_ticks;
+static long kbd_last_clicked;
 
 static void kbd_sched_delay(long msec)
 {
@@ -67,6 +68,12 @@ static void kbd_sched_click(long key)
 // WARNING stack program flow is reversed
     kbd_sched_release(key);
     kbd_sched_press(key);
+}
+
+static void kbd_sched_wait_click()
+{
+// WARNING stack program flow is reversed
+    KBD_STACK_PUSH(SCRIPT_WAIT_CLICK);
 }
 
 void kbd_sched_shoot()
@@ -105,6 +112,7 @@ void script_start()
     state_kbd_script_run = 1;
     delay_target_ticks = 0;
     kbd_int_stack_ptr = 0;
+    kbd_last_clicked = 0;
     kbd_key_release_all();
     ubasic_init(state_ubasic_script);
 
@@ -188,6 +196,13 @@ void process_script()
 	    }
 	    return;
 	}
+        case SCRIPT_WAIT_CLICK: {
+            kbd_last_clicked = kbd_get_clicked_key();
+	    if (kbd_last_clicked) {
+		kbd_int_stack_ptr-=1; // pop op.
+	    }
+	    return;
+	}
 	default:
 	    /*finished();*/
 	    script_end();
@@ -231,6 +246,23 @@ void ubasic_camera_click(const char *s)
 	ubasic_error = 3;
     }
 }
+
+void ubasic_camera_wait_click()
+{
+    kbd_sched_wait_click();
+}
+
+int ubasic_camera_is_clicked(const char *s)
+{
+    long k = keyid_by_name(s);
+    if (k > 0) {
+        return (kbd_last_clicked == k);
+    } else {
+	ubasic_error = 3;
+    }
+    return 0;
+}
+
 
 void ubasic_camera_sleep(long v)
 {
@@ -317,32 +349,32 @@ long kbd_process()
     return kbd_blocked;
 }
 
-const struct Keynames {
+static const struct Keynames {
     int keyid;
     char *keyname;
 } keynames[] = {
-    { KEY_UP, "up" },
-    { KEY_DOWN, "down" },
-    { KEY_LEFT, "left" },
-    { KEY_RIGHT, "right" },
-    { KEY_SET, "set" },
-    { KEY_SHOOT_HALF, "shoot_half" },
-    { KEY_SHOOT_FULL, "shoot_full" },
-    { KEY_ZOOM_IN, "zoom_in" },
-    { KEY_ZOOM_OUT, "zoom_out" },
-    { KEY_MENU, "menu" },
-    { KEY_DISPLAY, "display" },
-    { KEY_PRINT, "print" },
-    { KEY_ERASE, "erase" },
-    { KEY_ISO, "iso" },
-    { KEY_FLASH, "flash" },
-    { KEY_MF, "mf" },
-    { KEY_MACRO, "macro" },
-    { KEY_VIDEO, "video" },
-    { KEY_TIMER, "timer" },
+    { KEY_UP,           "up"         },
+    { KEY_DOWN,         "down"       },
+    { KEY_LEFT,         "left"       },
+    { KEY_RIGHT,        "right"      },
+    { KEY_SET,          "set"        },
+    { KEY_SHOOT_HALF,   "shoot_half" },
+    { KEY_SHOOT_FULL,   "shoot_full" },
+    { KEY_ZOOM_IN,      "zoom_in"    },
+    { KEY_ZOOM_OUT,     "zoom_out"   },
+    { KEY_MENU,         "menu"       },
+    { KEY_DISPLAY,      "display"    },
+    { KEY_PRINT,        "print"      },
+    { KEY_ERASE,        "erase"      },
+    { KEY_ISO,          "iso"        },
+    { KEY_FLASH,        "flash"      },
+    { KEY_MF,           "mf"         },
+    { KEY_MACRO,        "macro"      },
+    { KEY_VIDEO,        "video"      },
+    { KEY_TIMER,        "timer"      },
 };
 
-int keyid_by_name (const char *n)
+static int keyid_by_name (const char *n)
 {
     int i;
     for (i=0;i<sizeof(keynames)/sizeof(keynames[0]);i++)

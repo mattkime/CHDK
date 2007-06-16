@@ -92,6 +92,9 @@ static const struct keyword_token keywords[] = {
   {"set_iso_dangerous",     TOKENIZER_SET_ISO_DIRECT},
   {"set_iso",       TOKENIZER_SET_ISO},
 
+  {"wait_click",    TOKENIZER_WAIT_CLICK},
+  {"is_key",        TOKENIZER_IS_KEY},
+
   {"@title",        TOKENIZER_REM},
   {"@param",        TOKENIZER_REM},
   {"@default",      TOKENIZER_REM},

@@ -87,6 +87,8 @@ typedef enum {
   TOKENIZER_GET_ISO,
   TOKENIZER_SET_ISO,
   TOKENIZER_SET_ISO_DIRECT,
+  TOKENIZER_WAIT_CLICK,
+  TOKENIZER_IS_KEY,
 } ubasic_token;
 
 void tokenizer_init(const char *program);
