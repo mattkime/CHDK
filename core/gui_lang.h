@@ -21,7 +21,7 @@
 #define LANG_MENU_RAW_TITLE             13
 
 #define LANG_MENU_RAW_SAVE              14
-#define LANG_MENU_RAW_AFTER_DFS         15
+//#define LANG_MENU_RAW_AFTER_DFS         15
 #define LANG_MENU_RAW_FIRST_ONLY        16
 #define LANG_MENU_RAW_SAVE_IN_DIR       17
 #define LANG_MENU_RAW_PREFIX            18
@@ -270,8 +270,10 @@
 #define LANG_FSELECT_DELETE_TEXT        198
 #define LANG_FSELECT_PROGRESS_TITLE     199
 
+#define LANG_MENU_RAW_NOISE_REDUCTION   200
+
 //-------------------------------------------------------------------
-#define GUI_LANG_ITEMS                  199
+#define GUI_LANG_ITEMS                  200
 
 //-------------------------------------------------------------------
 extern void gui_lang_init();

@@ -67,6 +67,7 @@ static const char* gui_zebra_draw_osd_enum(int change, int arg);
 static const char* gui_font_enum(int change, int arg);
 static const char* gui_raw_prefix_enum(int change, int arg);
 static const char* gui_raw_ext_enum(int change, int arg);
+static const char* gui_raw_nr_enum(int change, int arg);
 static const char* gui_reader_codepage_enum(int change, int arg);
 static const char* gui_zoom_value_enum(int change, int arg);
 #if defined(CAMERA_s2is) || defined(CAMERA_s3is)
@@ -236,7 +237,7 @@ static CMenu histo_submenu = { LANG_MENU_HISTO_TITLE, NULL, histo_submenu_items 
 
 static CMenuItem raw_submenu_items[] = {
     {LANG_MENU_RAW_SAVE,                MENUITEM_BOOL,      &conf.save_raw },
-    {LANG_MENU_RAW_AFTER_DFS,           MENUITEM_BOOL,      &conf.raw_save_second },
+    {LANG_MENU_RAW_NOISE_REDUCTION,     MENUITEM_ENUM,      (int*)gui_raw_nr_enum },
     {LANG_MENU_RAW_FIRST_ONLY,          MENUITEM_BOOL,      &conf.raw_save_first_only },
     {LANG_MENU_RAW_SAVE_IN_DIR,         MENUITEM_BOOL,      &conf.raw_in_dir },
     {LANG_MENU_RAW_PREFIX,              MENUITEM_ENUM,      (int*)gui_raw_prefix_enum },
@@ -397,6 +398,19 @@ const char* gui_raw_ext_enum(int change, int arg) {
         conf.raw_ext=0;
 
     return exts[conf.raw_ext];
+}
+
+//-------------------------------------------------------------------
+const char* gui_raw_nr_enum(int change, int arg) {
+    static const char* modes[]={ "Auto", "Off", "On"};
+
+    conf.raw_nr+=change;
+    if (conf.raw_nr<0)
+        conf.raw_nr=(sizeof(modes)/sizeof(modes[0]))-1;
+    else if (conf.raw_nr>=(sizeof(modes)/sizeof(modes[0])))
+        conf.raw_nr=0;
+
+    return modes[conf.raw_nr];
 }
 
 //-------------------------------------------------------------------

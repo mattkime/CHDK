@@ -23,7 +23,6 @@ static char* gui_lang_default = \
 " 13 \"RAW\"\n"
 
 " 14 \"Save RAW\"\n"
-" 15 \"After dark frame substract\"\n"
 " 16 \"Only first RAW in series\"\n"
 " 17 \"RAW file in dir with JPEG\"\n"
 " 18 \"RAW file prefix\"\n"
@@ -259,6 +258,8 @@ static char* gui_lang_default = \
 "197 \"*** Delete files ***\"\n"
 "198 \"Are you SURE to delete\\n%d selected files?\"\n"
 "199 \"Please wait...\"\n"
+
+"200 \"Noise reduction\"\n"
 
 ;
 

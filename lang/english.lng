@@ -23,7 +23,6 @@
  13 "RAW"
 
  14 "Save RAW"
- 15 "After dark frame substract"
  16 "Only first RAW in series"
  17 "RAW file in dir with JPEG"
  18 "RAW file prefix"
@@ -270,3 +269,5 @@
 197 "*** Delete files ***"
 198 "Are you SURE to delete\n%d selected files?"
 199 "Please wait..."
+
+200 "Noise reduction"

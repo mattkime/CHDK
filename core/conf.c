@@ -6,6 +6,7 @@
 #include "raw.h"
 #include "gui_draw.h"
 #include "gui_osd.h"
+#include "core.h"
 #include "stdlib.h"
 #include "script.h"
 
@@ -103,7 +104,7 @@ static const ConfInfo conf_info[] = {
     CONF_INFO( 41, conf.show_clock,             CONF_DEF_VALUE, i:0, NULL),
     CONF_INFO( 42, conf.clock_pos,              CONF_DEF_PTR,   ptr:&def_clock_pos , NULL),
     CONF_INFO( 43, conf.reader_autoscroll,      CONF_DEF_VALUE, i:0, NULL),
-    CONF_INFO( 44, conf.reader_autoscroll_delay, CONF_DEF_VALUE, i:5, NULL),
+    CONF_INFO( 44, conf.reader_autoscroll_delay,CONF_DEF_VALUE, i:5, NULL),
     CONF_INFO( 45, conf.reader_rbf_file,        CONF_DEF_PTR,   ptr:"", NULL),
     CONF_INFO( 46, conf.reader_codepage,        CONF_DEF_VALUE, i:FONT_CP_WIN, NULL),
     CONF_INFO( 47, conf.splash_show,            CONF_DEF_VALUE, i:1, NULL),
@@ -121,12 +122,13 @@ static const ConfInfo conf_info[] = {
     CONF_INFO( 59, conf.use_zoom_mf,            CONF_DEF_VALUE, i:0, NULL),
     CONF_INFO( 60, conf.raw_save_first_only,    CONF_DEF_VALUE, i:0, NULL),
     CONF_INFO( 61, conf.reader_wrap_by_words,   CONF_DEF_VALUE, i:0, NULL),
-    CONF_INFO( 62, conf.raw_save_second,        CONF_DEF_VALUE, i:0, NULL),
+//  62 is not used anymore
     CONF_INFO( 63, conf.alt_mode_button,        CONF_DEF_VALUE, i:KEY_PRINT, conf_change_alt_mode_button),
     CONF_INFO( 64, conf.lang_file,              CONF_DEF_PTR,   ptr:"", NULL),
     CONF_INFO( 65, conf.font_cp,                CONF_DEF_VALUE, i:FONT_CP_WIN_1251, conf_change_font_cp),
     CONF_INFO( 66, conf.menu_rbf_file,          CONF_DEF_PTR,   ptr:"", conf_change_menu_rbf_file),
     CONF_INFO( 67, conf.alt_prevent_shutdown,   CONF_DEF_VALUE, i:ALT_PREVENT_SHUTDOWN_ALT, NULL),
+    CONF_INFO( 68, conf.raw_nr,                 CONF_DEF_VALUE, i:NOISE_REDUCTION_AUTO_CANON, NULL),
 };
 #define CONF_NUM (sizeof(conf_info)/sizeof(conf_info[0]))
 

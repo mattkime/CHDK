@@ -13,6 +13,8 @@ all: all-recursive
 
 clean: clean-recursive
 
+distclean: distclean-recursive
+
 fir: version firsub
 
 firsub: all
