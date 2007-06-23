@@ -270,8 +270,15 @@
 #define LANG_FSELECT_DELETE_TEXT        198
 #define LANG_FSELECT_PROGRESS_TITLE     199
 
+#define LANG_MENU_SHOW_GRID             200
+#define LANG_MENU_GRID_LOAD             201
+#define LANG_MENU_GRID_TITLE            202
+#define LANG_MENU_OSD_GRID_PARAMS       203
+#define LANG_STR_SELECT_GRID_FILE       204
+#define LANG_MENU_GRID_CURRENT          205
+
 //-------------------------------------------------------------------
-#define GUI_LANG_ITEMS                  199
+#define GUI_LANG_ITEMS                  205
 
 //-------------------------------------------------------------------
 extern void gui_lang_init();

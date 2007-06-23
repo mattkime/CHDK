@@ -88,6 +88,9 @@ typedef struct {
     long alt_mode_button; //for S-series
     int alt_prevent_shutdown;
 
+    int show_grid_lines;
+    char grid_lines_file[100];
+
     int ns_enable_memdump;
 } Conf;
 

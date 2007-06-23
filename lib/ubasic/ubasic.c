@@ -731,8 +731,12 @@ static void set_iso_direct_statement()
 
 static void wait_click_statement()
 {
+    int timeout=0;
     accept(TOKENIZER_WAIT_CLICK);
-    ubasic_camera_wait_click();;
+    if (tokenizer_token() != TOKENIZER_CR) {
+        timeout = expr();
+    }
+    ubasic_camera_wait_click(timeout);
     accept(TOKENIZER_CR);
 }
 

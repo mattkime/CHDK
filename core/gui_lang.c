@@ -260,6 +260,13 @@ static char* gui_lang_default = \
 "198 \"Are you SURE to delete\\n%d selected files?\"\n"
 "199 \"Please wait...\"\n"
 
+"200 \"Show grid lines\"\n"
+"201 \"Load grid from file...\"\n"
+"202 \"Grid lines\"\n"
+"203 \"Grid settings ->\"\n"
+"204 \"Select grid file\"\n"
+"205 \"Current grid\"\n"
+
 ;
 
 //-------------------------------------------------------------------

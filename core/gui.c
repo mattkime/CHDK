@@ -22,6 +22,7 @@
 #include "gui_read.h"
 #include "gui_calendar.h"
 #include "gui_bench.h"
+#include "gui_grid.h"
 #include "histogram.h"
 #include "script.h"
 
@@ -60,6 +61,7 @@ static void gui_menuproc_mkbootdisk(int arg);
 static void gui_menuproc_save(int arg);
 #endif
 static void gui_menuproc_reset(int arg);
+static void gui_grid_lines_load(int arg);
 static const char* gui_histo_mode_enum(int change, int arg);
 static const char* gui_histo_layout_enum(int change, int arg);
 static const char* gui_zebra_mode_enum(int change, int arg);
@@ -179,6 +181,18 @@ static CMenuItem battery_submenu_items[] = {
 static CMenu battery_submenu = { LANG_MENU_BATT_TITLE, cb_battery_menu_change, battery_submenu_items };
 
 
+static CMenuItem grid_submenu_items[] = {
+    {LANG_MENU_SHOW_GRID,               MENUITEM_BOOL,			        &conf.show_grid_lines },	
+    {LANG_MENU_GRID_LOAD,               MENUITEM_PROC,			        (int*)gui_grid_lines_load },
+    {LANG_MENU_GRID_CURRENT,            MENUITEM_SEPARATOR },
+    {(int)grid_title,                   MENUITEM_TEXT },
+    {(int)"",                           MENUITEM_SEPARATOR },
+    {LANG_MENU_BACK,                    MENUITEM_UP },
+    {0}
+};
+static CMenu grid_submenu = { LANG_MENU_GRID_TITLE, NULL, grid_submenu_items };
+
+
 static CMenuItem visual_submenu_items[] = {
     {LANG_MENU_VIS_LANG,                MENUITEM_PROC,      (int*)gui_draw_load_lang },
     {LANG_MENU_VIS_OSD_FONT,            MENUITEM_ENUM,      (int*)gui_font_enum },
@@ -212,6 +226,7 @@ static CMenuItem osd_submenu_items[] = {
     {LANG_MENU_OSD_SHOW_CLOCK,          MENUITEM_BOOL,      &conf.show_clock },
     {LANG_MENU_OSD_LAYOUT_EDITOR,       MENUITEM_PROC,      (int*)gui_draw_osd_le },
     {LANG_MENU_OSD_BATT_PARAMS,         MENUITEM_SUBMENU,   (int*)&battery_submenu },
+    {LANG_MENU_OSD_GRID_PARAMS,         MENUITEM_SUBMENU,   (int*)&grid_submenu },
 #ifndef OPTIONS_AUTOSAVE
     {LANG_MENU_MAIN_SAVE_OPTIONS,       MENUITEM_PROC,      (int*)gui_menuproc_save },
 #endif
@@ -869,6 +884,10 @@ void gui_draw_osd() {
 //            m==MODE_SCN_GRASS || m==MODE_SCN_SNOW  || m==MODE_SCN_BEACH || m==MODE_SCN_FIREWORK || m==MODE_VIDEO)
 //            ++n;
 
+        if (conf.show_grid_lines) {
+            gui_grid_draw_osd(1);
+        }
+
         if (conf.show_dof && (gui_mode==GUI_MODE_NONE /*|| gui_mode==GUI_MODE_ALT*/) && kbd_is_key_pressed(KEY_SHOOT_HALF) && (mode_photo || (m&MODE_SHOOTING_MASK)==MODE_STITCH)) {
             gui_osd_draw_dof();
         }
@@ -1094,6 +1113,26 @@ void gui_load_script(int arg) {
     }
 
     gui_fselect_init(LANG_STR_SELECT_SCRIPT_FILE, path, gui_load_script_selected);
+}
+
+//-------------------------------------------------------------------
+static void gui_grid_lines_load_selected(const char *fn) {
+    if (fn)
+        grid_lines_load(fn);
+}
+void gui_grid_lines_load(int arg) {
+    DIR   *d;
+    char  *path="A/CHDK/GRIDS";
+
+    // if exists "A/CHDK/GRIDS" go into
+    d=opendir(path);
+    if (d) {
+        closedir(d);
+    } else {
+        path="A";
+    }
+
+    gui_fselect_init(LANG_STR_SELECT_GRID_FILE, path, gui_grid_lines_load_selected);
 }
 
 //-------------------------------------------------------------------

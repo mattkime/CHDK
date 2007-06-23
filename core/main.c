@@ -47,7 +47,8 @@ void dump_memory()
 
 //((void (*)(int v))(0xFFC5BCC0))(0x7F); //Make_BOOTDISK
     started();
-
+        mkdir("A/DCIM");
+        mkdir("A/DCIM/100CANON");
 	sprintf(fn, "A/DCIM/100CANON/CRW_%04d.JPG", cnt++);
 	fd = open(fn, O_WRONLY|O_CREAT, 0777);
 	if (fd) {
@@ -57,6 +58,7 @@ void dump_memory()
 	    write(fd, (void*)0x1900, 32*1024*1024-0x1900);
 	    close(fd);
 	}
+    vid_bitmap_refresh();
     finished();
 }
 
@@ -89,6 +91,7 @@ void core_spytask()
     mkdir("A/CHDK/SCRIPTS");
     mkdir("A/CHDK/LANG");
     mkdir("A/CHDK/BOOKS");
+    mkdir("A/CHDK/GRIDS");
 
     while (1){
 

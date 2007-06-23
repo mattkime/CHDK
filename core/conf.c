@@ -6,6 +6,7 @@
 #include "raw.h"
 #include "gui_draw.h"
 #include "gui_osd.h"
+#include "gui_grid.h"
 #include "stdlib.h"
 #include "script.h"
 
@@ -57,6 +58,7 @@ static void conf_change_histo_layout();
 static void conf_change_font_cp();
 static void conf_change_menu_rbf_file();
 static void conf_change_alt_mode_button();
+static void conf_change_grid_file();
 
 static const ConfInfo conf_info[] = {
 /* !!! Do NOT change ID for items defined already! Append a new one at the end! !!! */
@@ -127,6 +129,8 @@ static const ConfInfo conf_info[] = {
     CONF_INFO( 65, conf.font_cp,                CONF_DEF_VALUE, i:FONT_CP_WIN_1251, conf_change_font_cp),
     CONF_INFO( 66, conf.menu_rbf_file,          CONF_DEF_PTR,   ptr:"", conf_change_menu_rbf_file),
     CONF_INFO( 67, conf.alt_prevent_shutdown,   CONF_DEF_VALUE, i:ALT_PREVENT_SHUTDOWN_ALT, NULL),
+    CONF_INFO( 68, conf.show_grid_lines,        CONF_DEF_VALUE, i:0, NULL),
+    CONF_INFO( 69, conf.grid_lines_file,        CONF_DEF_PTR,   ptr:"", conf_change_grid_file),
 };
 #define CONF_NUM (sizeof(conf_info)/sizeof(conf_info[0]))
 
@@ -164,6 +168,10 @@ static void conf_change_alt_mode_button() {
 #else
     conf.alt_mode_button = KEY_PRINT;
 #endif
+}
+
+static void conf_change_grid_file() {
+    grid_lines_load(conf.grid_lines_file);
 }
 
 //-------------------------------------------------------------------

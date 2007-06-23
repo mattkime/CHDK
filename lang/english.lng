@@ -270,3 +270,10 @@
 197 "*** Delete files ***"
 198 "Are you SURE to delete\n%d selected files?"
 199 "Please wait..."
+
+200 "Show grid lines"
+201 "Load grid from file..."
+202 "Grid lines"
+203 "Grid settings ->"
+204 "Select grid file"
+205 "Current grid"

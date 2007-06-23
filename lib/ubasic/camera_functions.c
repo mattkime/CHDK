@@ -29,9 +29,9 @@ void ubasic_camera_shoot()
     printf("*** shoot ***\n");
 }
 
-void ubasic_camera_wait_click()
+void ubasic_camera_wait_click(int t)
 {
-    printf("*** wait_click ***\n");
+    printf("*** wait_click %d ***\n", t);
 }
 
 int ubasic_camera_is_clicked(const char *s)

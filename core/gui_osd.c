@@ -9,6 +9,7 @@
 #include "gui_draw.h"
 #include "gui_lang.h"
 #include "gui_batt.h"
+#include "gui_grid.h"
 #include "gui_osd.h"
 
 
@@ -177,6 +178,9 @@ static void gui_osd_draw_zebra_osd() {
             if (conf.show_osd) {
                 draw_set_draw_proc(draw_pixel_buffered);
                 if ((mode_get()&MODE_MASK) == MODE_REC) {
+                    if (conf.show_grid_lines) {
+                        gui_grid_draw_osd(1);
+                    }
                     if (conf.show_dof) {
                         gui_osd_draw_dof();
                     }

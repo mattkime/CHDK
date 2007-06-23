@@ -70,9 +70,10 @@ static void kbd_sched_click(long key)
     kbd_sched_press(key);
 }
 
-static void kbd_sched_wait_click()
+static void kbd_sched_wait_click(int timeout)
 {
 // WARNING stack program flow is reversed
+    KBD_STACK_PUSH(timeout);
     KBD_STACK_PUSH(SCRIPT_WAIT_CLICK);
 }
 
@@ -197,9 +198,18 @@ void process_script()
 	    return;
 	}
         case SCRIPT_WAIT_CLICK: {
-            kbd_last_clicked = kbd_get_clicked_key();
-	    if (kbd_last_clicked) {
-		kbd_int_stack_ptr-=1; // pop op.
+            t = get_tick_count();
+	    if (delay_target_ticks == 0){
+		/* setup timer */
+		delay_target_ticks = t+((KBD_STACK_PREV(2))?KBD_STACK_PREV(2):86400000);
+	    } else {
+                kbd_last_clicked = kbd_get_clicked_key();
+                if (kbd_last_clicked || delay_target_ticks <= t) {
+                    if (!kbd_last_clicked) 
+                        kbd_last_clicked=0xFFFF;
+        	    delay_target_ticks = 0;
+                    kbd_int_stack_ptr-=2; // pop op.
+                }
 	    }
 	    return;
 	}
@@ -247,9 +257,9 @@ void ubasic_camera_click(const char *s)
     }
 }
 
-void ubasic_camera_wait_click()
+void ubasic_camera_wait_click(int timeout)
 {
-    kbd_sched_wait_click();
+    kbd_sched_wait_click(timeout);
 }
 
 int ubasic_camera_is_clicked(const char *s)
@@ -372,6 +382,7 @@ static const struct Keynames {
     { KEY_MACRO,        "macro"      },
     { KEY_VIDEO,        "video"      },
     { KEY_TIMER,        "timer"      },
+    { 0xFFFF,           "no_key"     },
 };
 
 static int keyid_by_name (const char *n)
