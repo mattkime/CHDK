@@ -93,6 +93,8 @@ void lens_set_focus_pos(long newpos)
 {
     _MoveFocusLensToDistance((short*)&newpos);
     while (focus_busy);
+    newpos = _GetFocusLensSubjectDistance();
+    _SetPropertyCase(65, &newpos, sizeof(newpos));
 }
 
 long stat_get_vbatt()

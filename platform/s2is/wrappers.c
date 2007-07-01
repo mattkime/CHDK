@@ -1,7 +1,7 @@
-#include "../generic/wrappers.c"
 #include "keyboard.h"
 #include "conf.h"
 #include "platform.h"
+#include "../generic/wrappers.c"
 
 long lens_get_focus_pos()
 {
