@@ -14,3 +14,8 @@ d2d.o: d2d.c fdlibm.h
 
 clean:
 	rm -f $(OBJS) libmath.a
+
+distclean: clean
+	rm -f $(OBJS:.o=.d)
+
+include $(topdir)bottom.inc

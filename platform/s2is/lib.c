@@ -46,7 +46,6 @@ static void led_off(const int led)
 
 void debug_led(int state)
 {
-    volatile long *p=(void*)LED_PR;
     if (state)
         led_on(LED_BLUE, LED_BRIGHTNESS);
     else

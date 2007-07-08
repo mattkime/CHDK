@@ -19,7 +19,6 @@ static char exts[][4] = { "JPG", "CRW", "CR2", "THM", "WAV" };
 int raw_savefile() {
     int fd;
     static struct utimbuf t;
-    static long last_saved_raw_number = 0;
 
     // got here second time in a row. Skip second RAW saving.
     if (conf.raw_save_first_only && state_shooting_progress == SHOOTING_PROGRESS_PROCESSING) {
@@ -28,10 +27,8 @@ int raw_savefile() {
 
     state_shooting_progress = SHOOTING_PROGRESS_PROCESSING;
 
-    if (conf.save_raw && (last_saved_raw_number!=get_file_next_counter() || conf.raw_save_second)) {
+    if (conf.save_raw) {
         long v;
-
-        last_saved_raw_number = get_file_next_counter();
         
         started();
 

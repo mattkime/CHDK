@@ -23,7 +23,6 @@ static char* gui_lang_default = \
 " 13 \"RAW\"\n"
 
 " 14 \"Save RAW\"\n"
-" 15 \"After dark frame substract\"\n"
 " 16 \"Only first RAW in series\"\n"
 " 17 \"RAW file in dir with JPEG\"\n"
 " 18 \"RAW file prefix\"\n"
@@ -266,6 +265,8 @@ static char* gui_lang_default = \
 "203 \"Grid settings ->\"\n"
 "204 \"Select grid file\"\n"
 "205 \"Current grid\"\n"
+
+"206 \"Noise reduction\"\n"
 
 ;
 

@@ -14,7 +14,7 @@ typedef struct {
     int raw_prefix;
     int raw_ext;
     int raw_save_first_only; //for series shooting
-    int raw_save_second; // after dark frame substraction
+    int raw_nr;
 
     int show_osd;
     int script_shoot_delay;

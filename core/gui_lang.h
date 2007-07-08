@@ -21,7 +21,7 @@
 #define LANG_MENU_RAW_TITLE             13
 
 #define LANG_MENU_RAW_SAVE              14
-#define LANG_MENU_RAW_AFTER_DFS         15
+//#define LANG_MENU_RAW_AFTER_DFS         15
 #define LANG_MENU_RAW_FIRST_ONLY        16
 #define LANG_MENU_RAW_SAVE_IN_DIR       17
 #define LANG_MENU_RAW_PREFIX            18
@@ -277,8 +277,10 @@
 #define LANG_STR_SELECT_GRID_FILE       204
 #define LANG_MENU_GRID_CURRENT          205
 
+#define LANG_MENU_RAW_NOISE_REDUCTION   206
+
 //-------------------------------------------------------------------
-#define GUI_LANG_ITEMS                  205
+#define GUI_LANG_ITEMS                  206
 
 //-------------------------------------------------------------------
 extern void gui_lang_init();

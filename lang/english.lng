@@ -23,7 +23,6 @@
  13 "RAW"
 
  14 "Save RAW"
- 15 "After dark frame substract"
  16 "Only first RAW in series"
  17 "RAW file in dir with JPEG"
  18 "RAW file prefix"
@@ -277,3 +276,5 @@
 203 "Grid settings ->"
 204 "Select grid file"
 205 "Current grid"
+
+206 "Noise reduction"

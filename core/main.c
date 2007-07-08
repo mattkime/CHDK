@@ -39,6 +39,13 @@ void core_hook_task_delete(void *tcb)
 #endif
 }
 
+
+long core_get_noise_reduction_value()
+{
+    return conf.raw_nr;
+}
+
+
 void dump_memory()
 {
     int fd;
@@ -69,7 +76,6 @@ void core_rawdata_available()
 {
     raw_data_available = 1;
 }
-
 
 void core_spytask()
 {
@@ -108,8 +114,6 @@ void core_spytask()
 
 	    histogram_process();
 	}
-
-	hook_raw_install();
 
 	if ((state_shooting_progress == SHOOTING_PROGRESS_PROCESSING) && (!shooting_in_progress())) {
 	    state_shooting_progress = SHOOTING_PROGRESS_DONE;
