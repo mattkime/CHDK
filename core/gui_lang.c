@@ -268,6 +268,10 @@ static char* gui_lang_default = \
 
 "206 \"Noise reduction\"\n"
 
+"207 \"Override grid colors\"\n"
+"208 \"Line color\"\n"
+"209 \"Fill color\"\n"
+
 ;
 
 //-------------------------------------------------------------------

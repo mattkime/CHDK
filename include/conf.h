@@ -65,6 +65,7 @@ typedef struct {
     color menu_color;
     color reader_color;
     color zebra_color; // under/over
+    color grid_color;
 
     int font_cp;
     char menu_rbf_file[100];
@@ -90,6 +91,7 @@ typedef struct {
 
     int show_grid_lines;
     char grid_lines_file[100];
+    int grid_force_color;
 
     int ns_enable_memdump;
 } Conf;

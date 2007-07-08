@@ -279,8 +279,12 @@
 
 #define LANG_MENU_RAW_NOISE_REDUCTION   206
 
+#define LANG_MENU_GRID_FORCE_COLOR      207
+#define LANG_MENU_GRID_COLOR_LINE       208
+#define LANG_MENU_GRID_COLOR_FILL       209
+
 //-------------------------------------------------------------------
-#define GUI_LANG_ITEMS                  206
+#define GUI_LANG_ITEMS                  209
 
 //-------------------------------------------------------------------
 extern void gui_lang_init();

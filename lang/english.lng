@@ -278,3 +278,7 @@
 205 "Current grid"
 
 206 "Noise reduction"
+
+207 "Override grid colors"
+208 "Line color"
+209 "Fill color"

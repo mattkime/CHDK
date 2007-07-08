@@ -183,11 +183,14 @@ static CMenu battery_submenu = { LANG_MENU_BATT_TITLE, cb_battery_menu_change, b
 
 
 static CMenuItem grid_submenu_items[] = {
-    {LANG_MENU_SHOW_GRID,               MENUITEM_BOOL,			        &conf.show_grid_lines },	
-    {LANG_MENU_GRID_LOAD,               MENUITEM_PROC,			        (int*)gui_grid_lines_load },
+    {LANG_MENU_SHOW_GRID,               MENUITEM_BOOL,		&conf.show_grid_lines },
+    {LANG_MENU_GRID_LOAD,               MENUITEM_PROC,		(int*)gui_grid_lines_load },
     {LANG_MENU_GRID_CURRENT,            MENUITEM_SEPARATOR },
     {(int)grid_title,                   MENUITEM_TEXT },
     {(int)"",                           MENUITEM_SEPARATOR },
+    {LANG_MENU_GRID_FORCE_COLOR,        MENUITEM_BOOL,          &conf.grid_force_color },
+    {LANG_MENU_GRID_COLOR_LINE,         MENUITEM_COLOR_FG,      (int*)&conf.grid_color },
+    {LANG_MENU_GRID_COLOR_FILL,         MENUITEM_COLOR_BG,      (int*)&conf.grid_color },
     {LANG_MENU_BACK,                    MENUITEM_UP },
     {0}
 };
