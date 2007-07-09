@@ -128,4 +128,7 @@ void script_console_add_line(const char *str) {
     printf(">>> %s\n", str);
 }
 
+void script_console_clear() {
+    printf("*** clear console ***\n");
+}
 #endif

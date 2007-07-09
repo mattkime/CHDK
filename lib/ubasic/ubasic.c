@@ -38,6 +38,9 @@
 #include "../../include/ubasic.h"
 #include "../../include/platform.h"
 #include "../../include/script.h"
+#include <string.h>
+#include <fcntl.h>
+#include <io.h>
 #else
 #include "ubasic.h"
 #include "platform.h"
@@ -73,11 +76,16 @@ static int for_stack_ptr;
 #define MAX_VARNUM 26
 static int variables[MAX_VARNUM];
 
+static int  print_screen_p;             // print_screen predicate: 0-off 1-on.
+static int  print_screen_d = -1;        // print_screen file descriptor.
+static const char print_screen_file[] ="A/CHDK/SCRIPTS/PR_SCREEN.TXT";
+
 static int ended;
 
 static int expr(void);
 static void line_statement(void);
 static void statement(void);
+static int relation(void);
 
 int ubasic_error;
 const char *ubasic_errstrings[UBASIC_E_ENDMARK] = 
@@ -107,6 +115,11 @@ ubasic_init(const char *program)
   for_stack_ptr = gosub_stack_ptr = 0;
   tokenizer_init(program);
   ended = 0;
+  print_screen_p = 0;
+  if (print_screen_d >= 0) {
+    close(print_screen_d);
+    print_screen_d = -1;
+  }
   ubasic_error = UBASIC_E_NONE;
 }
 /*---------------------------------------------------------------------------*/
@@ -124,6 +137,15 @@ accept(int token)
   }
   DEBUG_PRINTF("Expected %d, got it\n", token);
   tokenizer_next();
+}
+/*---------------------------------------------------------------------------*/
+static void
+accept_cr()
+{
+
+    while(tokenizer_token() != TOKENIZER_CR)
+      tokenizer_next();
+    accept(TOKENIZER_CR);
 }
 /*---------------------------------------------------------------------------*/
 static int
@@ -150,7 +172,7 @@ factor(void)
     break;
   case TOKENIZER_LEFTPAREN:
     accept(TOKENIZER_LEFTPAREN);
-    r = expr();
+    r = relation();
     accept(TOKENIZER_RIGHTPAREN);
     break;
   case TOKENIZER_PLUS:
@@ -160,6 +182,10 @@ factor(void)
   case TOKENIZER_MINUS:
     accept(TOKENIZER_MINUS);
     r = - factor();
+    break;
+  case TOKENIZER_LNOT:
+    accept(TOKENIZER_LNOT);
+    r = ! relation();
     break;
   default:
     r = varfactor();
@@ -179,6 +205,14 @@ term(void)
   DEBUG_PRINTF("term: token %d\n", op);
   while(op == TOKENIZER_ASTR ||
 	op == TOKENIZER_SLASH ||
+	op == TOKENIZER_LT ||
+	op == TOKENIZER_GT ||
+	op == TOKENIZER_GE ||
+	op == TOKENIZER_LE ||
+	op == TOKENIZER_NE ||
+	op == TOKENIZER_EQ ||
+	op == TOKENIZER_XOR || 
+        op == TOKENIZER_OR ||
 	op == TOKENIZER_MOD) {
     tokenizer_next();
     f2 = factor();
@@ -192,6 +226,30 @@ term(void)
       break;
     case TOKENIZER_MOD:
       f1 = f1 % f2;
+      break;
+    case TOKENIZER_LT:
+      f1 = f1 < f2;
+      break;
+    case TOKENIZER_GT:
+      f1 = f1 > f2;
+      break;
+    case TOKENIZER_EQ:
+      f1 = f1 == f2;
+      break;
+    case TOKENIZER_NE:
+      f1 = f1 != f2;
+      break;
+    case TOKENIZER_LE:
+      f1 = f1 <= f2;
+      break;
+    case TOKENIZER_GE:
+      f1 = f1 >= f2;
+      break;
+    case TOKENIZER_OR:
+      f1 = f1 | f2;
+      break;
+    case TOKENIZER_XOR:
+      f1 = f1 ^ f2;
       break;
     }
     op = tokenizer_token();
@@ -212,7 +270,7 @@ expr(void)
   while(op == TOKENIZER_PLUS ||
 	op == TOKENIZER_MINUS ||
 	op == TOKENIZER_AND ||
-        op == TOKENIZER_OR ||
+        op == TOKENIZER_LOR ||
 	op == TOKENIZER_XOR) {
     tokenizer_next();
     t2 = term();
@@ -227,11 +285,8 @@ expr(void)
     case TOKENIZER_AND:
       t1 = t1 & t2;
       break;
-    case TOKENIZER_OR:
-      t1 = t1 | t2;
-      break;
-    case TOKENIZER_XOR:
-      t1 = t1 ^ t2;
+    case TOKENIZER_LOR:
+      t1 = t1 || t2;
       break;
     }
     op = tokenizer_token();
@@ -249,21 +304,13 @@ relation(void)
   r1 = expr();
   op = tokenizer_token();
   DEBUG_PRINTF("relation: token %d\n", op);
-  while(op == TOKENIZER_LT ||
-	op == TOKENIZER_GT ||
-	op == TOKENIZER_EQ) {
+  while(op == TOKENIZER_LAND) {
     tokenizer_next();
     r2 = expr();
     DEBUG_PRINTF("relation: %d %d %d\n", r1, op, r2);
     switch(op) {
-    case TOKENIZER_LT:
-      r1 = r1 < r2;
-      break;
-    case TOKENIZER_GT:
-      r1 = r1 > r2;
-      break;
-    case TOKENIZER_EQ:
-      r1 = r1 == r2;
+    case TOKENIZER_LAND:
+      r1 = r1 && r2;
       break;
     }
     op = tokenizer_token();
@@ -349,6 +396,19 @@ goto_statement(void)
 }
 /*---------------------------------------------------------------------------*/
 static void
+print_screen_statement(void)
+{
+  int val;
+  accept(TOKENIZER_PRINT_SCREEN);
+  val = expr();
+  accept(TOKENIZER_CR);
+  if (val && print_screen_d<0) {
+      print_screen_d = open(print_screen_file, O_WRONLY|O_CREAT|O_TRUNC, 0777);
+  }
+  print_screen_p = val;
+}
+/*---------------------------------------------------------------------------*/
+static void
 print_statement(void)
 {
   static char buf[128];
@@ -369,11 +429,15 @@ print_statement(void)
     } else {
       sprintf(buf+strlen(buf), "%d", expr());
     }
-  } while(tokenizer_token() != TOKENIZER_CR &&
-	  tokenizer_token() != TOKENIZER_ENDOFINPUT);
-  script_console_add_line(buf);     
+  } while(tokenizer_token() != TOKENIZER_CR && tokenizer_token() != TOKENIZER_ENDOFINPUT && tokenizer_token() != TOKENIZER_ELSE);
+  script_console_add_line(buf);
+  if (print_screen_p && print_screen_d>=0) {
+    int bl = strlen(buf);
+    buf[bl]='\n';
+    write(print_screen_d, buf, bl+1);
+  }
   DEBUG_PRINTF("End of print\n");
-  tokenizer_next();
+  accept_cr();
 }
 /*---------------------------------------------------------------------------*/
 static void
@@ -406,6 +470,7 @@ if_statement(void)
 static void
 let_statement(void)
 {
+ 
   int var;
 
   var = tokenizer_variable_num();
@@ -414,8 +479,7 @@ let_statement(void)
   accept(TOKENIZER_EQ);
   ubasic_set_variable(var, expr());
   DEBUG_PRINTF("let_statement: assign %d to %d\n", variables[var], var);
-  accept(TOKENIZER_CR);
-
+  accept_cr();
 }
 /*---------------------------------------------------------------------------*/
 static void
@@ -427,14 +491,26 @@ rem_statement(void)
 }
 /*---------------------------------------------------------------------------*/
 static void
+cls_statement(void)
+{
+  accept(TOKENIZER_CLS);
+  script_console_clear();
+  DEBUG_PRINTF("cls_statement\n");
+  accept(TOKENIZER_CR);
+}
+/*---------------------------------------------------------------------------*/
+static void
 gosub_statement(void)
 {
   accept(TOKENIZER_GOSUB);
   if(tokenizer_token() == TOKENIZER_STRING) {
     tokenizer_string(string, sizeof(string));
+    do {
     tokenizer_next();
+    } while(tokenizer_token() != TOKENIZER_CR);
     accept(TOKENIZER_CR);
     if(gosub_stack_ptr < MAX_GOSUB_STACK_DEPTH) {
+/*    tokenizer_line_number_inc();*/
       gosub_stack[gosub_stack_ptr] = tokenizer_line_number();
       gosub_stack_ptr++;
       jump_label(string);
@@ -532,7 +608,7 @@ click_statement(void)
   ubasic_camera_click(string);
   tokenizer_next();
   DEBUG_PRINTF("End of click\n");
-  accept(TOKENIZER_CR);
+  accept_cr();
 }
 /*---------------------------------------------------------------------------*/
 static void
@@ -543,7 +619,7 @@ press_statement(void)
   ubasic_camera_press(string);
   tokenizer_next();
   DEBUG_PRINTF("End of press\n");
-  accept(TOKENIZER_CR);
+  accept_cr();
 }
 /*---------------------------------------------------------------------------*/
 static void
@@ -554,7 +630,7 @@ release_statement(void)
   ubasic_camera_release(string);
   tokenizer_next();
   DEBUG_PRINTF("End of release\n");
-  accept(TOKENIZER_CR);
+  accept_cr();
 }
 /*---------------------------------------------------------------------------*/
 static void
@@ -565,7 +641,7 @@ sleep_statement(void)
   val = expr();
   ubasic_camera_sleep(val);
   DEBUG_PRINTF("End of sleep\n");
-  accept(TOKENIZER_CR);
+  accept_cr();
 }
 /*---------------------------------------------------------------------------*/
 static void
@@ -574,7 +650,7 @@ shoot_statement(void)
   accept(TOKENIZER_SHOOT);
   ubasic_camera_shoot();
   DEBUG_PRINTF("End of shoot\n");
-  accept(TOKENIZER_CR);
+  accept_cr();
 }
 
 /*---------------------------------------------------------------------------*/
@@ -586,7 +662,7 @@ static void get_tv_statement()
     var = tokenizer_variable_num();
     accept(TOKENIZER_VARIABLE);
     ubasic_set_variable(var, shooting_get_tv());
-    accept(TOKENIZER_CR);
+    accept_cr();
 }
 
 static void set_tv_statement()
@@ -595,7 +671,7 @@ static void set_tv_statement()
     accept(TOKENIZER_SET_TV);
     to = expr();
     shooting_set_tv(to);
-    accept(TOKENIZER_CR);
+    accept_cr();
 }
 
 static void set_tv_rel_statement()
@@ -604,7 +680,7 @@ static void set_tv_rel_statement()
     accept(TOKENIZER_SET_TV_REL);
     to = expr();
     shooting_set_tv_rel(to);
-    accept(TOKENIZER_CR);
+    accept_cr();
 }
 
 /*---------------------------------------------------------------------------*/
@@ -616,7 +692,7 @@ static void get_av_statement()
     var = tokenizer_variable_num();
     accept(TOKENIZER_VARIABLE);
     ubasic_set_variable(var, shooting_get_av());
-    accept(TOKENIZER_CR);
+    accept_cr();
 }
 
 static void set_av_statement()
@@ -625,7 +701,7 @@ static void set_av_statement()
     accept(TOKENIZER_SET_AV);
     to = expr();
     shooting_set_av(to);
-    accept(TOKENIZER_CR);
+    accept_cr();
 }
 
 static void set_av_rel_statement()
@@ -634,7 +710,7 @@ static void set_av_rel_statement()
     accept(TOKENIZER_SET_AV_REL);
     to = expr();
     shooting_set_av_rel(to);
-    accept(TOKENIZER_CR);
+    accept_cr();
 }
 
 /*---------------------------------------------------------------------------*/
@@ -646,7 +722,7 @@ static void get_zoom_statement()
     var = tokenizer_variable_num();
     accept(TOKENIZER_VARIABLE);
     ubasic_set_variable(var, shooting_get_zoom());
-    accept(TOKENIZER_CR);
+    accept_cr();
 }
 
 static void set_zoom_statement()
@@ -655,7 +731,7 @@ static void set_zoom_statement()
     accept(TOKENIZER_SET_ZOOM);
     to = expr();
     shooting_set_zoom(to);
-    accept(TOKENIZER_CR);
+    accept_cr();
 }
 
 static void set_zoom_rel_statement()
@@ -664,7 +740,7 @@ static void set_zoom_rel_statement()
     accept(TOKENIZER_SET_ZOOM_REL);
     to = expr();
     shooting_set_zoom_rel(to);
-    accept(TOKENIZER_CR);
+    accept_cr();
 }
 
 static void set_zoom_speed_statement()
@@ -673,7 +749,7 @@ static void set_zoom_speed_statement()
     accept(TOKENIZER_SET_ZOOM_SPEED);
     to = expr();
     shooting_set_zoom_speed(to);
-    accept(TOKENIZER_CR);
+    accept_cr();
 }
 
 /*---------------------------------------------------------------------------*/
@@ -685,7 +761,7 @@ static void get_focus_statement()
     var = tokenizer_variable_num();
     accept(TOKENIZER_VARIABLE);
     ubasic_set_variable(var, shooting_get_focus());
-    accept(TOKENIZER_CR);
+    accept_cr();
 }
 
 static void set_focus_statement()
@@ -694,7 +770,7 @@ static void set_focus_statement()
     accept(TOKENIZER_SET_FOCUS);
     to = expr();
     shooting_set_focus(to);
-    accept(TOKENIZER_CR);
+    accept_cr();
 }
 
 /*---------------------------------------------------------------------------*/
@@ -706,7 +782,7 @@ static void get_iso_statement()
     var = tokenizer_variable_num();
     accept(TOKENIZER_VARIABLE);
     ubasic_set_variable(var, shooting_get_iso());
-    accept(TOKENIZER_CR);
+    accept_cr();
 }
 
 static void set_iso_statement()
@@ -715,7 +791,7 @@ static void set_iso_statement()
     accept(TOKENIZER_SET_ISO);
     to = expr();
     shooting_set_iso(to);
-    accept(TOKENIZER_CR);
+    accept_cr();
 }
 
 static void set_iso_direct_statement()
@@ -724,7 +800,7 @@ static void set_iso_direct_statement()
     accept(TOKENIZER_SET_ISO_DIRECT);
     to = expr();
     shooting_set_iso_direct(to);
-    accept(TOKENIZER_CR);
+    accept_cr();
 }
 
 /*---------------------------------------------------------------------------*/
@@ -733,11 +809,12 @@ static void wait_click_statement()
 {
     int timeout=0;
     accept(TOKENIZER_WAIT_CLICK);
-    if (tokenizer_token() != TOKENIZER_CR) {
+    if (tokenizer_token() != TOKENIZER_CR &&
+        tokenizer_token() != TOKENIZER_ELSE ) {
         timeout = expr();
     }
     ubasic_camera_wait_click(timeout);
-    accept(TOKENIZER_CR);
+    accept_cr();
 }
 
 static void is_key_statement(void)
@@ -750,7 +827,7 @@ static void is_key_statement(void)
     tokenizer_next();
     ubasic_set_variable(var, ubasic_camera_is_clicked(string));
     DEBUG_PRINTF("End of is_key\n");
-    accept(TOKENIZER_CR);
+    accept_cr();
 }
 
 /*---------------------------------------------------------------------------*/
@@ -762,6 +839,10 @@ statement(void)
   token = tokenizer_token();
 
   switch(token) {
+
+  case TOKENIZER_PRINT_SCREEN:
+    print_screen_statement();
+    break;
   case TOKENIZER_PRINT:
     print_statement();
     break;
@@ -869,6 +950,9 @@ statement(void)
   case TOKENIZER_REM:
     rem_statement();
     break;
+  case TOKENIZER_CLS:
+    cls_statement();
+    break;
   default:
     DEBUG_PRINTF("ubasic.c: statement(): not implemented %d\n", token);
     ended = 1;
@@ -927,5 +1011,14 @@ ubasic_get_variable(int varnum)
     return variables[varnum];
   }
   return 0;
+}
+/*---------------------------------------------------------------------------*/
+void
+ubasic_end() {
+  if (print_screen_d >= 0) {
+    close(print_screen_d);
+    print_screen_d = -1;
+    print_screen_p = 0;
+  }
 }
 /*---------------------------------------------------------------------------*/

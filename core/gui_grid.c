@@ -136,7 +136,7 @@ void grid_lines_load(const char *fn) {
     int fd;
 
     if (fn[0]) {
-        buf = malloc(GRID_BUF_SIZE);
+        buf = umalloc(GRID_BUF_SIZE);
         if (!buf) return;
 
         grid = grid_default;
@@ -159,7 +159,7 @@ void grid_lines_load(const char *fn) {
         grid_lines_free_data();
         parse_grid_file(fn, grid);
     
-        free(buf);
+        ufree(buf);
     }
 }
 

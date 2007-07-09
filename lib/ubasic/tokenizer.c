@@ -34,6 +34,11 @@
 #define DEBUG_PRINTF(...)
 #endif
 
+#ifdef TEST
+#include <string.h>
+#include <ctype.h>
+#endif
+
 #include "tokenizer.h"
 #include "stdlib.h"
 
@@ -50,8 +55,16 @@ static ubasic_token current_token = TOKENIZER_ERROR;
 static int current_line = 0;
 
 static const struct keyword_token keywords[] = {
+  {"<>",            TOKENIZER_NE},
+  {"<=",            TOKENIZER_LE},
+  {">=",            TOKENIZER_GE},
+  {"<",             TOKENIZER_LT},
+  {">",             TOKENIZER_GT},
+  {"not",           TOKENIZER_LNOT},
+  {"or",            TOKENIZER_LOR},
+  {"and",           TOKENIZER_LAND},
+
   {"let",           TOKENIZER_LET},
-  {"print",         TOKENIZER_PRINT},
   {"if",            TOKENIZER_IF},
   {"then",          TOKENIZER_THEN},
   {"else",          TOKENIZER_ELSE},
@@ -63,6 +76,9 @@ static const struct keyword_token keywords[] = {
   {"return",        TOKENIZER_RETURN},
   {"call",          TOKENIZER_CALL},
   {"rem",           TOKENIZER_REM},
+  {"cls",           TOKENIZER_CLS},
+  {"print_screen",  TOKENIZER_PRINT_SCREEN},
+  {"print",         TOKENIZER_PRINT},
 
   {"click",         TOKENIZER_CLICK},
   {"press",         TOKENIZER_PRESS},
@@ -100,6 +116,7 @@ static const struct keyword_token keywords[] = {
   {"@default",      TOKENIZER_REM},
 
   {"end",           TOKENIZER_END},
+
   {NULL,            TOKENIZER_ERROR}
 };
 
@@ -133,10 +150,6 @@ singlechar(void)
     return TOKENIZER_LEFTPAREN;
   } else if(*ptr == ')') {
     return TOKENIZER_RIGHTPAREN;
-  } else if(*ptr == '<') {
-    return TOKENIZER_LT;
-  } else if(*ptr == '>') {
-    return TOKENIZER_GT;
   } else if(*ptr == '=') {
     return TOKENIZER_EQ;
   }

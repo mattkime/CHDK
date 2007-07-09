@@ -37,6 +37,7 @@ typedef enum {
   TOKENIZER_STRING,
   TOKENIZER_VARIABLE,
   TOKENIZER_LET,
+  TOKENIZER_PRINT_SCREEN,
   TOKENIZER_PRINT,
   TOKENIZER_IF,
   TOKENIZER_THEN,
@@ -50,6 +51,7 @@ typedef enum {
   TOKENIZER_CALL,
   TOKENIZER_REM,
   TOKENIZER_END,
+  TOKENIZER_CLS,
   TOKENIZER_COMMA,
   TOKENIZER_SEMICOLON,
   TOKENIZER_PLUS,
@@ -65,6 +67,12 @@ typedef enum {
   TOKENIZER_LT,
   TOKENIZER_GT,
   TOKENIZER_EQ,
+  TOKENIZER_NE,
+  TOKENIZER_LE,
+  TOKENIZER_GE,
+  TOKENIZER_LNOT,
+  TOKENIZER_LAND,
+  TOKENIZER_LOR,
   TOKENIZER_CR,
   TOKENIZER_LABEL,
   TOKENIZER_SLEEP,
@@ -100,7 +108,6 @@ void tokenizer_string(char *dest, int len);
 void tokenizer_label(char *dest, int len);
 
 int tokenizer_line_number(void);
-void tokenizer_skip_line(void);
 
 int tokenizer_finished(void);
 void tokenizer_error_print(void);

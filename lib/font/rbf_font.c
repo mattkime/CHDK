@@ -220,6 +220,18 @@ int rbf_draw_string(int x, int y, const char *str, color cl) {
 }
 
 //-------------------------------------------------------------------
+// Draw a string colored 'c1' with the character at string-position 'c' colored 'c2'.
+int rbf_draw_string_c(int x, int y, const char *str, color c1, int c, color c2) {
+     int l=0, i=0;
+
+     while (*str) {
+          l+=rbf_draw_char(x+l, y, *str++, (i==c)?c2:c1);
+          ++i;
+     }
+     return l;
+}
+
+//-------------------------------------------------------------------
 int rbf_draw_string_len(int x, int y, int len, const char *str, color cl) {
     int l=0, yy;
 

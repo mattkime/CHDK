@@ -81,7 +81,7 @@ main(int argc, char * argv[])
         program[sz+1] = 0;
     }
 
-    printf("Program:\n%s\n", program);
+    printf("Program:\n%s\n=====================================\n\n", program);
     ubasic_init(program);
     do {
         ubasic_run();

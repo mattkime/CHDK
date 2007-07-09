@@ -33,6 +33,7 @@ static int          gui_menu_redraw;
 static int          count;
 static coord        x, y, w, num_lines;
 static int          len_bool, len_int, len_enum, len_space, len_br1, len_br2, cl_rect;
+static int          int_incr;
 static unsigned char *item_color;
 
 //-------------------------------------------------------------------
@@ -60,6 +61,7 @@ void gui_menu_init(CMenu *menu_ptr) {
     len_br1 = rbf_char_width('[');
     len_br2 = rbf_char_width(']');
     cl_rect = rbf_font_height() - 4;
+    int_incr = 1;
     
     gui_menu_redraw=2;
 }
@@ -101,6 +103,7 @@ void gui_menu_kbd_process() {
                 }
             } while ((curr_menu->menu[gui_menu_curr_item].type & MENUITEM_MASK)==MENUITEM_TEXT || 
                      (curr_menu->menu[gui_menu_curr_item].type & MENUITEM_MASK)==MENUITEM_SEPARATOR);
+            int_incr = 1;
             gui_menu_redraw=1;
             break;
         case KEY_DOWN:
@@ -117,6 +120,7 @@ void gui_menu_kbd_process() {
                 }
             } while ((curr_menu->menu[gui_menu_curr_item].type & MENUITEM_MASK)==MENUITEM_TEXT || 
                      (curr_menu->menu[gui_menu_curr_item].type & MENUITEM_MASK)==MENUITEM_SEPARATOR);
+            int_incr = 1;
             gui_menu_redraw=1;
             break;
         case KEY_LEFT:
@@ -131,9 +135,11 @@ void gui_menu_kbd_process() {
                                 *(curr_menu->menu[gui_menu_curr_item].value) -= *(int *)(curr_menu->menu[gui_menu_curr_item].arg);
                                 break;
                             default:
-                                *(curr_menu->menu[gui_menu_curr_item].value) -= 1;
+                                *(curr_menu->menu[gui_menu_curr_item].value) -= int_incr;
                                 break;
                         }
+                        if (*(curr_menu->menu[gui_menu_curr_item].value) < -9999) 
+                            *(curr_menu->menu[gui_menu_curr_item].value) = -9999;
                         if ( curr_menu->menu[gui_menu_curr_item].type & MENUITEM_F_UNSIGNED) {
                             if (*(curr_menu->menu[gui_menu_curr_item].value) < 0) 
                                 *(curr_menu->menu[gui_menu_curr_item].value) = 0;
@@ -181,9 +187,11 @@ void gui_menu_kbd_process() {
                                 *(curr_menu->menu[gui_menu_curr_item].value) += *(int *)(curr_menu->menu[gui_menu_curr_item].arg);
                                 break;
                             default:
-                                *(curr_menu->menu[gui_menu_curr_item].value) += 1;
+                                *(curr_menu->menu[gui_menu_curr_item].value) += int_incr;
                                 break;
                         }
+                        if (*(curr_menu->menu[gui_menu_curr_item].value) > 99999) 
+                            *(curr_menu->menu[gui_menu_curr_item].value) = 99999;
                         if ( curr_menu->menu[gui_menu_curr_item].type & MENUITEM_F_UNSIGNED) {
                             if ( curr_menu->menu[gui_menu_curr_item].type & MENUITEM_F_MAX) {
                                 if (*(curr_menu->menu[gui_menu_curr_item].value) > (unsigned short)((curr_menu->menu[gui_menu_curr_item].arg>>16) & 0xFFFF)) 
@@ -284,6 +292,16 @@ void gui_menu_kbd_process() {
                         gui_menu_redraw=1;
                         break;
                 }
+            }
+            break;
+        case KEY_ZOOM_IN:
+            if (int_incr >= 10){
+                int_incr /= 10;
+            }
+            break;
+        case KEY_ZOOM_OUT:
+            if (int_incr <= 1000){
+                int_incr *= 10;
             }
             break;
         case KEY_DISPLAY:
