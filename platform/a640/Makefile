@@ -9,13 +9,12 @@ SUBDIRS=sub
 
 all: all-recursive libplatform.a
 
-OBJS=main.o lib.o wrappers.o kbd.o raw_hook.o shooting.o
+OBJS=main.o lib.o wrappers.o kbd.o shooting.o
 # stubs_init.o
 
 kbd.o: kbd.c ../generic/kbd.c
 lib.o: lib.c ../generic/lib.c
 main.o: main.c ../generic/main.c
-raw_hook.o: raw_hook.c ../generic/raw_hook.c
 shooting.o: shooting.c ../generic/shooting.c
 wrappers.o: wrappers.c ../generic/wrappers.c
 
