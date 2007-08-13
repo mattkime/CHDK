@@ -50,6 +50,8 @@ extern long _GetParameterData(long id, void *buf, long size);
 extern long _SetParameterData(long id, void *buf, long size);
 extern void _UpdateMBROnFlash(int driveno, long offset, char *str);
 
+extern volatile long movie_compression;
+
 /* standart C library */
 //extern int _creat (const char *name, int flags);
 extern int _open (const char *name, int flags, int mode );

@@ -82,6 +82,7 @@ static const char* gui_alt_power_enum(int change, int arg);
 static void cb_step_25();
 static void cb_perc();
 static void cb_volts();
+static void cb_movie_hicomp();
 static void cb_battery_menu_change(unsigned int item);
 static void cb_zebra_restore_screen();
 static void cb_zebra_restore_osd();
@@ -134,7 +135,7 @@ static CMenuItem misc_submenu_items[] = {
     {LANG_MENU_MISC_CALENDAR,           MENUITEM_PROC,    (int*)gui_draw_calendar },
     {LANG_MENU_MISC_TEXT_READER,        MENUITEM_SUBMENU, (int*)&reader_submenu },
     {LANG_MENU_MISC_GAMES,              MENUITEM_SUBMENU, (int*)&games_submenu },
-#ifndef CAMERA_a710
+#if !defined(CAMERA_a710) && !defined(CAMERA_a700)
     {LANG_MENU_MISC_FLASHLIGHT,         MENUITEM_BOOL,    &conf.flashlight },
 #endif
     {LANG_MENU_MISC_SHOW_SPLASH,        MENUITEM_BOOL,    &conf.splash_show },
@@ -143,7 +144,7 @@ static CMenuItem misc_submenu_items[] = {
     {LANG_MENU_MISC_ALT_BUTTON,         MENUITEM_ENUM,    (int*)gui_alt_mode_button_enum },
 #endif
     {LANG_MENU_MISC_DISABLE_LCD_OFF,    MENUITEM_ENUM,    (int*)gui_alt_power_enum },
-
+    {LANG_MENU_MISC_MOVIE_HICOMP,       MENUITEM_BOOL|MENUITEM_ARG_CALLBACK,    &conf.movie_hi_compress, (int)cb_movie_hicomp },
     {LANG_MENU_MISC_PALETTE,            MENUITEM_PROC,    (int*)gui_draw_palette },
     {LANG_MENU_MISC_BUILD_INFO,         MENUITEM_PROC,    (int*)gui_show_build_info },
     {LANG_MENU_MISC_MEMORY_INFO,        MENUITEM_PROC,    (int*)gui_show_memory_info },
@@ -308,6 +309,10 @@ void cb_perc() {
 
 void cb_volts() {
     conf.batt_perc_show=0;
+}
+
+void cb_movie_hicomp() {
+    shooting_set_movie_hi_compression(conf.movie_hi_compress);
 }
 
 void cb_battery_menu_change(unsigned int item) {

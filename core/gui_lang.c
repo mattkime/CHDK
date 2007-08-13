@@ -272,6 +272,7 @@ static char* gui_lang_default = \
 "208 \"Line color\"\n"
 "209 \"Fill color\"\n"
 
+"210 \"HiCompressed movie\"\n"
 ;
 
 //-------------------------------------------------------------------

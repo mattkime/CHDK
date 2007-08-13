@@ -49,7 +49,7 @@ long core_get_noise_reduction_value()
 void dump_memory()
 {
     int fd;
-    static int cnt=0;
+    static int cnt=1;
     static char fn[32];
 
 //((void (*)(int v))(0xFFC5BCC0))(0x7F); //Make_BOOTDISK

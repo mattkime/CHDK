@@ -194,3 +194,6 @@ void shooting_set_focus(int v) {
     lens_set_focus_pos(v);
 }
 
+void shooting_set_movie_hi_compression(int c) {
+    movie_compression = (c)?1:0;	
+}

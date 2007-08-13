@@ -161,6 +161,8 @@ int shooting_get_iso();
 void shooting_set_iso(int v);
 void shooting_set_iso_direct(int v);
 
+void shooting_set_movie_hi_compression(int c);
+
 /******************************************************************/
 
 int mode_get();

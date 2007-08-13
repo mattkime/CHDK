@@ -283,8 +283,10 @@
 #define LANG_MENU_GRID_COLOR_LINE       208
 #define LANG_MENU_GRID_COLOR_FILL       209
 
+#define LANG_MENU_MISC_MOVIE_HICOMP     210
+
 //-------------------------------------------------------------------
-#define GUI_LANG_ITEMS                  209
+#define GUI_LANG_ITEMS                  210
 
 //-------------------------------------------------------------------
 extern void gui_lang_init();
