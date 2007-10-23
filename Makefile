@@ -87,3 +87,5 @@ batch-clean:
 	$(MAKE) -s --no-print-directory PLATFORM=s3is PLATFORMSUB=100a NO_INC_BUILD=1 clean
 
 .PHONY: fir upload
+
+include bottom.inc
