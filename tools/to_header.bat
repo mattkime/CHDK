@@ -1,0 +1,1 @@
+@grep -o -e "func_sig_[a-z]\+" signatures_fio.h | sed "s/func_sig_\([a-zA-Z]*\).*/{\"\1\",func_sig_\1 }, \\\/"

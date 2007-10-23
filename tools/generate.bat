@@ -1,0 +1,27 @@
+gensig.exe PRIMARY.BIN 0xFF800000       fclose            0xFFB09BC0  0x12 >>newsigs
+gensig.exe PRIMARY.BIN 0xFF800000       fdopen            0xFFB09CAC  0x12 >>newsigs
+gensig.exe PRIMARY.BIN 0xFF800000       feof              0xFFB09D18  0x12 >>newsigs
+gensig.exe PRIMARY.BIN 0xFF800000       ferror            0xFFB09D84  0x12 >>newsigs
+gensig.exe PRIMARY.BIN 0xFF800000       fflush            0xFFB09EB0  0x12 >>newsigs
+gensig.exe PRIMARY.BIN 0xFF800000       fgetc             0xFFB09F24  0x12 >>newsigs
+gensig.exe PRIMARY.BIN 0xFF800000       fgetpos           0xFFB09FAC  0x12 >>newsigs
+gensig.exe PRIMARY.BIN 0xFF800000       fgets             0xFFB0A010  0x12 >>newsigs
+gensig.exe PRIMARY.BIN 0xFF800000       fileno            0xFFB0A144  0x12 >>newsigs
+gensig.exe PRIMARY.BIN 0xFF800000       fopen             0xFFB0A2C8  0x12 >>newsigs
+gensig.exe PRIMARY.BIN 0xFF800000       fprintf           0xFFB0A35C  0x12 >>newsigs
+gensig.exe PRIMARY.BIN 0xFF800000       fputs             0xFFB0A47C  0x12 >>newsigs
+gensig.exe PRIMARY.BIN 0xFF800000       fread             0xFFB0A504  0x12 >>newsigs
+gensig.exe PRIMARY.BIN 0xFF800000       freopen           0xFFB0A608  0x12 >>newsigs
+gensig.exe PRIMARY.BIN 0xFF800000       fscanf            0xFFB0A7F0  0x12 >>newsigs
+gensig.exe PRIMARY.BIN 0xFF800000       fseek             0xFFB0A898  0x12 >>newsigs
+gensig.exe PRIMARY.BIN 0xFF800000       fsetpos           0xFFB0AC3C  0x12 >>newsigs
+gensig.exe PRIMARY.BIN 0xFF800000       ftell             0xFFB0AC48  0x12 >>newsigs
+gensig.exe PRIMARY.BIN 0xFF800000       fwrite            0xFFB0B068  0x12 >>newsigs
+gensig.exe PRIMARY.BIN 0xFF800000       fstat             0xFFB0F980  0x12 >>newsigs
+gensig.exe PRIMARY.BIN 0xFF800000       fstatfs           0xFFB0FA64  0x12 >>newsigs
+gensig.exe PRIMARY.BIN 0xFF800000       fdprintf          0xFFB115DC  0x12 >>newsigs
+gensig.exe PRIMARY.BIN 0xFF800000       fioRead           0xFFB116C0  0x12 >>newsigs
+gensig.exe PRIMARY.BIN 0xFF800000       fioRdString       0xFFB1171C  0x12 >>newsigs
+gensig.exe PRIMARY.BIN 0xFF800000       fioScanV          0xFFB12104  0x12 >>newsigs
+gensig.exe PRIMARY.BIN 0xFF800000       free              0xFFB1551C  0x12 >>newsigs
+

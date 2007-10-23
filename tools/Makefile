@@ -12,10 +12,10 @@ all: pakwif$(EXE) finsig$(EXE)
 	@echo $< \-\> $@
 	$(HOSTCC) $(HOSTCFLAGS) -c -o $@ $<
 
-.dep/%.d: %.c .dep
-	$(HOSTCC) $(HOSTCFLAGS) -MM $< > $@.$$$$; \
-	    sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
-	    rm -f $@.$$$$
+.dep/%.d: %.c
+	echo Making $@
+	mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) -M $< | sed 's/[cdCD]:.*.h//g' | sed 's/$.+.o //g'> $@
 
 pakwif$(EXE): pakwif.o
 	@echo $< \-\> $@

@@ -1,3 +1,4 @@
+#include "signatures_fio.h"
 
 static FuncSig func_sig_AllocateMemory_1[] = {
 	{   0, 0xe52de004, 0xfdffffff }, // str:4:0xE52DE004
@@ -4158,5 +4159,8 @@ FuncsList func_list[] = {
 	{ "utime", func_sig_utime_2 },
 	{ "vsprintf", func_sig_vsprintf_1 },
 	{ "write", func_sig_write_1 },
+
+	SIG_FIO
+
 	{ NULL }
 };
