@@ -8,6 +8,7 @@
 #include "gui_lang.h"
 #include "gui_mbox.h"
 
+#include<string.h>
 
 //-------------------------------------------------------------------
 static enum Gui_Mode 	gui_mbox_mode_old;

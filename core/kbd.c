@@ -33,8 +33,8 @@ static int kbd_int_stack_ptr;
 #define KBD_STACK_PUSH(v) kbd_int_stack[kbd_int_stack_ptr++] = (v);
 #define KBD_STACK_PREV(p) (kbd_int_stack[kbd_int_stack_ptr-(p)])
 
-static int kbd_blocked;
-static int key_pressed;
+static int kbd_blocked = 0;
+static int key_pressed = 0;
 int state_kbd_script_run;
 static long delay_target_ticks;
 static long kbd_last_clicked;
@@ -293,21 +293,28 @@ long kbd_process()
 
     if (kbd_blocked){
 	if (key_pressed){
-            if (kbd_is_key_pressed(conf.alt_mode_button)) {
-                ++key_pressed;
-                if (key_pressed==40) {
-                    kbd_key_press(conf.alt_mode_button);
-                } else if (key_pressed==45) {
-                    kbd_key_release_all();
-                    key_pressed = 2;
-        	    kbd_blocked = 0;
-//        	    gui_kbd_leave();
-                }
-            } else if (kbd_get_pressed_key() == 0) {
-                if (key_pressed!=100)
-                    gui_kbd_enter();
-        	key_pressed = 0;
-            }    
+	    
+	    DEBUG_TRACE("blocked&pressed", 0);
+
+        if (kbd_is_key_pressed(conf.alt_mode_button)) {
+	        
+	        DEBUG_TRACE("alt_mode_button:%d", key_pressed);
+
+            ++key_pressed;
+            if (key_pressed==40)
+            {
+                kbd_key_press(conf.alt_mode_button);
+            } else if (key_pressed==45) {
+                kbd_key_release_all();
+                key_pressed = 2;
+                kbd_blocked = 0;
+//          gui_kbd_leave();
+            }
+        } else if (kbd_get_pressed_key() == 0) {
+            if (key_pressed!=100)
+                gui_kbd_enter();
+            key_pressed = 0;
+        }    
 	    return 1;
 	}
 

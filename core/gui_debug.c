@@ -6,7 +6,6 @@
 #include "gui_draw.h"
 #include "gui_debug.h"
 
-
 //-------------------------------------------------------------------
 static void *addr;
 static char debug_to_draw;
@@ -23,6 +22,319 @@ void gui_debug_init(void *st_addr) {
     debug_to_draw = 1;
     step = 4;
     gui_set_mode(GUI_MODE_DEBUG);
+}
+
+//#include "../lib/fceu/src/driver.h"
+
+void debug_dump_information() {
+    int fd;
+    int len, cnt = 0;
+    static char buf[64];
+    const char *name = NULL;
+    int idList[100];
+
+//    FCEUI_LoadGame("path");
+
+    started();
+
+    fd = open("A/tasks-dump.txt", O_WRONLY|O_CREAT, 0777);
+
+    if (!fd) return;
+        
+    int tnum = taskIdListGet(idList, 100);
+    
+    while(tnum){
+        
+        name = taskName(idList[tnum]);
+
+        len = sprintf(buf, "task %x: %s\n", idList[tnum], name);
+        write(fd, buf, len);
+        tnum--;
+
+    }
+    
+    close(fd);
+
+    finished();
+}
+
+#define MRC(reg, p, c1, c2, op1, op2)  \
+    do{  \
+    asm volatile   \
+    (  \
+        "MRC     " #p ", " #op1 ", r0, " #c1 "," #c2 "," #op2 "\n"        \
+        "STR     r0, [%0]"  \
+        :: "r"(&(reg)) : "r0"  \
+    );   \
+    }while(0)
+
+
+#define MCR(reg, p, c1, c2, op1, op2)  \
+    do{  \
+    int data = (reg); \
+    asm volatile   \
+    (  \
+        "LDR     r0, [%0]\n"  \
+        "MCR     " #p ", " #op1 ", r0, " #c1 "," #c2 "," #op2 "\n"        \
+        :: "r"(&data) : "r0"  \
+    );   \
+    }while(0)
+
+
+int prefetch_count = 0;
+
+void prefetch_abort_action()
+{
+    prefetch_count++;
+}
+
+void __attribute((naked)) prefetch_abort_handler()
+{
+    asm volatile
+    (
+        "MOV     R0, R0\n"
+        "STMDB	 sp!, {r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, lr}\n"
+        "BL      prefetch_abort_action\n"
+        "LDMIA	 sp!, {r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, lr}\n"
+//        "LDR     pc, [pc, #-24]\n"
+        "SUBS    PC, R14, #4\n" // Retries the instruction!
+    );
+}
+
+
+
+
+void task_spywriter()
+{
+    int i;
+
+    msleep(1000);
+
+    started();
+    
+    FILE *fd = fopen("A/rom.dat", "w");
+    for(i = 0; i < 0x400000; i += 0x1000){
+      fwrite((void*)(0xFF800000+i), 0x1000, 1, fd);
+    }
+    fclose(fd);
+
+    fd = fopen("A/boot.dat", "w");
+    for(i = 0; i < 0x10000; i += 0x1000){
+      fwrite((void*)(0xFFFF0000+i), 0x1000, 1, fd);
+    }
+    fclose(fd);
+
+    finished();
+
+    while(1){
+       msleep(100);
+    };
+}
+
+int data_count = 0;
+
+void data_abort_action()
+{
+    if (data_count == 0) {
+      int creg = 0;
+//      MRC(creg, p15, c1, c0, 0, 0);
+//      MCR(creg & ~1, p15, c1, c0, 0, 0);
+//      CreateTask("SpyWriter", 0x19, 0x4000, task_spywriter, 0);
+      data_count++;
+    }
+    // just to see it
+    if (data_count == -1) {
+      CreateTask("SpyWriter", 0x19, 0x4000, task_spywriter, 0);
+    }
+
+    data_count++;
+
+}
+
+void createtask_spywriter()
+{
+    CreateTask("SpyWriter", 0x19, 0x4000, task_spywriter, 0);
+}
+
+void __attribute((naked)) data_abort_handler()
+{
+    asm volatile
+    (
+        "MOV     R0, R0\n"
+        "STMDB	 sp!, {r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, lr}\n"
+        "BL      data_abort_action\n"
+        "LDMIA	 sp!, {r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, lr}\n"
+
+        // save real ret addr
+        "SUB     R14, R14, #4\n"
+        "STR     R14, retlabel\n"
+
+        // return from abort mode
+        "SUBS    PC, PC, #-4\n"
+        "MOV     R0, R0\n"
+        "MOV     R0, R0\n"
+        "MOV     R0, R0\n"
+        "MOV     R0, R0\n"
+
+        // execute our code
+        "STMDB	 sp!, {r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, lr}\n"
+        "BL      createtask_spywriter\n"
+        "LDMIA	 sp!, {r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, lr}\n"
+
+        // jump back to saved return address
+        "LDR     PC, retlabel\n"
+
+        // location to store ret addr
+        "retlabel:;\n"
+        "MOV     R0, R0\n"
+
+//        "LDR     PC, [PC, #-24]\n" // Jump to VxWorks handler
+//        "SUBS    PC, R14, #8\n"    // Retries the instruction!
+//        "SUBS    PC, R14, #4\n"    // Moves to the next instruction!    
+    );
+
+}
+
+#define PREFETCH_HANDLER ((int*)0x108)
+#define DATA_HANDLER     ((int*)0x10C)
+
+
+void debug_dump_arm()
+{
+    int creg = 0, creg_dis = 0;
+    int banks[8] = {0};
+    int accperm_data = 0;
+    int accperm_code = 0;
+    int i;
+
+
+    FILE *fd = fopen("A/arm-info.txt", "w");
+
+    if (!fd) return;
+
+    // Disable Memory Protection Unit
+    MRC(creg, p15, c1, c0, 0, 0);
+    MCR(creg & ~1, p15, c1, c0, 0, 0);
+    
+    // Add new memory bank to control
+    MCR( (0x700000) + (0xb<<1) + 1, p15, c6, c6, 0, 0); 
+    MRC(accperm_data, p15, c5, c0, 0, 2);
+    MCR(accperm_data & 0x00FFFFFF, p15, c5, c0, 0, 2);
+    MRC(accperm_data, p15, c5, c0, 0, 3);
+    MCR(accperm_data & 0x00FFFFFF, p15, c5, c0, 0, 3);
+
+    // Changing abort handlers: 0x0C and 0x10 (prefetch and data aborts)
+
+    *(int*)prefetch_abort_handler = *PREFETCH_HANDLER;
+    *PREFETCH_HANDLER = (char*)prefetch_abort_handler+4;
+    *(int*)data_abort_handler = *DATA_HANDLER;
+    *DATA_HANDLER = (char*)data_abort_handler+4;
+
+    
+    // ReEnable Memory Protection Unit
+    MRC(creg_dis, p15, c1, c0, 0, 0);
+    MCR(creg_dis | 1, p15, c1, c0, 0, 0);
+    // Reread it
+    MRC(creg, p15, c1, c0, 0, 0);
+
+    MRC(banks[0], p15, c6, c0, 0, 0);
+    MRC(banks[1], p15, c6, c1, 0, 0);
+    MRC(banks[2], p15, c6, c2, 0, 0);
+    MRC(banks[3], p15, c6, c3, 0, 0);
+    MRC(banks[4], p15, c6, c4, 0, 0);
+    MRC(banks[5], p15, c6, c5, 0, 0);
+    MRC(banks[6], p15, c6, c6, 0, 0);
+    MRC(banks[7], p15, c6, c7, 0, 0);
+
+    MRC(accperm_data, p15, c5, c0, 0, 2);
+    MRC(accperm_code, p15, c5, c0, 0, 3);
+
+    fprintf(fd, "Control register dis: %x\n", creg_dis);
+    fprintf(fd, "Control register: %x\n", creg);
+
+    fprintf(fd, "Bank registers: \n");
+
+    for (i = 0; i < 8; i++) {
+       int size = (banks[i]>>1) & 0x1F;
+       fprintf(fd, " bank%d: base=0x% 8x size=%d kb, enabled(%d) accode(%x) acdata(%x)\n", i,
+                banks[i]&~4095, 4 * (1 << size - 0xB ), banks[i]&1,  (accperm_code>>i*4)&7, (accperm_data>>i*4)&7 );
+    }
+
+    fprintf(fd, "Abort Prefetch handler: %x\n", *(int*)prefetch_abort_handler);
+    fprintf(fd, "Abort Data handler: %x\n", *(int*)data_abort_handler);
+    
+    fprintf(fd, "Interrupt vectors: \n");
+
+    for (i = 0; i < 8; i++) {
+       fprintf(fd, " vec(%x) = %x\n", i*4,  *(int*)(i*4) );
+    }
+
+    fclose(fd);
+
+    msleep(1000);
+
+    // trigger it
+    *((int*)0x700000) = 100;
+
+}
+
+void dump_memory()
+{
+    int fd;
+    static int cnt=0;
+    static char fn[32];
+    int i;
+
+    int * addr = (int*)hook_raw_image_addr();
+
+    started();
+
+/*
+    for(i = 0; i < 1000000; i++){
+        *addr = 0xFFFFFFFF;
+        addr++;
+    }
+*/
+    
+	sprintf(fn, "A/32mem-%d.dump", cnt++);
+	fd = open(fn, O_WRONLY|O_CREAT, 0777);
+	if (fd) {
+//            fwrite((void*)vid_get_viewport_fb(), 360*240*3, 1, fd);
+//            fwrite((void*)vid_get_bitmap_fb(), 360*240, 1, fd);
+
+	    // Zero is not readable!
+	    write(fd, (int*)0xFFFF0000, 4);
+            
+	    write(fd, (int*)4, 0x1900-4);
+
+	    // write(fd, (void*)0x1900, 0x9C6B0); // all RAM+BSS
+
+	    write(fd, (void*)0x1900, 32*1024*1024 - 0x1900);
+
+	    close(fd);
+	}
+    vid_bitmap_refresh();
+    finished();
+    msleep(1000);
+}
+
+#define CONS_W (45)
+#define CONS_H (128)
+extern char console_buf[CONS_H][CONS_W];
+extern long console_buf_line;
+long cons_topline = 0;
+
+extern int cons_cmd_ptr;
+static char osd_buf[64];
+
+void gui_debug_draw_console() {
+  long i;
+  for (i=0;i<15;i++){
+      long l = cons_topline+i;
+      if (l>CONS_H) l-=CONS_H;
+      sprintf(osd_buf, "%02d:%-45s", i, console_buf[l]);
+      draw_txt_string(1, 1+i, osd_buf, MAKE_COLOR(COLOR_BLACK, COLOR_WHITE));
+  }
 }
 
 //-------------------------------------------------------------------
@@ -96,8 +408,20 @@ void gui_debug_draw() {
 void gui_debug_kbd_process() {
     switch (kbd_get_autoclicked_key()) {
     case KEY_DOWN:
+        switch (step) {
+            case 0x00000010: step = 0x00000004; break;
+            case 0x00000004: step = 0x10000000; break;
+            default: step>>=4; break;
+        }
+        debug_to_draw = 2;
         break;
     case KEY_UP:
+        switch (step) {
+            case 0x00000004: step = 0x00000010; break;
+            case 0x10000000: step = 0x00000004; break;
+            default: step<<=4; break;
+        }
+        debug_to_draw = 2;
         break;
     case KEY_LEFT:
         addr-=step;
@@ -107,13 +431,10 @@ void gui_debug_kbd_process() {
         addr+=step;
         debug_to_draw = 2;
         break;
-    case KEY_DISPLAY:
-        switch (step) {
-            case 0x00000004: step = 0x00000010; break;
-            case 0x10000000: step = 0x00000004; break;
-            default: step<<=4; break;
+    default:
+        if (debug_to_draw == 0) {
+            debug_to_draw = 2;
         }
-        debug_to_draw = 2;
         break;
     }
 }
