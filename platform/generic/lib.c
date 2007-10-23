@@ -1,4 +1,6 @@
 #include "platform.h"
+#include "lolevel.h"
+#include "stdlib.h"
 
 void shutdown()
 {
@@ -17,8 +19,6 @@ void shutdown()
 }
 
 
-#define LED_PR 0xc0220084
-
 void debug_led(int state)
 {
     volatile long *p=(void*)LED_PR;
@@ -26,4 +26,68 @@ void debug_led(int state)
 	p[0]=0x46;
     else
 	p[0]=0x44;
+}
+
+void led_on(int led)
+{
+    volatile long *p=(void*)led;
+	p[0]=0x46;
+}
+
+void led_off(int led)
+{
+    volatile long *p=(void*)led;
+	p[0]=0x44;
+}
+
+void debug_blink(int led) {
+
+    volatile long *p=(void*)led;
+
+    p[0]=0x46;
+    
+    _SleepTask(10);
+    
+    p[0]=0x44;
+
+    return;
+}
+
+
+
+static int fd = 0;
+static int counter = 0;
+
+void debug_trace(char *a, int b)
+{
+    // FIX SIZE!!!!!!!!!!!!!!!!!!!
+    char logg[512];
+    int len;
+
+    if (fd == 0) {
+      fd = open("A/LOG.TXT", O_WRONLY|O_CREAT, 0777);
+      lseek(fd, 0, SEEK_END);
+    }
+
+    len = sprintf(logg, "%04x: %05d: ", counter, time(NULL)%10000);
+    len += sprintf(logg+len, a, b);
+    logg[len++] = '\n';
+    logg[len] = 0;
+
+    write(fd, logg, len);
+    counter++;
+
+    if (counter%10 == 0)
+    {
+      close(fd);
+      fd = 0;
+    }
+
+}
+
+void logger_task()
+{
+    while(1) {
+       msleep(500);
+    }
 }

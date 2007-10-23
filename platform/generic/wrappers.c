@@ -110,39 +110,6 @@ long get_tick_count()
     return t;
 }
 
-/*int creat (const char *name, int flags)
-{
-    return _creat(name, flags);
-}*/
-int open (const char *name, int flags, int mode )
-{
-    return _Open(name, flags, mode);
-}
-int close (int fd)
-{
-    return _Close(fd);
-}
-int write (int fd, void *buffer, long nbytes)
-{
-    return _Write(fd, buffer, nbytes);
-}
-int read (int fd, void *buffer, long nbytes)
-{
-    return _Read(fd, buffer, nbytes);
-}
-int lseek (int fd, long offset, int whence)
-{
-    return _lseek(fd, offset, whence); /* yes, it's lower-case lseek here since Lseek calls just lseek (A610) */
-}
-long mkdir(const char *dirname)
-{
-    return _mkdir(dirname);
-}
-
-int remove(const char *name) {
-    return _Remove(name);
-}
-
 int isdigit(int c) {
     return _isdigit(c);
 }

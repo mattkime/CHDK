@@ -4,14 +4,16 @@
 #include "keyboard.h"
 
 typedef struct {
-	long hackkey;
-	long canonkey;
+    long hackkey;
+    long canonkey;
 } KeyMap;
 
 
-static long kbd_new_state[3];
-static long kbd_prev_state[3];
-static long kbd_mod_state;
+long kbd_new_state[3];
+long kbd_prev_state[3];
+long kbd_mod_state;
+long debug_kbd_state_diff;
+
 static KeyMap keymap[];
 static long last_kbd_key = 0;
 
@@ -22,16 +24,21 @@ static long last_kbd_key = 0;
 static char kbd_stack[NEW_SS];
 #endif
 
+#define KEY_MASK 0x1FFF
+
+
 long __attribute__((naked)) wrap_kbd_p1_f() ;
 
-static void __attribute__((noinline)) mykbd_task_proceed()
+static void __attribute__((noinline)) hook_kbd_task_proceed()
 {
     while (physw_run){
-	_SleepTask(10);
+        _SleepTask(10);
 
-	if (wrap_kbd_p1_f() == 1){ // autorepeat ?
-	    _kbd_p2_f();
-	}
+        if (wrap_kbd_p1_f() == 1) // Readout key state via camera function
+        {
+            _kbd_p2_f();
+        }
+
     }
 }
 
@@ -40,10 +47,10 @@ void __attribute__((naked,noinline)) mykbd_task()
     /* WARNING
      * Stack pointer manipulation performed here!
      * This means (but not limited to):
-     *	function arguments destroyed;
-     *	function CAN NOT return properly;
-     *	MUST NOT call or use stack variables before stack
-     *	is setup properly;
+     *  function arguments destroyed;
+     *  function CAN NOT return properly;
+     *  MUST NOT call or use stack variables before stack
+     *  is setup properly;
      *
      */
 
@@ -57,15 +64,15 @@ void __attribute__((naked,noinline)) mykbd_task()
 #endif
 
     for (i=0;i<NEW_SS/4;i++)
-	newstack[i]=0xdededede;
+        newstack[i]=0xdededede;
 
     asm volatile (
-	"MOV	SP, %0"
-	:: "r"(((char*)newstack)+NEW_SS)
-	: "memory"
+        "MOV    SP, %0"
+        :: "r"(((char*)newstack)+NEW_SS)
+        : "memory"
     );
 
-    mykbd_task_proceed();
+    hook_kbd_task_proceed();
 
     /* function can be modified to restore SP here...
      */
@@ -80,55 +87,52 @@ long __attribute__((naked,noinline)) wrap_kbd_p1_f()
     asm volatile(
                 "STMFD   SP!, {R4-R7,LR}\n"
                 "SUB     SP, SP, #0xC\n"
-                "BL      my_kbd_read_keys\n"
-		"B	 _kbd_p1_f_cont\n"
+                "BL      _kbd_read_keys\n"
+                "BL      hook_kbd_handle_keys\n"
+                "B       _kbd_p1_f_cont\n"        // Continue original function execution
     );
     return 0; // shut up the compiler
 }
 
+#if FEATURE_FEATHER
+extern int * touch_keys_angle;
+extern int * touch_keys_sema;
+int touch_keys_sema_stored;
+#endif
 
-void my_kbd_read_keys()
+/**
+ * Handles and forwards key settings to key processing routines
+ */
+void hook_kbd_handle_keys()
 {
     kbd_prev_state[0] = kbd_new_state[0];
     kbd_prev_state[1] = kbd_new_state[1];
     kbd_prev_state[2] = kbd_new_state[2];
 
-    _kbd_pwr_on();
-
-    kbd_fetch_data(kbd_new_state);
-
-#if 0
-    if ((new_state[2] & 0x00001000 /* print button */) == 0 )
-	started();
-    else
-	finished();
-#endif
-
+    kbd_new_state[0] = physw_status[0];
+    kbd_new_state[1] = physw_status[1];
+    kbd_new_state[2] = physw_status[2];
 
     if (kbd_process() == 0){
-	// leave it alone...
-	physw_status[0] = kbd_new_state[0];
-	physw_status[1] = kbd_new_state[1];
-	physw_status[2] = kbd_new_state[2];
-#if 0
-	kbd_mod_state = kbd_new_state[2];
+        // leave it ...
+#if FEATURE_FEATHER
+        if (*touch_keys_sema == 0) {
+            *touch_keys_sema = touch_keys_sema_stored;
+        }
 #endif
     } else {
-	// override keys
-#if 0
-	physw_status[2] = kbd_mod_state;
-#else
-	physw_status[0] = kbd_new_state[0];
-	physw_status[1] = kbd_new_state[1];
-	physw_status[2] = (kbd_new_state[2] & (~0x1fff)) |
-			  (kbd_mod_state & 0x1fff);
+        // override keys
+        physw_status[2] = (physw_status[2] & (~KEY_MASK)) | (kbd_mod_state & KEY_MASK);
+#if FEATURE_FEATHER
+        if (*touch_keys_sema != 0) {
+            touch_keys_sema_stored = *touch_keys_sema;
+            *touch_keys_sema = 0;
+        }
 #endif
     }
 
-    _kbd_read_keys_r2(physw_status);
+    // Drop SD readonly status
     physw_status[2] = physw_status[2] & ~SD_READONLY_FLAG;
-
-    _kbd_pwr_off();
 
 }
 
@@ -139,10 +143,10 @@ void kbd_key_press(long key)
 {
     int i;
     for (i=0;keymap[i].hackkey;i++){
-	if (keymap[i].hackkey == key){
-	    kbd_mod_state &= ~keymap[i].canonkey;
-	    return;
-	}
+        if (keymap[i].hackkey == key){
+            kbd_mod_state &= ~keymap[i].canonkey;
+            return;
+        }
     }
 }
 
@@ -150,25 +154,25 @@ void kbd_key_release(long key)
 {
     int i;
     for (i=0;keymap[i].hackkey;i++){
-	if (keymap[i].hackkey == key){
-	    kbd_mod_state |= keymap[i].canonkey;
-	    return;
-	}
+        if (keymap[i].hackkey == key){
+            kbd_mod_state |= keymap[i].canonkey;
+            return;
+        }
     }
 }
 
 void kbd_key_release_all()
 {
-    kbd_mod_state |= 0x1fff;
+    kbd_mod_state |= KEY_MASK;
 }
 
 long kbd_is_key_pressed(long key)
 {
     int i;
     for (i=0;keymap[i].hackkey;i++){
-	if (keymap[i].hackkey == key){
-	    return ((kbd_new_state[2] & keymap[i].canonkey) == 0) ? 1:0;
-	}
+        if (keymap[i].hackkey == key){
+            return ((kbd_new_state[2] & keymap[i].canonkey) == 0) ? 1:0;
+        }
     }
     return 0;
 }
@@ -176,11 +180,12 @@ long kbd_is_key_pressed(long key)
 long kbd_is_key_clicked(long key)
 {
     int i;
+    
     for (i=0;keymap[i].hackkey;i++){
-	if (keymap[i].hackkey == key){
-	    return ((kbd_prev_state[2] & keymap[i].canonkey) != 0) &&
-		    ((kbd_new_state[2] & keymap[i].canonkey) == 0);
-	}
+        if (keymap[i].hackkey == key){
+            return ((kbd_prev_state[2] & keymap[i].canonkey) != 0) &&
+                    ((kbd_new_state[2] & keymap[i].canonkey) == 0);
+        }
     }
     return 0;
 }
@@ -189,9 +194,9 @@ long kbd_get_pressed_key()
 {
     int i;
     for (i=0;keymap[i].hackkey;i++){
-	if ((kbd_new_state[2] & keymap[i].canonkey) == 0){
-	    return keymap[i].hackkey;
-	}
+        if ((kbd_new_state[2] & keymap[i].canonkey) == 0){
+            return keymap[i].hackkey;
+        }
     }
     return 0;
 }
@@ -200,10 +205,10 @@ long kbd_get_clicked_key()
 {
     int i;
     for (i=0;keymap[i].hackkey;i++){
-	if (((kbd_prev_state[2] & keymap[i].canonkey) != 0) &&
-	    ((kbd_new_state[2] & keymap[i].canonkey) == 0)){
-	    return keymap[i].hackkey;
-	}
+        if (((kbd_prev_state[2] & keymap[i].canonkey) != 0) &&
+            ((kbd_new_state[2] & keymap[i].canonkey) == 0)){
+            return keymap[i].hackkey;
+        }
     }
     return 0;
 }
