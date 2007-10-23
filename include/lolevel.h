@@ -54,19 +54,13 @@ extern volatile long movie_compression;
 
 /* standart C library */
 //extern int _creat (const char *name, int flags);
+/*
 extern int _open (const char *name, int flags, int mode );
 extern int _close (int fd);
 extern int _write (int fd, void *buffer, long nbytes);
 extern int _read (int fd, void *buffer, long nbytes);
 extern int _lseek (int fd, long offset, int whence);
-extern long _mkdir(const char *dirname);
-
-extern int _Open (const char *name, int flags, int mode );
-extern int _Close (int fd);
-extern int _Write (int fd, void *buffer, long nbytes);
-extern int _Read (int fd, void *buffer, long nbytes);
-extern int _Lseek (int fd, long offset, int whence);
-extern int _Remove(const char *name);
+*/
 
 extern int _isdigit(int c);
 extern int _isspace(int c);
@@ -115,6 +109,14 @@ extern void _kbd_pwr_on();
 extern void _kbd_pwr_off();
 extern void _kbd_read_keys_r2(void*p);
 extern long physw_status[3], physw_copy[3];
+
+
+extern long NotifyMask[3];
+extern long SwitchMask[3];
+extern long InvertData[3];
+extern long GpioStatus[3];
+extern long SwitchStatus[3];
+
 
 void __attribute__((naked,noinline)) mykbd_task();
 extern void capt_seq_task();

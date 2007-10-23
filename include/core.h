@@ -1,6 +1,11 @@
 #ifndef CORE_H
 #define CORE_H
 
+#define TRUE		(1)
+#define FALSE		(0)
+
+#include "features.h"
+
 void core_spytask();
 
 void core_hook_task_create(void *tcb);
@@ -17,6 +22,7 @@ void core_rawdata_available();
 #define NOISE_REDUCTION_ON              (2)
 
 long core_get_noise_reduction_value();
+
 
 #endif
 

@@ -1,6 +1,8 @@
 #ifndef PLATFORM_H
 #define PLATFORM_H
 
+#include "vxworks.h"
+
 #define SSID_INVALID (-32767)
 #define ASID_INVALID (-32767)
 
@@ -37,6 +39,22 @@
 #define MODE_SCREEN_MASK        0x0C00
 #define MODE_SCREEN_OPENED      0x0400
 #define MODE_SCREEN_ROTATED     0x0800
+
+#define LED_AF   0xc0220080
+#define LED_PR   0xc0220084
+#define LED_RED  0xc0220088
+
+
+#if 0
+  
+  #define DEBUG_TRACE(...)
+
+#else
+
+  #define DEBUG_TRACE(a,b) debug_trace(a,b)
+
+#endif
+
 
 typedef struct {
     short int id; // hacks id
@@ -179,8 +197,21 @@ void enable_shutdown();
 
 /******************************************************************/
 void __attribute__((noreturn)) shutdown();
+
+
 void debug_led(int state);
-#define started() debug_led(1)
-#define finished() debug_led(0)
+
+#define started() led_on(LED_AF)
+#define finished() led_off(LED_AF)
+
+void debug_blink(int led);
+
+void led_on(int led);
+void led_off(int led);
+
+void debug_trace(char *a, int b);
+
+void logger_task();
+
 
 #endif
