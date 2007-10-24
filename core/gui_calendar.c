@@ -110,7 +110,11 @@ void gui_calendar_kbd_process() {
             }
             need_redraw = 1;
             break;
+      #if defined (CAMERA_ixus700)
+        case KEY_DISPLAY:
+      #else
         case KEY_ERASE:
+      #endif
             calendar_goto_today();
             need_redraw = 1;
             break;

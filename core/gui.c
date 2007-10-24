@@ -135,11 +135,11 @@ static CMenuItem misc_submenu_items[] = {
     {LANG_MENU_MISC_CALENDAR,           MENUITEM_PROC,    (int*)gui_draw_calendar },
     {LANG_MENU_MISC_TEXT_READER,        MENUITEM_SUBMENU, (int*)&reader_submenu },
     {LANG_MENU_MISC_GAMES,              MENUITEM_SUBMENU, (int*)&games_submenu },
-#if !defined(CAMERA_a710) && !defined(CAMERA_a700) && !defined(CAMERA_g7)
+#if !defined(CAMERA_a710) && !defined(CAMERA_a700) && !defined(CAMERA_g7) && !defined (CAMERA_ixus700)
     {LANG_MENU_MISC_FLASHLIGHT,         MENUITEM_BOOL,    &conf.flashlight },
 #endif
     {LANG_MENU_MISC_SHOW_SPLASH,        MENUITEM_BOOL,    &conf.splash_show },
-#if !defined(CAMERA_g7)
+#if !defined(CAMERA_g7) && !defined (CAMERA_ixus700)
     {LANG_MENU_MISC_ZOOM_FOR_MF,        MENUITEM_BOOL,    &conf.use_zoom_mf },
 #endif
 #if defined(CAMERA_s2is) || defined(CAMERA_s3is)
@@ -733,7 +733,11 @@ void gui_kbd_process()
     
     switch (gui_mode) {
         case GUI_MODE_ALT:
+        #if !defined (CAMERA_ixus700)
             if (kbd_is_key_clicked(KEY_ERASE)) {
+        #else
+            if (kbd_is_key_clicked(KEY_DISPLAY)) {
+        #endif
                 if (conf.ns_enable_memdump) {
                     dump_memory();
                 } else {
@@ -843,6 +847,7 @@ void gui_draw_osd() {
 
     if (kbd_is_key_pressed(KEY_SHOOT_HALF)) {
         if (kbd_is_key_pressed(KEY_LEFT)) {
+        #if !defined (CAMERA_ixus700)
             if (!pressed) {
                 conf.zebra_draw = !conf.zebra_draw;
                 if (zebra && !conf.zebra_draw) {
@@ -851,8 +856,9 @@ void gui_draw_osd() {
                 }
                 pressed = 1;
             }
+        #endif
         }
-     #if defined (CAMERA_g7)
+     #if defined (CAMERA_g7) || defined (CAMERA_ixus700)
          else if (kbd_is_key_pressed(KEY_DOWN)) {
      #else
          else if (kbd_is_key_pressed(KEY_UP)) {
@@ -937,10 +943,17 @@ void gui_draw_osd() {
         gui_osd_draw_clock();
     }
 
+#if defined (CAMERA_ixus700)
+    if (gui_mode==GUI_MODE_NONE && kbd_is_key_pressed(KEY_SHOOT_HALF) && ((m&MODE_MASK)==MODE_REC)&&((m&MODE_SHOOTING_MASK))!=MODE_VIDEO_STD) {    
+     strcpy(osd_buf,shooting_get_tv_str());
+     strcat(osd_buf,"\"  ");
+     strcat(osd_buf,shooting_get_av_str());
+     draw_txt_string(22-strlen(osd_buf)/2, 14, osd_buf, conf.osd_color);
+    }
+#endif
+
     if (debug_vals_show) {
-//        long v=get_file_counter();
-//	sprintf(osd_buf, "1:%03d-%04d  ", (v>>18)&0x3FF, (v>>4)&0x3FFF);
-//	sprintf(osd_buf, "1:%d, %08X  ", xxxx, eeee);
+
 	sprintf(osd_buf, "1:%8x  ", physw_status[0]);
 	draw_txt_string(28, 10, osd_buf, conf.osd_color);
 

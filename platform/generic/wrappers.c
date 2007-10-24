@@ -91,10 +91,12 @@ void lens_set_zoom_speed(long newspd)
 
 void lens_set_focus_pos(long newpos)
 {
+ #if !defined(CAMERA_ixus700) 
     _MoveFocusLensToDistance((short*)&newpos);
     while (focus_busy);
     newpos = _GetFocusLensSubjectDistance();
     _SetPropertyCase(65, &newpos, sizeof(newpos));
+ #endif
 }
 
 long stat_get_vbatt()

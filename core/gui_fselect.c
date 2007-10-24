@@ -676,7 +676,11 @@ void gui_fselect_kbd_process() {
                 }
             }
             break;
+    #if defined (CAMERA_ixus700)
+        case KEY_DISPLAY:
+    #else
         case KEY_ERASE:
+    #endif
             if (selected && selected->attr != 0xFF) {
                 if (selected->attr & DOS_ATTR_DIRECTORY) {
                     if (selected->name[0]!='.' || selected->name[1]!='.' || selected->name[2]!=0)

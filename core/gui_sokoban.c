@@ -258,14 +258,20 @@ void gui_sokoban_kbd_process() {
             sokoban_redo();
             need_redraw = 1;
             break;
+     #if defined (CAMERA_ixus700)
+        case KEY_DISPLAY:
+     #else
         case KEY_ERASE:
+     #endif
             sokoban_set_level(conf.sokoban_level);
             need_redraw = 1;
             break;
+     #if !defined (CAMERA_ixus700)
         case KEY_DISPLAY:
             gui_mbox_init(LANG_MBOX_ABOUT_TITLE, (int)"SOKOBAN\n(c) GrAnd, 2007", MBOX_TEXT_CENTER, NULL);
             need_redraw = 1;
             break;
+     #endif
     }
 }
 

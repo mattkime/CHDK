@@ -142,11 +142,13 @@ int shooting_in_progress();
 int shooting_is_flash_ready();
 
 int shooting_get_tv();
+char* shooting_get_tv_str();
 void shooting_set_tv(int v);
 void shooting_set_tv_rel(int v);
 const ShutterSpeed *shooting_get_tv_line();
 
 int shooting_get_av();
+char* shooting_get_av_str();
 void shooting_set_av(int v);
 void shooting_set_av_rel(int v);
 

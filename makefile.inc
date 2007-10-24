@@ -27,6 +27,9 @@ PLATFORMSUB=100e
 #PLATFORM=g7
 #PLATFORMSUB=100i
 
+#PLATFORM=ixus700
+#PLATFORMSUB=101a
+
 include $(topdir)version.inc
 include $(topdir)platform/$(PLATFORM)/sub/$(PLATFORMSUB)/makefile.inc
 
