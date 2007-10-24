@@ -135,7 +135,7 @@ static CMenuItem misc_submenu_items[] = {
     {LANG_MENU_MISC_CALENDAR,           MENUITEM_PROC,    (int*)gui_draw_calendar },
     {LANG_MENU_MISC_TEXT_READER,        MENUITEM_SUBMENU, (int*)&reader_submenu },
     {LANG_MENU_MISC_GAMES,              MENUITEM_SUBMENU, (int*)&games_submenu },
-#if !defined(CAMERA_a710) && !defined(CAMERA_a700) && !defined(CAMERA_g7) && !defined (CAMERA_ixus700)
+#if !defined(CAMERA_a710) && !defined(CAMERA_a700) && !defined(CAMERA_g7) && !defined(CAMERA_a570) && !defined (CAMERA_ixus700)
     {LANG_MENU_MISC_FLASHLIGHT,         MENUITEM_BOOL,    &conf.flashlight },
 #endif
     {LANG_MENU_MISC_SHOW_SPLASH,        MENUITEM_BOOL,    &conf.splash_show },
@@ -146,7 +146,9 @@ static CMenuItem misc_submenu_items[] = {
     {LANG_MENU_MISC_ALT_BUTTON,         MENUITEM_ENUM,    (int*)gui_alt_mode_button_enum },
 #endif
     {LANG_MENU_MISC_DISABLE_LCD_OFF,    MENUITEM_ENUM,    (int*)gui_alt_power_enum },
+#if !defined(CAMERA_a570)
     {LANG_MENU_MISC_MOVIE_HICOMP,       MENUITEM_BOOL|MENUITEM_ARG_CALLBACK,    &conf.movie_hi_compress, (int)cb_movie_hicomp },
+#endif
     {LANG_MENU_MISC_PALETTE,            MENUITEM_PROC,    (int*)gui_draw_palette },
     {LANG_MENU_MISC_BUILD_INFO,         MENUITEM_PROC,    (int*)gui_show_build_info },
     {LANG_MENU_MISC_MEMORY_INFO,        MENUITEM_PROC,    (int*)gui_show_memory_info },

@@ -9,36 +9,43 @@
 #define MODE_PLAY               0x0200
 
 #define MODE_SHOOTING_MASK      0x00FF
-#define MODE_AUTO               1
-#define MODE_P                  2
-#define MODE_TV                 3
-#define MODE_AV                 4
-#define MODE_M                  5
-#define MODE_PORTRAIT           6
-#define MODE_NIGHT              7
-#define MODE_LANDSCAPE          8
-#define MODE_VIDEO_STD          9
-#define MODE_VIDEO_SPEED        10
-#define MODE_VIDEO_COMPACT      11
-#define MODE_VIDEO_MY_COLORS    12
-#define MODE_VIDEO_COLOR_ACCENT 13
-#define MODE_STITCH             14
-#define MODE_MY_COLORS          15
-#define MODE_SCN_WATER          16
-#define MODE_SCN_NIGHT          17
-#define MODE_SCN_CHILD          18
-#define MODE_SCN_PARTY          19
-#define MODE_SCN_GRASS          20
-#define MODE_SCN_SNOW           21
-#define MODE_SCN_BEACH          22
-#define MODE_SCN_FIREWORK       23
-#define MODE_SCN_COLOR_ACCENT   24
-#define MODE_VIDEO_HIRES        25
-#define MODE_SCN_AQUARIUM       26
-#define MODE_SCN_NIGHT1         27
-#define MODE_SCN_ISO_3200       28
-#define MODE_SCN_SPORT          29
 
+enum {
+MODE_AUTO               =1,
+MODE_P                  ,
+MODE_TV                 ,
+MODE_AV                 ,
+MODE_M                  ,
+MODE_PORTRAIT           ,
+MODE_NIGHT              ,
+MODE_LANDSCAPE          ,
+MODE_VIDEO_STD          ,
+MODE_VIDEO_SPEED        ,
+MODE_VIDEO_COMPACT      ,
+MODE_VIDEO_MY_COLORS    ,
+MODE_VIDEO_COLOR_ACCENT ,
+MODE_STITCH             ,
+MODE_MY_COLORS          ,
+MODE_SCN_WATER          ,
+MODE_SCN_NIGHT          ,
+MODE_SCN_CHILD          ,
+MODE_SCN_PARTY          ,
+MODE_SCN_GRASS          ,
+MODE_SCN_SNOW           ,
+MODE_SCN_BEACH          ,
+MODE_SCN_FIREWORK       ,
+MODE_SCN_COLOR_ACCENT   ,
+MODE_VIDEO_HIRES        ,
+MODE_SCN_AQUARIUM       ,
+
+MODE_SCN_NIGHT1         ,
+MODE_SCN_ISO_3200       ,
+MODE_SCN_SPORT          ,
+
+MODE_INDOOR             ,
+MODE_KIDS_PETS          ,
+MODE_NIGHT_SNAPSHOT     ,
+};
 
 #define MODE_SCREEN_MASK        0x0C00
 #define MODE_SCREEN_OPENED      0x0400

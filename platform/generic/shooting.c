@@ -16,11 +16,23 @@
 #define ISO_MIN (iso_table[0].id)
 #define ISO_MAX (iso_table[ISO_SIZE-1].id)
 
+#if defined(CAMERA_a570) 
+ #define PROPCASE_TV       264
+ #define PROPCASE_AV       26
+ #define PROPCASE_ISO      149
+ #define PROPCASE_SHOOTING 206
+#else
+ #define PROPCASE_TV       40
+ #define PROPCASE_AV       39
+ #define PROPCASE_ISO      21
+ #define PROPCASE_SHOOTING 205
+#endif
+
 int shooting_get_tv()
 {
     short int tvv;
     long i;
-    _GetPropertyCase(40, &tvv, sizeof(tvv));
+    _GetPropertyCase(PROPCASE_TV, &tvv, sizeof(tvv));
     for (i=0;i<SS_SIZE;i++){
 	if (shutter_speeds_table[i].prop_id == tvv)
 	    return shutter_speeds_table[i].id;
@@ -32,7 +44,7 @@ const ShutterSpeed *shooting_get_tv_line()
 {
     short int tvv;
     long i;
-    _GetPropertyCase(40, &tvv, sizeof(tvv));
+    _GetPropertyCase(PROPCASE_TV, &tvv, sizeof(tvv));
     for (i=0;i<SS_SIZE;i++){
 	if (shutter_speeds_table[i].prop_id == tvv)
 	    return &shutter_speeds_table[i];
@@ -51,7 +63,7 @@ void shooting_set_tv(int v)
     for (i=0;i<SS_SIZE;i++){
 	if (shutter_speeds_table[i].id == v){
 	    short int vv = shutter_speeds_table[i].prop_id;
-	    _SetPropertyCase(40, &vv, sizeof(vv));
+	    _SetPropertyCase(PROPCASE_TV, &vv, sizeof(vv));
 	    return;
 	}
     }
@@ -68,7 +80,7 @@ int shooting_get_av()
 {
     short int avv;
     long i;
-    _GetPropertyCase(39, &avv, sizeof(avv));
+    _GetPropertyCase(PROPCASE_AV, &avv, sizeof(avv));
     for (i=0;i<AS_SIZE;i++){
 	if (aperture_sizes_table[i].prop_id == avv)
 	    return aperture_sizes_table[i].id;
@@ -90,7 +102,7 @@ void shooting_set_av(int v)
     for (i=0;i<AS_SIZE;i++){
 	if (aperture_sizes_table[i].id == v){
 	    short int vv = aperture_sizes_table[i].prop_id;
-	    _SetPropertyCase(39, &vv, sizeof(vv));
+	    _SetPropertyCase(PROPCASE_AV, &vv, sizeof(vv));
 	    return;
 	}
     }
@@ -106,7 +118,7 @@ int shooting_get_iso()
 {
     short int isov;
     long i;
-    _GetPropertyCase(21, &isov, sizeof(isov));
+    _GetPropertyCase(PROPCASE_ISO, &isov, sizeof(isov));
     for (i=0;i<ISO_SIZE;i++){
 	if (iso_table[i].prop_id == isov)
 	    return iso_table[i].id;
@@ -121,7 +133,7 @@ void shooting_set_iso(int v)
     for (i=0;i<ISO_SIZE;i++){
 	if (iso_table[i].id == v){
 	    short int vv = iso_table[i].prop_id;
-	    _SetPropertyCase(21, &vv, sizeof(vv));
+	    _SetPropertyCase(PROPCASE_ISO, &vv, sizeof(vv));
 	    return;
 	}
     }
@@ -130,13 +142,13 @@ void shooting_set_iso(int v)
 void shooting_set_iso_direct(int v)
 {
     short int vv = v;
-    _SetPropertyCase(21, &vv, sizeof(vv));
+    _SetPropertyCase(PROPCASE_ISO, &vv, sizeof(vv));
 }
 
 int shooting_in_progress()
 {
     int t = 0;
-    _GetPropertyCase(205, &t, 4);
+    _GetPropertyCase(PROPCASE_SHOOTING, &t, 4);
     return t != 0;
 }
 
@@ -195,5 +207,7 @@ void shooting_set_focus(int v) {
 }
 
 void shooting_set_movie_hi_compression(int c) {
+#if !defined (CAMERA_a570)
     movie_compression = (c)?1:0;	
+#endif
 }
