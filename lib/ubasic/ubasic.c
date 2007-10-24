@@ -830,6 +830,22 @@ static void is_key_statement(void)
     accept_cr();
 }
 
+static void wheel_left_statement(void){
+  accept(TOKENIZER_WHEEL_LEFT);
+#if defined (CAMERA_g7)
+  JogDial_CCW();
+#endif
+  accept_cr();
+}
+
+static void wheel_right_statement(void){
+  accept(TOKENIZER_WHEEL_RIGHT);
+#if defined (CAMERA_g7)
+  JogDial_CW();
+#endif
+  accept_cr();
+}
+
 /*---------------------------------------------------------------------------*/
 static void
 statement(void)
@@ -919,6 +935,13 @@ statement(void)
   case TOKENIZER_IS_KEY:
     is_key_statement();
     break;
+
+  case TOKENIZER_WHEEL_LEFT:
+    wheel_left_statement();
+    break;
+  case TOKENIZER_WHEEL_RIGHT:
+    wheel_right_statement();
+     break;
 
   case TOKENIZER_IF:
     if_statement();

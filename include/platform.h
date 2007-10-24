@@ -33,6 +33,12 @@
 #define MODE_SCN_BEACH          22
 #define MODE_SCN_FIREWORK       23
 #define MODE_SCN_COLOR_ACCENT   24
+#define MODE_VIDEO_HIRES        25
+#define MODE_SCN_AQUARIUM       26
+#define MODE_SCN_NIGHT1         27
+#define MODE_SCN_ISO_3200       28
+#define MODE_SCN_SPORT          29
+
 
 #define MODE_SCREEN_MASK        0x0C00
 #define MODE_SCREEN_OPENED      0x0400
@@ -175,6 +181,8 @@ long get_vbatt_max();
 
 void disable_shutdown();
 void enable_shutdown();
+void JogDial_CW(void);
+void JogDial_CCW(void);
 
 
 /******************************************************************/

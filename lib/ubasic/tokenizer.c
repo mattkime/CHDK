@@ -111,6 +111,9 @@ static const struct keyword_token keywords[] = {
   {"wait_click",    TOKENIZER_WAIT_CLICK},
   {"is_key",        TOKENIZER_IS_KEY},
 
+  {"wheel_right",   TOKENIZER_WHEEL_RIGHT},
+  {"wheel_left",    TOKENIZER_WHEEL_LEFT},
+
   {"@title",        TOKENIZER_REM},
   {"@param",        TOKENIZER_REM},
   {"@default",      TOKENIZER_REM},

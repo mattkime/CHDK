@@ -135,11 +135,13 @@ static CMenuItem misc_submenu_items[] = {
     {LANG_MENU_MISC_CALENDAR,           MENUITEM_PROC,    (int*)gui_draw_calendar },
     {LANG_MENU_MISC_TEXT_READER,        MENUITEM_SUBMENU, (int*)&reader_submenu },
     {LANG_MENU_MISC_GAMES,              MENUITEM_SUBMENU, (int*)&games_submenu },
-#if !defined(CAMERA_a710) && !defined(CAMERA_a700)
+#if !defined(CAMERA_a710) && !defined(CAMERA_a700) && !defined(CAMERA_g7)
     {LANG_MENU_MISC_FLASHLIGHT,         MENUITEM_BOOL,    &conf.flashlight },
 #endif
     {LANG_MENU_MISC_SHOW_SPLASH,        MENUITEM_BOOL,    &conf.splash_show },
+#if !defined(CAMERA_g7)
     {LANG_MENU_MISC_ZOOM_FOR_MF,        MENUITEM_BOOL,    &conf.use_zoom_mf },
+#endif
 #if defined(CAMERA_s2is) || defined(CAMERA_s3is)
     {LANG_MENU_MISC_ALT_BUTTON,         MENUITEM_ENUM,    (int*)gui_alt_mode_button_enum },
 #endif
@@ -849,7 +851,13 @@ void gui_draw_osd() {
                 }
                 pressed = 1;
             }
-        } else if (kbd_is_key_pressed(KEY_UP)) {
+        }
+     #if defined (CAMERA_g7)
+         else if (kbd_is_key_pressed(KEY_DOWN)) {
+     #else
+         else if (kbd_is_key_pressed(KEY_UP)) {
+     #endif
+
             if (!pressed) {
                 conf.show_histo = !conf.show_histo;
                 if (!conf.show_histo) {

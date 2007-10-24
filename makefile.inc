@@ -24,6 +24,9 @@ PLATFORMSUB=100e
 #PLATFORM=s3is
 #PLATFORMSUB=100a
 
+#PLATFORM=g7
+#PLATFORMSUB=100i
+
 include $(topdir)version.inc
 include $(topdir)platform/$(PLATFORM)/sub/$(PLATFORMSUB)/makefile.inc
 

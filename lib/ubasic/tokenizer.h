@@ -97,6 +97,9 @@ typedef enum {
   TOKENIZER_SET_ISO_DIRECT,
   TOKENIZER_WAIT_CLICK,
   TOKENIZER_IS_KEY,
+  TOKENIZER_WHEEL_LEFT,
+  TOKENIZER_WHEEL_RIGHT,
+
 } ubasic_token;
 
 void tokenizer_init(const char *program);

@@ -383,6 +383,8 @@ static const struct Keynames {
     { KEY_MACRO,        "macro"      },
     { KEY_VIDEO,        "video"      },
     { KEY_TIMER,        "timer"      },
+    { KEY_EXPO_CORR,    "expo_corr"  },
+    { KEY_MICROPHONE,   "fe"         },
     { 0xFFFF,           "no_key"     },
 };
 

@@ -105,6 +105,7 @@ extern int _taskCreateHookAdd (void *createHook);
 extern int _taskDeleteHookAdd (void *deleteHook);
 extern long _iosDevAdd(void*,void*,int);
 extern long _iosDrvInstall(void*,void*,void*,void*,void*,void*,void*);
+extern void _GiveSemaphore(int sem);
 
 /* misc */
 extern const char aPhysw;
