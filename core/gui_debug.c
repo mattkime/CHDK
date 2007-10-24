@@ -92,12 +92,18 @@ void __attribute((naked)) prefetch_abort_handler()
 {
     asm volatile
     (
-        "MOV     R0, R0\n"
         "STMDB	 sp!, {r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, lr}\n"
         "BL      prefetch_abort_action\n"
         "LDMIA	 sp!, {r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, lr}\n"
-//        "LDR     pc, [pc, #-24]\n"
         "SUBS    PC, R14, #4\n" // Retries the instruction!
+
+//        "LDR     pc, vxworks_prefetch_abort_handler\n"
+
+        // vxWorks original handler stored here
+        ".GLOBL  vxworks_prefetch_abort_handler;\n"
+        "vxworks_prefetch_abort_handler:;\n"
+        "MOV     R0, R0\n"
+    
     );
 }
 
@@ -133,41 +139,66 @@ void task_spywriter()
 
 int data_count = 0;
 
-void data_abort_action()
+/**
+ * Action to be executed in super mode
+ */
+int data_abort_action(int sp)
 {
     if (data_count == 0) {
       int creg = 0;
 //      MRC(creg, p15, c1, c0, 0, 0);
 //      MCR(creg & ~1, p15, c1, c0, 0, 0);
-//      CreateTask("SpyWriter", 0x19, 0x4000, task_spywriter, 0);
       data_count++;
-    }
-    // just to see it
-    if (data_count == -1) {
-      CreateTask("SpyWriter", 0x19, 0x4000, task_spywriter, 0);
+      // abort_retval == 1 - perform user-mode action
+      return 1;
     }
 
     data_count++;
 
+    // abort_retval == 0 - perform no post action
+    return 0;
+
 }
 
-void createtask_spywriter()
+/**
+ * Action to be executed in user mode
+ */
+void data_abort_action_usermode(int abort_retval)
 {
-    CreateTask("SpyWriter", 0x19, 0x4000, task_spywriter, 0);
+    // Execute it only if data_abort_action returns TRUE
+    if (abort_retval) {
+//        CreateTask("SpyWriter", 0x19, 0x4000, task_spywriter, 0);
+    }
 }
 
 void __attribute((naked)) data_abort_handler()
 {
     asm volatile
     (
-        "MOV     R0, R0\n"
+
         "STMDB	 sp!, {r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, lr}\n"
+        // execute our supervisor-side action
+        "MOV     R0, SP\n"
         "BL      data_abort_action\n"
+        "STR     R0, abort_retval\n"
+
+        // Store the instruction to reexecute
+        // !!!!!!!!!!!!!!  Not working yet
+        // Probably because of access permission config - 0x0 - deny ALL
+        "LDR     R0, [R14, #-4]\n"
+        "STR     R0, reexecute\n"
+
         "LDMIA	 sp!, {r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, lr}\n"
 
-        // save real ret addr
+
+        // save real return address - after the data access instruction
         "SUB     R14, R14, #4\n"
         "STR     R14, retlabel\n"
+        "ADD     R14, R14, #4\n"
+
+        // Instruction to be re-executed, but in supervisor mode
+        "reexecute:;\n"
+        "MOV     R0, R0\n"
 
         // return from abort mode
         "SUBS    PC, PC, #-4\n"
@@ -176,19 +207,29 @@ void __attribute((naked)) data_abort_handler()
         "MOV     R0, R0\n"
         "MOV     R0, R0\n"
 
-        // execute our code
+        // execute our user-side action
         "STMDB	 sp!, {r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, lr}\n"
-        "BL      createtask_spywriter\n"
+        "LDR     R0, abort_retval\n"
+        "BL      data_abort_action_usermode\n"
         "LDMIA	 sp!, {r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, lr}\n"
 
         // jump back to saved return address
         "LDR     PC, retlabel\n"
 
-        // location to store ret addr
+        // location to store return addrress
         "retlabel:;\n"
         "MOV     R0, R0\n"
 
-//        "LDR     PC, [PC, #-24]\n" // Jump to VxWorks handler
+        // stored return value of the abort action handler
+        "abort_retval:;\n"
+        "MOV     R0, R0\n"
+
+        // vxWorks original handler stored here
+        ".GLOBL  vxworks_data_abort_handler;\n"
+        "vxworks_data_abort_handler:;\n"
+        "MOV     R0, R0\n"
+
+//        "LDR     PC, vxworks_data_abort_handler\n" // Jump to VxWorks handler
 //        "SUBS    PC, R14, #8\n"    // Retries the instruction!
 //        "SUBS    PC, R14, #4\n"    // Moves to the next instruction!    
     );
@@ -198,6 +239,8 @@ void __attribute((naked)) data_abort_handler()
 #define PREFETCH_HANDLER ((int*)0x108)
 #define DATA_HANDLER     ((int*)0x10C)
 
+extern int vxworks_prefetch_abort_handler;
+extern int vxworks_data_abort_handler;
 
 void debug_dump_arm()
 {
@@ -216,19 +259,19 @@ void debug_dump_arm()
     MRC(creg, p15, c1, c0, 0, 0);
     MCR(creg & ~1, p15, c1, c0, 0, 0);
     
-    // Add new memory bank to control
-    MCR( (0x700000) + (0xb<<1) + 1, p15, c6, c6, 0, 0); 
+    // Add new memory bank to control //0x700000  0xb
+    MCR( (0x700000) + (0xb<<1) + 1, p15, c6, c6, 0, 0);
     MRC(accperm_data, p15, c5, c0, 0, 2);
     MCR(accperm_data & 0x00FFFFFF, p15, c5, c0, 0, 2);
     MRC(accperm_data, p15, c5, c0, 0, 3);
     MCR(accperm_data & 0x00FFFFFF, p15, c5, c0, 0, 3);
 
     // Changing abort handlers: 0x0C and 0x10 (prefetch and data aborts)
+//    vxworks_prefetch_abort_handler = *PREFETCH_HANDLER;
+//    *PREFETCH_HANDLER = (int)prefetch_abort_handler;
 
-    *(int*)prefetch_abort_handler = *PREFETCH_HANDLER;
-    *PREFETCH_HANDLER = (char*)prefetch_abort_handler+4;
-    *(int*)data_abort_handler = *DATA_HANDLER;
-    *DATA_HANDLER = (char*)data_abort_handler+4;
+    vxworks_data_abort_handler = *DATA_HANDLER;
+    *DATA_HANDLER = (int)data_abort_handler;
 
     
     // ReEnable Memory Protection Unit
@@ -274,7 +317,17 @@ void debug_dump_arm()
     msleep(1000);
 
     // trigger it
-    *((int*)0x700000) = 100;
+    *((int*)0x700000) = 0x100;
+
+    *((int*)0x700100) = 0x200;
+
+    *((int*)0x700200) = 0x300;
+
+    msleep(2000);
+
+    if ( *((int*)0x10700000) == 0x100 ) data_count += 0x100;
+    if ( *((int*)0x10700100) == 0x200 ) data_count += 0x100;
+    if ( *((int*)0x10700200) == 0x300 ) data_count += 0x100;
 
 }
 
