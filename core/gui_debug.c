@@ -176,10 +176,9 @@ void __attribute((naked)) data_abort_handler()
     asm volatile
     (
 
-        "STMDB	 sp!, {r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, lr}\n"
+        "STMDB	 sp!, {r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, lr}\n"
         
         // Store the instruction to reexecute
-        // !!!!!!!!!!!!!!  Not working yet
         "LDR     R0, [R14, #-8]\n"
         "STR     R0, reexecute\n"
 
@@ -193,7 +192,7 @@ void __attribute((naked)) data_abort_handler()
         "BL      data_abort_action\n"
         "STR     R0, abort_retval\n"
 
-        "LDMIA	 sp!, {r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, lr}\n"
+        "LDMIA	 sp!, {r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, lr}\n"
 
         // save real return address - after the data access instruction
         "SUB     R14, R14, #4\n"
@@ -208,10 +207,10 @@ void __attribute((naked)) data_abort_handler()
         "MOV     R0, R0\n"
 
         // execute our user-side action
-        "STMDB	 sp!, {r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, lr}\n"
+        "STMDB	 sp!, {r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, lr}\n"
         "LDR     R0, abort_retval\n"
         "BL      data_abort_action_usermode\n"
-        "LDMIA	 sp!, {r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, lr}\n"
+        "LDMIA	 sp!, {r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, lr}\n"
 
 
         // Disable PU
@@ -219,6 +218,7 @@ void __attribute((naked)) data_abort_handler()
         "MRC     p15, 0, r0, c1, c0, 0\n"
         "BIC     r0, #1\n"
         "MCR     p15, 0, r0, c1, c0, 0\n"
+        "LDMIA	 sp!, {r0}\n"
 
         // Instruction to be re-executed, but with disabled Protection Unit!
         ".GLOBL  reexecute;\n"
@@ -226,6 +226,7 @@ void __attribute((naked)) data_abort_handler()
         "MOV     R0, R0\n"
 
         // Enable PU back
+        "STMDB	 sp!, {r0}\n"
         "MRC     p15, 0, r0, c1, c0, 0\n"
         "ORR     r0, #1\n"
         "MCR     p15, 0, r0, c1, c0, 0\n"
@@ -279,25 +280,24 @@ void debug_dump_arm()
 
     if (!fd) return;
 
+    // Changing abort handlers: 0x0C and 0x10 (prefetch and data aborts)
+//    vxworks_prefetch_abort_handler = *PREFETCH_HANDLER;
+//    *PREFETCH_HANDLER = (int)prefetch_abort_handler;
+    vxworks_data_abort_handler = *DATA_HANDLER;
+    *DATA_HANDLER = (int)data_abort_handler;
+
+    
     // Disable Memory Protection Unit
     MRC(creg, p15, c1, c0, 0, 0);
     MCR(creg & ~1, p15, c1, c0, 0, 0);
     
     // Add new memory bank to control //0x700000  0xb
-    MCR( (0x700000) + (0xb<<1) + 1, p15, c6, c6, 0, 0);
+    MCR( (0x2000) + (0xb<<1) + 1, p15, c6, c6, 0, 0);
     MRC(accperm_data, p15, c5, c0, 0, 2);
     MCR((accperm_data & 0x00FFFFFF) + 0x06000000, p15, c5, c0, 0, 2);
     MRC(accperm_data, p15, c5, c0, 0, 3);
     MCR((accperm_data & 0x00FFFFFF) + 0x06000000, p15, c5, c0, 0, 3);
 
-    // Changing abort handlers: 0x0C and 0x10 (prefetch and data aborts)
-//    vxworks_prefetch_abort_handler = *PREFETCH_HANDLER;
-//    *PREFETCH_HANDLER = (int)prefetch_abort_handler;
-
-    vxworks_data_abort_handler = *DATA_HANDLER;
-    *DATA_HANDLER = (int)data_abort_handler;
-
-    
     // ReEnable Memory Protection Unit
     MRC(creg_dis, p15, c1, c0, 0, 0);
     MCR(creg_dis | 1, p15, c1, c0, 0, 0);
