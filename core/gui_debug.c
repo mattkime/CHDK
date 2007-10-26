@@ -177,28 +177,28 @@ void __attribute((naked)) data_abort_handler()
     (
 
         "STMDB	 sp!, {r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, lr}\n"
+        
+        // Store the instruction to reexecute
+        // !!!!!!!!!!!!!!  Not working yet
+        "LDR     R0, [R14, #-8]\n"
+        "STR     R0, reexecute\n"
+
+        // Trying to reset the cache
+        // WARNING: ARM946ES specific!!!
+        "MOV     R0, #0\n"
+        "MCR     p15, 0, r0, c7, c5, 0\n"
+
         // execute our supervisor-side action
         "MOV     R0, SP\n"
         "BL      data_abort_action\n"
         "STR     R0, abort_retval\n"
 
-        // Store the instruction to reexecute
-        // !!!!!!!!!!!!!!  Not working yet
-        // Probably because of access permission config - 0x0 - deny ALL
-        "LDR     R0, [R14, #-4]\n"
-        "STR     R0, reexecute\n"
-
         "LDMIA	 sp!, {r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, lr}\n"
-
 
         // save real return address - after the data access instruction
         "SUB     R14, R14, #4\n"
         "STR     R14, retlabel\n"
         "ADD     R14, R14, #4\n"
-
-        // Instruction to be re-executed, but in supervisor mode
-        "reexecute:;\n"
-        "MOV     R0, R0\n"
 
         // return from abort mode
         "SUBS    PC, PC, #-4\n"
@@ -213,8 +213,29 @@ void __attribute((naked)) data_abort_handler()
         "BL      data_abort_action_usermode\n"
         "LDMIA	 sp!, {r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, lr}\n"
 
+
+        // Disable PU
+        "STMDB	 sp!, {r0}\n"
+        "MRC     p15, 0, r0, c1, c0, 0\n"
+        "BIC     r0, #1\n"
+        "MCR     p15, 0, r0, c1, c0, 0\n"
+
+        // Instruction to be re-executed, but with disabled Protection Unit!
+        ".GLOBL  reexecute;\n"
+        "reexecute:;\n"
+        "MOV     R0, R0\n"
+
+        // Enable PU back
+        "MRC     p15, 0, r0, c1, c0, 0\n"
+        "ORR     r0, #1\n"
+        "MCR     p15, 0, r0, c1, c0, 0\n"
+        "LDMIA	 sp!, {r0}\n"
+
+
         // jump back to saved return address
         "LDR     PC, retlabel\n"
+
+        ///////////////// Variables //////////////////
 
         // location to store return addrress
         "retlabel:;\n"
@@ -242,12 +263,15 @@ void __attribute((naked)) data_abort_handler()
 extern int vxworks_prefetch_abort_handler;
 extern int vxworks_data_abort_handler;
 
+extern int reexecute;
+
 void debug_dump_arm()
 {
     int creg = 0, creg_dis = 0;
     int banks[8] = {0};
     int accperm_data = 0;
     int accperm_code = 0;
+    int cpsr = 0;
     int i;
 
 
@@ -262,9 +286,9 @@ void debug_dump_arm()
     // Add new memory bank to control //0x700000  0xb
     MCR( (0x700000) + (0xb<<1) + 1, p15, c6, c6, 0, 0);
     MRC(accperm_data, p15, c5, c0, 0, 2);
-    MCR(accperm_data & 0x00FFFFFF, p15, c5, c0, 0, 2);
+    MCR((accperm_data & 0x00FFFFFF) + 0x06000000, p15, c5, c0, 0, 2);
     MRC(accperm_data, p15, c5, c0, 0, 3);
-    MCR(accperm_data & 0x00FFFFFF, p15, c5, c0, 0, 3);
+    MCR((accperm_data & 0x00FFFFFF) + 0x06000000, p15, c5, c0, 0, 3);
 
     // Changing abort handlers: 0x0C and 0x10 (prefetch and data aborts)
 //    vxworks_prefetch_abort_handler = *PREFETCH_HANDLER;
@@ -295,6 +319,15 @@ void debug_dump_arm()
     fprintf(fd, "Control register dis: %x\n", creg_dis);
     fprintf(fd, "Control register: %x\n", creg);
 
+    asm volatile
+    (
+        "MRS     r0, CPSR\n"
+        "STR     r0, [%0]\n"
+        :: "r"(&cpsr) : "r0"
+    );
+    fprintf(fd, "CPSR: %x\n", cpsr);
+
+
     fprintf(fd, "Bank registers: \n");
 
     for (i = 0; i < 8; i++) {
@@ -314,7 +347,7 @@ void debug_dump_arm()
 
     fclose(fd);
 
-    msleep(1000);
+    msleep(500);
 
     // trigger it
     *((int*)0x700000) = 0x100;
@@ -323,11 +356,13 @@ void debug_dump_arm()
 
     *((int*)0x700200) = 0x300;
 
-    msleep(2000);
+    msleep(1000);
 
-    if ( *((int*)0x10700000) == 0x100 ) data_count += 0x100;
-    if ( *((int*)0x10700100) == 0x200 ) data_count += 0x100;
-    if ( *((int*)0x10700200) == 0x300 ) data_count += 0x100;
+    if ( *((int*)0x700000) == 0x100 ) data_count += 0x100;
+    if ( *((int*)0x700100) == 0x200 ) data_count += 0x100;
+    if ( *((int*)0x700200) == 0x300 ) data_count += 0x100;
+
+    // data_count should be 0x303 here!!!
 
 }
 
