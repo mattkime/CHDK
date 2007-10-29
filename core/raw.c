@@ -34,6 +34,7 @@ int raw_savefile() {
 
         t.actime = t.modtime = time(NULL);
 
+        mkdir("A/DCIM");
         sprintf(dir, RAW_TARGET_DIRECTORY, (conf.raw_in_dir)?get_target_dir_num():100);
         mkdir(dir);
 

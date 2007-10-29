@@ -33,11 +33,7 @@ void *vid_get_bitmap_fb()
 
 void *vid_get_viewport_fb()
 {
-//    return (void*)(0x10400000+0x1BC000+0x3C00); //0x105BFC00
-
-//>>mx3. FIXME
  return (void*)0x10657A00;
-//<<mx3
 }
 
 void *vid_get_viewport_fb_d()

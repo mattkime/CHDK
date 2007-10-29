@@ -77,7 +77,7 @@ const ISOTable iso_table[] = {
 #include "../generic/shooting.c"
 
 long get_file_next_counter() {
-    return get_file_counter();
+    return ((get_file_counter()>>4)+1)<<4;
 }
 
 long get_target_file_num() {
