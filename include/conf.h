@@ -93,7 +93,9 @@ typedef struct {
     char grid_lines_file[100];
     int grid_force_color;
 
-    int movie_hi_compress;
+    int video_mode;
+    int video_quality;
+    int video_bitrate;  
 
     int ns_enable_memdump;
 } Conf;

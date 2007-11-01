@@ -60,7 +60,7 @@ static void conf_change_font_cp();
 static void conf_change_menu_rbf_file();
 static void conf_change_alt_mode_button();
 static void conf_change_grid_file();
-static void conf_change_movie_compression();
+static void conf_change_video_bitrate();
 
 static const ConfInfo conf_info[] = {
 /* !!! Do NOT change ID for items defined already! Append a new one at the end! !!! */
@@ -136,7 +136,9 @@ static const ConfInfo conf_info[] = {
     CONF_INFO( 70, conf.raw_nr,                 CONF_DEF_VALUE, i:NOISE_REDUCTION_AUTO_CANON, NULL),
     CONF_INFO( 71, conf.grid_force_color,       CONF_DEF_VALUE, i:0, NULL),
     CONF_INFO( 72, conf.grid_color,             CONF_DEF_VALUE, cl:MAKE_COLOR(COLOR_BG, COLOR_FG), NULL),
-    CONF_INFO( 73, conf.movie_hi_compress,      CONF_DEF_VALUE, i:0, conf_change_movie_compression),
+    CONF_INFO( 98, conf.video_quality,          CONF_DEF_VALUE, i:84,NULL),
+    CONF_INFO( 97, conf.video_mode,             CONF_DEF_VALUE, i:0, NULL),
+    CONF_INFO( 96, conf.video_bitrate,          CONF_DEF_VALUE, i:3, conf_change_video_bitrate),
 };
 #define CONF_NUM (sizeof(conf_info)/sizeof(conf_info[0]))
 
@@ -182,10 +184,10 @@ static void conf_change_grid_file() {
     grid_lines_load(conf.grid_lines_file);
 }
 
-static void conf_change_movie_compression() {
-    shooting_set_movie_hi_compression(conf.movie_hi_compress);
-}
-
+static void conf_change_video_bitrate() {
+    shooting_video_bitrate_change(conf.video_bitrate);
+ }
+	
 //-------------------------------------------------------------------
 static void conf_init_defaults() {
     // init some defaults values

@@ -76,13 +76,14 @@ static const char* gui_zoom_value_enum(int change, int arg);
 static const char* gui_alt_mode_button_enum(int change, int arg);
 #endif
 static const char* gui_alt_power_enum(int change, int arg);
+static const char* gui_video_mode_enum(int change, int arg);
+static const char* gui_video_bitrate_enum(int change, int arg);
 
 // Menu callbacks
 //-------------------------------------------------------------------
 static void cb_step_25();
 static void cb_perc();
 static void cb_volts();
-static void cb_movie_hicomp();
 static void cb_battery_menu_change(unsigned int item);
 static void cb_zebra_restore_screen();
 static void cb_zebra_restore_osd();
@@ -146,9 +147,9 @@ static CMenuItem misc_submenu_items[] = {
     {LANG_MENU_MISC_ALT_BUTTON,         MENUITEM_ENUM,    (int*)gui_alt_mode_button_enum },
 #endif
     {LANG_MENU_MISC_DISABLE_LCD_OFF,    MENUITEM_ENUM,    (int*)gui_alt_power_enum },
-#if !defined(CAMERA_a570)
-    {LANG_MENU_MISC_MOVIE_HICOMP,       MENUITEM_BOOL|MENUITEM_ARG_CALLBACK,    &conf.movie_hi_compress, (int)cb_movie_hicomp },
-#endif
+    {(int)"Video mode",                 MENUITEM_ENUM,    (int*)gui_video_mode_enum}, 
+    {(int)"Video bitrate",              MENUITEM_ENUM,    (int*)gui_video_bitrate_enum}, 
+    {(int)"Video quality",              MENUITEM_INT|MENUITEM_F_UNSIGNED|MENUITEM_F_MINMAX,  &conf.video_quality, MENU_MINMAX(1, 99)}, 
     {LANG_MENU_MISC_PALETTE,            MENUITEM_PROC,    (int*)gui_draw_palette },
     {LANG_MENU_MISC_BUILD_INFO,         MENUITEM_PROC,    (int*)gui_show_build_info },
     {LANG_MENU_MISC_MEMORY_INFO,        MENUITEM_PROC,    (int*)gui_show_memory_info },
@@ -313,10 +314,6 @@ void cb_perc() {
 
 void cb_volts() {
     conf.batt_perc_show=0;
-}
-
-void cb_movie_hicomp() {
-    shooting_set_movie_hi_compression(conf.movie_hi_compress);
 }
 
 void cb_battery_menu_change(unsigned int item) {
@@ -528,6 +525,32 @@ const char* gui_alt_power_enum(int change, int arg) {
         conf.alt_prevent_shutdown=0;
 
     return modes[conf.alt_prevent_shutdown];
+}
+const char* gui_video_mode_enum(int change, int arg) {
+    static const char* modes[]={ "Bitrate", "Quality"};
+
+    conf.video_mode+=change;
+    if (conf.video_mode<0)
+        conf.video_mode=(sizeof(modes)/sizeof(modes[0]))-1;
+    else if (conf.video_mode>=(sizeof(modes)/sizeof(modes[0])))
+        conf.video_mode=0;
+
+    return modes[conf.video_mode];
+}
+
+//-------------------------------------------------------------------
+const char* gui_video_bitrate_enum(int change, int arg) {
+    static const char* modes[]={ "0.25x", "0.5x","0.75x", "1x", "1.25x", "1.5x", "1.75x", "2x", "2.5x", "3x"};
+
+    conf.video_bitrate+=change;
+    if (conf.video_bitrate<0)
+        conf.video_bitrate=0;
+    else if (conf.video_bitrate>=(sizeof(modes)/sizeof(modes[0])))
+        conf.video_bitrate=sizeof(modes)/sizeof(modes[0])-1;
+
+    shooting_video_bitrate_change(conf.video_bitrate);
+
+    return modes[conf.video_bitrate];
 }
 
 //-------------------------------------------------------------------

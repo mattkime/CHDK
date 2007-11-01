@@ -206,8 +206,8 @@ void shooting_set_focus(int v) {
     lens_set_focus_pos(v);
 }
 
-void shooting_set_movie_hi_compression(int c) {
-#if !defined (CAMERA_a570)
-    movie_compression = (c)?1:0;	
-#endif
+void shooting_video_bitrate_change(int v){
+ int m[]={1,2,3,4,5,6,7,8,10,12};
+ if (v>=(sizeof(m)/sizeof(m[0]))) v=(sizeof(m)/sizeof(m[0]))-1;
+ change_video_tables(m[v],4);
 }

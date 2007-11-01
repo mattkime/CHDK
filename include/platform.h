@@ -176,7 +176,7 @@ int shooting_get_iso();
 void shooting_set_iso(int v);
 void shooting_set_iso_direct(int v);
 
-void shooting_set_movie_hi_compression(int c);
+void shooting_video_bitrate_change(int v);
 
 /******************************************************************/
 
@@ -192,7 +192,7 @@ void disable_shutdown();
 void enable_shutdown();
 void JogDial_CW(void);
 void JogDial_CCW(void);
-
+void change_video_tables(int a, int b);
 
 /******************************************************************/
 void __attribute__((noreturn)) shutdown();
