@@ -28,7 +28,7 @@ void *vid_get_viewport_live_fb()
 
 void *vid_get_bitmap_fb()
 {
-    return (void*)0x10361000;  
+    return (void*)0x10361000; 
 }
 
 void *vid_get_viewport_fb()
