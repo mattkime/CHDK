@@ -136,7 +136,7 @@ static CMenuItem misc_submenu_items[] = {
     {LANG_MENU_MISC_CALENDAR,           MENUITEM_PROC,    (int*)gui_draw_calendar },
     {LANG_MENU_MISC_TEXT_READER,        MENUITEM_SUBMENU, (int*)&reader_submenu },
     {LANG_MENU_MISC_GAMES,              MENUITEM_SUBMENU, (int*)&games_submenu },
-#if !defined(CAMERA_a710) && !defined(CAMERA_a700) && !defined(CAMERA_g7) && !defined(CAMERA_a570) && !defined (CAMERA_ixus700)
+#if !defined(CAMERA_a710) && !defined(CAMERA_a700) && !defined(CAMERA_g7) && !defined(CAMERA_a570) && !defined (CAMERA_ixus700) && !defined (CAMERA_ixus800)
     {LANG_MENU_MISC_FLASHLIGHT,         MENUITEM_BOOL,    &conf.flashlight },
 #endif
     {LANG_MENU_MISC_SHOW_SPLASH,        MENUITEM_BOOL,    &conf.splash_show },
@@ -758,7 +758,7 @@ void gui_kbd_process()
     
     switch (gui_mode) {
         case GUI_MODE_ALT:
-        #if !defined (CAMERA_ixus700)
+        #if !defined (CAMERA_ixus700) && !defined (CAMERA_ixus800)
             if (kbd_is_key_clicked(KEY_ERASE)) {
         #else
             if (kbd_is_key_clicked(KEY_DISPLAY)) {

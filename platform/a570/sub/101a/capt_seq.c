@@ -49,7 +49,7 @@ void __attribute__((naked,noinline)) sub_FFEABF94_my(long p)
                 "MOV     R4, R0\n"          
                 "SUB     SP, SP, #0xC\n"    
                 "BL      sub_FFEACA04\n"    
-                "MVN    R1, #0\n"          // origianlly 0xFFFFFFFF
+                "MVN     R1, #0\n"         
                 "BL      sub_FFEBD168\n"  
                 "MOV     R0, #0x8A\n"       
                 "ADD     R1, SP, #4\n"      
@@ -120,219 +120,143 @@ void __attribute__((naked,noinline)) sub_FFEA8E50_my(long p)
 
 void __attribute__((naked,noinline)) capt_seq_task()
 {
-	asm volatile (
-                "STMFD   SP!, {R4,LR}\n"    
-                "SUB     SP, SP, #4\n"      
-                "MOV     R4, SP\n"          
-                "B       loc_FFEA9360\n"    
-
-
-"loc_FFEA91F4:\n"                           
-                "LDR     R2, [SP]\n"        
-                "LDR     R3, [R2]\n"        
-                "MOV     R0, R2\n"          
-                "CMP     R3, #0x16\n"       
-                "LDRLS   PC, [PC,R3,LSL#2]\n" 
-                "B       loc_FFEA9334\n"    
-
-                ".long loc_FFEA9268\n"
-                ".long loc_FFEA9274\n"
-                ".long loc_FFEA927C\n"
-                ".long loc_FFEA9290\n"
-                ".long loc_FFEA9288\n"
-                ".long loc_FFEA9298\n"
-                ".long loc_FFEA92A0\n"
-                ".long loc_FFEA92AC\n"
-                ".long loc_FFEA92B4\n"
-                ".long loc_FFEA92C0\n"
-                ".long loc_FFEA92C8\n"
-                ".long loc_FFEA92D0\n"
-                ".long loc_FFEA92D8\n"
-                ".long loc_FFEA92E0\n"
-                ".long loc_FFEA92E8\n"
-                ".long loc_FFEA92F4\n"
-                ".long loc_FFEA92FC\n"
-                ".long loc_FFEA9304\n"
-                ".long loc_FFEA930C\n"
-                ".long loc_FFEA9318\n"
-                ".long loc_FFEA9324\n"
-                ".long loc_FFEA932C\n"
-                ".long loc_FFEA9348\n"
-
-
-"loc_FFEA9268:\n"                           
-                                        
-                "BL      sub_FFEA9958\n"    
-                "BL      sub_FFEA710C\n"    
-                "B       loc_FFEA9344\n"    
-
-
-"loc_FFEA9274:\n"                           
-                                        
-                "BL      sub_FFEA8E50_my\n"    
-                "B       loc_FFEA9344\n"    
-
-
-"loc_FFEA927C:\n"                           
-                                        
-                "MOV     R0, #1\n"          
-                "BL      sub_FFEA9B60\n"    
-                "B       loc_FFEA9344\n"    
-
-
-"loc_FFEA9288:\n"                           
-                                        
-                "BL      sub_FFEA94BC\n"    
-                "B       loc_FFEA9344\n"    
-
-
-"loc_FFEA9290:\n"                           
-                                        
-                "BL      sub_FFEA9924\n"    
-                "B       loc_FFEA9344\n"    
-
-
-"loc_FFEA9298:\n"                           
-                                        
-                "BL      sub_FFEA9934\n"    
-                "B       loc_FFEA9344\n"    
-
-
-"loc_FFEA92A0:\n"                           
-                                        
-                "BL      sub_FFEA9A50\n"    
-                "BL      sub_FFEA710C\n"    
-                "B       loc_FFEA9344\n"    
-
-
-"loc_FFEA92AC:\n"                           
-                                        
-                "BL      sub_FFEA8F34\n"    
-                "B       loc_FFEA9344\n"    
-
-
-"loc_FFEA92B4:\n"                           
-                                        
-                "BL      sub_FFEA9AC4\n"    
-                "BL      sub_FFEA710C\n"    
-                "B       loc_FFEA9344\n"    
-
-
-"loc_FFEA92C0:\n"                           
-                                        
-                "BL      sub_FFEA9924\n"    
-                "B       loc_FFEA9344\n"    
-
-
-"loc_FFEA92C8:\n"                           
-                                        
-                "BL      sub_FFEAB1CC\n"    
-                "B       loc_FFEA9344\n"    
-
-
-"loc_FFEA92D0:\n"                           
-                                        
-                "BL      sub_FFEAB3A0\n"    
-                "B       loc_FFEA9344\n"    
-
-
-"loc_FFEA92D8:\n"                           
-                                        
-                "BL      sub_FFEAB434\n"    
-                "B       loc_FFEA9344\n"    
-
-
-"loc_FFEA92E0:\n"                           
-                                        
-                "BL      sub_FFEAB530\n"    
-                "B       loc_FFEA9344\n"    
-
-
-"loc_FFEA92E8:\n"                           
-                                        
-                "MOV     R0, #0\n"          
-                "BL      sub_FFEAB79C\n"    
-                "B       loc_FFEA9344\n"    
-
-
-"loc_FFEA92F4:\n"                           
-                                        
-                "BL      sub_FFEAB970\n"    
-                "B       loc_FFEA9344\n"    
-
-
-"loc_FFEA92FC:\n"                           
-                                        
-                "BL      sub_FFEABA0c\n"    
-                "B       loc_FFEA9344\n"    
-
-
-"loc_FFEA9304:\n"                           
-                                        
-                "BL      sub_FFEABACC\n"    
-                "B       loc_FFEA9344\n"    
-
-
-"loc_FFEA930C:\n"                           
-                                        
-                "MOV     R0, #1\n"          
-                "BL      sub_FFEAB79C\n"    
-                "B       loc_FFEA9344\n"    
-
-
-"loc_FFEA9318:\n"                           
-                                        
-                "BL      sub_FFEA9CBC\n"    
-                "BL      sub_FFEA8D74\n"    
-                "B       loc_FFEA9344\n"    
-
-
-"loc_FFEA9324:\n"                           
-                                        
-                "BL      sub_FFEAB670\n"    
-                "B       loc_FFEA9344\n"    
-
-
-"loc_FFEA932C:\n"                           
-                                        
-                "BL      sub_FFEAB6CC\n"    
-                "B       loc_FFEA9344\n"    
-
-
-"loc_FFEA9334:\n"                           
-                "MOV     R1, #0x4C0\n"      
-                "LDR     R0, =0xFFEA8BD0\n" 
-                "ADD     R1, R1, #1\n"      
-                "BL      sub_FFECA824\n"     
-
-"loc_FFEA9344:\n"                           
-                                        
-                "LDR     R2, [SP]\n"        
-
-"loc_FFEA9348:\n"                           
-                                        
-                "LDR     R3, =0x7EEC0\n"    
-                "LDR     R1, [R2,#4]\n"     
-                "LDR     R0, [R3]\n"        
-                "BL      sub_FFEBCFCC\n"    
-                "LDR     R0, [SP]\n"        
-                "BL      sub_FFEA8C50\n"    
-
-"loc_FFEA9360:\n"                           
-                "LDR     R3, =0x7EEC4\n"    
-                "MOV     R1, R4\n"          
-                "LDR     R0, [R3]\n"        
-                "MOV     R2, #0\n"          
-                "BL      sub_FFEBD6E4\n" 
-                "TST     R0, #1\n"          
-                "BEQ     loc_FFEA91F4\n"    
-                "MOV     R1, #0x3F0\n"      
-                "LDR     R0, =0xFFEA8BD0\n" 
-                "ADD     R1, R1, #3\n"      
-                "BL      sub_FFECA824\n"     
-                "BL      sub_FFEBECA8\n"    
-                "ADD     SP, SP, #4\n"      
-                "LDMFD   SP!, {R4,PC}\n"    
-	);
+ asm volatile (
+                 "STMFD   SP!, {R4,LR}\n"
+                 "SUB     SP, SP, #4\n"
+                 "MOV     R4, SP\n"
+                 "B       loc_FFEA93D4\n"
+ "loc_FFEA9268:\n"
+                 "LDR     R2, [SP]\n"
+                 "LDR     R3, [R2]\n"
+                 "MOV     R0, R2\n"
+                 "CMP     R3, #0x16\n"
+                 "LDRLS   PC, [PC,R3,LSL#2]\n"
+                 "B       loc_FFEA93A8\n"
+                 ".long loc_FFEA92DC\n"
+                 ".long loc_FFEA92E8\n"
+                 ".long loc_FFEA92F0\n"
+                 ".long loc_FFEA9304\n"
+                 ".long loc_FFEA92FC\n"
+                 ".long loc_FFEA930C\n"
+                 ".long loc_FFEA9314\n"
+                 ".long loc_FFEA9320\n"
+                 ".long loc_FFEA9328\n"
+                 ".long loc_FFEA9334\n"
+                 ".long loc_FFEA933C\n"
+                 ".long loc_FFEA9344\n"
+                 ".long loc_FFEA934C\n"
+                 ".long loc_FFEA9354\n"
+                 ".long loc_FFEA935C\n"
+                 ".long loc_FFEA9368\n"
+                 ".long loc_FFEA9370\n"
+                 ".long loc_FFEA9378\n"
+                 ".long loc_FFEA9380\n"
+                 ".long loc_FFEA938C\n"
+                 ".long loc_FFEA9398\n"
+                 ".long loc_FFEA93A0\n"
+                 ".long loc_FFEA93BC\n"
+ "loc_FFEA92DC:\n"
+                 "BL      sub_FFEA9958\n"
+                 "BL      sub_FFEA710C\n"
+                 "B       loc_FFEA93B8\n"
+ "loc_FFEA92E8:\n"
+                 "BL      sub_FFEA8E50_my\n"
+                 "B       loc_FFEA93B8\n"
+ "loc_FFEA92F0:\n"
+                 "MOV     R0, #1\n"
+                 "BL      sub_FFEA9B60\n"
+                 "B       loc_FFEA93B8\n"
+ "loc_FFEA92FC:\n"
+                 "BL      sub_FFEA94BC\n"
+                 "B       loc_FFEA93B8\n"
+ "loc_FFEA9304:\n"
+                 "BL      sub_FFEA9924\n"
+                 "B       loc_FFEA93B8\n"
+ "loc_FFEA930C:\n"
+                 "BL      sub_FFEA9934\n"
+                 "B       loc_FFEA93B8\n"
+ "loc_FFEA9314:\n"
+                 "BL      sub_FFEA9A50\n"
+                 "BL      sub_FFEA710C\n"
+                 "B       loc_FFEA93B8\n"
+ "loc_FFEA9320:\n"
+                 "BL      sub_FFEA8F34\n"
+                 "B       loc_FFEA93B8\n"
+ "loc_FFEA9328:\n"
+                 "BL      sub_FFEA9AC4\n"
+                 "BL      sub_FFEA710C\n"
+                 "B       loc_FFEA93B8\n"
+ "loc_FFEA9334:\n"
+                 "BL      sub_FFEA9924\n"
+                 "B       loc_FFEA93B8\n"
+ "loc_FFEA933C:\n"
+                 "BL      sub_FFEAB1CC\n"
+                 "B       loc_FFEA93B8\n"
+ "loc_FFEA9344:\n"
+                 "BL      sub_FFEAB3A0\n"
+                 "B       loc_FFEA93B8\n"
+ "loc_FFEA934C:\n"
+                 "BL      sub_FFEAB434\n"
+                 "B       loc_FFEA93B8\n"
+ "loc_FFEA9354:\n"
+                 "BL      sub_FFEAB530\n"
+                 "B       loc_FFEA93B8\n"
+ "loc_FFEA935C:\n"
+                 "MOV     R0, #0\n"
+                 "BL      sub_FFEAB79C\n"
+                 "B       loc_FFEA93B8\n"
+ "loc_FFEA9368:\n"
+                 "BL      sub_FFEAB970\n"
+                 "B       loc_FFEA93B8\n"
+ "loc_FFEA9370:\n"
+                 "BL      sub_FFEABA0C\n"
+                 "B       loc_FFEA93B8\n"
+ "loc_FFEA9378:\n"
+                 "BL      sub_FFEABACC\n"
+                 "B       loc_FFEA93B8\n"
+ "loc_FFEA9380:\n"
+                 "MOV     R0, #1\n"
+                 "BL      sub_FFEAB79C\n"
+                 "B       loc_FFEA93B8\n"
+ "loc_FFEA938C:\n"
+                 "BL      sub_FFEA9CBC\n"
+                 "BL      sub_FFEA8D74\n"
+                 "B       loc_FFEA93B8\n"
+ "loc_FFEA9398:\n"
+                 "BL      sub_FFEAB670\n"
+                 "B       loc_FFEA93B8\n"
+ "loc_FFEA93A0:\n"
+                 "BL      sub_FFEAB6CC\n"
+                 "B       loc_FFEA93B8\n"
+ "loc_FFEA93A8:\n"
+                 "MOV     R1, #0x4C0\n"
+                 "LDR     R0, =0xFFEA8BD0\n"
+                 "ADD     R1, R1, #1\n"
+                 "BL      sub_FFECA824\n"
+ "loc_FFEA93B8:\n"
+                 "LDR     R2, [SP]\n"
+ "loc_FFEA93BC:\n"
+                 "LDR     R3, =0x7EEC0\n"
+                 "LDR     R1, [R2,#4]\n"
+                 "LDR     R0, [R3]\n"
+                 "BL      sub_FFEBCFCC\n"
+                 "LDR     R0, [SP]\n"
+                 "BL      sub_FFEA8C50\n"
+ "loc_FFEA93D4:\n"
+                 "LDR     R3, =0x7EEC4\n"
+                 "MOV     R1, R4\n"
+                 "LDR     R0, [R3]\n"
+                 "MOV     R2, #0\n"
+                 "BL      sub_FFEBD6E4\n"
+                 "TST     R0, #1\n"
+                 "BEQ     loc_FFEA9268\n"
+                 "MOV     R1, #0x3F0\n"
+                 "LDR     R0, =0xFFEA8BD0\n"
+                 "ADD     R1, R1, #3\n"
+                 "BL      sub_FFECA824\n"
+                 "BL      sub_FFEBECA8\n"
+                 "ADD     SP, SP, #4\n"
+                 "LDMFD   SP!, {R4,PC}\n"
+ );
 }
 

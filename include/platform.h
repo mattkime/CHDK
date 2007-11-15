@@ -45,6 +45,7 @@ MODE_SCN_SPORT          ,
 MODE_INDOOR             ,
 MODE_KIDS_PETS          ,
 MODE_NIGHT_SNAPSHOT     ,
+MODE_DIGITAL_MACRO      ,
 };
 
 #define MODE_SCREEN_MASK        0x0C00
