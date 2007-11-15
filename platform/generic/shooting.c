@@ -3,6 +3,9 @@
 #include "core.h"
 #include "keyboard.h"
 #include "math.h"
+#include "stdlib.h"
+#include "conf.h"
+
 
 #define SS_SIZE (sizeof(shutter_speeds_table)/sizeof(shutter_speeds_table[0]))
 #define SSID_MIN (shutter_speeds_table[0].id)
@@ -17,15 +20,17 @@
 #define ISO_MAX (iso_table[ISO_SIZE-1].id)
 
 #if defined(CAMERA_a570) 
- #define PROPCASE_TV       264
- #define PROPCASE_AV       26
- #define PROPCASE_ISO      149
- #define PROPCASE_SHOOTING 206
+ #define PROPCASE_TV		264
+ #define PROPCASE_CAMERA_TV	262
+ #define PROPCASE_AV		26
+ #define PROPCASE_ISO		149
+ #define PROPCASE_SHOOTING	206
 #else
- #define PROPCASE_TV       40
- #define PROPCASE_AV       39
- #define PROPCASE_ISO      21
- #define PROPCASE_SHOOTING 205
+ #define PROPCASE_TV		40
+ #define PROPCASE_CAMERA_TV	69
+ #define PROPCASE_AV		39
+ #define PROPCASE_ISO		21
+ #define PROPCASE_SHOOTING	205
 #endif
 
 int shooting_get_tv()
@@ -211,3 +216,36 @@ void shooting_video_bitrate_change(int v){
  if (v>=(sizeof(m)/sizeof(m[0]))) v=(sizeof(m)/sizeof(m[0]))-1;
  change_video_tables(m[v],4);
 }
+
+short int get_camera_tv(void){
+  short int vv;
+ _GetPropertyCase(PROPCASE_CAMERA_TV, &vv, sizeof(vv));
+ return vv;
+}
+
+void set_camera_tv(short int v){
+  short int vv=v;
+ _SetPropertyCase(PROPCASE_CAMERA_TV, &vv, sizeof(vv));
+}
+
+
+static short save_tv;
+static int shoot_counter;
+static short delta_tv, step_tv; 
+
+void tv_bracketing(int stage){
+ int m=mode_get()&MODE_MASK;
+ if (m==MODE_STITCH) return;
+ if (stage!=SHOOTING_PROGRESS_PROCESSING) { // first shoot
+  save_tv=get_camera_tv();
+  shoot_counter=1;
+  step_tv=32*conf.tv_bracketing;
+  delta_tv=step_tv;
+ }
+ else {
+  shoot_counter++;      // other shoots
+  if (shoot_counter&1) delta_tv+=step_tv;
+ }
+ set_camera_tv(shoot_counter&1 ? save_tv+delta_tv: save_tv-delta_tv);
+}
+

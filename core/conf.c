@@ -139,6 +139,7 @@ static const ConfInfo conf_info[] = {
     CONF_INFO( 98, conf.video_quality,          CONF_DEF_VALUE, i:84,NULL),
     CONF_INFO( 97, conf.video_mode,             CONF_DEF_VALUE, i:0, NULL),
     CONF_INFO( 96, conf.video_bitrate,          CONF_DEF_VALUE, i:3, conf_change_video_bitrate),
+    CONF_INFO( 95, conf.tv_bracketing,		CONF_DEF_VALUE, i:0, NULL),
 };
 #define CONF_NUM (sizeof(conf_info)/sizeof(conf_info[0]))
 

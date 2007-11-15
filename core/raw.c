@@ -25,6 +25,8 @@ int raw_savefile() {
         return 0;
     }
 
+    if (conf.tv_bracketing) tv_bracketing(state_shooting_progress);
+
     state_shooting_progress = SHOOTING_PROGRESS_PROCESSING;
 
     if (conf.save_raw) {

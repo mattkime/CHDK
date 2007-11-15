@@ -78,6 +78,7 @@ static const char* gui_alt_mode_button_enum(int change, int arg);
 static const char* gui_alt_power_enum(int change, int arg);
 static const char* gui_video_mode_enum(int change, int arg);
 static const char* gui_video_bitrate_enum(int change, int arg);
+static const char* gui_bracketing_enum(int change, int arg);
 
 // Menu callbacks
 //-------------------------------------------------------------------
@@ -133,6 +134,7 @@ static CMenu reader_submenu = { LANG_MENU_READ_TITLE, NULL, reader_submenu_items
 
 static CMenuItem misc_submenu_items[] = {
     {LANG_MENU_MISC_FILE_BROWSER,       MENUITEM_PROC,    (int*)gui_draw_fselect },
+    {(int)"Tv bracketing value",        MENUITEM_ENUM,    (int*)gui_bracketing_enum },
     {LANG_MENU_MISC_CALENDAR,           MENUITEM_PROC,    (int*)gui_draw_calendar },
     {LANG_MENU_MISC_TEXT_READER,        MENUITEM_SUBMENU, (int*)&reader_submenu },
     {LANG_MENU_MISC_GAMES,              MENUITEM_SUBMENU, (int*)&games_submenu },
@@ -552,6 +554,21 @@ const char* gui_video_bitrate_enum(int change, int arg) {
 
     return modes[conf.video_bitrate];
 }
+
+
+//-------------------------------------------------------------------
+const char* gui_bracketing_enum(int change, int arg) {
+    static const char* modes[]={ "Off", "1/3 EV","2/3 EV", "1 EV"};
+
+    conf.tv_bracketing+=change;
+    if (conf.tv_bracketing<0)
+        conf.tv_bracketing=0;
+    else if (conf.tv_bracketing>=(sizeof(modes)/sizeof(modes[0])))
+        conf.tv_bracketing=sizeof(modes)/sizeof(modes[0])-1;
+
+    return modes[conf.tv_bracketing]; 
+}
+
 
 //-------------------------------------------------------------------
 void gui_update_script_submenu() {

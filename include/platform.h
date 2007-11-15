@@ -179,6 +179,8 @@ void shooting_set_iso_direct(int v);
 
 void shooting_video_bitrate_change(int v);
 
+void tv_bracketing(int stage);
+
 /******************************************************************/
 
 int mode_get();
