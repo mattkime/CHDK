@@ -234,7 +234,7 @@ static int shoot_counter;
 static short delta_tv, step_tv; 
 
 void tv_bracketing(int stage){
- int m=mode_get()&MODE_MASK;
+ int m=mode_get()&MODE_SHOOTING_MASK;
  if (m==MODE_STITCH) return;
  if (stage!=SHOOTING_PROGRESS_PROCESSING) { // first shoot
   save_tv=get_camera_tv();
