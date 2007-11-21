@@ -7,7 +7,7 @@ CFLAGS+=-DLOW_LEVEL
 all: libplatformsub.a
 
 TARGET_PRIMARY = PRIMARY.BIN
-OBJS=boot.o stubs_min.o stubs_auto.o stubs_entry.o lib.o stubs_entry_2.o capt_seq.o movie_rec.o 
+OBJS=boot.o stubs_min.o stubs_auto.o stubs_entry.o lib.o stubs_entry_2.o capt_seq.o movie_rec.o
 
 libplatformsub.a: $(OBJS)
 
@@ -21,13 +21,21 @@ distclean: clean
 
 stubs_auto.S: boot.c capt_seq.c movie_rec.c
 	@echo $< \-\> $@
-# UNIX shell magick )
+ifeq ($(OSTYPE),Windows)
 	cat $^ | \
 	    grep 'BL\\?[[:space:]]*sub_[0-9A-Fa-f]' | \
 	    sed 's/.*sub_\\([0-9A-Fa-f]*\\).*/\\1/' | \
 	    $(SORT) | uniq | \
 	    awk 'BEGIN {print "/* THIS FILE IS GENERATED */\n#include \"stubs_asm.h\"\n"} \
 		{printf("STUB(%s)\n",$$1)}' > stubs_auto.S
+else	
+	cat $^ | \
+	    grep 'BL\?[[:space:]]*sub_[0-9A-Fa-f]' | \
+	    sed 's/.*sub_\([0-9A-Fa-f]*\).*/\1/' | \
+	    $(SORT) | uniq | \
+	    awk 'BEGIN {print "/* THIS FILE IS GENERATED */\n#include \"stubs_asm.h\"\n"} \
+		{printf("STUB(%s)\n",$$1)}' > stubs_auto.S
+endif
 
 stubs_entry.S: $(TARGET_PRIMARY) $(topdir)tools/signatures.h
 	@echo \-\> $@
