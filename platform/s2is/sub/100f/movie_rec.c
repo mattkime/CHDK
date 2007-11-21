@@ -250,6 +250,7 @@ void __attribute__((naked,noinline)) sub_FF9546EC_my(){
 "loc_FF954884:\n"                                     
                                                   
                 "ADD     SP, SP, #0x1C\n"             
+                "LDMFD   SP!, {R4-R8,PC}\n"
  );
 }
 
