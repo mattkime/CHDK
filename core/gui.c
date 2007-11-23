@@ -35,19 +35,13 @@
 //------------------------------------------------------------------
 // #define KEY_NONE (KEY_DUMMY+1)
 
-#if   defined (CAMERA_ixus700) 
+#if   defined(CAMERA_ixus700) || defined(CAMERA_ixus800) || defined(CAMERA_a560)
  #define SHORTCUT_TOGGLE_RAW      KEY_DISPLAY
  #define SHORTCUT_TOGGLE_HISTO    KEY_DOWN
  #define SHORTCUT_TOGGLE_ZEBRA    KEY_MENU
  #define SHORTCUT_TOGGLE_OSD      KEY_RIGHT
 
-#elif defined (CAMERA_ixus800)  
- #define SHORTCUT_TOGGLE_RAW      KEY_DISPLAY
- #define SHORTCUT_TOGGLE_HISTO    KEY_DOWN
- #define SHORTCUT_TOGGLE_ZEBRA    KEY_MENU
- #define SHORTCUT_TOGGLE_OSD      KEY_RIGHT
-
-#elif defined (CAMERA_g7)  
+#elif defined(CAMERA_g7)  
  #define SHORTCUT_TOGGLE_RAW      KEY_ERASE
  #define SHORTCUT_TOGGLE_HISTO    KEY_DOWN
  #define SHORTCUT_TOGGLE_ZEBRA    KEY_LEFT
@@ -170,11 +164,11 @@ static CMenuItem misc_submenu_items[] = {
     {LANG_MENU_MISC_CALENDAR,           MENUITEM_PROC,    (int*)gui_draw_calendar },
     {LANG_MENU_MISC_TEXT_READER,        MENUITEM_SUBMENU, (int*)&reader_submenu },
     {LANG_MENU_MISC_GAMES,              MENUITEM_SUBMENU, (int*)&games_submenu },
-#if !defined(CAMERA_a710) && !defined(CAMERA_a700) && !defined(CAMERA_g7) && !defined(CAMERA_a570) && !defined (CAMERA_ixus700) && !defined (CAMERA_ixus800)
+#if !defined(CAMERA_a710) && !defined(CAMERA_a700) && !defined(CAMERA_g7) && !defined(CAMERA_a570) && !defined (CAMERA_ixus700) && !defined (CAMERA_ixus800) && !defined (CAMERA_a560)
     {LANG_MENU_MISC_FLASHLIGHT,         MENUITEM_BOOL,    &conf.flashlight },
 #endif
     {LANG_MENU_MISC_SHOW_SPLASH,        MENUITEM_BOOL,    &conf.splash_show },
-#if !defined(CAMERA_g7) && !defined (CAMERA_ixus700) && !defined (CAMERA_ixus800)
+#if !defined(CAMERA_g7) && !defined (CAMERA_ixus700) && !defined (CAMERA_ixus800) && !defined (CAMERA_a560)
     {LANG_MENU_MISC_ZOOM_FOR_MF,        MENUITEM_BOOL,    &conf.use_zoom_mf },
 #endif
 #if defined(CAMERA_s2is) || defined(CAMERA_s3is)

@@ -1,0 +1,8 @@
+#include "stubs_asm.h"
+
+DEF(physw_status, 0x54238)
+DEF(physw_run, 0x7D20)
+
+DEF(zoom_busy, 0x7DC54)
+DEF(focus_busy, 0x7D3B8)  //  maybe wrong, it can be tested later
+DEF(playrec_mode, 0xC2C0)

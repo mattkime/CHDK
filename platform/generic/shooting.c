@@ -19,7 +19,7 @@
 #define ISO_MIN (iso_table[0].id)
 #define ISO_MAX (iso_table[ISO_SIZE-1].id)
 
-#if defined(CAMERA_a570) 
+#if defined(CAMERA_a570) || defined(CAMERA_a560)
  #define PROPCASE_TV		264
  #define PROPCASE_CAMERA_TV	262
  #define PROPCASE_AV		26
