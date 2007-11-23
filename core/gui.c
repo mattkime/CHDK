@@ -31,6 +31,36 @@
 #define OPTIONS_AUTOSAVE
 #define SPLASH_TIME               20
 
+//shortcuts
+//------------------------------------------------------------------
+// #define KEY_NONE (KEY_DUMMY+1)
+
+#if   defined (CAMERA_ixus700) 
+ #define SHORTCUT_TOGGLE_RAW      KEY_DISPLAY
+ #define SHORTCUT_TOGGLE_HISTO    KEY_DOWN
+ #define SHORTCUT_TOGGLE_ZEBRA    KEY_MENU
+ #define SHORTCUT_TOGGLE_OSD      KEY_RIGHT
+
+#elif defined (CAMERA_ixus800)  
+ #define SHORTCUT_TOGGLE_RAW      KEY_DISPLAY
+ #define SHORTCUT_TOGGLE_HISTO    KEY_DOWN
+ #define SHORTCUT_TOGGLE_ZEBRA    KEY_MENU
+ #define SHORTCUT_TOGGLE_OSD      KEY_RIGHT
+
+#elif defined (CAMERA_g7)  
+ #define SHORTCUT_TOGGLE_RAW      KEY_ERASE
+ #define SHORTCUT_TOGGLE_HISTO    KEY_DOWN
+ #define SHORTCUT_TOGGLE_ZEBRA    KEY_LEFT
+ #define SHORTCUT_TOGGLE_OSD      KEY_RIGHT
+
+#else
+ #define SHORTCUT_TOGGLE_RAW      KEY_ERASE
+ #define SHORTCUT_TOGGLE_HISTO    KEY_UP
+ #define SHORTCUT_TOGGLE_ZEBRA    KEY_LEFT
+ #define SHORTCUT_TOGGLE_OSD      KEY_RIGHT
+#endif
+
+
 // forward declarations
 //-------------------------------------------------------------------
 extern void dump_memory();
@@ -79,6 +109,7 @@ static const char* gui_alt_power_enum(int change, int arg);
 static const char* gui_video_mode_enum(int change, int arg);
 static const char* gui_video_bitrate_enum(int change, int arg);
 static const char* gui_bracketing_enum(int change, int arg);
+static const char* gui_tv_enum(int change, int arg);
 
 // Menu callbacks
 //-------------------------------------------------------------------
@@ -135,6 +166,7 @@ static CMenu reader_submenu = { LANG_MENU_READ_TITLE, NULL, reader_submenu_items
 static CMenuItem misc_submenu_items[] = {
     {LANG_MENU_MISC_FILE_BROWSER,       MENUITEM_PROC,    (int*)gui_draw_fselect },
     {(int)"Tv bracketing value",        MENUITEM_ENUM,    (int*)gui_bracketing_enum },
+    {(int)"Override shutter speed ",    MENUITEM_ENUM,    (int*)gui_tv_enum },
     {LANG_MENU_MISC_CALENDAR,           MENUITEM_PROC,    (int*)gui_draw_calendar },
     {LANG_MENU_MISC_TEXT_READER,        MENUITEM_SUBMENU, (int*)&reader_submenu },
     {LANG_MENU_MISC_GAMES,              MENUITEM_SUBMENU, (int*)&games_submenu },
@@ -142,7 +174,7 @@ static CMenuItem misc_submenu_items[] = {
     {LANG_MENU_MISC_FLASHLIGHT,         MENUITEM_BOOL,    &conf.flashlight },
 #endif
     {LANG_MENU_MISC_SHOW_SPLASH,        MENUITEM_BOOL,    &conf.splash_show },
-#if !defined(CAMERA_g7) && !defined (CAMERA_ixus700)
+#if !defined(CAMERA_g7) && !defined (CAMERA_ixus700) && !defined (CAMERA_ixus800)
     {LANG_MENU_MISC_ZOOM_FOR_MF,        MENUITEM_BOOL,    &conf.use_zoom_mf },
 #endif
 #if defined(CAMERA_s2is) || defined(CAMERA_s3is)
@@ -569,6 +601,18 @@ const char* gui_bracketing_enum(int change, int arg) {
     return modes[conf.tv_bracketing]; 
 }
 
+//-------------------------------------------------------------------
+const char* gui_tv_enum(int change, int arg) {
+    static const char* modes[]={ "Off", "20\"","25\"", "30\"", "40\"", "50\"", "65\""};
+
+    conf.tv_override+=change;
+    if (conf.tv_override<0)
+        conf.tv_override=0;
+    else if (conf.tv_override>=(sizeof(modes)/sizeof(modes[0])))
+        conf.tv_override=sizeof(modes)/sizeof(modes[0])-1;
+
+    return modes[conf.tv_override]; 
+}
 
 //-------------------------------------------------------------------
 void gui_update_script_submenu() {
@@ -775,11 +819,7 @@ void gui_kbd_process()
     
     switch (gui_mode) {
         case GUI_MODE_ALT:
-        #if !defined (CAMERA_ixus700) && !defined (CAMERA_ixus800)
-            if (kbd_is_key_clicked(KEY_ERASE)) {
-        #else
-            if (kbd_is_key_clicked(KEY_DISPLAY)) {
-        #endif
+            if (kbd_is_key_clicked(SHORTCUT_TOGGLE_RAW)) {
                 if (conf.ns_enable_memdump) {
                     dump_memory();
                 } else {
@@ -888,8 +928,7 @@ void gui_draw_osd() {
     }
 
     if (kbd_is_key_pressed(KEY_SHOOT_HALF)) {
-        if (kbd_is_key_pressed(KEY_LEFT)) {
-        #if !defined (CAMERA_ixus700)
+        if (kbd_is_key_pressed(SHORTCUT_TOGGLE_ZEBRA)) {
             if (!pressed) {
                 conf.zebra_draw = !conf.zebra_draw;
                 if (zebra && !conf.zebra_draw) {
@@ -898,14 +937,8 @@ void gui_draw_osd() {
                 }
                 pressed = 1;
             }
-        #endif
         }
-     #if defined (CAMERA_g7) || defined (CAMERA_ixus700)
-         else if (kbd_is_key_pressed(KEY_DOWN)) {
-     #else
-         else if (kbd_is_key_pressed(KEY_UP)) {
-     #endif
-
+         else if (kbd_is_key_pressed(SHORTCUT_TOGGLE_HISTO)) {
             if (!pressed) {
                 conf.show_histo = !conf.show_histo;
                 if (!conf.show_histo) {
@@ -913,7 +946,7 @@ void gui_draw_osd() {
                 }
                 pressed = 1;
             }
-        } else if (kbd_is_key_pressed(KEY_RIGHT)) {
+        } else if (kbd_is_key_pressed(SHORTCUT_TOGGLE_OSD)) {
             if (!pressed) {
                 conf.show_osd = !conf.show_osd;
                 if (!conf.show_osd) {
@@ -985,7 +1018,7 @@ void gui_draw_osd() {
         gui_osd_draw_clock();
     }
 
-#if defined (CAMERA_ixus700)
+#if defined (CAMERA_ixus700) || defined (CAMERA_ixus800)
     if (gui_mode==GUI_MODE_NONE && kbd_is_key_pressed(KEY_SHOOT_HALF) && ((m&MODE_MASK)==MODE_REC)&&((m&MODE_SHOOTING_MASK))!=MODE_VIDEO_STD) {    
      strcpy(osd_buf,shooting_get_tv_str());
      strcat(osd_buf,"\"  ");

@@ -196,6 +196,7 @@ void enable_shutdown();
 void JogDial_CW(void);
 void JogDial_CCW(void);
 void change_video_tables(int a, int b);
+void set_camera_tv(short int v);
 
 /******************************************************************/
 void __attribute__((noreturn)) shutdown();

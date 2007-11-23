@@ -3,7 +3,7 @@
 #include "platform.h"
 
 const ApertureSize aperture_sizes_table[] = {
-    {  9, 283, "2.8" },
+    {  9, 288, "2.8" },
     { 10, 320, "3.2" },
     { 11, 352, "3.5" },
     { 12, 384, "4.0" },
@@ -13,6 +13,7 @@ const ApertureSize aperture_sizes_table[] = {
     { 16, 512, "6.3" },
     { 17, 544, "7.1" },
     { 18, 576, "8.0" },
+    
 };
 
 const ShutterSpeed shutter_speeds_table[] = {
@@ -97,3 +98,28 @@ long get_target_dir_num() {
 }
 
 int circle_of_confusion = 5;
+
+char* shooting_get_tv_str()
+{
+    short int tvv;
+    long i;
+    _GetPropertyCase(69, &tvv, sizeof(tvv));
+    for (i=0;i<SS_SIZE;i++){
+	if (shutter_speeds_table[i].prop_id >= tvv)
+	    return (char*)shutter_speeds_table[i].name;
+    }
+    return (void*)"?";
+}
+
+char* shooting_get_av_str()
+{
+    short int avv;
+    long i;
+    _GetPropertyCase(68, &avv, sizeof(avv));
+    for (i=0;i<AS_SIZE;i++){
+	if (aperture_sizes_table[i].prop_id == avv)
+	    return (char*)aperture_sizes_table[i].name;
+    }
+    return (char*) "?";
+}
+

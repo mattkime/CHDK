@@ -97,6 +97,7 @@ typedef struct {
     int video_quality;
     int video_bitrate;  
     int tv_bracketing;
+    int tv_override;
 
     int ns_enable_memdump;
 } Conf;
