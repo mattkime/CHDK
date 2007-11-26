@@ -95,10 +95,12 @@ long __attribute__((naked,noinline)) wrap_kbd_p1_f()
 }
 
 #if FEATURE_FEATHER
-extern int * touch_keys_angle;
+extern int touch_keys_angle;
 extern int * touch_keys_sema;
 int touch_keys_sema_stored;
 #endif
+
+#define IN(base, value) ((value < base + 20) && (value > base - 20))
 
 /**
  * Handles and forwards key settings to key processing routines
@@ -113,6 +115,38 @@ void hook_kbd_handle_keys()
     kbd_new_state[1] = physw_status[1];
     kbd_new_state[2] = physw_status[2];
 
+/*
+    int key_emu = 0;
+    int canonkey = 0;
+    int i;
+
+    if (IN(250, touch_keys_angle)) {
+        key_emu = KEY_RIGHT;
+    }
+    if (IN(450, touch_keys_angle)) {
+        key_emu = KEY_DOWN;
+    }
+    if (IN(675, touch_keys_angle)) {
+        key_emu = KEY_LEFT;
+    }
+    if (IN(870, touch_keys_angle)) {
+        key_emu = KEY_UP;
+    }
+    
+    if (key_emu != 0) {
+        for (i=0; keymap[i].hackkey; i++){
+            if (keymap[i].hackkey == key_emu) {
+                canonkey = keymap[i].canonkey;
+                break;;
+            }
+        }
+    }
+
+    if (canonkey != 0) {
+        kbd_new_state[2] = kbd_new_state[2] & ~canonkey;
+    }
+*/
+    
     if (kbd_process() == 0){
         // leave it ...
 #if FEATURE_FEATHER
@@ -230,7 +264,7 @@ long kbd_get_autoclicked_key() {
     } else {
         if (last_kbd_key && kbd_is_key_pressed(last_kbd_key)) {
             t = get_tick_count();
-            if (t-last_kbd_time>((press_count)?175:500)) {
+            if (t-last_kbd_time > ( press_count ? KBD_REPEAT_DELAY : KBD_INITIAL_DELAY) ) {
                 ++press_count;
                 last_kbd_time = t;
                 return last_kbd_key;

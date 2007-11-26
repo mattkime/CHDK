@@ -43,12 +43,17 @@ void boot()
 	"MCR     p15, 0, R0,c1,c0\n"
     :::"r0");
 #endif
+	int * data = (int*)0x170000;
+	for (i = 0; i < 30*1024*1024/4; i++) {
+	  data[i] = 0xCAFEDEAD;
+	}
 
     for(i=0;i<canon_data_len/4;i++)
 	canon_data_dst[i]=canon_data_src[i];
 
     for(i=0;i<canon_bss_len/4;i++)
 	canon_bss_start[i]=0;
+
 
 #if 1
     asm volatile (

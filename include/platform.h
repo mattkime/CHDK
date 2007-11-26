@@ -44,6 +44,9 @@
 #define LED_PR   0xc0220084
 #define LED_RED  0xc0220088
 
+/* Keyboard repeat and initial delays */
+#define KBD_REPEAT_DELAY  140
+#define KBD_INITIAL_DELAY 300
 
 #if 0
   
