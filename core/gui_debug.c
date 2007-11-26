@@ -5,6 +5,7 @@
 #include "gui.h"
 #include "gui_draw.h"
 #include "gui_debug.h"
+#include <coproc.h>
 
 //-------------------------------------------------------------------
 static void *addr;
@@ -58,217 +59,10 @@ void debug_dump_information() {
     finished();
 }
 
-#define MRC(reg, p, c1, c2, op1, op2)  \
-    do{  \
-    asm volatile   \
-    (  \
-        "MRC     " #p ", " #op1 ", r0, " #c1 "," #c2 "," #op2 "\n"        \
-        "STR     r0, [%0]"  \
-        :: "r"(&(reg)) : "r0"  \
-    );   \
-    }while(0)
-
-
-#define MCR(reg, p, c1, c2, op1, op2)  \
-    do{  \
-    int data = (reg); \
-    asm volatile   \
-    (  \
-        "LDR     r0, [%0]\n"  \
-        "MCR     " #p ", " #op1 ", r0, " #c1 "," #c2 "," #op2 "\n"        \
-        :: "r"(&data) : "r0"  \
-    );   \
-    }while(0)
-
-
-int prefetch_count = 0;
-
-void prefetch_abort_action()
-{
-    prefetch_count++;
-}
-
-void __attribute((naked)) prefetch_abort_handler()
-{
-    asm volatile
-    (
-        "STMDB	 sp!, {r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, lr}\n"
-        "BL      prefetch_abort_action\n"
-        "LDMIA	 sp!, {r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, lr}\n"
-        "SUBS    PC, R14, #4\n" // Retries the instruction!
-
-//        "LDR     pc, vxworks_prefetch_abort_handler\n"
-
-        // vxWorks original handler stored here
-        ".GLOBL  vxworks_prefetch_abort_handler;\n"
-        "vxworks_prefetch_abort_handler:;\n"
-        "MOV     R0, R0\n"
-    
-    );
-}
-
-
-
-
-void task_spywriter()
-{
-    int i;
-
-    msleep(1000);
-
-    started();
-    
-    FILE *fd = fopen("A/rom.dat", "w");
-    for(i = 0; i < 0x400000; i += 0x1000){
-      fwrite((void*)(0xFF800000+i), 0x1000, 1, fd);
-    }
-    fclose(fd);
-
-    fd = fopen("A/boot.dat", "w");
-    for(i = 0; i < 0x10000; i += 0x1000){
-      fwrite((void*)(0xFFFF0000+i), 0x1000, 1, fd);
-    }
-    fclose(fd);
-
-    finished();
-
-    while(1){
-       msleep(100);
-    };
-}
-
-int data_count = 0;
-
-/**
- * Action to be executed in super mode
- */
-int data_abort_action(int sp)
-{
-    if (data_count == 0) {
-      int creg = 0;
-//      MRC(creg, p15, c1, c0, 0, 0);
-//      MCR(creg & ~1, p15, c1, c0, 0, 0);
-      data_count++;
-      // abort_retval == 1 - perform user-mode action
-      return 1;
-    }
-
-    data_count++;
-
-    // abort_retval == 0 - perform no post action
-    return 0;
-
-}
-
-/**
- * Action to be executed in user mode
- */
-void data_abort_action_usermode(int abort_retval)
-{
-    // Execute it only if data_abort_action returns TRUE
-    if (abort_retval) {
-//        CreateTask("SpyWriter", 0x19, 0x4000, task_spywriter, 0);
-    }
-}
-
-void __attribute((naked)) data_abort_handler()
-{
-    asm volatile
-    (
-
-        "STMDB	 sp!, {r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, lr}\n"
-        
-        // Store the instruction to reexecute
-        "LDR     R0, [R14, #-8]\n"
-        "STR     R0, reexecute\n"
-
-        // Trying to reset the cache
-        // WARNING: ARM946ES specific!!!
-        "MOV     R0, #0\n"
-        "MCR     p15, 0, r0, c7, c5, 0\n"
-
-        // execute our supervisor-side action
-        "MOV     R0, SP\n"
-        "BL      data_abort_action\n"
-        "STR     R0, abort_retval\n"
-
-        "LDMIA	 sp!, {r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, lr}\n"
-
-        // save real return address - after the data access instruction
-        "SUB     R14, R14, #4\n"
-        "STR     R14, retlabel\n"
-        "ADD     R14, R14, #4\n"
-
-        // return from abort mode
-        "SUBS    PC, PC, #-4\n"
-        "MOV     R0, R0\n"
-        "MOV     R0, R0\n"
-        "MOV     R0, R0\n"
-        "MOV     R0, R0\n"
-
-        // execute our user-side action
-        "STMDB	 sp!, {r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, lr}\n"
-        "LDR     R0, abort_retval\n"
-        "BL      data_abort_action_usermode\n"
-        "LDMIA	 sp!, {r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, lr}\n"
-
-
-        // Disable PU
-        "STMDB	 sp!, {r0}\n"
-        "MRC     p15, 0, r0, c1, c0, 0\n"
-        "BIC     r0, #1\n"
-        "MCR     p15, 0, r0, c1, c0, 0\n"
-        "LDMIA	 sp!, {r0}\n"
-
-        // Instruction to be re-executed, but with disabled Protection Unit!
-        ".GLOBL  reexecute;\n"
-        "reexecute:;\n"
-        "MOV     R0, R0\n"
-
-        // Enable PU back
-        "STMDB	 sp!, {r0}\n"
-        "MRC     p15, 0, r0, c1, c0, 0\n"
-        "ORR     r0, #1\n"
-        "MCR     p15, 0, r0, c1, c0, 0\n"
-        "LDMIA	 sp!, {r0}\n"
-
-
-        // jump back to saved return address
-        "LDR     PC, retlabel\n"
-
-        ///////////////// Variables //////////////////
-
-        // location to store return addrress
-        "retlabel:;\n"
-        "MOV     R0, R0\n"
-
-        // stored return value of the abort action handler
-        "abort_retval:;\n"
-        "MOV     R0, R0\n"
-
-        // vxWorks original handler stored here
-        ".GLOBL  vxworks_data_abort_handler;\n"
-        "vxworks_data_abort_handler:;\n"
-        "MOV     R0, R0\n"
-
-//        "LDR     PC, vxworks_data_abort_handler\n" // Jump to VxWorks handler
-//        "SUBS    PC, R14, #8\n"    // Retries the instruction!
-//        "SUBS    PC, R14, #4\n"    // Moves to the next instruction!    
-    );
-
-}
-
-#define PREFETCH_HANDLER ((int*)0x108)
-#define DATA_HANDLER     ((int*)0x10C)
-
-extern int vxworks_prefetch_abort_handler;
-extern int vxworks_data_abort_handler;
-
-extern int reexecute;
 
 void debug_dump_arm()
 {
-    int creg = 0, creg_dis = 0;
+    int creg, creg_dis = 0;
     int banks[8] = {0};
     int accperm_data = 0;
     int accperm_code = 0;
@@ -280,27 +74,6 @@ void debug_dump_arm()
 
     if (!fd) return;
 
-    // Changing abort handlers: 0x0C and 0x10 (prefetch and data aborts)
-//    vxworks_prefetch_abort_handler = *PREFETCH_HANDLER;
-//    *PREFETCH_HANDLER = (int)prefetch_abort_handler;
-    vxworks_data_abort_handler = *DATA_HANDLER;
-    *DATA_HANDLER = (int)data_abort_handler;
-
-    
-    // Disable Memory Protection Unit
-    MRC(creg, p15, c1, c0, 0, 0);
-    MCR(creg & ~1, p15, c1, c0, 0, 0);
-    
-    // Add new memory bank to control //0x700000  0xb
-    MCR( (0x2000) + (0xb<<1) + 1, p15, c6, c6, 0, 0);
-    MRC(accperm_data, p15, c5, c0, 0, 2);
-    MCR((accperm_data & 0x00FFFFFF) + 0x06000000, p15, c5, c0, 0, 2);
-    MRC(accperm_data, p15, c5, c0, 0, 3);
-    MCR((accperm_data & 0x00FFFFFF) + 0x06000000, p15, c5, c0, 0, 3);
-
-    // ReEnable Memory Protection Unit
-    MRC(creg_dis, p15, c1, c0, 0, 0);
-    MCR(creg_dis | 1, p15, c1, c0, 0, 0);
     // Reread it
     MRC(creg, p15, c1, c0, 0, 0);
 
@@ -316,7 +89,6 @@ void debug_dump_arm()
     MRC(accperm_data, p15, c5, c0, 0, 2);
     MRC(accperm_code, p15, c5, c0, 0, 3);
 
-    fprintf(fd, "Control register dis: %x\n", creg_dis);
     fprintf(fd, "Control register: %x\n", creg);
 
     asm volatile
@@ -336,9 +108,6 @@ void debug_dump_arm()
                 banks[i]&~4095, 4 * (1 << size - 0xB ), banks[i]&1,  (accperm_code>>i*4)&7, (accperm_data>>i*4)&7 );
     }
 
-    fprintf(fd, "Abort Prefetch handler: %x\n", *(int*)prefetch_abort_handler);
-    fprintf(fd, "Abort Data handler: %x\n", *(int*)data_abort_handler);
-    
     fprintf(fd, "Interrupt vectors: \n");
 
     for (i = 0; i < 8; i++) {
@@ -358,9 +127,9 @@ void debug_dump_arm()
 
     msleep(1000);
 
-    if ( *((int*)0x700000) == 0x100 ) data_count += 0x100;
-    if ( *((int*)0x700100) == 0x200 ) data_count += 0x100;
-    if ( *((int*)0x700200) == 0x300 ) data_count += 0x100;
+    //if ( *((int*)0x700000) == 0x100 ) data_count += 0x100;
+    //if ( *((int*)0x700100) == 0x200 ) data_count += 0x100;
+    //if ( *((int*)0x700200) == 0x300 ) data_count += 0x100;
 
     // data_count should be 0x303 here!!!
 

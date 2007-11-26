@@ -132,7 +132,7 @@ static CMenuItem misc_submenu_items[] = {
     {LANG_MENU_MISC_CALENDAR,           MENUITEM_PROC,    (int*)gui_draw_calendar },
     {LANG_MENU_MISC_TEXT_READER,        MENUITEM_SUBMENU, (int*)&reader_submenu },
     {LANG_MENU_MISC_GAMES,              MENUITEM_SUBMENU, (int*)&games_submenu },
-#if !defined(CAMERA_a710) && !defined(CAMERA_a700)
+#if !defined(CAMERA_a710) && !defined(CAMERA_a700) && !defined(CAMERA_ixus65)
     {LANG_MENU_MISC_FLASHLIGHT,         MENUITEM_BOOL,    &conf.flashlight },
 #endif
     {LANG_MENU_MISC_SHOW_SPLASH,        MENUITEM_BOOL,    &conf.splash_show },
@@ -834,13 +834,14 @@ extern long kbd_new_state[3];
 extern long kbd_prev_state[3];
 extern long kbd_mod_state;
 extern long debug_kbd_state_diff;
+extern int touch_keys_angle;
 
 long *a = (long*)0xe778;
 long *b = (long*)0xe788;
 long *c = (long*)0xe7D8;
 
-#define PREFETCH_HANDLER ((int*)0x108)
-#define DATA_HANDLER     ((int*)0x10C)
+//#define PREFETCH_HANDLER ((int*)0x108)
+//#define DATA_HANDLER     ((int*)0x10C)
 
 void gui_draw_debug_values() {
     if (debug_vals_show)
@@ -855,11 +856,11 @@ void gui_draw_debug_values() {
 	sprintf(osd_buf, PhyswStatus_fmt, "GpioSt", GpioStatus[2], GpioStatus[1], GpioStatus[0]);
 	draw_txt_string(1, 1, osd_buf, conf.osd_color);
 
-	sprintf(osd_buf, "new:%8x  ", kbd_new_state[2]);
+	sprintf(osd_buf, "touch_keys_angle:%d", touch_keys_angle);
 	draw_txt_string(1, 2, osd_buf, conf.osd_color);
 	
-	sprintf(osd_buf, "abort: (%08x,%08x) = (%x %x)", *PREFETCH_HANDLER, *DATA_HANDLER, prefetch_count, data_count);
-	draw_txt_string(1, 3, osd_buf, conf.osd_color);
+//	sprintf(osd_buf, "abort: (%08x,%08x) = (%x %x)", *PREFETCH_HANDLER, *DATA_HANDLER, prefetch_count, data_count);
+//	draw_txt_string(1, 3, osd_buf, conf.osd_color);
 
 /*
 	sprintf(osd_buf, PhyswStatus_fmt, "a", a[2], a[1], a[0]);
