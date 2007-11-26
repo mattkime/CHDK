@@ -47,7 +47,7 @@ ifndef OSTYPE
     SH = sh
     DEVNULL = NUL
     SORT = $(dir $(shell which uniq.exe | sed s/\\\\/\\\//g))/sort.exe
-    GCC_DIR=D:/projects/canon-hdk/gcc_env
+    GCC_DIR=$(topdir)/../gcc_env
   else
     ifeq ($(HOSTPLATFORM),Linux)
       OSTYPE = Linux
@@ -72,7 +72,7 @@ else
   SH = 
   DEVNULL = /dev/null
   SORT = sort
-  GCC_DIR=$(topdir)/../../gcc_env
+  GCC_DIR=$(topdir)/../gcc_env
 endif
 
 ##########################################################################
