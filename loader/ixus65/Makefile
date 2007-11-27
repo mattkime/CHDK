@@ -12,9 +12,11 @@ CPPFLAGS+=-I.
 
 CORE_FILE=$(topdir)core/main.bin
 RESET_FILE=$(curdir)resetcode/main.bin
+UDUMPER_FILE=$(topdir)loader/udumper/main.bin
 
 CPPFLAGS+=-DCORE_FILE=\"$(CORE_FILE)\"
 CPPFLAGS+=-DRESET_FILE=\"$(RESET_FILE)\"
+CPPFLAGS+=-DUDUMPER_FILE=\"$(UDUMPER_FILE)\"
 
 all: all-recursive main.bin
 
@@ -37,6 +39,6 @@ distclean: distclean-recursive
 	rm -f $(OBJS) main.bin main.elf main.dump main.elf.syms
 	rm -f reboot_core.h copy_and_reset.h
 
-blobs.o: $(RESET_FILE) $(CORE_FILE)
+blobs.o: $(RESET_FILE) $(CORE_FILE) $(UDUMPER_FILE)
 
 include $(topdir)bottom.inc

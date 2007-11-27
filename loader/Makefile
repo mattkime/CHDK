@@ -1,7 +1,7 @@
 topdir=../
 include $(topdir)makefile.inc
 
-SUBDIRS=$(PLATFORM)
+SUBDIRS=udumper $(PLATFORM)
 
 all: all-recursive
 

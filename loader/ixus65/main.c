@@ -21,10 +21,12 @@ static void __attribute__((noreturn)) shutdown();
 static void __attribute__((noreturn)) panic(int cnt);
 
 extern long *blob_chdk_core;
-extern long *blob_copy_and_reset;
 extern long blob_chdk_core_size;
+extern long *blob_copy_and_reset;
 extern long blob_copy_and_reset_size;
 
+extern long *blob_udumper;
+extern long blob_udumper_size;
 
 
 void __attribute__((noreturn)) my_restart() 
@@ -39,7 +41,11 @@ void __attribute__((noreturn)) my_restart()
     port_on(LED_AF);
     
     copy_and_restart = (void*)RESTARTSTART;
-    copy_and_restart((void*)MEMISOSTART, (char*)blob_chdk_core, blob_chdk_core_size);
+    
+    //copy_and_restart((void*)MEMISOSTART, (char*)blob_chdk_core, blob_chdk_core_size);
+
+    // copying universal dumper code to upper RAM addresses (framebuffer) and jump on it
+    copy_and_restart((void*)0x1400000, (char*)blob_udumper, blob_udumper_size);
     
     port_off(LED_AF);
 }
