@@ -51,3 +51,7 @@ void debug_led(int state)
     else
         led_off(LED_BLUE);
 }
+
+int get_flash_params_count(void){
+ return 83;
+}

@@ -5,4 +5,5 @@ DEF(physw_run, 0x1FAC)
 
 DEF(zoom_busy, 0x79D2C)
 DEF(focus_busy, 0x7A04C)
-DEF(movie_compression, 0x6138)
+
+DEF(FlashParamsTable,0xFF974740)

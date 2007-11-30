@@ -28,3 +28,7 @@ void debug_led(int state)
 	p[0]=0x44;
 }
 
+
+int get_flash_params_count(void){
+ return 111;
+}

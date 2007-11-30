@@ -189,6 +189,7 @@ static CMenu misc_submenu = { LANG_MENU_MISC_TITLE, NULL, misc_submenu_items };
 
 static CMenuItem debug_submenu_items[] = {
     {LANG_MENU_DEBUG_SHOW_PROPCASES,    MENUITEM_BOOL,          &debug_propcase_show },
+    {(int)"Show parameter data",        MENUITEM_BOOL,          &debug_pardata_show },
     {LANG_MENU_DEBUG_PROPCASE_PAGE,     MENUITEM_INT|MENUITEM_F_UNSIGNED|MENUITEM_F_MINMAX,   &debug_propcase_page, MENU_MINMAX(0, 128) },
     {LANG_MENU_DEBUG_SHOW_MISC_VALS,    MENUITEM_BOOL,          &debug_vals_show },
     {LANG_MENU_DEBUG_MEMORY_BROWSER,    MENUITEM_PROC,          (int*)gui_draw_debug },
@@ -1036,9 +1037,10 @@ void gui_draw_osd() {
 	draw_txt_string(28, 13, osd_buf, conf.osd_color);
     }
 
+   {
+    static char sbuf[100];
+    int r,i, p, len;
     if (debug_propcase_show){
-	static char sbuf[100];
-	int r,i, p;
 
 	for (i=0;i<10;i++){
 	    r = 0;
@@ -1048,6 +1050,33 @@ void gui_draw_osd() {
 	    draw_string(64,16+16*i,sbuf, conf.osd_color);
 	}
     }
+
+    if (debug_pardata_show){
+        extern long* FlashParamsTable[]; 
+	char s[30];
+	int count;
+
+	for (i=0;i<10;i++){
+	    r = 0;
+	    p = debug_propcase_page*10+i;
+	    if (p>=get_flash_params_count())  sprintf(sbuf, "%3d: This parameter does not exists", p);
+	    else   {
+             len=FlashParamsTable[p][1]>>16;
+             if ((len==1)||(len==2)||(len==4)){
+              get_parameter_data(p, &r, len); 
+	      sprintf(sbuf, "%3d: %30d :%2d ", p, r,len);
+	      }
+	     else {
+	      if (len>=sizeof(s)) count=sizeof(s)-1; else count=len;
+	      get_parameter_data(p, &s, count);
+	      s[count]=0;
+	      sprintf(sbuf, "%3d: %30s :%2d ", p, s,len);
+	     }
+	    }
+	    draw_string(16,16+16*i,sbuf, conf.osd_color);
+	}
+    }
+   }
 
 
     if (ubasic_error){

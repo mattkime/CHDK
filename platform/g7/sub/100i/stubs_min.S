@@ -6,5 +6,4 @@ DEF(playrec_mode, 0x7244)
 
 DEF(zoom_busy, 0x83CF8)
 DEF(focus_busy, 0x840C4)
-DEF(movie_compression, 0x6DAC)
-
+DEF(FlashParamsTable,0xFF9B8DB4)

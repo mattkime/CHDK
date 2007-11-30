@@ -29,6 +29,6 @@ void debug_led(int state)
 }
 
 
-int Get_JogDial(void){
- return (*(int*)0xC0220304)>>16;
+int get_flash_params_count(void){
+ return 110;
 }

@@ -109,7 +109,7 @@ static char* gui_lang_default = \
 " 79 \"Debug\"\n"
 
 " 80 \"Show PropCases\"\n"
-" 81 \"PropCase page\"\n"
+" 81 \"PropCase/ParamsData page\"\n"
 " 82 \"Show misc. values\"\n"
 " 83 \"Memory browser\"\n"
 " 84 \"Dump RAM on ALT +/- press\"\n"

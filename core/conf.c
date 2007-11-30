@@ -46,6 +46,7 @@ int state_debug1;
 int debug_propcase_show;
 int debug_propcase_page;
 int debug_vals_show;
+int debug_pardata_show;
 
 //-------------------------------------------------------------------
 static int def_ubasic_vars[SCRIPT_NUM_PARAMS] = {0};

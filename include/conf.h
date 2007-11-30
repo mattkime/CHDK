@@ -124,6 +124,7 @@ extern int state_debug1;
 extern int debug_propcase_show;
 extern int debug_propcase_page;
 extern int debug_vals_show;
+extern int debug_pardata_show;
 
 extern void conf_save();
 extern void conf_restore();

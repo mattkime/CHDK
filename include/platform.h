@@ -197,6 +197,7 @@ void JogDial_CW(void);
 void JogDial_CCW(void);
 void change_video_tables(int a, int b);
 void set_camera_tv(short int v);
+int get_flash_params_count(void);
 
 /******************************************************************/
 void __attribute__((noreturn)) shutdown();
