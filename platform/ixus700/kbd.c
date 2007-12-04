@@ -166,10 +166,10 @@ void __attribute__((naked,noinline)) _platformsub_kbd_fetch_data_my(){
                  "ORR     R3, LR, #0x208\n"
                  "ORR     R3, R3, #0xC0000000\n"
                  "LDR     R1, [R3]\n"
-            //my code there
+            //my code here
                  "MOV     R2, R0\n"
                  "MOV     R0, R1\n"
-                 "STMFD   SP!, {R1-R11}\n"  // Гулять - так гулять!
+                 "STMFD   SP!, {R1-R11}\n"  
                  "BL      my_kbd_read_keys\n"
                  "LDMFD   SP!, {R1-R11}\n"
                  "MOV     R1,R0\n"

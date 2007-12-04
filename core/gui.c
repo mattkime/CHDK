@@ -104,6 +104,7 @@ static const char* gui_video_mode_enum(int change, int arg);
 static const char* gui_video_bitrate_enum(int change, int arg);
 static const char* gui_bracketing_enum(int change, int arg);
 static const char* gui_tv_enum(int change, int arg);
+static const char* gui_av_enum(int change, int arg);
 
 // Menu callbacks
 //-------------------------------------------------------------------
@@ -159,8 +160,6 @@ static CMenu reader_submenu = { LANG_MENU_READ_TITLE, NULL, reader_submenu_items
 
 static CMenuItem misc_submenu_items[] = {
     {LANG_MENU_MISC_FILE_BROWSER,       MENUITEM_PROC,    (int*)gui_draw_fselect },
-    {(int)"Tv bracketing value",        MENUITEM_ENUM,    (int*)gui_bracketing_enum },
-    {(int)"Override shutter speed ",    MENUITEM_ENUM,    (int*)gui_tv_enum },
     {LANG_MENU_MISC_CALENDAR,           MENUITEM_PROC,    (int*)gui_draw_calendar },
     {LANG_MENU_MISC_TEXT_READER,        MENUITEM_SUBMENU, (int*)&reader_submenu },
     {LANG_MENU_MISC_GAMES,              MENUITEM_SUBMENU, (int*)&games_submenu },
@@ -175,9 +174,6 @@ static CMenuItem misc_submenu_items[] = {
     {LANG_MENU_MISC_ALT_BUTTON,         MENUITEM_ENUM,    (int*)gui_alt_mode_button_enum },
 #endif
     {LANG_MENU_MISC_DISABLE_LCD_OFF,    MENUITEM_ENUM,    (int*)gui_alt_power_enum },
-    {(int)"Video mode",                 MENUITEM_ENUM,    (int*)gui_video_mode_enum}, 
-    {(int)"Video bitrate",              MENUITEM_ENUM,    (int*)gui_video_bitrate_enum}, 
-    {(int)"Video quality",              MENUITEM_INT|MENUITEM_F_UNSIGNED|MENUITEM_F_MINMAX,  &conf.video_quality, MENU_MINMAX(1, 99)}, 
     {LANG_MENU_MISC_PALETTE,            MENUITEM_PROC,    (int*)gui_draw_palette },
     {LANG_MENU_MISC_BUILD_INFO,         MENUITEM_PROC,    (int*)gui_show_build_info },
     {LANG_MENU_MISC_MEMORY_INFO,        MENUITEM_PROC,    (int*)gui_show_memory_info },
@@ -315,7 +311,26 @@ static CMenuItem zebra_submenu_items[] = {
 static CMenu zebra_submenu = { LANG_MENU_ZEBRA_TITLE, NULL, zebra_submenu_items };
 
 
+static CMenuItem extra_shooting_submenu_items[] = {
+    {(int)"Tv bracketing value",        MENUITEM_ENUM,    (int*)gui_bracketing_enum },
+    {(int)"Override shutter speed",     MENUITEM_BOOL,    (int*)&conf.tv_override},
+    {(int)"Tv value ",                  MENUITEM_ENUM,    (int*)gui_tv_enum },
+ #if !defined (CAMERA_ixus700) && !defined (CAMERA_ixus800) && !defined (CAMERA_a560)
+    {(int)"Override aperture",          MENUITEM_BOOL,    (int*)&conf.av_override},
+    {(int)"Av value ",                  MENUITEM_ENUM,    (int*)gui_av_enum },
+ #endif
+    {(int)"Video mode",                 MENUITEM_ENUM,    (int*)gui_video_mode_enum}, 
+    {(int)"Video bitrate",              MENUITEM_ENUM,    (int*)gui_video_bitrate_enum}, 
+    {(int)"Video quality",              MENUITEM_INT|MENUITEM_F_UNSIGNED|MENUITEM_F_MINMAX,  &conf.video_quality, MENU_MINMAX(1, 99)}, 
+    {LANG_MENU_BACK,                    MENUITEM_UP },
+    {0}
+};
+
+static CMenu extra_shooting_submenu = { (int)"Extra shooting parameters", NULL, extra_shooting_submenu_items };
+
+
 static CMenuItem root_menu_items[] = {
+    {(int)"Extra shooting parameters ->",  MENUITEM_SUBMENU,   (int*)&extra_shooting_submenu },
     {LANG_MENU_MAIN_RAW_PARAM,          MENUITEM_SUBMENU,   (int*)&raw_submenu },
     {LANG_MENU_MAIN_OSD_PARAM,          MENUITEM_SUBMENU,   (int*)&osd_submenu },
     {LANG_MENU_MAIN_HISTO_PARAM,        MENUITEM_SUBMENU,   (int*)&histo_submenu },
@@ -598,16 +613,35 @@ const char* gui_bracketing_enum(int change, int arg) {
 
 //-------------------------------------------------------------------
 const char* gui_tv_enum(int change, int arg) {
-    static const char* modes[]={ "Off", "20\"","25\"", "30\"", "40\"", "50\"", "65\""};
+    static const char* modes[]={"65\"", "50\"", "40\"", "30\"","25\"", "20\"",
+ #if defined (CAMERA_ixus700) || defined (CAMERA_ixus800) || defined (CAMERA_a560)
+     "15\"", "13\"", "10\"", "8\"", "6\"","5\"", "4\"", "3.2\"", "2.5\"","2\"", "1.6\"", "1.3\"", "1\"",
+     "0.8\"", "0.6\"", "0.5\"", "0.4\"", "0.3\"", "1/4\"", "1/5\"", "1/6\"", "1/8\"", "1/10\"","1/13\"",
+     "1/15\"","1/20\"","1/25\"","1/30\"","1/40\"","1/50\"","1/60\"","1/80\"","1/100\"","1/125\"","1/160\"",
+     "1/200\"","1/250\"","1/320\"","1/400\"","1/500\"","1/640\"","1/800\"","1/1000\"","1/1250\"","1/1600\"","1/2000\"",
+ #endif
+    };
+    conf.tv_override_value+=change;
+    if (conf.tv_override_value<0)
+        conf.tv_override_value=0;
+    else if (conf.tv_override_value>=(sizeof(modes)/sizeof(modes[0])))
+        conf.tv_override_value=sizeof(modes)/sizeof(modes[0])-1;
 
-    conf.tv_override+=change;
-    if (conf.tv_override<0)
-        conf.tv_override=0;
-    else if (conf.tv_override>=(sizeof(modes)/sizeof(modes[0])))
-        conf.tv_override=sizeof(modes)/sizeof(modes[0])-1;
-
-    return modes[conf.tv_override]; 
+    return modes[conf.tv_override_value]; 
 }
+
+//-------------------------------------------------------------------
+const char* gui_av_enum(int change, int arg) {
+    static const char* modes[]={"9","10","11"};
+    conf.av_override_value+=change;
+    if (conf.av_override_value<0)
+        conf.av_override_value=0;
+    else if (conf.av_override_value>=(sizeof(modes)/sizeof(modes[0])))
+        conf.av_override_value=sizeof(modes)/sizeof(modes[0])-1;
+
+    return modes[conf.av_override_value]; 
+}
+
 
 //-------------------------------------------------------------------
 void gui_update_script_submenu() {

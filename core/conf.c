@@ -142,6 +142,10 @@ static const ConfInfo conf_info[] = {
     CONF_INFO( 96, conf.video_bitrate,          CONF_DEF_VALUE, i:3, conf_change_video_bitrate),
     CONF_INFO( 95, conf.tv_bracketing,		CONF_DEF_VALUE, i:0, NULL),
     CONF_INFO( 94, conf.tv_override,		CONF_DEF_VALUE, i:0, NULL),
+    CONF_INFO( 93, conf.tv_override_value,	CONF_DEF_VALUE, i:0, NULL),
+    CONF_INFO( 92, conf.av_override,		CONF_DEF_VALUE, i:0, NULL),
+    CONF_INFO( 91, conf.av_override_value,	CONF_DEF_VALUE, i:0, NULL),
+
 };
 #define CONF_NUM (sizeof(conf_info)/sizeof(conf_info[0]))
 
@@ -239,7 +243,7 @@ void conf_save() {
     static char buf[sizeof(t)+CONF_NUM*(sizeof(conf_info[0].id)+sizeof(conf_info[0].size))+sizeof(conf)];
     char *p=buf;
 
-    fd = open(CONF_FILE, O_WRONLY|O_CREAT, 0777); 
+    fd = open(CONF_FILE, O_WRONLY|O_CREAT|O_TRUNC, 0777); 
     if (fd>=0){
         memcpy(p, &t, sizeof(t));
         p+=sizeof(t);

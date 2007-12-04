@@ -23,12 +23,14 @@
  #define PROPCASE_TV		264
  #define PROPCASE_CAMERA_TV	262
  #define PROPCASE_AV		26
+ #define PROPCASE_CAMERA_AV	23
  #define PROPCASE_ISO		149
  #define PROPCASE_SHOOTING	206
 #else
  #define PROPCASE_TV		40
  #define PROPCASE_CAMERA_TV	69
  #define PROPCASE_AV		39
+ #define PROPCASE_CAMERA_AV	68
  #define PROPCASE_ISO		21
  #define PROPCASE_SHOOTING	205
 #endif
@@ -228,6 +230,11 @@ void set_camera_tv(short int v){
  _SetPropertyCase(PROPCASE_CAMERA_TV, &vv, sizeof(vv));
 }
 
+void set_camera_av(short int v){
+  short int vv=v;
+ _SetPropertyCase(PROPCASE_CAMERA_AV, &vv, sizeof(vv));
+}
+
 
 static short save_tv;
 static int shoot_counter;
@@ -249,3 +256,8 @@ void tv_bracketing(int stage){
  set_camera_tv(shoot_counter&1 ? save_tv+delta_tv: save_tv-delta_tv);
 }
 
+
+void shooting_override(void){
+  if (conf.tv_override) set_camera_tv(-576+32*conf.tv_override_value);
+  if (conf.av_override) set_camera_av( 608+32*conf.av_override_value);
+}

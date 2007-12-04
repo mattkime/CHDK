@@ -1,7 +1,6 @@
 #include "lolevel.h"
 #include "platform.h"
 #include "core.h"
-#include "conf.h"
 
 #define RAWDATA_AVAILABLE (1)
 #define RAWDATA_SAVED (2)
@@ -43,10 +42,6 @@ void capt_seq_hook_set_nr()
     };
 }
 
-
-void tv_override(void){
- if (conf.tv_override) set_camera_tv(-384-32*conf.tv_override);
-}
 
 
 void __attribute__((naked,noinline)) sub_FF96F5A8_my(long p)
@@ -173,7 +168,7 @@ void __attribute__((naked,noinline)) capt_seq_task()
                 "B       loc_FF96CB8C\n"
 "loc_FF96CA6C:\n"
                 "BL      sub_FF96D9A8\n"
-                "BL      tv_override\n"  // +
+                "BL      shooting_override\n"  // +
                 "BL      sub_FF96A964\n"
                 "LDR     R3, =0x5D0FC\n"
                 "MOV     R1, #0x10\n"
