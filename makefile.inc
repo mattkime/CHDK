@@ -76,7 +76,7 @@ PAKWIF=$(topdir)tools/pakwif$(EXE)
 
 ##########################################################################
 
-export PATH+=:/net/mos127/export/home/gratchev/_distr/opt/arm/bin
+export PATH+=:/export/home/gratchev/_distr/opt/gcc/32/bin
 
 CC=arm-elf-gcc
 OBJCOPY=arm-elf-objcopy
