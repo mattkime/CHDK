@@ -200,6 +200,10 @@ void set_camera_tv(short int v);
 void shooting_override(void);
 int get_flash_params_count(void);
 
+extern int canon_menu_active;
+extern char canon_shoot_menu_active;
+
+
 /******************************************************************/
 void __attribute__((noreturn)) shutdown();
 void debug_led(int state);

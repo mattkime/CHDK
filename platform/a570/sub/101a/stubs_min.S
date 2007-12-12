@@ -7,3 +7,5 @@ DEF(zoom_busy, 0x7E12C)
 DEF(focus_busy, 0x7D860)
 
 DEF(FlashParamsTable,0xFFEE84EC)
+DEF(canon_menu_active,0x2F38)
+DEF(canon_shoot_menu_active,0x27B1)

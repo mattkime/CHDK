@@ -7,3 +7,5 @@ DEF(zoom_busy, 0x7DC54)
 DEF(focus_busy, 0x7D3B8)  //  maybe wrong, it can be tested later
 DEF(playrec_mode, 0xC2C0)
 DEF(FlashParamsTable,0xFFED3430)
+DEF(canon_menu_active,0x2EDC)
+DEF(canon_shoot_menu_active,0x2795)

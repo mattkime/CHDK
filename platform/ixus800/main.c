@@ -10,7 +10,7 @@ long get_vbatt_max()
     return 4100;
 }
 
-static const int fl_tbl[] = {5800, 6630, 7470, 8640, 9980, 11820, 14330, 18630, 23200};
+static const int fl_tbl[] = {5800, 6600, 7500, 8600, 10000, 11800, 14300, 18600, 23200};
 #define NUM_FL (sizeof(fl_tbl)/sizeof(fl_tbl[0]))
 #define CF_EFL 60345
 
