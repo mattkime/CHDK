@@ -30,9 +30,6 @@
 
 //-------------------------------------------------------------------
 
-#define OPTIONS_AUTOSAVE
-#define SPLASH_TIME               20
-
 //shortcuts
 //------------------------------------------------------------------
 // #define KEY_NONE (KEY_DUMMY+1)
@@ -83,7 +80,7 @@ static void gui_draw_load_rbf(int arg);
 static void gui_draw_calendar(int arg);
 static void gui_draw_load_lang(int arg);
 static void gui_menuproc_mkbootdisk(int arg);
-#ifndef OPTIONS_AUTOSAVE
+#ifndef FEATURE_AUTOSAVE_SETTINGS
 static void gui_menuproc_save(int arg);
 #endif
 static void gui_menuproc_reset(int arg);
@@ -213,6 +210,8 @@ static CMenuItem debug_submenu_items[] = {
     {LANG_MENU_DEBUG_BENCHMARK,         MENUITEM_PROC,          (int*)gui_draw_bench },
     {LANG_MENU_DEBUG_DUMP_RAM,          MENUITEM_BOOL,          &conf.ns_enable_memdump },
     {LANG_MENU_DEBUG_MAKE_BOOTABLE,     MENUITEM_PROC, 	    	(int*)gui_menuproc_mkbootdisk },
+    {(int)"Dump debug info",            MENUITEM_PROC,			(int*)debug_dump_information },
+    {(int)"debug_dump_arm",             MENUITEM_PROC,			(int*)debug_dump_arm },    
     {LANG_MENU_BACK,                    MENUITEM_UP },
     {0}
 };
@@ -383,7 +382,7 @@ static CMenuItem osd_submenu_items[] = {
     {LANG_MENU_OSD_BATT_PARAMS,         MENUITEM_SUBMENU,   (int*)&battery_submenu },
     {LANG_MENU_OSD_GRID_PARAMS,         MENUITEM_SUBMENU,   (int*)&grid_submenu },
     {LANG_MENU_OSD_SHOW_IN_REVIEW,      MENUITEM_BOOL,      &conf.show_osd_in_review},
-#ifndef OPTIONS_AUTOSAVE
+#ifndef FEATURE_AUTOSAVE_SETTINGS
     {LANG_MENU_MAIN_SAVE_OPTIONS,       MENUITEM_PROC,      (int*)gui_menuproc_save },
 #endif
     {LANG_MENU_BACK,                    MENUITEM_UP },
@@ -445,7 +444,7 @@ static CMenuItem root_menu_items[] = {
     {LANG_MENU_MAIN_MISC,               MENUITEM_SUBMENU,   (int*)&misc_submenu },
     {LANG_MENU_MAIN_DEBUG,              MENUITEM_SUBMENU,   (int*)&debug_submenu },
     {LANG_MENU_MAIN_RESET_OPTIONS,      MENUITEM_PROC,      (int*)gui_menuproc_reset },
-#ifndef OPTIONS_AUTOSAVE
+#ifndef FEATURE_AUTOSAVE_SETTINGS
     {LANG_MENU_MAIN_SAVE_OPTIONS,       MENUITEM_PROC,      (int*)gui_menuproc_save },
 #endif
     {0}
@@ -955,7 +954,7 @@ static volatile int gui_restore;
 static volatile int gui_in_redraw;
 static int gui_splash, gui_splash_mode;
 static char osd_buf[32];
-#ifdef OPTIONS_AUTOSAVE
+#ifdef FEATURE_AUTOSAVE_SETTINGS
 static Conf old_conf;
 #endif
 
@@ -1074,7 +1073,7 @@ void gui_redraw()
     }
 }
 
-#ifdef OPTIONS_AUTOSAVE
+#ifdef FEATURE_AUTOSAVE_SETTINGS
 //-------------------------------------------------------------------
 static inline void conf_store_old_settings() {
     old_conf=conf;
@@ -1097,6 +1096,16 @@ void gui_kbd_process()
 {
     int clicked_key;
 
+    if (kbd_is_key_pressed(KEY_MENU) && kbd_is_key_pressed(KEY_DISPLAY)) {
+        if (conf.ns_enable_memdump) {
+            dump_memory();
+        } else {
+            conf.save_raw = !conf.save_raw;
+            draw_restore();
+        }
+        return;
+    }
+
     if (kbd_is_key_clicked(KEY_MENU)){
         switch (gui_mode) {
             case GUI_MODE_ALT:
@@ -1105,7 +1114,7 @@ void gui_kbd_process()
                 draw_restore();
                 break;
             case GUI_MODE_MENU:
-#ifdef OPTIONS_AUTOSAVE
+#ifdef FEATURE_AUTOSAVE_SETTINGS
                 conf_save_new_settings_if_changed();
 #endif
                 gui_mode = GUI_MODE_ALT;
@@ -1224,7 +1233,7 @@ void gui_kbd_process()
 void gui_kbd_enter()
 {
     // XXX set custom palette
-#ifdef OPTIONS_AUTOSAVE
+#ifdef FEATURE_AUTOSAVE_SETTINGS
     conf_store_old_settings();
 #endif
     if ((conf.alt_prevent_shutdown == ALT_PREVENT_SHUTDOWN_ALT && !state_kbd_script_run) 
@@ -1232,13 +1241,14 @@ void gui_kbd_enter()
         disable_shutdown();
     }
     gui_mode = GUI_MODE_ALT;
+	led_on(LED_PR);
 }
 
 //-------------------------------------------------------------------
 void gui_kbd_leave()
 {
     // XXX restore palette
-#ifdef OPTIONS_AUTOSAVE
+#ifdef FEATURE_AUTOSAVE_SETTINGS
     conf_save_new_settings_if_changed();
 #endif
     ubasic_error = 0;
@@ -1248,10 +1258,76 @@ void gui_kbd_leave()
     rbf_set_codepage(FONT_CP_WIN);
     enable_shutdown();
     gui_mode = GUI_MODE_NONE;
+	led_off(LED_PR);
 }
 
 //-------------------------------------------------------------------
+const char * PhyswStatus_fmt = "%s|0x%08lx||0x%08lx||0x%08lx|";
+
+extern long NotifyMask[3];
+extern long SwitchMask[3];
+extern long InvertData[3];
+extern long GpioStatus[3];
+extern long SwitchStatus[3];
+
 extern long physw_status[3];
+extern long kbd_new_state[3];
+extern long kbd_prev_state[3];
+extern long kbd_mod_state;
+extern long debug_kbd_state_diff;
+//extern int touch_keys_angle;
+
+long *a = (long*)0xe778;
+long *b = (long*)0xe788;
+long *c = (long*)0xe7D8;
+
+//#define PREFETCH_HANDLER ((int*)0x108)
+//#define DATA_HANDLER     ((int*)0x10C)
+
+void gui_draw_debug_values() {
+    if (debug_vals_show)
+    {
+
+//        gui_debug_draw_console();
+
+//        long v=get_file_counter();
+//	sprintf(osd_buf, "1:%03d-%04d  ", (v>>18)&0x3FF, (v>>4)&0x3FFF);
+//	sprintf(osd_buf, "1:%d, %08X  ", xxxx, eeee);
+
+	sprintf(osd_buf, PhyswStatus_fmt, "GpioSt", GpioStatus[2], GpioStatus[1], GpioStatus[0]);
+	draw_txt_string(1, 1, osd_buf, conf.osd_color);
+
+//	sprintf(osd_buf, "touch_keys_angle:%d", touch_keys_angle);
+//	draw_txt_string(1, 2, osd_buf, conf.osd_color);
+	
+//	sprintf(osd_buf, "abort: (%08x,%08x) = (%x %x)", *PREFETCH_HANDLER, *DATA_HANDLER, prefetch_count, data_count);
+//	draw_txt_string(1, 3, osd_buf, conf.osd_color);
+
+/*
+	sprintf(osd_buf, PhyswStatus_fmt, "a", a[2], a[1], a[0]);
+	draw_txt_string(2, 7, osd_buf, conf.osd_color);
+	sprintf(osd_buf, PhyswStatus_fmt, "b", b[2], b[1], b[0]);
+	draw_txt_string(2, 8, osd_buf, conf.osd_color);
+	sprintf(osd_buf, PhyswStatus_fmt, "c", c[2], c[1], c[0]);
+	draw_txt_string(2, 9, osd_buf, conf.osd_color);
+
+	
+	sprintf(osd_buf, "prv:%8x  ", kbd_prev_state[2]);
+	draw_txt_string(2, 8, osd_buf, conf.osd_color);
+	sprintf(osd_buf, "state:%8x  ", kbd_mod_state);
+	draw_txt_string(2, 10, osd_buf, conf.osd_color);
+	sprintf(osd_buf, "diff:%8x  ", debug_kbd_state_diff);
+	draw_txt_string(2, 11, osd_buf, conf.osd_color);
+*/	
+
+//	sprintf(osd_buf, "4:%8x  ", vid_get_viewport_fb_d());
+//	draw_txt_string(28, 13, osd_buf, conf.osd_color);
+    }
+}
+
+
+
+
 extern long GetPropertyCase(long opt_id, void *buf, long bufsize);
 //extern int xxxx, eeee;
 //-------------------------------------------------------------------
@@ -1378,23 +1454,7 @@ void gui_draw_osd() {
     }
 #endif
 
-    if (debug_vals_show) {
-//        long v=get_file_counter();
-//	sprintf(osd_buf, "1:%03d-%04d  ", (v>>18)&0x3FF, (v>>4)&0x3FFF);
-//	sprintf(osd_buf, "1:%d, %08X  ", xxxx, eeee);
-	sprintf(osd_buf, "1:%8x  ", physw_status[0]);
-	draw_txt_string(28, 10, osd_buf, conf.osd_color);
-
-	sprintf(osd_buf, "2:%8x  ", physw_status[1]);
-	draw_txt_string(28, 11, osd_buf, conf.osd_color);
-
-	sprintf(osd_buf, "3:%8x  ", physw_status[2]);
-	draw_txt_string(28, 12, osd_buf, conf.osd_color);
-
-//      sprintf(osd_buf, "4:%8x  ", vid_get_viewport_fb_d());
-//        sprintf(osd_buf, "4:%8x  ", get_usb_power());
-	draw_txt_string(28, 13, osd_buf, conf.osd_color);
-    }
+   gui_draw_debug_values();
 
    {
 	static char sbuf[100];
@@ -1450,7 +1510,7 @@ if (debug_pardata_show){
     }
 }
 
-#ifndef OPTIONS_AUTOSAVE
+#ifndef FEATURE_AUTOSAVE_SETTINGS
 //-------------------------------------------------------------------
 void gui_menuproc_save(int arg)
 {

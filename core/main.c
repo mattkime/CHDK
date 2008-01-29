@@ -31,28 +31,6 @@ long core_get_noise_reduction_value()
     return conf.raw_nr;
 }
 
-
-void dump_memory()
-{
-    int fd;
-    static int cnt=1;
-    static char fn[32];
-
-
-    started();
-        mkdir("A/DCIM");
-        mkdir("A/DCIM/100CANON");
-	sprintf(fn, "A/DCIM/100CANON/CRW_%04d.JPG", cnt++);
-	fd = open(fn, O_WRONLY|O_CREAT, 0777);
-	if (fd) {
-	    write(fd, (void*)0, 0x1900);
-	    write(fd, (void*)0x1900, 32*1024*1024-0x1900);
-	    close(fd);
-	}
-    vid_bitmap_refresh();
-    finished();
-}
-
 static volatile long raw_data_available;
 
 /* called from another process */

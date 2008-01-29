@@ -119,3 +119,5 @@ batch-clean:
 	#$(MAKE) -s --no-print-directory PLATFORM=ixusW_sd430    PLATFORMSUB=110a NO_INC_BUILD=1 clean
 
 .PHONY: fir upload
+
+include bottom.inc

@@ -1,3 +1,4 @@
+#include "signatures_fio.h"
 
 static FuncSig func_sig_AllocateMemory_1[] = {
 	{   0, 0xe52de004, 0xfdffffff }, // str:4:0xE52DE004
@@ -4922,5 +4923,8 @@ FuncsList func_list[] = {
 	{ "GetDrive_TotalClusters", func_sig_GetDrive_TotalClusters_2 },
 	{ "GetDrive_FreeClusters", func_sig_GetDrive_FreeClusters_1 },
 	{ "GetDrive_FreeClusters", func_sig_GetDrive_FreeClusters_2 },
+
+    SIG_FIO
+
 	{ NULL }
 };

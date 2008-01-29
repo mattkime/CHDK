@@ -31,7 +31,8 @@ static void task_start_hook(
     long p0,    long p1,    long p2,    long p3,    long p4,
     long p5,    long p6,    long p7,    long p8,    long p9)
 {
-    _CreateTask("SpyTask", 0x19, 0x2000, spytask, 0);
+    _CreateTask("SpyTask", 0x19, 0x4000, spytask, 0);
+    _CreateTask("LoggerTask", 0x10, 0x2000, logger_task, 0);
 
     task_prev(p0, p1, p2, p3, p4, p5, p6, p7, p8, p9 );
 }
@@ -102,11 +103,11 @@ void createHook (void *pNewTcb)
 	    init_file_modules_prev = (void*)(*entry);
 	    *entry = (long)init_file_modules_hook;
 	}
-
+#ifndef CAMERA_ixus65_sd630 // not implemented for this model
 	if (my_ncmp(name, "tCaptSeqTa", 10) == 0){
 	    *entry = (long)capt_seq_hook;
 	}
-
+#endif
 	if (my_ncmp(name, "tMovieReco", 10) == 0){
 	    *entry = (long)movie_record_hook;
 	}

@@ -35,8 +35,8 @@ static int kbd_int_stack_ptr;
 #define KBD_STACK_PUSH(v) kbd_int_stack[kbd_int_stack_ptr++] = (v);
 #define KBD_STACK_PREV(p) (kbd_int_stack[kbd_int_stack_ptr-(p)])
 
-static int kbd_blocked;
-static int key_pressed;
+static int kbd_blocked = 0;
+static int key_pressed = 0;
 int state_kbd_script_run;
 static long delay_target_ticks;
 static long kbd_last_clicked;

@@ -16,9 +16,8 @@ OBJS=entry.o nothumb.o main.o gui_draw.o gui_menu.o gui_palette.o gui_mbox.o \
      histogram.o gui_batt.o gui_osd.o script.o raw.o gui_sokoban.o gui_calendar.o \
      gui_lang.o gui_bench.o gui_mpopup.o gui_grid.o motion_detector.o raw_merge.o
 
-gui.o: FORCE
-
-FORCE:
+#gui.o: FORCE
+#FORCE:
 
 nothumb.o: nothumb.c
 	@echo $< \-\> $@

@@ -1,6 +1,8 @@
 #ifndef PLATFORM_H
 #define PLATFORM_H
 
+#include "vxworks.h"
+
 #define SSID_INVALID (-32767)
 #define ASID_INVALID (-32767)
 
@@ -100,6 +102,25 @@ MODE_DIGITAL_MACRO      ,
 #define AS_SIZE (sizeof(aperture_sizes_table)/sizeof(aperture_sizes_table[0]))
 #define ASID_MIN (aperture_sizes_table[0].id)
 #define ASID_MAX (aperture_sizes_table[AS_SIZE-1].id)
+
+#define LED_AF   0xc0220080
+#define LED_PR   0xc0220084
+#define LED_RED  0xc0220088
+
+/* Keyboard repeat and initial delays */
+#define KBD_REPEAT_DELAY  140
+#define KBD_INITIAL_DELAY 300
+
+#if 0
+  
+  #define DEBUG_TRACE(...)
+
+#else
+
+  #define DEBUG_TRACE(a,b) debug_trace(a,b)
+
+#endif
+
 
 typedef struct {
     short id; // hacks id
@@ -382,6 +403,19 @@ int get_flash_params_count(void);
 void __attribute__((noreturn)) shutdown();
 void ubasic_set_led(int led, int state, int bright);
 void debug_led(int state);
+
+#define started() led_on(LED_AF)
+#define finished() led_off(LED_AF)
+
+void debug_blink(int led);
+
+void led_on(int led);
+void led_off(int led);
+
+void debug_trace(char *a, int b);
+
+void logger_task();
+
 /****************************************/
 extern int canon_menu_active;  
 extern char canon_shoot_menu_active;  
