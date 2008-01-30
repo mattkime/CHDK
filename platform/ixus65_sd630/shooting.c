@@ -97,3 +97,8 @@ long get_target_dir_num() {
 }
 
 int circle_of_confusion = 6;
+
+void change_video_tables(int a, int b)
+{
+}
+

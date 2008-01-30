@@ -1,8 +1,6 @@
 VER=allbest
 
-PLATFORM=ixus65
-PLATFORMSUB=100a
-OSTYPE = Windows
+#OSTYPE = Windows
 
 #PLATFORM=a610
 #PLATFORMSUB=100e

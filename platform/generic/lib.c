@@ -18,6 +18,10 @@ void shutdown()
     while(1);
 }
 
+int get_flash_params_count(void)
+{
+ return 111;
+}
 
 void debug_led(int state)
 {

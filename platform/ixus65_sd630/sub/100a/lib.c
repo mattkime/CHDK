@@ -29,6 +29,14 @@ void *vid_get_bitmap_fb()
 }
 
 /**
+ * TODO: ??????
+ */
+void *vid_get_viewport_live_fb()
+{
+    return (void*)0;
+}
+
+/**
  * IMG viewport in 'rec' mode
  */
 void *vid_get_viewport_fb()

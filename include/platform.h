@@ -424,7 +424,4 @@ extern int recreview_hold;
 unsigned int GetFreeCardSpaceKb(void);
 unsigned int GetTotalCardSpaceKb(void);
 
-#define started() debug_led(1)
-#define finished() debug_led(0)
-
 #endif

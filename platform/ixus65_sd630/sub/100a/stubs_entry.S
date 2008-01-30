@@ -147,6 +147,18 @@ NSTUB(utime, 0xffb0fab4)
 // ALT: NSTUB(utime, 0xffb0fab4) // 26/0
 NSTUB(vsprintf, 0xffb11278)
 NSTUB(write, 0xffb125a0)
+NSTUB(Fclose_Fut, 0xff86984c)
+NSTUB(Fopen_Fut, 0xff869810)
+NSTUB(Fread_Fut, 0xff869930)
+NSTUB(Fseek_Fut, 0xff869a18)
+NSTUB(Fwrite_Fut, 0xff869980)
+// Best match: 78%
+NSTUB(GetDrive_ClusterSize, 0xff86fd94)
+// Best match: 73%
+NSTUB(GetDrive_TotalClusters, 0xff86fd58)
+// ALT: NSTUB(GetDrive_TotalClusters, 0xff86fd94) // 31/11
+// Best match: 75%
+NSTUB(GetDrive_FreeClusters, 0xff86fdd0)
 NSTUB(fclose, 0xffb09bc0)
 NSTUB(fdopen, 0xffb09cac)
 NSTUB(feof, 0xffb09d18)

@@ -1,6 +1,10 @@
 
 #include "../generic/main.c"
 
+void movie_record_task()
+{
+}
+
 long get_vbatt_min()
 {
     return 3550;

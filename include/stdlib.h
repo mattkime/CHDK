@@ -94,9 +94,6 @@ extern int _Read (int fd, void *buffer, long nbytes);
 extern int _Lseek (int fd, long offset, int whence);
 extern int _Remove(const char *name);
 
-#define feof Feof_Fut
-#define fdelete DeleteFile_Fut
-
 #define open _Open
 #define close _Close
 #define write _Write
