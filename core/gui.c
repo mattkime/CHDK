@@ -34,7 +34,7 @@
 //------------------------------------------------------------------
 // #define KEY_NONE (KEY_DUMMY+1)
 
-#if   defined(CAMERA_ixus700_sd500) || defined(CAMERA_ixus800_sd700) || defined(CAMERA_a560) || defined(CAMERA_ixus65_sd530) 
+#if   defined(CAMERA_ixus700_sd500) || defined(CAMERA_ixus800_sd700) || defined(CAMERA_a560) || defined(CAMERA_ixus65_sd630) || defined(CAMERA_ixus850_sd800) || defined(CAMERA_ixus70_sd1000)
  #define SHORTCUT_TOGGLE_RAW      KEY_DISPLAY
  #define SHORTCUT_TOGGLE_HISTO    KEY_DOWN
  #define SHORTCUT_TOGGLE_ZEBRA    KEY_MENU
@@ -97,7 +97,7 @@ static const char* gui_raw_nr_enum(int change, int arg);
 static const char* gui_reader_codepage_enum(int change, int arg);
 static const char* gui_zoom_value_enum(int change, int arg);
 static const char* gui_dof_show_value_enum(int change, int arg);
-#if defined(CAMERA_s2is) || defined(CAMERA_s3is)
+#if defined(CAMERA_s2is) || defined(CAMERA_s3is) || defined(CAMERA_g7)
 static const char* gui_alt_mode_button_enum(int change, int arg);
 #endif
 static const char* gui_alt_power_enum(int change, int arg);
@@ -135,7 +135,7 @@ static CMenuItem script_submenu_items_top[] = {
     {LANG_MENU_SCRIPT_DELAY,            MENUITEM_INT|MENUITEM_F_UNSIGNED,   &conf.script_shoot_delay },
 	// remote autostart
 	{LANG_MENU_SCRIPT_AUTOSTART,		MENUITEM_BOOL,						&conf.script_startup },
-#if !defined (CAMERA_ixus800_sd700) && !defined (CAMERA_ixus700_sd500) && !defined(CAMERA_ixus65_sd630) && !defined (CAMERA_a570) && !defined (CAMERA_a700)
+#if !defined (CAMERA_ixus700_sd500) && !defined(CAMERA_ixus65_sd630) && !defined (CAMERA_a570) && !defined (CAMERA_a700)
 	{LANG_MENU_SCRIPT_REMOTE_ENABLE,	MENUITEM_BOOL,						&conf.remote_enable},
 #endif
     {LANG_MENU_SCRIPT_CURRENT,          MENUITEM_SEPARATOR },
@@ -181,14 +181,14 @@ static CMenuItem misc_submenu_items[] = {
     {LANG_MENU_MISC_CALENDAR,           MENUITEM_PROC,    (int*)gui_draw_calendar },
     {LANG_MENU_MISC_TEXT_READER,        MENUITEM_SUBMENU, (int*)&reader_submenu },
     {LANG_MENU_MISC_GAMES,              MENUITEM_SUBMENU, (int*)&games_submenu },
-#if !defined(CAMERA_a710) && !defined(CAMERA_a700) && !defined(CAMERA_g7) && !defined(CAMERA_a570) && !defined (CAMERA_ixus700_sd500) && !defined (CAMERA_ixus800_sd700) && !defined (CAMERA_a560) && !defined(CAMERA_ixus65_sd630)
+#if defined(CAMERA_a610) || defined(CAMERA_a620) || defined(CAMERA_a630) || defined(CAMERA_a640) || defined (CAMERA_s2is) || defined (CAMERA_s3is) || defined (CAMERA_s5is)
     {LANG_MENU_MISC_FLASHLIGHT,         MENUITEM_BOOL,    &conf.flashlight },
 #endif
     {LANG_MENU_MISC_SHOW_SPLASH,        MENUITEM_BOOL,    &conf.splash_show },
-#if !defined(CAMERA_g7) && !defined (CAMERA_ixus700_sd500) && !defined (CAMERA_ixus800_sd700) && !defined (CAMERA_a560) && !defined(CAMERA_ixus65_sd630)
+#if !defined(CAMERA_g7) && !defined (CAMERA_ixus700_sd500) && !defined (CAMERA_ixus800_sd700) && !defined (CAMERA_a560) && !defined(CAMERA_ixus65_sd630) && !defined (CAMERA_ixus850_sd800)  && !defined (CAMERA_ixus70_sd1000)
     {LANG_MENU_MISC_ZOOM_FOR_MF,        MENUITEM_BOOL,    &conf.use_zoom_mf },
 #endif
-#if defined(CAMERA_s2is) || defined(CAMERA_s3is)
+#if defined(CAMERA_s2is) || defined(CAMERA_s3is) || defined(CAMERA_g7)
     {LANG_MENU_MISC_ALT_BUTTON,         MENUITEM_ENUM,    (int*)gui_alt_mode_button_enum },
 #endif
     {LANG_MENU_MISC_DISABLE_LCD_OFF,    MENUITEM_ENUM,    (int*)gui_alt_power_enum },
@@ -196,7 +196,8 @@ static CMenuItem misc_submenu_items[] = {
     {LANG_MENU_MISC_BUILD_INFO,         MENUITEM_PROC,    (int*)gui_show_build_info },
     {LANG_MENU_MISC_MEMORY_INFO,        MENUITEM_PROC,    (int*)gui_show_memory_info },
     {LANG_MENU_BACK,                    MENUITEM_UP },
-    {0}
+    {0}, // for swap part. menu
+    {0},
 };
 static CMenu misc_submenu = { LANG_MENU_MISC_TITLE, NULL, misc_submenu_items };
 
@@ -261,7 +262,7 @@ static CMenuItem values_submenu_items[] = {
       {LANG_MENU_VALUES_SHOW_BV_SETED,			 MENUITEM_BOOL,	     &conf.values_show_bv_seted},					
       {LANG_MENU_VALUES_SHOW_BV_MEASURED,   	 MENUITEM_BOOL,	     &conf.values_show_bv_measured},					
       {LANG_MENU_VALUES_SHOW_OVEREXPOSURE,	     MENUITEM_BOOL,      &conf.values_show_overexposure},	
-#if !defined(CAMERA_a570) && !defined(CAMERA_a560) 						 						
+#if !defined(CAMERA_a570) && !defined(CAMERA_a560) && !defined(CAMERA_a720) && !defined(CAMERA_ixus850_sd800) && !defined(CAMERA_ixus70_sd1000)
       {LANG_MENU_SHOW_CANON_OVEREXPOSURE,	     MENUITEM_BOOL,      &conf.values_show_canon_overexposure},							
 #endif      
       {LANG_MENU_VALUES_SHOW_LUMINANCE,  	     MENUITEM_BOOL,      &conf.values_show_luminance},							
@@ -286,7 +287,7 @@ static CMenuItem bracketing_in_continuous_submenu_items[] = {
 #endif
 	  {LANG_MENU_ISO_BRACKET_VALUE,            MENUITEM_INT|MENUITEM_F_UNSIGNED|MENUITEM_F_MINMAX, &conf.iso_bracket_value, MENU_MINMAX(0, 100)}, 
 	  {LANG_MENU_ISO_BRACKET_KOEF,             MENUITEM_ENUM,    (int*)gui_iso_bracket_koef_enum},
-#if !defined (CAMERA_ixus700_sd500) && !defined (CAMERA_ixus800_sd700) && !defined (CAMERA_a560)
+#if !defined (CAMERA_ixus700_sd500) && !defined (CAMERA_ixus800_sd700) && !defined (CAMERA_a560) && !defined (CAMERA_ixus850_sd800) && !defined (CAMERA_ixus70_sd1000)
 	  {LANG_MENU_SUBJ_DIST_BRACKET_VALUE,      MENUITEM_INT|MENUITEM_F_UNSIGNED|MENUITEM_F_MINMAX, &conf.subj_dist_bracket_value, MENU_MINMAX(0, 100)}, 
 	  {LANG_MENU_SUBJ_DIST_BRACKET_KOEF,       MENUITEM_ENUM,    (int*)gui_subj_dist_bracket_koef_enum},
 #endif	  
@@ -316,7 +317,7 @@ static CMenuItem operation_submenu_items[] = {
 	  {LANG_MENU_OVERRIDE_ISO_VALUE,	   MENUITEM_INT|MENUITEM_F_UNSIGNED|MENUITEM_F_MINMAX,  &conf.iso_override_value, MENU_MINMAX(0, 800)}, 
 	  {LANG_MENU_OVERRIDE_ISO_KOEF,        MENUITEM_ENUM,    (int*)gui_iso_override_koef_enum},
  	 // {LANG_MENU_OVERRIDE_SUBJ_DIST_VALUE, MENUITEM_INT|MENUITEM_F_UNSIGNED|MENUITEM_F_MINMAX,  &conf.subj_dist_override_value, MENU_MINMAX(0, 500)}, 
-#if !defined (CAMERA_ixus700_sd500) && !defined (CAMERA_ixus800_sd700) && !defined (CAMERA_a560)	  	   	 
+#if !defined (CAMERA_ixus700_sd500) && !defined (CAMERA_ixus800_sd700) && !defined (CAMERA_a560) && !defined (CAMERA_ixus850_sd800) && !defined (CAMERA_ixus70_sd1000)
       {LANG_MENU_OVERRIDE_SUBJ_DIST_VALUE, MENUITEM_ENUM,    (int*)gui_subj_dist_override_value_enum},
 	  {LANG_MENU_OVERRIDE_SUBJ_DIST_KOEF,  MENUITEM_ENUM,    (int*)gui_subj_dist_override_koef_enum},
 #endif	  
@@ -435,7 +436,9 @@ static CMenu zebra_submenu = { LANG_MENU_ZEBRA_TITLE, NULL, zebra_submenu_items 
 static CMenuItem root_menu_items[] = {
 	{LANG_MENU_OPERATION_PARAM,         MENUITEM_SUBMENU,   (int*)&operation_submenu },
 	{LANG_MENU_MAIN_OSD_PARAM,          MENUITEM_SUBMENU,   (int*)&osd_submenu },
+#if !defined (CAMERA_a720)
     {LANG_MENU_VIDEO_PARAM,             MENUITEM_SUBMENU,   (int*)&video_submenu },
+#endif
 	{LANG_MENU_MAIN_RAW_PARAM,          MENUITEM_SUBMENU,   (int*)&raw_submenu },
     {LANG_MENU_MAIN_HISTO_PARAM,        MENUITEM_SUBMENU,   (int*)&histo_submenu },
     {LANG_MENU_MAIN_ZEBRA_PARAM,        MENUITEM_SUBMENU,   (int*)&zebra_submenu },
@@ -449,6 +452,9 @@ static CMenuItem root_menu_items[] = {
 #endif
     {0}
 };
+
+static CMenuItem swap_menuitem={(int)"Swap partitions",      MENUITEM_PROC,      (int*)swap_partitions };
+
 static CMenu root_menu = { LANG_MENU_MAIN_TITLE, NULL, root_menu_items };
 
 //-------------------------------------------------------------------
@@ -651,10 +657,15 @@ const char* gui_dof_show_value_enum(int change, int arg) {
 //ARM End
 
 //-------------------------------------------------------------------
-#if defined(CAMERA_s2is) || defined(CAMERA_s3is)
+#if defined(CAMERA_s2is) || defined(CAMERA_s3is) || defined(CAMERA_g7)
 const char* gui_alt_mode_button_enum(int change, int arg) {
+#if defined(CAMERA_s2is) || defined(CAMERA_s3is)
     static const char* names[]={ "Shrtcut", "Flash", "Timer", "ISO", "Video" };
     static const int keys[]={ KEY_PRINT, KEY_FLASH, KEY_TIMER, KEY_ISO, KEY_VIDEO };
+#else
+    static const char* names[]={ "Print", "FE"};
+    static const int keys[]={ KEY_PRINT, KEY_MICROPHONE };
+#endif
     int i;
 
     for (i=0; i<sizeof(names)/sizeof(names[0]); ++i) {
@@ -1110,6 +1121,16 @@ void gui_kbd_process()
         switch (gui_mode) {
             case GUI_MODE_ALT:
                 gui_menu_init(&root_menu);
+#if defined (CAMERA_g7) || defined (CAMERA_a710)
+                if (get_part_count()==2){
+                 int misc_menu_count;
+                 misc_menu_count=sizeof(misc_submenu_items)/sizeof(misc_submenu_items[0]);
+                 if (misc_submenu_items[misc_menu_count-2].text==0){
+                  misc_submenu_items[misc_menu_count-2]=misc_submenu_items[misc_menu_count-3];
+                  misc_submenu_items[misc_menu_count-3]=swap_menuitem;
+                 }
+                }
+#endif
                 gui_mode = GUI_MODE_MENU;
                 draw_restore();
                 break;
@@ -1158,7 +1179,7 @@ void gui_kbd_process()
                 gui_mode = GUI_MODE_MENU;
                 draw_restore();
             } else {
-#if !defined(CAMERA_g7) && !defined (CAMERA_ixus700_sd500) && !defined (CAMERA_ixus800_sd700) && !defined (CAMERA_a560)
+#if !defined(CAMERA_g7) && !defined (CAMERA_ixus700_sd500) && !defined (CAMERA_ixus800_sd700) && !defined (CAMERA_a560) && !defined (CAMERA_ixus850_sd800) && !defined (CAMERA_ixus70_sd1000)
 			  if (shooting_get_focus_mode()){ 
 				if (kbd_is_key_clicked(KEY_RIGHT)) {
 				  gui_subj_dist_override_koef_enum(1,0);
@@ -1321,6 +1342,7 @@ void gui_draw_debug_values() {
 */	
 
 //	sprintf(osd_buf, "4:%8x  ", vid_get_viewport_fb_d());
+    sprintf(osd_buf, "4:%8x  ", get_usb_power(1));
 //	draw_txt_string(28, 13, osd_buf, conf.osd_color);
     }
 }
@@ -1335,6 +1357,8 @@ void gui_draw_osd() {
     unsigned int m, n = 0, mode_photo;
     coord x;
     static int flashlight = 0, zebra = 0, zebra_init = 0, pressed = 0;
+    static int half_disp_press_old=0;
+    int half_disp_press;
     
     m = mode_get();
 
@@ -1390,7 +1414,14 @@ void gui_draw_osd() {
 				 (m&MODE_SHOOTING_MASK)==MODE_VIDEO_COMPACT ||
 				 (m&MODE_SHOOTING_MASK)==MODE_VIDEO_MY_COLORS || 
 				 (m&MODE_SHOOTING_MASK)==MODE_VIDEO_COLOR_ACCENT || 
+                                 (m&MODE_SHOOTING_MASK)==MODE_VIDEO_TIME_LAPSE || 
 				 (m&MODE_SHOOTING_MASK)==MODE_STITCH);
+
+    half_disp_press=mode_photo && kbd_is_key_pressed(KEY_SHOOT_HALF) && kbd_is_key_pressed(KEY_DISPLAY);
+    if (half_disp_press && ! half_disp_press_old) draw_restore();
+    half_disp_press_old=half_disp_press;
+    if (half_disp_press) return;
+
     if (conf.zebra_draw && gui_mode==GUI_MODE_NONE && kbd_is_key_pressed(KEY_SHOOT_HALF) && mode_photo) {
         if (!zebra_init) {
             zebra_init = 1;
@@ -1445,7 +1476,7 @@ void gui_draw_osd() {
         gui_osd_draw_clock();
     }
 
-#if defined (CAMERA_ixus700_sd500) || defined (CAMERA_ixus800_sd700)
+#if defined (CAMERA_ixus700_sd500) || defined (CAMERA_ixus800_sd700) || defined (CAMERA_ixus850_sd800) || defined (CAMERA_ixus70_sd1000)
     if (gui_mode==GUI_MODE_NONE && kbd_is_key_pressed(KEY_SHOOT_HALF) && ((m&MODE_MASK)==MODE_REC)&&((m&MODE_SHOOTING_MASK))!=MODE_VIDEO_STD) {    
      strcpy(osd_buf,shooting_get_tv_str());
      strcat(osd_buf,"\"  ");

@@ -25,7 +25,7 @@ static int remote_key, remote_count;
 #define USB_REG 0
 #endif
 
-#if defined(CAMERA_a630) || defined(CAMERA_a640) || defined(CAMERA_a610) || defined(CAMERA_a620)
+#if defined(CAMERA_a630) || defined(CAMERA_a640) || defined(CAMERA_a610) || defined(CAMERA_a620) || defined(CAMERA_ixus800_sd700) || defined(CAMERA_ixus850_sd800) || defined(CAMERA_ixus70_sd1000)
 #define USB_MASK 0x8000000
 #define USB_REG 1
 #endif
@@ -278,7 +278,7 @@ long kbd_use_zoom_as_mf() {
     static long zoom_key_pressed = 0;
 
     if (kbd_is_key_pressed(KEY_ZOOM_IN) && (mode_get()&MODE_MASK) == MODE_REC) {
-        get_property_case(12, &v, 4);
+        get_property_case(PROPCASE_MF_ACTIVE, &v, 4);
         if (v) {
             kbd_key_release_all();
             kbd_key_press(KEY_RIGHT);
@@ -293,7 +293,7 @@ long kbd_use_zoom_as_mf() {
         }
     }
     if (kbd_is_key_pressed(KEY_ZOOM_OUT) && (mode_get()&MODE_MASK) == MODE_REC) {
-        get_property_case(12, &v, 4);
+        get_property_case(PROPCASE_MF_ACTIVE, &v, 4);
         if (v) {
             kbd_key_release_all();
             kbd_key_press(KEY_LEFT);

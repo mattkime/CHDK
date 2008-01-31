@@ -101,7 +101,11 @@ void createHook (void *pNewTcb)
 
 	if (my_ncmp(name, "tInitFileM", 10) == 0){
 	    init_file_modules_prev = (void*)(*entry);
+	  #if defined (CAMERA_g7) || defined (CAMERA_a710)
+	    *entry = (long)init_file_modules_task;
+	  #else
 	    *entry = (long)init_file_modules_hook;
+	  #endif
 	}
 #if !defined(CAMERA_ixus65_sd630) // not implemented for this model
 	if (my_ncmp(name, "tCaptSeqTa", 10) == 0){

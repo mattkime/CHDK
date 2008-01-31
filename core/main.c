@@ -18,11 +18,7 @@ void core_hook_task_create(void *tcb)
 void core_hook_task_delete(void *tcb)
 {
 char *name = (char*)(*(long*)((char*)tcb+0x34));
-/*
-#if defined(CAMERA_ixus700_sd500) || defined(CAMERA_a710)
- if (strcmp(name,"tStartupIm")==0) spytask_can_start=1;
-#endif
-*/
+ if (strcmp(name,"tInitFileM")==0) core_spytask_can_start();
 }
 
 
@@ -39,6 +35,10 @@ void core_rawdata_available()
     raw_data_available = 1;
 }
 
+void core_spytask_can_start() {
+        spytask_can_start = 1;
+}
+
 void core_spytask()
 {
     int cnt = 1;
@@ -48,7 +48,7 @@ void core_spytask()
 
     spytask_can_start=0;
 
-    while((i++<200) && !spytask_can_start) msleep(10);
+    while((i++<250) && !spytask_can_start) msleep(10);
 
     started();
     msleep(50);

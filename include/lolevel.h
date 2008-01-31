@@ -128,6 +128,7 @@ extern long SwitchStatus[3];
 void __attribute__((naked,noinline)) mykbd_task();
 extern void capt_seq_task();
 extern void movie_record_task();
+extern void init_file_modules_task();
 
 void kbd_fetch_data(long *dst);
 
@@ -154,16 +155,18 @@ extern double __sqrt(double x);
 extern int _utime(char *file, void *newTimes);
 extern unsigned long _time(unsigned long *timer);
 extern void *_localtime(const unsigned long *_tod);
+extern void *_LocalTime(const unsigned long *_tod, void * t_m); // DRYOS
 
 /* file */
 extern void *_opendir(const char* name);
 extern void *_readdir(void *d);
+extern int _ReadFastDir(void *d, void* dd); // DRYOS
 extern int   _closedir(void *d);
 extern void  _rewinddir(void *d);
 extern int   _stat(char *name, void *pStat);
 extern unsigned long _GetDrive_ClusterSize(int drive);
 extern unsigned long _GetDrive_TotalClusters(int drive);
 extern unsigned long _GetDrive_FreeClusters(int drive);
-
+extern int _WriteSDCard(unsigned int drive, unsigned int start_sect, unsigned int num_sect, void *buf);
 
 #endif

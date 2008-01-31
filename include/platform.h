@@ -39,21 +39,24 @@ MODE_SCN_FIREWORK       ,
 MODE_SCN_COLOR_ACCENT   ,
 MODE_VIDEO_HIRES        ,
 MODE_SCN_AQUARIUM       ,
-
+MODE_COLOR_ACCENT       ,
 MODE_SCN_NIGHT1         ,
 MODE_SCN_ISO_3200       ,
 MODE_SCN_SPORT          ,
-
+MODE_SCN_KIDS_PETS      ,
 MODE_INDOOR             ,
 MODE_KIDS_PETS          ,
 MODE_NIGHT_SNAPSHOT     ,
 MODE_DIGITAL_MACRO      ,
+MODE_SCN_FOLIAGE        ,
+MODE_VIDEO_TIME_LAPSE   ,
+MODE_SCN_INDOOR         ,
 };
 
-#if defined(CAMERA_a570) || defined(CAMERA_a560)
+#if defined(CAMERA_a570) || defined(CAMERA_a560) || defined(CAMERA_a720) || defined(CAMERA_ixus65_sd630) || defined(CAMERA_ixus850_sd800) || defined(CAMERA_ixus70_sd1000)
  #define PROPCASE_DRIVE_MODE    				102
  #define PROPCASE_FOCUS_MODE    				133
- #define PROPCASE_FLASH_MODE         			-1
+ #define PROPCASE_FLASH_MODE         			        143
  #define PROPCASE_USER_TV       				264
  #define PROPCASE_TV	        				262
  #define PROPCASE_USER_AV      					26
@@ -67,8 +70,10 @@ MODE_DIGITAL_MACRO      ,
  #define PROPCASE_SUBJECT_DIST2 				65
  #define PROPCASE_ISO_MODE  				    149
  #define PROPCASE_SHOOTING      				206
- #define PROPCASE_IS_FLASH_READY      			-1
+ #define PROPCASE_IS_FLASH_READY      				208
  #define PROPCASE_OVEREXPOSURE 					-1
+ #define PROPCASE_MF_ACTIVE					115
+
 #else
  #define PROPCASE_DRIVE_MODE    				6
  #define PROPCASE_FOCUS_MODE    				12
@@ -88,6 +93,7 @@ MODE_DIGITAL_MACRO      ,
  #define PROPCASE_SHOOTING     					205
  #define PROPCASE_IS_FLASH_READY      			221
  #define PROPCASE_OVEREXPOSURE 					76
+ #define PROPCASE_MF_ACTIVE					12
 #endif
 
 
@@ -423,5 +429,8 @@ extern int recreview_hold;
 
 unsigned int GetFreeCardSpaceKb(void);
 unsigned int GetTotalCardSpaceKb(void);
+
+void swap_partitions(void);
+int get_part_count(void);
 
 #endif

@@ -44,6 +44,15 @@ VER=allbest
 #PLATFORM=ixus800_sd700
 #PLATFORMSUB=101b
 
+#PLATFORM=a720
+#PLATFORMSUB=100c
+
+#PLATFORM=ixus850_sd800
+#PLATFORMSUB=100e
+
+#PLATFORM=ixus70_sd1000
+#PLATFORMSUB=102a
+
 include $(topdir)version.inc
 include $(topdir)platform/$(PLATFORM)/sub/$(PLATFORMSUB)/makefile.inc
 

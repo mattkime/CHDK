@@ -681,7 +681,7 @@ int shooting_in_progress()
 
 int shooting_is_flash_ready()
 {
-#if !defined(CAMERA_a570) && !defined(CAMERA_a560)	
+//#if !defined(CAMERA_a570) && !defined(CAMERA_a560)	
     int t = 0;
 /* well, I'm not sure what's exactly is happening here
  * but it works for a610-100e
@@ -693,7 +693,7 @@ int shooting_is_flash_ready()
      _GetPropertyCase(PROPCASE_IS_FLASH_READY, &t,sizeof(&t));
     return (t==1) && _IsStrobeChargeCompleted();
     }
-#endif        
+//#endif        
     return 1;
 }
 
@@ -811,7 +811,7 @@ void shooting_tv_bracketing(){
  int m=mode_get()&MODE_SHOOTING_MASK;
  if (bracketing.shoot_counter==0) { // first shoot
     bracketing.shoot_counter=1;
-#if   defined(CAMERA_ixus700_sd500) || defined(CAMERA_ixus800_sd700) || defined(CAMERA_a560) || defined(CAMERA_ixus65_sd630)
+#if   defined(CAMERA_ixus700_sd500) || defined(CAMERA_ixus800_sd700) || defined(CAMERA_a560) || defined(CAMERA_ixus850_sd800) || defined(CAMERA_ixus70_sd1000)  || defined(CAMERA_ixus65_sd630)
     bracketing.tv96=shooting_get_tv96(); 
 #else    
     if (!(m==MODE_M || m==MODE_TV)) bracketing.tv96=shooting_get_tv96(); 

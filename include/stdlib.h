@@ -8,16 +8,23 @@
 #define __cdecl
 
 //#define _CRTIMP
+#define O_RDONLY        0
+#define O_WRONLY        1
+#define O_RDWR          2
 
-//#define __inline__
 
-#define __NO_ISOCEXT
 
 
 //
 // !!! stat is 0x48 bytes on digic
 //
 #define _STAT_DEFINED TRUE
+
+
+#if !defined(CAMERA_a720)
+
+#define O_TRUNC         0x400
+#define O_CREAT         0x200
 
 struct	stat
     {
@@ -43,6 +50,44 @@ struct	stat
     int			reserved6;	/* reserved for future use */
 };
 
+#else // CAMERA_a720
+
+#define O_TRUNC         0x200
+#define O_CREAT         0x100
+
+struct	stat
+    {
+    unsigned long	st_dev;		//?
+    unsigned long	st_ino;		//?	
+    unsigned short	st_mode;	//?	
+    short		st_nlink;	//?	
+    short		st_uid;		//?	
+    short		st_gid;		//?	
+    unsigned long	st_atime;	//?	
+    unsigned long	st_mtime;	//?	
+    unsigned long	st_ctime;	//?	
+    unsigned long	st_size;	
+    long		st_blksize;	//?
+    long		st_blocks;	//?
+    unsigned char	st_attrib;
+    int			reserved1;	//	
+    int			reserved2;	//
+    int			reserved3;	//
+    int			reserved4;	//
+    int			reserved5;	//
+    int			reserved6;	//
+};
+
+#endif
+
+
+
+//#define __inline__
+
+#define __NO_ISOCEXT
+
+
+
 #define _stat stat
 
 #include "stdio.h"
@@ -50,6 +95,7 @@ struct	stat
 #include <io.h>
 #include <sys/stat.h>
 #include <string.h>
+
 
 
 extern int rand(void);
@@ -122,15 +168,29 @@ extern long task_unlock();
 #define DOS_ATTR_DIRECTORY      0x10            /* entry is a sub-directory */
 #define DOS_ATTR_ARCHIVE        0x20            /* file subject to archiving */
 
+#if !defined (CAMERA_a720)
 struct dirent {
     char                name[100];
 };
+#else
+struct dirent {
+    char                name[13];
+    unsigned long	unk1;
+    unsigned char 	attrib;
+    unsigned long 	size;
+    unsigned long	time1;
+    unsigned long	time2;
+    unsigned long	time3;
+};
+#endif
 
 typedef struct {
     unsigned int        fd;
     unsigned int        loc;
     struct dirent       dir;
 } DIR;
+
+
 
 extern DIR*           opendir (const char* name);
 extern struct dirent* readdir (DIR*);
