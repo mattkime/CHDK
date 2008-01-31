@@ -6,3 +6,5 @@ SUBDIRS=$(PLATFORMSUB)
 all: all-recursive
 
 clean: clean-recursive
+
+include $(topdir)bottom.inc

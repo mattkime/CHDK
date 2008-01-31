@@ -165,6 +165,7 @@ ifndef SKIPBUILDRULES
 endif
 
 all: all-recursive
+# all: depend-recursive
 clean: clean-recursive
 distclean: distclean-recursive
 

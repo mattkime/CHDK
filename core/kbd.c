@@ -187,7 +187,9 @@ void process_script()
 	    kbd_int_stack_ptr-=1; // pop op.
 	    return;
 	case SCRIPT_WAIT_SAVE:{
+#if defined(CAMERA_ixus65_sd630) // RAW is not working yet
 	    if (state_shooting_progress == SHOOTING_PROGRESS_DONE)
+#endif
 		kbd_int_stack_ptr-=1; // pop op.
 	    return;
 	}
