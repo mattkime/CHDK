@@ -107,11 +107,9 @@ void createHook (void *pNewTcb)
 	    *entry = (long)init_file_modules_hook;
 	  #endif
 	}
-#if !defined(CAMERA_ixus65_sd630) // not implemented for this model
 	if (my_ncmp(name, "tCaptSeqTa", 10) == 0){
 	    *entry = (long)capt_seq_hook;
 	}
-#endif
 #if !defined(CAMERA_ixus65_sd630) // not implemented for this model
 	if (my_ncmp(name, "tMovieReco", 10) == 0){
 	    *entry = (long)movie_record_hook;

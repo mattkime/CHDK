@@ -23,7 +23,7 @@ stubs_auto.S: boot.c capt_seq.c
 	@echo $< \-\> $@
 	# UNIX shell magick )
 	echo '#include "stubs_asm.h"' > stubs_auto.S
-	cat $^ | perl stubs_auto_gen.pl >> stubs_auto.S
+	cat boot.c capt_seq.c | perl stubs_auto_gen.pl >> stubs_auto.S
 
 stubs_entry.S: $(TARGET_PRIMARY) $(topdir)tools/signatures.h
 	@echo \-\> $@

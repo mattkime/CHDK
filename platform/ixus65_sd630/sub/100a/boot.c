@@ -34,7 +34,6 @@ void boot()
     long canon_bss_len = 0x9C6B0 - (long)canon_bss_start;
     long i;
 
-#if 1
     asm volatile (
 	"MRC     p15, 0, R0,c1,c0\n"
 	"ORR     R0, R0, #0x1000\n"
@@ -42,7 +41,6 @@ void boot()
 	"ORR     R0, R0, #1\n"
 	"MCR     p15, 0, R0,c1,c0\n"
     :::"r0");
-#endif
 /*
 	int * data = (int*)0x170000;
 	for (i = 0; i < 30*1024*1024/4; i++) {
@@ -57,7 +55,6 @@ void boot()
 	canon_bss_start[i]=0;
 
 
-#if 1
     asm volatile (
 	"MRC     p15, 0, R0,c1,c0\n"
 	"ORR     R0, R0, #0x1000\n"
@@ -65,14 +62,12 @@ void boot()
 	"ORR     R0, R0, #1\n"
 	"MCR     p15, 0, R0,c1,c0\n"
     :::"r0");
-#endif
     h_usrInit();
 }
 
 
 void h_usrInit()
 {
-#if 1
     asm volatile (
 	"STR     LR, [SP,#-4]!\n"
 	"BL      sub_FF81196C\n"
@@ -85,12 +80,10 @@ void h_usrInit()
 	"LDR     LR, [SP],#4\n"
 	"B       h_usrKernelInit\n"
     );
-#endif
 }
 
 void  h_usrKernelInit()
 {
-#if 1
     asm volatile (
 	"STMFD   SP!, {R4,LR}\n"
 	"SUB     SP, SP, #8\n"
@@ -118,14 +111,13 @@ void  h_usrKernelInit()
 	"LDR     R0, =h_usrRoot\n"  // !!!
 	"MOV     R1, #0x4000\n"
 //	"LDR     R2, =0xCC6B0\n"	// !!! 0x9C6B0 + 0x30000    MEMISOSIZE!!!
-	"LDR     R2, =0x18A6B0\n"       // 0x9C6B0+0x1ae000= 0x24A6B0-0x18A6B0=786432
+	"LDR     R2, =0x18A6B0\n"   // !!! Increased size !!! 0x9C6B0+0x1ae000= 0x24A6B0-0x18A6B0=786432
 	"STR     R12, [SP]\n"                    
 	"STR     R4, [SP,#4]\n"
 	"BL      sub_FFB1FE20\n"
 	"ADD     SP, SP, #8\n"
 	"LDMFD   SP!, {R4,PC}\n"
     );
-#endif
 }
 
 static long drv_struct[16];
@@ -284,8 +276,8 @@ void h_ios_tty_Init()
 
 void  h_usrRoot()
 {
-#if 1
-    asm volatile (
+    asm volatile
+    (
 	"STMFD   SP!, {R4,R5,LR}\n"
 	"MOV     R5, R0\n"
 	"MOV     R4, R1\n"
@@ -299,29 +291,26 @@ void  h_usrRoot()
 	"BL      sub_FF811708\n"
 	"MOV     R0, #0x32\n"
 	"BL      sub_FFB16A88\n"  // selectInit
-);
+    );
 //       h_ios_tty_Init();
 
-asm volatile
-(	
+    asm volatile
+    (	
 	"BL      sub_FF811A14\n" //ios_tty_Init
 	"BL      sub_FF8119F8\n"
 	"BL      sub_FF811A40\n"
 	"BL      sub_FFB16348\n"
 	"BL      sub_FF8119C8\n"
     );
-#endif
 
     _taskCreateHookAdd(createHook);
     _taskDeleteHookAdd(deleteHook);
 
     drv_self_hide();
 
-#if 1
     asm volatile (
 	"LDMFD   SP!, {R4,R5,LR}\n"
 	"B       sub_FF811370\n"
     );
-#endif
 }
 

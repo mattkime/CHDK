@@ -22,10 +22,11 @@ DEF(touch_keys_sema, 0x0000E874)
 
 
 
+DEF(zoom_busy, 0x79E20)
+DEF(focus_busy, 0x7A13C)
+DEF(movie_compression, 0x617C)
+
 // TODO: !!!!!!!!!!!!! THESE ARE INVALID !!!!!!!!
-DEF(zoom_busy, 0x801C4)
-DEF(focus_busy, 0x80574)
-DEF(movie_compression, 0x6CBC)
 DEF(FlashParamsTable,0xFFD4B62C)
 DEF(canon_menu_active, 0x6CBC)
 DEF(canon_shoot_menu_active, 0x6CBC)

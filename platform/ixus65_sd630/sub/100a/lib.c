@@ -12,12 +12,12 @@ void *hook_raw_ret_addr()
 
 char *hook_raw_image_addr()
 {
-    return (char*)0x00006895A0;
+    return (char*)0x105B8AC0;
 }
 
 long hook_raw_size()
 {
-    return 0x683880;
+    return 0x75A8F0;
 }
 
 /**
