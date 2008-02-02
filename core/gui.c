@@ -276,7 +276,7 @@ static CMenu values_submenu = { LANG_MENU_OSD_VALUES_TITLE, /*cb_values_menu_cha
 static CMenuItem video_submenu_items[] = {
 	  {LANG_MENU_VIDEO_MODE,              MENUITEM_ENUM,    (int*)gui_video_mode_enum}, 
       {LANG_MENU_VIDEO_BITRATE,           MENUITEM_ENUM,    (int*)gui_video_bitrate_enum}, 
-      {LANG_MENU_VIDEO_QUALITY,           MENUITEM_INT|MENUITEM_F_UNSIGNED|MENUITEM_F_MINMAX,  &conf.video_quality, MENU_MINMAX(1, 99)}, 
+      {LANG_MENU_VIDEO_QUALITY,           MENUITEM_INT|MENUITEM_F_UNSIGNED|MENUITEM_F_MINMAX,  &conf.video_quality, MENU_MINMAX(1, 99)},
       {LANG_MENU_BACK,                    MENUITEM_UP },
       {0}
 };
@@ -284,15 +284,17 @@ static CMenu video_submenu = { LANG_MENU_VIDEO_PARAM_TITLE, NULL, video_submenu_
 
 static CMenuItem bracketing_in_continuous_submenu_items[] = {
 	  {LANG_MENU_TV_BRACKET_VALUE,             MENUITEM_ENUM,    (int*)gui_tv_bracket_values_enum },
-#if !defined (CAMERA_ixus700_sd500) && !defined (CAMERA_ixus800_sd700) && !defined (CAMERA_a560)	  
+#if !defined (CAMERA_ixus700_sd500) && !defined (CAMERA_ixus800_sd700) && !defined (CAMERA_a560)
 	  {LANG_MENU_AV_BRACKET_VALUE,             MENUITEM_ENUM,    (int*)gui_av_bracket_values_enum },
 #endif
-	  {LANG_MENU_ISO_BRACKET_VALUE,            MENUITEM_INT|MENUITEM_F_UNSIGNED|MENUITEM_F_MINMAX, &conf.iso_bracket_value, MENU_MINMAX(0, 100)}, 
+	  {LANG_MENU_ISO_BRACKET_VALUE,            MENUITEM_INT|MENUITEM_F_UNSIGNED|MENUITEM_F_MINMAX, &conf.iso_bracket_value, MENU_MINMAX(0, 100)},
 	  {LANG_MENU_ISO_BRACKET_KOEF,             MENUITEM_ENUM,    (int*)gui_iso_bracket_koef_enum},
-#if !defined (CAMERA_ixus700_sd500) && !defined (CAMERA_ixus800_sd700) && !defined (CAMERA_a560) && !defined (CAMERA_ixus850_sd800) && !defined (CAMERA_ixus70_sd1000)	  	  
-	  {LANG_MENU_SUBJ_DIST_BRACKET_VALUE,      MENUITEM_INT|MENUITEM_F_UNSIGNED|MENUITEM_F_MINMAX, &conf.subj_dist_bracket_value, MENU_MINMAX(0, 100)}, 
+//nirschi: IXUS800(me) and IXUS950(whoever) tested OK, a560 and ixus800+ should not crash calling MoveFocusLensToDistance()
+//#if !defined (CAMERA_ixus700_sd500) && !defined (CAMERA_ixus800_sd700) && !defined (CAMERA_a560) && !defined (CAMERA_ixus850_sd800) && !defined (CAMERA_ixus70_sd1000)
+#if !defined (CAMERA_ixus700_sd500)
+	  {LANG_MENU_SUBJ_DIST_BRACKET_VALUE,      MENUITEM_INT|MENUITEM_F_UNSIGNED|MENUITEM_F_MINMAX, &conf.subj_dist_bracket_value, MENU_MINMAX(0, 100)},
 	  {LANG_MENU_SUBJ_DIST_BRACKET_KOEF,       MENUITEM_ENUM,    (int*)gui_subj_dist_bracket_koef_enum},
-#endif	  
+#endif
 	  {LANG_MENU_BRACKET_TYPE,                 MENUITEM_ENUM,    (int*)gui_bracket_type_enum },
       {LANG_MENU_BACK,                         MENUITEM_UP },
       {0}
@@ -311,19 +313,21 @@ static CMenuItem exposure_submenu_items[] = {
 static CMenu exposure_submenu = { LANG_MENU_EXPOSURE_TITLE, NULL, exposure_submenu_items };
 
 static CMenuItem operation_submenu_items[] = {
-	  {LANG_MENU_OVERRIDE_TV_VALUE,        MENUITEM_INT|MENUITEM_F_UNSIGNED|MENUITEM_F_MINMAX,  &conf.tv_override_value, MENU_MINMAX(0, 100)}, 
+	  {LANG_MENU_OVERRIDE_TV_VALUE,        MENUITEM_INT|MENUITEM_F_UNSIGNED|MENUITEM_F_MINMAX,  &conf.tv_override_value, MENU_MINMAX(0, 100)},
 	  {LANG_MENU_OVERRIDE_TV_KOEF,         MENUITEM_ENUM,    (int*)gui_tv_override_koef_enum},
 #if !defined (CAMERA_ixus700_sd500) && !defined (CAMERA_ixus800_sd700) && !defined (CAMERA_a560)
 	  {LANG_MENU_OVERRIDE_AV_VALUE,        MENUITEM_ENUM,    (int*)gui_av_override_enum },
 #endif
-	  {LANG_MENU_OVERRIDE_ISO_VALUE,	   MENUITEM_INT|MENUITEM_F_UNSIGNED|MENUITEM_F_MINMAX,  &conf.iso_override_value, MENU_MINMAX(0, 800)}, 
+	  {LANG_MENU_OVERRIDE_ISO_VALUE,	   MENUITEM_INT|MENUITEM_F_UNSIGNED|MENUITEM_F_MINMAX,  &conf.iso_override_value, MENU_MINMAX(0, 800)},
 	  {LANG_MENU_OVERRIDE_ISO_KOEF,        MENUITEM_ENUM,    (int*)gui_iso_override_koef_enum},
- 	 // {LANG_MENU_OVERRIDE_SUBJ_DIST_VALUE, MENUITEM_INT|MENUITEM_F_UNSIGNED|MENUITEM_F_MINMAX,  &conf.subj_dist_override_value, MENU_MINMAX(0, 500)}, 
-#if !defined (CAMERA_ixus700_sd500) && !defined (CAMERA_ixus800_sd700) && !defined (CAMERA_a560) && !defined (CAMERA_ixus850_sd800) && !defined (CAMERA_ixus70_sd1000)
+ 	 // {LANG_MENU_OVERRIDE_SUBJ_DIST_VALUE, MENUITEM_INT|MENUITEM_F_UNSIGNED|MENUITEM_F_MINMAX,  &conf.subj_dist_override_value, MENU_MINMAX(0, 500)},
+//nirschi: IXUS800(me) and IXUS950(whoever) tested OK, a560 and ixus800+ should not crash calling MoveFocusLensToDistance()
+//#if !defined (CAMERA_ixus700_sd500) && !defined (CAMERA_ixus800_sd700) && !defined (CAMERA_a560) && !defined (CAMERA_ixus850_sd800) && !defined (CAMERA_ixus70_sd1000)
+#if !defined (CAMERA_ixus700_sd500)
       {LANG_MENU_OVERRIDE_SUBJ_DIST_VALUE, MENUITEM_ENUM,    (int*)gui_subj_dist_override_value_enum},
 	  {LANG_MENU_OVERRIDE_SUBJ_DIST_KOEF,  MENUITEM_ENUM,    (int*)gui_subj_dist_override_koef_enum},
-#endif	  
-	  {LANG_MENU_BRACKET_IN_CONTINUOUS,	   MENUITEM_SUBMENU, (int*)&bracketing_in_continuous_submenu }, 
+#endif
+	  {LANG_MENU_BRACKET_IN_CONTINUOUS,	   MENUITEM_SUBMENU, (int*)&bracketing_in_continuous_submenu },
 	  {LANG_MENU_CLEAR_OVERRIDE_VALUES,    MENUITEM_BOOL,    (int*)&conf.clear_override},
       //{LANG_MENU_EXPOSURE,                 MENUITEM_SUBMENU,    (int*)&exposure_submenu },
 	  {LANG_MENU_BACK,                     MENUITEM_UP },
@@ -1171,20 +1175,22 @@ void gui_kbd_process()
                 gui_mode = GUI_MODE_MENU;
                 draw_restore();
             } else {
-#if !defined(CAMERA_g7) && !defined (CAMERA_ixus700_sd500) && !defined (CAMERA_ixus800_sd700) && !defined (CAMERA_a560) && !defined (CAMERA_ixus850_sd800) && !defined (CAMERA_ixus70_sd1000)
-			  if (shooting_get_focus_mode()){ 
+//nirschi: IXUS800(me) and IXUS950(whoever) tested OK, a560 and ixus800+ should not crash calling MoveFocusLensToDistance()
+//#if !defined(CAMERA_g7) && !defined (CAMERA_ixus700_sd500) && !defined (CAMERA_ixus800_sd700) && !defined (CAMERA_a560) && !defined (CAMERA_ixus850_sd800) && !defined (CAMERA_ixus70_sd1000)
+#if !defined(CAMERA_g7) && !defined (CAMERA_ixus700_sd500)
+			  if (shooting_get_focus_mode()){
 				if (kbd_is_key_clicked(KEY_RIGHT)) {
 				  gui_subj_dist_override_koef_enum(1,0);
                   gui_osd_draw_state();
                   shooting_set_focus(shooting_get_subject_distance_override_value(), SET_NOW);
 				  }
-				else if (kbd_is_key_clicked(KEY_LEFT)) 
+				else if (kbd_is_key_clicked(KEY_LEFT))
 				  {
 				  gui_subj_dist_override_koef_enum(-1,0);
                   gui_osd_draw_state();
                   shooting_set_focus(shooting_get_subject_distance_override_value(), SET_NOW);
 				  }
-				else  
+				else
 				switch (kbd_get_autoclicked_key()) {
 				  case KEY_ZOOM_IN:
                   gui_subj_dist_override_value_enum(1,0);
@@ -1332,7 +1338,7 @@ void gui_draw_osd() {
         pressed = 0;
     }
     
-    mode_photo = (m&MODE_MASK) == MODE_PLAY || 
+    mode_photo = (m&MODE_MASK) == MODE_PLAY ||
                  !((m&MODE_SHOOTING_MASK)==MODE_VIDEO_STD || 
 				 (m&MODE_SHOOTING_MASK)==MODE_VIDEO_SPEED ||  
 				 (m&MODE_SHOOTING_MASK)==MODE_VIDEO_COMPACT ||
@@ -1367,9 +1373,10 @@ void gui_draw_osd() {
     if (conf.show_histo && (gui_mode==GUI_MODE_NONE || gui_mode==GUI_MODE_ALT) && kbd_is_key_pressed(KEY_SHOOT_HALF) && (mode_photo || (m&MODE_SHOOTING_MASK)==MODE_STITCH)) {
         gui_osd_draw_histo();
     }
+//nirschi: IXUS requires shoot menu active for EV comp, canon_shoot_menu_active==1 when AFL or AEL indicator on, TvAv readout simulated here also required
+//if (!(conf.show_osd && (canon_menu_active==(int)&canon_menu_active-4) && (canon_shoot_menu_active==0)))  return;
+    if (!(conf.show_osd && (canon_menu_active==(int)&canon_menu_active-4)))  return;
 
-    if (!(conf.show_osd && (canon_menu_active==(int)&canon_menu_active-4) && (canon_shoot_menu_active==0)))  return;
-    
     if (((m&MODE_MASK) == MODE_REC) && ((recreview_hold==0) || (conf.show_osd_in_review)) ) {
 //        m &= MODE_SHOOTING_MASK;
 //        if (m==MODE_SCN_WATER || m==MODE_SCN_NIGHT || m==MODE_SCN_CHILD || m==MODE_SCN_PARTY || m==MODE_STITCH ||

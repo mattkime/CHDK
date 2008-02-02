@@ -127,7 +127,9 @@ void lens_set_zoom_speed(long newspd)
 
 void lens_set_focus_pos(long newpos)
 {
-#if !defined (CAMERA_ixus700_sd500) && !defined (CAMERA_ixus800_sd700) && !defined(CAMERA_a560) 
+//nirschi: IXUS800(me) and IXUS950(whoever) tested OK, a560 and ixus800+ should not crash calling MoveFocusLensToDistance()
+//#if !defined (CAMERA_ixus700_sd500) && !defined (CAMERA_ixus800_sd700) && !defined(CAMERA_a560)
+#if !defined (CAMERA_ixus700_sd500)
     _MoveFocusLensToDistance((short*)&newpos);
     //while (focus_busy);
     while ((shooting_is_flash_ready()!=1) || (focus_busy));

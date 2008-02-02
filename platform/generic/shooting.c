@@ -361,7 +361,7 @@ int shooting_get_exif_subject_dist()
 int shooting_get_hyperfocal_distance()
 {
   int av=shooting_get_real_aperture();
-  int fl=get_focal_length(lens_get_zoom_point());	
+  int fl=get_focal_length(lens_get_zoom_point());
   if ((av>0) && (fl>0)) return (fl*fl)/(10*circle_of_confusion*av);
   else return (-1);
 }
@@ -601,11 +601,21 @@ short shooting_get_drive_mode()
     return m;
 }
 
-short shooting_get_focus_mode()
+short shooting_get_focus_mode() //nirschi: should better be named shooting_can_focus_be_set()
 {
-    short m;
-    _GetPropertyCase(PROPCASE_FOCUS_MODE, &m, sizeof(m));
-    return m;
+//nirschi: 9 zoom point lens but 8 zoom point code, prevent crash in MoveFocusLensToDistance()
+#if defined(CAMERA_ixus800_sd700) || defined(CAMERA_ixus950_sd900)
+    return shooting_get_zoom() < 8;
+
+//nirschi: ewavr said A, S and G series OK, a560 and ixus800+ should not crash calling MoveFocusLensToDistance()
+#elif defined(CAMERA_ixus700_sd500)
+//    short m;
+//    _GetPropertyCase(PROPCASE_FOCUS_MODE, &m, sizeof(m));
+//    return m;
+    return 0;
+#else
+    return 1;
+#endif
 }
 
 
