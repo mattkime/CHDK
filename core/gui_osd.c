@@ -430,7 +430,7 @@ void gui_osd_calc_dof() {
     //long lfpfl=lens_get_focus_pos_fl();
            
     av=shooting_get_real_aperture();
-#if defined(CAMERA_ixus700_sd500) || defined(CAMERA_ixus800_sd700) || defined(CAMERA_a560) || defined(CAMERA_ixus850_sd800) || defined(CAMERA_ixus70_sd1000) || defined(CAMERA_ixus950_sd850)
+#if defined(CAMERA_ixus700_sd500) || defined(CAMERA_ixus800_sd700) || defined(CAMERA_a560) || defined(CAMERA_ixus850_sd800) || defined(CAMERA_ixus70_sd1000) || defined(CAMERA_ixus950_sd850) 
     if (av>=shooting_get_aperture_from_av96(shooting_get_aperture_sizes_table_prop_id(shooting_get_aperture_sizes_table_size()/2))) av/=2; // nd filter in
 #endif
     fl=get_focal_length(lens_get_zoom_point());
