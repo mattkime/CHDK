@@ -1,0 +1,23 @@
+Random notes, probably mainly useful for identification of similar pointers in 
+other camera's firmwares.
+
+0x25E0 = 0x25C8 + 0x18
+             sub_FF84A5A8:
+             ...
+ROM:FF84A5AC 008                 LDR     R4, =0x25C8
+ROM:FF84A5B0 008                 LDR     R1, [R4,#0x18]
+ROM:FF84A5B4 008                 CMP     R1, R0
+ROM:FF84A5B8 008                 LDMFDEQ SP!, {R4,PC}
+
+[0x25E0] (4B, long) 0 == LCD enabled, 1 == EVF enabled
+[0x40BDC] (4B, short dim, short bright) LCD brightness presets
+[0x40BEC] (4B, short dim, short bright) EVF brightness presets
+
+
+
+Todo:
+- Implement separate configuration file dgmod.cfg so dgmod settings won't
+  accidentally collide with trunk settings in the future.
+- Implement 'find IS lens center' properly, including warnings etc. Code is
+  basically done but needs to be cleaned up and adjusted into here.
+- All the other stuff in the top-secret document.

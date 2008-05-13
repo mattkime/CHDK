@@ -12,6 +12,7 @@ static long raw_save_stage;
 
 void capt_seq_hook_raw_here()
 {
+    *((long *)0x185C) = 0; // DG monitor shooting progress
     raw_save_stage = RAWDATA_AVAILABLE;
     core_rawdata_available();
     while (raw_save_stage != RAWDATA_SAVED){

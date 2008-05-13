@@ -420,7 +420,96 @@ static char* gui_lang_default = \
 "333 \"Cursor Background Color\"\n"
 "334 \"Center Menu\"\n"
 
+"335 \"DataGhost's menu ->\"\n"
+"336 \"DataGhost's menu\"\n"
+"337 \"Adjust IS lens position\"\n"
+"338 \"Find IS lens center\"\n"
+"339 \"Post LED messages ->\"\n"
+"340 \"LED disco\"\n"
+"341 \"Display brightness ->\"\n"
+
+"342 \"Display brightness\"\n"
+"343 \"Canon LCD low brightness\"\n"
+"344 \"Canon LCD high brightness\"\n"
+"345 \"Canon EVF low brightness\"\n"
+"346 \"Canon EVF high brightness\"\n"
+"347 \"Current LCD brightness\"\n"
+"348 \"Current EVF brightness\"\n"
+
+"349 \"Please switch your camera\\nto REC mode\\nand try again. :)\"\n"
+
+"350 \"IS Lens adjustment\"\n"
+"351 \"\x18\x19\x1b\x1a: position the lens\\nZOOM: set position step size\\n SET: reset to default settings\\nMENU: return\"\n"
+"352 \"Pitch: set 0x%3X,  cur 0x%3X\"\n"
+"353 \"Yaw:   set 0x%3X,  cur 0x%3X\"\n"
+"354 \"Step: %3d\"\n"
+"355 \"WARNING: Use of this feature may\\ndamage the IS lens mechanism.\\nThe camera will now determine the\\nlimits. You can toggle the limit\\noverride by pressing the FUNC key.\\n\\nDo you want to continue?\"\n"
+"356 \"ERROR: Assertion failed, default IS\\nlens position is not within IS lens\\nlimits. This should never happen.\\nPlease do not use this feature\\nunless you know what you're doing.\"\n"
+"357 \"CAUTION! LIMIT OVERRIDE ENABLED, CAMERA MAY\"\n"
+"358 \"BE DAMAGED! READ ONLINE DOCS FOR MORE INFO\"\n"
+
+"359 \"Post LED messages\"\n"
+"360 \"LED number\"\n"
+"361 \"Action\"\n"
+"362 \"Brightness\"\n"
+"363 \"Blink count\"\n"
+"364 \"Post message\"\n"
+
+"365 \"Turn on display\"\n"
+"366 \"Turn off display\"\n"
+"367 \"Turn on backlight\"\n"
+"368 \"Turn off backlight\"\n"
+
+"369 \"Quick debugger (code of the day)\"\n"
+
+"370 \"Advanced memory viewer\"\n"
+
+"371 \"IS Menu ->\"\n"
+"372 \"IS Menu\"\n"
+"373 \"Show IS internals\"\n"
+
+"374 \"Hall dev off. P:   %2X, Y:   %2X\"\n"
+"375 \"Hall dev gain P:   %2X, Y:   %2X\"\n"
+"376 \"Gyro offset   P: %4X, Y: %4X\"\n"
+"377 \"Gyro gain     P:   %2X, Y:   %2X\"\n"
+"378 \"Lens cent. ax.A: %4X, B: %4X\"\n"
+"379 \"Lens EVi axis A: %6d, B: %6d\"\n"
+"380 \"Lens damp ax. A: %4X, B: %4X\"\n"
+"381 \"Lens PWM      P: %4X, Y: %4X\"\n"
+"382 \"Lens position P: %4X, Y: %4X\"\n"
+"383 \"Camera orientation demo\"\n"
+
+"384 \"Show IS intern. ontop (non-ALT)\"\n"
+"385 \"Show IS intern2 ontop (non-ALT)\"\n"
+
+"386 \"Show IS internals 2\"\n"
+
+"387 \"Drive     A: %4X, B: %4X\"\n"
+"388 \"Pos       A: %4X, B: %4X\"\n"
+"389 \"Hall off  A:   %2X, B:   %2X\"\n"
+"390 \"Hall gain A:   %2X, B:   %2X\"\n"
+"391 \"Gyro gain A:   %2X, B:   %2X\"\n"
+"392 \"Coeff P   A: %4X, B: %4X\"\n"
+"393 \"Coeff I   A: %4X, B: %4X\"\n"
+"394 \"Coeff D   A: %4X, B: %4X\"\n"
+"395 \"PLF       A: %4X, B: %4X\"\n"
+"396 \"LPF       A: %4X, B: %4X\"\n"
+"397 \"Damp      A: %4X, B: %4X\"\n"
+"398 \"EVi       A: %6d, B: %6d\"\n"
+
+"399 \"Fast-draw game test\"\n"
+
+
 ;
+
+/* Virtual screen
+
+----------------------------------- <-- MBOX
+------------------------------------------- <- Screen
+
+
+*/
+
 
 //-------------------------------------------------------------------
 void gui_lang_init() {

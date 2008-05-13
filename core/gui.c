@@ -29,6 +29,7 @@
 #include "script.h"
 #include "motion_detector.h"
 #include "raw.h"
+#include "dgmod.h"
 
 //-------------------------------------------------------------------
 
@@ -164,6 +165,18 @@ static const char* gui_space_warn_type_enum(int change, int arg);
 
 void rinit();
 
+// DGmod forwards
+static void gui_draw_dg_adjust_is(int arg);
+static void gui_draw_dg_show_is(int arg);
+static void gui_draw_dg_show_is2(int arg);
+static void gui_draw_dg_orientation_demo(int arg);
+static void dg_game_test_init(int arg);
+const char* gui_dg_led_number_enum(int change, int arg);
+const char* gui_dg_led_action_enum(int change, int arg);
+static void gui_draw_dg_hexviewer(int arg);
+static int dg_show_is_internals_always = 0;
+static int dg_show_is2_internals_always = 0;
+static int dg_game_test_enabled = 0;
 
 // Menu callbacks
 //-------------------------------------------------------------------
@@ -178,6 +191,68 @@ static void cb_zebra_restore_osd();
 
 // Menu definition
 //-------------------------------------------------------------------
+static CMenuItem dg_bright_submenu_items[] = {
+	{LANG_MENU_DG_BRIGHT_CANON_LCD_LOW,  MENUITEM_INT|MENUITEM_F_UNSIGNED,                       &dgconf_br_canlcdlow },
+	{LANG_MENU_DG_BRIGHT_CANON_LCD_HIGH, MENUITEM_INT|MENUITEM_F_UNSIGNED,                       &dgconf_br_canlcdhigh },
+	{LANG_MENU_DG_BRIGHT_CANON_EVF_LOW,  MENUITEM_INT|MENUITEM_F_UNSIGNED,                       &dgconf_br_canevflow },
+	{LANG_MENU_DG_BRIGHT_CANON_EVF_HIGH, MENUITEM_INT|MENUITEM_F_UNSIGNED,                       &dgconf_br_canevfhigh },
+	{LANG_MENU_DG_BRIGHT_CUR_LCD,        MENUITEM_INT|MENUITEM_F_UNSIGNED|MENUITEM_ARG_CALLBACK, &dgconf_br_curlcd, (int)dg_bright_setcurlcd },
+	{LANG_MENU_DG_BRIGHT_CUR_EVF,        MENUITEM_INT|MENUITEM_F_UNSIGNED|MENUITEM_ARG_CALLBACK, &dgconf_br_curevf, (int)dg_bright_setcurevf },
+	{LANG_MENU_DG_BRIGHT_TURN_ON_DISP,   MENUITEM_PROC,                                          (int*)dg_br_turnondisp },
+	{LANG_MENU_DG_BRIGHT_TURN_OFF_DISP,  MENUITEM_PROC,                                          (int*)dg_br_turnoffdisp },
+	{LANG_MENU_DG_BRIGHT_TURN_ON_BACK,   MENUITEM_PROC,                                          (int*)dg_br_turnonback },
+	{LANG_MENU_DG_BRIGHT_TURN_OFF_BACK,  MENUITEM_PROC,                                          (int*)dg_br_turnoffback },
+	{LANG_MENU_BACK,                   MENUITEM_UP },
+	{0}
+};
+
+static CMenu dg_bright_submenu = { LANG_MENU_DG_BRIGHT_MENU_TITLE, dg_bright_submenu_change, dg_bright_submenu_items };
+
+static CMenuItem dg_postledmsg_submenu_items[] = {
+	{LANG_MENU_DG_PLM_LEDNUM,          MENUITEM_ENUM,                                            (int*)gui_dg_led_number_enum },
+	{LANG_MENU_DG_PLM_ACTION,          MENUITEM_ENUM,                                            (int*)gui_dg_led_action_enum },
+	{LANG_MENU_DG_PLM_BRIGHT,          MENUITEM_INT|MENUITEM_F_UNSIGNED|MENUITEM_ARG_CALLBACK,   &dgconf_lc.brightness, (int)dg_plm_brightness },
+	{LANG_MENU_DG_PLM_COUNT,           MENUITEM_INT|MENUITEM_F_UNSIGNED,                         &dgconf_lc.blink_count },
+	{LANG_MENU_DG_PLM_POST,            MENUITEM_PROC,                                            (int*)dg_plm_post },
+	{LANG_MENU_BACK,                   MENUITEM_UP },
+	{0}
+};
+
+static CMenu dg_postledmsg_submenu = {LANG_MENU_DG_PLM_MENU_TITLE, NULL, dg_postledmsg_submenu_items };
+
+
+static CMenuItem dg_is_submenu_items[] = {
+	{LANG_MENU_DG_ADJUST_IS_LENS,      MENUITEM_PROC,           (int*)gui_draw_dg_adjust_is },
+	{LANG_MENU_DG_FIND_CENTER_IS_LENS, MENUITEM_PROC,           0 },
+	{LANG_MENU_DG_SHOW_IS_VALUES,      MENUITEM_PROC,           (int*)gui_draw_dg_show_is },
+	{LANG_MENU_DG_SHOW_IS_VALUES2,     MENUITEM_PROC,           (int*)gui_draw_dg_show_is2 },
+	{LANG_MENU_DG_SHOW_IS_VALS_ALWAYS, MENUITEM_BOOL,           &dg_show_is_internals_always },
+	{LANG_MENU_DG_SHOW_IS2_VALS_ALWAYS,MENUITEM_BOOL,           &dg_show_is2_internals_always },
+	{LANG_MENU_DG_ORIENTATION_DEMO,    MENUITEM_PROC,           (int*)gui_draw_dg_orientation_demo },
+	{LANG_MENU_BACK,                   MENUITEM_UP },
+	{0}
+};	
+
+static CMenu dg_is_submenu = {LANG_MENU_DG_IS_MENU_TITLE, NULL, dg_is_submenu_items };
+
+
+static CMenuItem dg_submenu_items[] = {
+	{LANG_MENU_DG_IS_MENU,             MENUITEM_SUBMENU,        (int*)&dg_is_submenu },
+	{LANG_MENU_DG_LED_MESSAGES,        MENUITEM_SUBMENU,        (int*)&dg_postledmsg_submenu },
+	{LANG_MENU_DG_LED_DISCO,           MENUITEM_PROC,           (int*)dg_disco },
+#if defined(CAMERA_s5is)
+	{LANG_MENU_DG_BRIGHT_MENU,         MENUITEM_SUBMENU,        (int*)&dg_bright_submenu },
+#endif
+	{LANG_MENU_DG_QUICK_DEBUGGER,      MENUITEM_PROC,           (int*)dg_quick_debugger },
+	{LANG_MENU_DG_HEXVIEWER,           MENUITEM_PROC,           (int*)gui_draw_dg_hexviewer },
+	{LANG_DG_GAME_TEST,                MENUITEM_PROC,           (int*)dg_game_test_init },
+	{LANG_MENU_BACK,                   MENUITEM_UP },
+	{0}
+};
+
+static CMenu dg_submenu = { LANG_MENU_DG_MENU_TITLE, NULL, dg_submenu_items };
+
+
 static CMenuItem script_submenu_items_top[] = {
     {LANG_MENU_SCRIPT_LOAD,             MENUITEM_PROC,                      (int*)gui_load_script },
     {LANG_MENU_SCRIPT_DELAY,            MENUITEM_INT|MENUITEM_F_UNSIGNED,   &conf.script_shoot_delay },
@@ -584,6 +659,7 @@ static CMenuItem root_menu_items[] = {
     {LANG_MENU_MAIN_VISUAL_PARAM,       MENUITEM_SUBMENU,   (int*)&visual_submenu },
     {LANG_MENU_MAIN_MISC,               MENUITEM_SUBMENU,   (int*)&misc_submenu },
     {LANG_MENU_MAIN_DEBUG,              MENUITEM_SUBMENU,   (int*)&debug_submenu },
+    {LANG_MENU_DG_MENU,                 MENUITEM_SUBMENU,   (int*)&dg_submenu },
     {LANG_MENU_MAIN_RESET_OPTIONS,      MENUITEM_PROC,      (int*)gui_menuproc_reset },
 #ifndef OPTIONS_AUTOSAVE
     {LANG_MENU_MAIN_SAVE_OPTIONS,       MENUITEM_PROC,      (int*)gui_menuproc_save },
@@ -1398,6 +1474,15 @@ void gui_redraw()
         --gui_splash;
     }
 
+    // FINDME DG
+    if(dg_game_test_enabled == 1) {
+        dg_game_test();
+        dg_game_test_enabled = 0;
+    }
+    // Disables disabling the screen, so it still displays stuff during image
+    // capture and shutdown.
+    //_MuteOffPhysicalScreen();
+    
     gui_in_redraw = 1;
     gui_mode_old = gui_mode;
 
@@ -1455,6 +1540,21 @@ void gui_redraw()
             break;
         case GUI_MODE_MPOPUP:
             gui_mpopup_draw();
+            break;
+        case GUI_MODE_DG_ADJUST_IS:
+            dg_adjust_is_draw();
+            break;
+        case GUI_MODE_DG_HEXVIEWER:
+            dg_hexviewer_draw();
+            break;
+        case GUI_MODE_DG_SHOW_IS:
+            dg_show_is_draw();
+            break;
+        case GUI_MODE_DG_SHOW_IS2:
+            dg_show_is2_draw();
+            break;
+        case GUI_MODE_DG_ORIENTATION_DEMO:
+            dg_orientation_demo_draw();
             break;
         default:
             break;
@@ -1522,6 +1622,11 @@ void gui_kbd_process()
             case GUI_MODE_OSD:
             case GUI_MODE_CALENDAR:
             case GUI_MODE_BENCH:
+            case GUI_MODE_DG_ADJUST_IS:
+            case GUI_MODE_DG_HEXVIEWER:
+            case GUI_MODE_DG_SHOW_IS:
+            case GUI_MODE_DG_SHOW_IS2:
+            case GUI_MODE_DG_ORIENTATION_DEMO:
                 draw_restore();
                 gui_mode = GUI_MODE_MENU;
                 break;
@@ -1673,6 +1778,21 @@ void gui_kbd_process()
         case GUI_MODE_MPOPUP:
             gui_mpopup_kbd_process();
              break;
+     case GUI_MODE_DG_ADJUST_IS:
+            dg_adjust_is_kbd_process();
+            break;
+     case GUI_MODE_DG_HEXVIEWER:
+            dg_hexviewer_kbd_process();
+            break;
+     case GUI_MODE_DG_SHOW_IS:
+            dg_show_is_kbd_process();
+            break;
+     case GUI_MODE_DG_SHOW_IS2:
+            dg_show_is2_kbd_process();
+            break;
+     case GUI_MODE_DG_ORIENTATION_DEMO:
+            dg_orientation_demo_kbd_process();
+            break;
         default:
             break;
     }
@@ -1747,6 +1867,13 @@ void gui_draw_osd() {
         return;
     }
 #endif
+    
+    if (gui_mode==GUI_MODE_NONE && dg_show_is_internals_always == 1) {
+        dg_show_is_draw();
+    } else if (gui_mode==GUI_MODE_NONE && dg_show_is2_internals_always == 1) {
+        dg_show_is2_draw();
+    }
+
     
     if (kbd_is_key_pressed(KEY_SHOOT_HALF)) {
         if (kbd_is_key_pressed(SHORTCUT_TOGGLE_ZEBRA)) {
@@ -1885,17 +2012,17 @@ void gui_draw_osd() {
 //        long v=get_file_counter();
 //	sprintf(osd_buf, "1:%03d-%04d  ", (v>>18)&0x3FF, (v>>4)&0x3FFF);
 //	sprintf(osd_buf, "1:%d, %08X  ", xxxx, eeee);
-	sprintf(osd_buf, "1:%8x  ", physw_status[0]);
+	sprintf(osd_buf, "1:%8x  ", *((long *)0x1850)); // DG
 	draw_txt_string(28, 10, osd_buf, conf.osd_color);
 
-	sprintf(osd_buf, "2:%8x  ", physw_status[1]);
+	sprintf(osd_buf, "2:%8x  ", *((long *)0x1854)); // DG
 	draw_txt_string(28, 11, osd_buf, conf.osd_color);
 
-	sprintf(osd_buf, "3:%8x  ", physw_status[2]);
+	sprintf(osd_buf, "3:%8x  ", *((long *)0x1858)); // DG
 	draw_txt_string(28, 12, osd_buf, conf.osd_color);
 
 //      sprintf(osd_buf, "4:%8x  ", vid_get_viewport_fb_d());
-        sprintf(osd_buf, "4:%8x  ", get_usb_power(1));
+        sprintf(osd_buf, "4:%8x  ", *((long *)0x185C)); // DG
 	draw_txt_string(28, 13, osd_buf, conf.osd_color);
     }
 
@@ -2292,3 +2419,81 @@ void user_menu_restore() {
 		find_mnu(&root_menu, conf.user_menu_vars[x], x);
 	}
 }
+
+
+//--- DGMOD addons ------------------------------------------------
+
+void gui_draw_dg_adjust_is(int arg) {
+    if ((mode_get()&MODE_MASK) != MODE_REC) {
+        gui_mbox_init(LANG_MSG_INFO_TITLE, LANG_MSG_SWITCH_TO_REC_MODE,
+                      MBOX_FUNC_RESTORE|MBOX_TEXT_CENTER, NULL);
+        return;
+    }
+    gui_mode = GUI_MODE_DG_ADJUST_IS;
+    dg_adjust_is_init();
+}
+
+void gui_draw_dg_show_is(int arg) {
+    if ((mode_get()&MODE_MASK) != MODE_REC) {
+        gui_mbox_init(LANG_MSG_INFO_TITLE, LANG_MSG_SWITCH_TO_REC_MODE,
+                      MBOX_FUNC_RESTORE|MBOX_TEXT_CENTER, NULL);
+        return;
+    }
+    gui_mode = GUI_MODE_DG_SHOW_IS;
+    dg_show_is_init();
+}
+
+void gui_draw_dg_show_is2(int arg) {
+    if ((mode_get()&MODE_MASK) != MODE_REC) {
+        gui_mbox_init(LANG_MSG_INFO_TITLE, LANG_MSG_SWITCH_TO_REC_MODE,
+                      MBOX_FUNC_RESTORE|MBOX_TEXT_CENTER, NULL);
+        return;
+    }
+    gui_mode = GUI_MODE_DG_SHOW_IS2;
+    dg_show_is2_init();
+}
+
+void gui_draw_dg_orientation_demo(int arg) {
+    if ((mode_get()&MODE_MASK) != MODE_REC) {
+        gui_mbox_init(LANG_MSG_INFO_TITLE, LANG_MSG_SWITCH_TO_REC_MODE,
+                      MBOX_FUNC_RESTORE|MBOX_TEXT_CENTER, NULL);
+        return;
+    }
+    gui_mode = GUI_MODE_DG_ORIENTATION_DEMO;
+    dg_orientation_demo_init();
+}
+
+
+const char* gui_dg_led_number_enum(int change, int arg) {
+    static const char* modes[]={ "0 Unk", "1 Unk", "2 Unk", "3 Unk", "4 PWR G", "5 PWR O", "6 Unk", "7 SDRW", "8 DP", "9 AF", "10 Tally" };
+
+    dgconf_lc.led_num+=change;
+    if (dgconf_lc.led_num<0)
+        dgconf_lc.led_num=(sizeof(modes)/sizeof(modes[0]))-1;
+    else if (dgconf_lc.led_num>=(sizeof(modes)/sizeof(modes[0])))
+        dgconf_lc.led_num=0;
+
+    return modes[dgconf_lc.led_num];
+}
+
+const char* gui_dg_led_action_enum(int change, int arg) {
+    static const char* modes[]={ "LED On", "LED Off", "B M SL", "B F LL", "B M SS", "B F LL", "B S LL", "B F SS"};
+
+    dgconf_lc.action+=change;
+    if (dgconf_lc.action<0)
+        dgconf_lc.action=(sizeof(modes)/sizeof(modes[0]))-1;
+    else if (dgconf_lc.action>=(sizeof(modes)/sizeof(modes[0])))
+        dgconf_lc.action=0;
+
+    return modes[dgconf_lc.action];
+}
+
+void gui_draw_dg_hexviewer(int arg) {
+    gui_mode = GUI_MODE_DG_HEXVIEWER;
+    dg_hexviewer_init();
+}
+
+void dg_game_test_init(int arg) {
+	dg_game_test_enabled = 1;
+}
+

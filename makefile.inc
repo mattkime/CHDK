@@ -1,4 +1,4 @@
-VER=allbest
+VER=dataghost
 
 PLATFORM=a610
 PLATFORMSUB=100e

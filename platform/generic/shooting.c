@@ -1173,6 +1173,7 @@ void shooting_expo_param_override(void){
  else if (conf.nd_filter_state) 
    shooting_set_nd_filter_state(conf.nd_filter_state, SET_NOW);
 #endif  
+ *((long *)0x185C) = 1; // DG monitor shooting progress
  return;
 }
 

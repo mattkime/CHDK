@@ -19,7 +19,12 @@ enum Gui_Mode { GUI_MODE_NONE = 0,
                 GUI_MODE_OSD,
                 GUI_MODE_CALENDAR,
                 GUI_MODE_BENCH,
-                GUI_MODE_MPOPUP };
+                GUI_MODE_MPOPUP,
+                GUI_MODE_DG_ADJUST_IS,
+                GUI_MODE_DG_HEXVIEWER,
+                GUI_MODE_DG_SHOW_IS,
+                GUI_MODE_DG_SHOW_IS2,
+                GUI_MODE_DG_ORIENTATION_DEMO };
 
 extern void gui_redraw();
 extern void gui_force_restore();

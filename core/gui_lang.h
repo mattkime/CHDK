@@ -429,9 +429,90 @@
 #define LANG_MENU_VIS_MENU_CURSOR_TEXT        332 
 #define LANG_MENU_VIS_MENU_CURSOR_BKG         333
 #define LANG_MENU_VIS_MENU_CENTER             334
+
+#define LANG_MENU_DG_MENU                 335
+#define LANG_MENU_DG_MENU_TITLE           336
+#define LANG_MENU_DG_ADJUST_IS_LENS       337
+#define LANG_MENU_DG_FIND_CENTER_IS_LENS  338
+#define LANG_MENU_DG_LED_MESSAGES         339
+#define LANG_MENU_DG_LED_DISCO            340
+#define LANG_MENU_DG_BRIGHT_MENU          341
+
+#define LANG_MENU_DG_BRIGHT_MENU_TITLE     342
+#define LANG_MENU_DG_BRIGHT_CANON_LCD_LOW  343
+#define LANG_MENU_DG_BRIGHT_CANON_LCD_HIGH 344
+#define LANG_MENU_DG_BRIGHT_CANON_EVF_LOW  345
+#define LANG_MENU_DG_BRIGHT_CANON_EVF_HIGH 346
+#define LANG_MENU_DG_BRIGHT_CUR_LCD        347
+#define LANG_MENU_DG_BRIGHT_CUR_EVF        348
+
+#define LANG_MSG_SWITCH_TO_REC_MODE        349
+
+#define LANG_DG_IS_ADJUST_TITLE            350
+#define LANG_DG_IS_ADJUST_INFO             351
+#define LANG_DG_IS_ADJUST_PITCH            352
+#define LANG_DG_IS_ADJUST_YAW              353
+#define LANG_DG_IS_ADJUST_STEP             354
+#define LANG_DG_IS_ADJUST_WARN             355
+#define LANG_DG_IS_ADJUST_ASSERT_CENTRAL   356
+#define LANG_DG_IS_ADJUST_WARNLIMIT1       357
+#define LANG_DG_IS_ADJUST_WARNLIMIT2       358
+
+#define LANG_MENU_DG_PLM_MENU_TITLE             359
+#define LANG_MENU_DG_PLM_LEDNUM                 360
+#define LANG_MENU_DG_PLM_ACTION                 361
+#define LANG_MENU_DG_PLM_BRIGHT                 362
+#define LANG_MENU_DG_PLM_COUNT                  363
+#define LANG_MENU_DG_PLM_POST                   364
+
+#define LANG_MENU_DG_BRIGHT_TURN_ON_DISP        365
+#define LANG_MENU_DG_BRIGHT_TURN_OFF_DISP       366
+#define LANG_MENU_DG_BRIGHT_TURN_ON_BACK        367
+#define LANG_MENU_DG_BRIGHT_TURN_OFF_BACK       368
+
+#define LANG_MENU_DG_QUICK_DEBUGGER             369
+
+#define LANG_MENU_DG_HEXVIEWER                  370
+
+#define LANG_MENU_DG_IS_MENU                    371
+#define LANG_MENU_DG_IS_MENU_TITLE              372
+#define LANG_MENU_DG_SHOW_IS_VALUES             373
+
+#define LANG_DG_IS_SHOW_HALL_DEV_OFFSET         374
+#define LANG_DG_IS_SHOW_HALL_DEV_GAIN           375
+#define LANG_DG_IS_SHOW_GYRO_OFFSET             376
+#define LANG_DG_IS_SHOW_GYRO_GAIN               377
+#define LANG_DG_IS_SHOW_LENS_CENTER_AXIS        378
+#define LANG_DG_IS_SHOW_LENS_EVI_AXIS           379
+#define LANG_DG_IS_SHOW_LENS_DAMP_AXIS          380
+#define LANG_DG_IS_SHOW_PWM                     381
+#define LANG_DG_IS_SHOW_LENS_POSITION           382
+#define LANG_MENU_DG_ORIENTATION_DEMO           383
+#define LANG_MENU_DG_SHOW_IS_VALS_ALWAYS        384
+
+#define LANG_MENU_DG_SHOW_IS2_VALS_ALWAYS       385
+#define LANG_MENU_DG_SHOW_IS_VALUES2            386
+
+#define LANG_DG_IS_SHOW2_DRIVE                  387
+#define LANG_DG_IS_SHOW2_POS                    388
+#define LANG_DG_IS_SHOW2_HALL_POS               389
+#define LANG_DG_IS_SHOW2_HALL_GAIN              390
+#define LANG_DG_IS_SHOW2_GYRO_GAIN              391
+#define LANG_DG_IS_SHOW2_COEFF_P                392
+#define LANG_DG_IS_SHOW2_COEFF_I                393
+#define LANG_DG_IS_SHOW2_COEFF_D                394
+#define LANG_DG_IS_SHOW2_PLF                    395
+#define LANG_DG_IS_SHOW2_LPF                    396
+#define LANG_DG_IS_SHOW2_DAMP                   397
+#define LANG_DG_IS_SHOW2_EVI                    398
+
+#define LANG_DG_GAME_TEST                       399
+
+
+
 //-------------------------------------------------------------------
 
-#define GUI_LANG_ITEMS                  334
+#define GUI_LANG_ITEMS                  399
 
 //-------------------------------------------------------------------
 extern void gui_lang_init();

@@ -7,6 +7,7 @@
 #include "histogram.h"
 #include "raw.h"
 #include "motion_detector.h"
+#include "dgmod.h"
 
 
 static int raw_need_postprocess;
@@ -85,6 +86,7 @@ void core_spytask()
     conf_restore();
     gui_init();
     md_init();
+    dg_init(); // DG
 
 #if CAM_CONSOLE_LOG_ENABLED
     console_init();
@@ -102,6 +104,30 @@ void core_spytask()
     
     if (conf.script_startup) script_autostart();				// remote autostart
     while (1){
+
+	/*
+	if(*((long *)0x185C) == 1) {
+		// Setup variables?
+		long *shutter_ready;
+		shutter_ready = _GetShutterReadyStateVar((*((long *)0xEA40)) >> 1) + 2;
+		// Read the set Tv and adjust the max number of open/close accordingly
+		while(*((long *)0x185C) == 1) {
+			while(!*shutter_ready && *((long *)0x185C) == 1) msleep(1);
+			if(*((long *)0x185C) == 1) {
+				_CloseMShutter();
+			}
+			
+			msleep(200);
+			
+			while(!*shutter_ready && *((long *)0x185C) == 1) msleep(1);
+			if(*((long *)0x185C) == 1) {
+				_OpenMShutter();
+			}
+			
+			msleep(50);
+		}
+	}
+	*/
 
 	if (raw_data_available){
             raw_need_postprocess = raw_savefile();

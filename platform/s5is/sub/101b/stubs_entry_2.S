@@ -133,6 +133,85 @@ NHSTUB(SSAPI_ExtStrobeCharged                 ,0xFF8287EC) // Functionality unkn
 
 
 ///////////
+// Following functions are for dgmod
+NHSTUB(GetISPitchPWM,                   0xFFA12184)
+NHSTUB(GetISYawPWM,                     0xFFA12180)
+NHSTUB(GetISShiftLensPitchPosition,     0xFFA12284)
+NHSTUB(GetISShiftLensYawPosition,       0xFFA12288)
+NHSTUB(SetISPitchPWM,                   0xFFA121B8)
+NHSTUB(SetISYawPWM,                     0xFFA121CC)
+NHSTUB(MoveISLensToTopLimitPosition,    0xFFA120D4)
+NHSTUB(MoveISLensToBottomLimitPosition, 0xFFA120C0)
+NHSTUB(MoveISLensToLeftLimitPosition,   0xFFA120AC)
+NHSTUB(MoveISLensToRightLimitPosition,  0xFFA12098)
+NHSTUB(MoveISLensToCentralPosition,     0xFFA12280)
+
+NHSTUB(GetISHallDevicePitchOffset,      0xFFA120FC) // returns char
+NHSTUB(GetISHallDeviceYawOffset,        0xFFA120F8) // returns char
+NHSTUB(GetISHallDevicePitchGain,        0xFFA120F4) // returns char
+NHSTUB(GetISHallDeviceYawGain,          0xFFA120F0) // returns char
+NHSTUB(GetISGyroPitchOffset,            0xFFA12020) // returns unknown, treat as long (sub just returns 0)
+NHSTUB(GetISGyroYawOffset,              0xFFA12018) // idem
+NHSTUB(GetISGyroPitchGain,              0xFFA12150) // returns char
+NHSTUB(GetISGyroYawGain,                0xFFA1214C) // returns char
+NHSTUB(GetISLensCenterShiftAaxis,       0xFFA11FF4) // returns unknown, treat as long (sub just returns 0)
+NHSTUB(GetISLensCenterShiftBaxis,       0xFFA11FFC) // idem
+NHSTUB(GetISLensEViAaxis,               0xFFA1228C) // returns short
+NHSTUB(GetISLensEViBaxis,               0xFFA122A0) // returns short
+NHSTUB(GetISLensDampAaxis,              0xFFA122B4) // returns short
+NHSTUB(GetISLensDampBaxis,              0xFFA122B8) // returns short
+
+// Second set of IS lens controls
+NHSTUB(GetISDriveAaxis,                 0xFF86035C) // short
+NHSTUB(GetISDriveBaxis,                 0xFF860380) // short
+NHSTUB(GetISPositionAaxis,              0xFF8603A4) // short
+NHSTUB(GetISPositionBaxis,              0xFF8603C8) // short
+NHSTUB(GetISHallOffsetAaxis,            0xFF8604E8) // char
+NHSTUB(GetISHallOffsetBaxis,            0xFF86050C) // char
+NHSTUB(GetISHallGainAaxis,              0xFF860530) // char
+NHSTUB(GetISHallGainBaxis,              0xFF860554) // char
+NHSTUB(GetISGyroGainAaxis,              0xFF860578) // char
+NHSTUB(GetISGyroGainBaxis,              0xFF86059C) // char
+NHSTUB(GetISCoefficientP_A,             0xFF8609A0) // short
+NHSTUB(GetISCoefficientP_B,             0xFF860AB0) // short
+NHSTUB(GetISCoefficientI_A,             0xFF860ACC) // short
+NHSTUB(GetISCoefficientI_B,             0xFF860AE8) // short
+NHSTUB(GetISCoefficientD_A,             0xFF860B04) // short
+NHSTUB(GetISCoefficientD_B,             0xFF860B20) // short
+NHSTUB(GetISPLFAaxis,                   0xFF8608B8) // short
+NHSTUB(GetISPLFBaxis,                   0xFF8608D4) // short
+NHSTUB(GetISLPFAaxis,                   0xFF860908) // short
+NHSTUB(GetISLPFBaxis,                   0xFF860924) // short
+NHSTUB(GetISDbgData,                    0xFF860620) // long but needs argument (char *)! investigate before use
+NHSTUB(GetISADData,                     0xFF860694) // void but needs argument (char *)! investigate before use, just does printf and doesn't return actual data
+NHSTUB(GetISDampAaxis,                  0xFF86080C) // short
+NHSTUB(GetISDampBaxis,                  0xFF860828) // short
+NHSTUB(GetISEViAaxis,                   0xFF860844) // short (GetISLensEViAAxis)
+NHSTUB(GetISEViBaxis,                   0xFF860868) // short
+NHSTUB(GetISHallOut1Amp,                0xFF8607DC) // void, just prints
+NHSTUB(ISActive,                        0xFF860B3C) // unknown, complex
+
+NHSTUB(GetWBStruct,                     0xFFA0CB8C)
+
+NHSTUB(MuteOffPhysicalScreen,           0xFF8883D0)
+
+
+NHSTUB(PostLEDMessage,                  0xFF84CF8C)
+
+NHSTUB(TurnOnDisplay,                   0xFF888358)
+NHSTUB(TurnOffDisplay,                  0xFF888370)
+NHSTUB(TurnOnBackLight,                 0xFF888388)
+NHSTUB(TurnOffBackLight,                0xFF8883A0)
+NHSTUB(SwitchOnDisplay,                 0xFFA0FD7C)
+NHSTUB(SwitchOffDisplay,                0xFFA0FD44)
+
+NHSTUB(StopContinuousVRAMData,          0xFFA10388)
+
+NHSTUB(GetShutterReadyStateVar,         0xFF8166D4)
+
+
+
+///////////
 // FOLLOWING FUNCTION NOT FOUND, points to nullsub. Function does not exist
 // where it is to be expected according to A720 firmware. Copied it from A720
 // and hooked in boot.c
