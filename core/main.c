@@ -72,21 +72,25 @@ void core_spytask()
 {
     int cnt = 1;
     int i=0;
-
+//dg_profiler_start(); // Spytask seems to be the only one sufficiently initialized to do something like this, perhaps use a memory buffer anyway.
+//PROFILER;
     raw_need_postprocess = 0;
 
     spytask_can_start=0;
 
     while((i++<250) && !spytask_can_start) msleep(10);
+//PROFILER;
 
     started();
     msleep(50);
     finished();
+//PROFILER;
 
     conf_restore();
     gui_init();
     md_init();
     dg_init(); // DG
+//PROFILER;
 
 #if CAM_CONSOLE_LOG_ENABLED
     console_init();
@@ -101,10 +105,11 @@ void core_spytask()
     auto_started = 0;
     
     clear_values();
-    
+//PROFILER;
+//dg_profiler_stop();    
     if (conf.script_startup) script_autostart();				// remote autostart
     while (1){
-
+	PROFILERE(sleep);
 	/*
 	if(*((long *)0x185C) == 1) {
 		// Setup variables?
@@ -137,17 +142,26 @@ void core_spytask()
 	}
 
 	if (state_shooting_progress != SHOOTING_PROGRESS_PROCESSING) {
-	    if (((cnt++) & 3) == 0)
+	    if (((cnt++) & 3) == 0){
+	        PROFILERB(gui_redraw);
 	        gui_redraw();
+	        PROFILERE(gui_redraw);
+	        if(cnt >= 800) dg_profiler_stop();
+	     }
 
+	    PROFILERB(histogram);
 	    histogram_process();
+	    PROFILERE(histogram);
 	}
+	
+	dg_cameralog_file();
 
 	if ((state_shooting_progress == SHOOTING_PROGRESS_PROCESSING) && (!shooting_in_progress())) {
 	    state_shooting_progress = SHOOTING_PROGRESS_DONE;
             if (raw_need_postprocess) raw_postprocess();
         }
 
+	PROFILERB(sleep);
 	msleep(20);
     }
 }

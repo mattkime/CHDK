@@ -9,8 +9,6 @@
 #define DG_HV_SELTYPE_LONG  4
 #define DG_HV_SELTYPE_DWORD 8
 
-//--- Macros --------------------------------------------------------
-
 //--- Structs -------------------------------------------------------
 typedef struct {
 	int led_num;
@@ -68,6 +66,18 @@ extern void dg_hexviewer_draw();
 
 extern void dg_game_test();
 
+extern void dg_profiler_start();
+extern void dg_profiler_stop();
+extern void dg_profiler(char *file, int line, const char *function, const char *arg);
+
+extern void dg_cameralog_screen_draw();
+extern void dg_cameralog_file();
+extern void dg_cameralog_file_start();
+extern void dg_cameralog_file_resume();
+extern void dg_cameralog_file_stop();
+extern void dg_cameralog_file_dynamic_call(int arg);
+
+extern void dg_dynamic_menu_init();
 
 extern long *_GetShutterReadyStateVar(long);
 
@@ -80,6 +90,17 @@ extern int dgconf_br_canevfhigh;
 extern int dgconf_br_curlcd;
 extern int dgconf_br_curevf;
 extern Led_control dgconf_lc;
+
+extern int *dg_cameralog_file_dynamic_entry;
+
+
+
+//--- Macros --------------------------------------------------------
+
+#define PROFILER dg_profiler(__FILE__, __LINE__, __FUNCTION__, "")
+#define PROFILERB(a) dg_profiler(__FILE__, __LINE__, __FUNCTION__, "b " #a)
+#define PROFILERE(a) dg_profiler(__FILE__, __LINE__, __FUNCTION__, "e " #a)
+
 
 
 #endif

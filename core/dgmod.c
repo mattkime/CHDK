@@ -40,6 +40,10 @@ int dgconf_br_curlcd;
 int dgconf_br_curevf;
 Led_control dgconf_lc;
 
+void (*dg_cameralog_file_dynamic_caller)();
+int *dg_cameralog_file_dynamic_entry;
+
+
 //--- Local global variables ----------------------------------------
 static int dg_adjust_is_initial_draw;
 static int dg_adjust_is_redraw;
@@ -66,6 +70,20 @@ static char *dg_game_test_trackbuf;
 static char *dg_game_test_trackbuf_ahead;
 static char *dg_game_test_tmpbuf;
 static char *dg_game_test_cambuf;
+
+static int dg_profiler_fd = 0;
+static int dg_profiler_enabled = 0;
+static int dg_profiler_bufsize = 10000;
+static int dg_profiler_fd_opened = 0;
+static char *dg_profiler_mem;
+static char *dg_profiler_mempos;
+
+static char *dg_cameralog_scrbuf;
+static char *dg_cameralog_tmpbuf;
+
+static int dg_cameralog_file_enabled;
+static int dg_cameralog_fd;
+static int dg_cameralog_init;
 
 //--- Function prototypes -------------------------------------------
 void dg_init();
@@ -110,6 +128,17 @@ void dg_game_test();
 
 void dg_assert(char *file, long line);
 
+void dg_profiler_start();
+void dg_profiler_stop();
+void dg_profiler_flush();
+void dg_profiler(char *file, int line, const char *function, const char *arg);
+
+void dg_cameralog_screen_draw();
+void dg_cameralog_file();
+void dg_cameralog_file_start();
+void dg_cameralog_file_resume();
+void dg_cameralog_file_stop();
+void dg_cameralog_file_dynamic_call(int arg);
 
 //--- Local function prototypes -------------------------------------
 static void dg_bright_load_canon();
@@ -117,6 +146,7 @@ static void dg_hexviewer_draw_pixel_buffered(unsigned int offset, color cl);
 static void dg_game_test_draw_pixbuf_buffered(unsigned int offset, color cl);
 static void dg_game_test_draw_trackbuf_buffered(unsigned int offset, color cl);
 static void dg_game_test_draw_trackbuf_ahead_buffered(unsigned int offset, color cl);
+static void dg_cameralog_draw_buffered(unsigned int offset, color cl);
 
 //--- Extern function prototypes ------------------------------------
 extern short _GetISPitchPWM();
@@ -186,6 +216,7 @@ extern void _StopContinuousVRAMData();
 extern void _CloseMShutter();
 extern void _OpenMShutter();
 
+extern long *dg_cameralog_base;
 
 //--- Real stuff ----------------------------------------------------
 
@@ -193,6 +224,10 @@ void dg_init() {
 	// Boot-time dgmod initialisation
 	
 	dg_bright_load_canon();
+	
+	dg_cameralog_file_dynamic_caller = dg_cameralog_file_start;
+	dg_dynamic_menu_init();
+	
 	
 	// Bypass camera's assert function - USE WITH EXTREME CAUTION, CAMERA WILL NOT SHUT DOWN
 	// For safety, disabled by default.
@@ -1226,4 +1261,284 @@ void dg_assert(char *file, long line) {
 }
 
 
+// --- Profiler -----------------------------------------------------
+
+void dg_profiler_start() {
+	// Sets up the profiler by allocating a buffer and a file. Will not enable
+	// the profiler if any of these fails.
+	
+	// Just making sure... size of the buffer. Do not set this below 128 or bad
+	// stuff will happen (see buf in dg_profiler()).
+	dg_profiler_bufsize = 10000;
+	dg_profiler_mem = malloc(dg_profiler_bufsize);
+	
+	if(dg_profiler_mem) {
+		dg_profiler_mempos = dg_profiler_mem;
+		memset(dg_profiler_mem, 0, dg_profiler_bufsize);
+		
+		dg_profiler_enabled = 1;
+		PROFILER; // Initializes the starting time
+	} else {
+		dg_profiler_enabled = 0;
+	}
+}
+
+void dg_profiler_stop() {
+	if(dg_profiler_enabled == 1) {
+		dg_profiler_enabled = 0;
+		draw_string(0, 0, "Profiler done!", conf.osd_color);
+		
+		// Allow possible writes to finish, then write the buffer
+		msleep(50);
+		
+		dg_profiler_flush();
+		if(dg_profiler_fd_opened == 1) {
+			dg_profiler_fd_opened = 0;
+			close(dg_profiler_fd);
+		}
+		
+		// Oh yeah and kill the current buffer, we won't be needing it anymore
+		// and it's always reallocated anyway.
+		free(dg_profiler_mem);
+	}
+}
+
+void dg_profiler_flush() {
+	// Should only be called when absolutely sure buffers exist, i.e.
+	// dg_profiler_enabled == 1 as precondition of the block we're called from.
+	
+	// Open the file if it's not opened yet
+	if(dg_profiler_fd_opened == 0) {
+		dg_profiler_fd = open("A/profiler.txt", O_WRONLY|O_CREAT|O_TRUNC, 0777);
+		if(dg_profiler_fd >= 0) {
+			dg_profiler_fd_opened = 1;
+		}
+	}
+	
+	// Write the buffer if we have a proper file
+	if(dg_profiler_fd_opened == 1) {
+		// Sanitize buffer and write it
+		dg_profiler_mem[dg_profiler_bufsize-1] = 0;
+		dg_profiler_mem[dg_profiler_bufsize-2] = '\n';
+		write(dg_profiler_fd, dg_profiler_mem, strlen(dg_profiler_mem));
+		
+		// Reset pointer and clear the buffer
+		dg_profiler_mempos = dg_profiler_mem;
+		memset(dg_profiler_mem, 0, dg_profiler_bufsize);
+	}
+}
+
+void dg_profiler(char *file, int line, const char *function, const char *arg) {
+	char buf[128];
+	
+	if(dg_profiler_enabled == 1) {
+		sprintf(buf, "%8d: %s:%d %s %s\n", get_tick_count(), file, line, function, arg);
+		if(buf[126] != 0) {
+			buf[126] = '\n';
+			buf[127] = 0;
+		}
+		
+		// Check to see if this fits in the buffer and flush it if necessary.
+		if(dg_profiler_mempos + strlen(buf) >= dg_profiler_mem + dg_profiler_bufsize) {
+			dg_profiler_flush();
+		}
+		
+		// Buffer will be large enough to write if flush worked
+		if(dg_profiler_mempos + strlen(buf) < dg_profiler_mem + dg_profiler_bufsize) {
+			strcpy(dg_profiler_mempos, buf);
+			dg_profiler_mempos += strlen(buf);
+		}
+	}
+}
+
+
+// --- Camera log ---------------------------------------------------
+
+void dg_cameralog_screen_draw() {
+	//extern long *dg_cameralog_base;  // Base of the entire log buffer and data (l), kept for easy reference
+	static long *logbegin; // Begin of log [l+0x6C]
+	static long *logend;   // End of log [l+0x68]
+	static long *logcurfw; // Address of the last-updated log entry, as kept by the camera
+	static long *logcurmy; // Address of the last-printed log entry, kept by me.
+	static long loginit = 0;
+	static char *cambuf;
+	
+	long idx;
+	long message_strlen;
+	char *tmp;
+	char logbuf[45];
+	
+	
+	// Initialize the log, if required. Determine where the base is and calculate
+	// the rest from that.
+	if(loginit == 0) {
+		logbegin = (long *) *(dg_cameralog_base+0x1B); // logbase + 0x6C, because it's long
+		logend   = (long *) *(dg_cameralog_base+0x1A); // logbase + 0x68
+		logcurfw = (dg_cameralog_base+0x16); // logbase + 0x58, don't dereference
+		logcurmy = (long *) *logcurfw; // Start at the current log entry
+		dg_cameralog_scrbuf = malloc(screen_buffer_size);
+		dg_cameralog_tmpbuf = malloc(screen_buffer_size);
+		cambuf = vid_get_bitmap_fb();
+		if(dg_cameralog_scrbuf && dg_cameralog_tmpbuf) {
+			memset(dg_cameralog_scrbuf, COLOR_TRANSPARENT, screen_buffer_size);
+			memset(dg_cameralog_tmpbuf, COLOR_TRANSPARENT, screen_buffer_size);
+		} else {
+			return;
+		}
+		
+		loginit = 1;
+	}
+	
+	// Only print something if our pointer doesn't match the one set by the FW
+	if(logcurmy != (long *) *logcurfw) {
+		// Setup buffered drawing
+		draw_set_draw_proc(dg_cameralog_draw_buffered);
+		
+		// Print all log entries from our latest one to the newest one
+		// Only as long as we stay within the log buffer
+		while(logcurmy != (long *) *logcurfw && logcurmy >= logbegin && logcurmy <= logend) {
+			logcurmy = (long *) *logcurmy; // Go to the next entry
+			tmp = (char *) (logcurmy+0x3); // logcur + 0xC, log entry text, skip the strlen
+			
+			message_strlen = *(logcurmy+0x2);
+			if(message_strlen > 0) { // Else something is wrong :)
+				if(message_strlen > 44) {
+					message_strlen = 44;
+				}
+				// Read the log entry into our own buffer and sanitize it
+				for(idx=0;idx<message_strlen;idx++) {
+					logbuf[idx] = *(tmp++);
+					if(logbuf[idx] == 0 || logbuf[idx] == '\n') {
+						logbuf[idx] = 0;
+						break;
+					}
+				}
+				logbuf[message_strlen] = 0;
+				
+				// Advance the screen buffer
+				memcpy(dg_cameralog_tmpbuf,
+				       dg_cameralog_scrbuf + FONT_HEIGHT*screen_buffer_width,
+				       screen_buffer_size - FONT_HEIGHT*screen_buffer_width);
+				
+				memcpy(dg_cameralog_scrbuf,
+				       dg_cameralog_tmpbuf,
+				       screen_buffer_size);
+				
+				// Draw the new line
+				draw_string(0, 14*FONT_HEIGHT, logbuf, conf.osd_color);
+			}
+		}
+		// All done, copy the buffer back to the screen and restore normal drawing
+		memcpy(cambuf, dg_cameralog_scrbuf, screen_buffer_size);
+		memcpy(cambuf+screen_buffer_size, dg_cameralog_scrbuf, screen_buffer_size);
+		draw_set_draw_proc(NULL);
+	}
+}
+
+static void dg_cameralog_draw_buffered(unsigned int offset, color cl) {
+    dg_cameralog_scrbuf[offset] = cl;
+}
+
+
+void dg_cameralog_file() {
+	//extern long *dg_cameralog_base;  // Base of the entire log buffer and data (l), kept for easy reference
+	static long *logbegin; // Begin of log [l+0x6C]
+	static long *logend;   // End of log [l+0x68]
+	static long *logcurfw; // Address of the last-updated log entry, as kept by the camera
+	static long *logcurmy; // Address of the last-printed log entry, kept by me.
+	
+	if(dg_cameralog_file_enabled == 1) {
+		long idx;
+		long message_strlen;
+		char *tmp;
+		char logbuf[1024];
+		
+		// Initialize the log, if required. Determine where the base is and calculate
+		// the rest from that.
+		if(dg_cameralog_init == 0) {
+			logbegin = (long *) *(dg_cameralog_base+0x1B); // logbase + 0x6C, because it's long
+			logend   = (long *) *(dg_cameralog_base+0x1A); // logbase + 0x68
+			logcurfw = (dg_cameralog_base+0x16); // logbase + 0x58, don't dereference
+			logcurmy = (long *) *logcurfw; // Start at the current log entry
+			
+			dg_cameralog_init = 1;
+		}
+		
+		// Only print something if our pointer doesn't match the one set by the FW
+		if(logcurmy != (long *) *logcurfw) {
+			// Print all log entries from our latest one to the newest one
+			// Only as long as we stay within the log buffer
+			while(logcurmy != (long *) *logcurfw && logcurmy >= logbegin && logcurmy <= logend) {
+				logcurmy = (long *) *logcurmy; // Go to the next entry
+				tmp = (char *) (logcurmy+0x3); // logcur + 0xC, log entry text, skip the strlen
+				
+				message_strlen = *(logcurmy+0x2);
+				if(message_strlen > 0) { // Else something is wrong :)
+					if(message_strlen > 1022) {
+						message_strlen = 1022;
+					}
+					
+					// Read the log entry into our own buffer and sanitize it
+					for(idx=0;idx<message_strlen;idx++) {
+						logbuf[idx] = *(tmp++);
+						if(logbuf[idx] == 0 || logbuf[idx] == '\n') {
+							logbuf[idx] = '\n';
+							logbuf[idx+1] = 0;
+							break;
+						}
+					}
+					logbuf[message_strlen] = '\n';
+					logbuf[message_strlen+1] = 0;
+					
+					write(dg_cameralog_fd, logbuf, strlen(logbuf));
+				}
+			}
+		}
+	}
+}
+
+void dg_cameralog_file_start() {
+	dg_cameralog_fd = open("A/CamLog.txt", O_WRONLY|O_CREAT|O_TRUNC, 0777);
+	if(dg_cameralog_fd < 0) {
+		dg_cameralog_file_enabled = 0;
+		return;
+	}
+	
+	dg_cameralog_file_dynamic_caller = dg_cameralog_file_stop;
+	*dg_cameralog_file_dynamic_entry = LANG_MENU_DG_CAMLOG_FILE_STOP;
+	
+	dg_cameralog_init = 0;
+	dg_cameralog_file_enabled = 1;
+}
+
+void dg_cameralog_file_resume() {
+	dg_cameralog_fd = open("A/CamLog.txt", O_WRONLY|O_CREAT, 0777);
+	if(dg_cameralog_fd < 0) {
+		dg_cameralog_file_enabled = 0;
+		return;
+	}
+	
+	lseek(dg_cameralog_fd, 0, SEEK_END);
+	dg_cameralog_file_dynamic_caller = dg_cameralog_file_stop;
+	*dg_cameralog_file_dynamic_entry = LANG_MENU_DG_CAMLOG_FILE_STOP;
+	
+	// Make sure to reinitialize the log structure so we only log messages
+	// that actually happened when logging was enabled.
+	dg_cameralog_init = 0;
+	dg_cameralog_file_enabled = 1;
+}
+
+void dg_cameralog_file_stop() {
+	dg_cameralog_file_enabled = 0;
+	dg_cameralog_file_dynamic_caller = dg_cameralog_file_resume;
+	*dg_cameralog_file_dynamic_entry = LANG_MENU_DG_CAMLOG_FILE_RESUME;
+	
+	msleep(50);
+	
+	close(dg_cameralog_fd);
+}
+
+void dg_cameralog_file_dynamic_call(int arg) {
+	(*dg_cameralog_file_dynamic_caller)();
+}
 

@@ -177,6 +177,9 @@ static void gui_draw_dg_hexviewer(int arg);
 static int dg_show_is_internals_always = 0;
 static int dg_show_is2_internals_always = 0;
 static int dg_game_test_enabled = 0;
+static int dg_cameralog_screen_draw_enabled = 0;
+
+void dg_dynamic_menu_init();
 
 // Menu callbacks
 //-------------------------------------------------------------------
@@ -246,6 +249,8 @@ static CMenuItem dg_submenu_items[] = {
 	{LANG_MENU_DG_QUICK_DEBUGGER,      MENUITEM_PROC,           (int*)dg_quick_debugger },
 	{LANG_MENU_DG_HEXVIEWER,           MENUITEM_PROC,           (int*)gui_draw_dg_hexviewer },
 	{LANG_DG_GAME_TEST,                MENUITEM_PROC,           (int*)dg_game_test_init },
+	{LANG_MENU_DG_SHOW_CAMLOG_SCREEN,  MENUITEM_BOOL,           &dg_cameralog_screen_draw_enabled },
+	{LANG_MENU_DG_CAMLOG_FILE,         MENUITEM_PROC,           (int*)dg_cameralog_file_dynamic_call },
 	{LANG_MENU_BACK,                   MENUITEM_UP },
 	{0}
 };
@@ -1198,6 +1203,7 @@ const char* gui_tv_override_koef_enum(int change, int arg) {
 
 const char* gui_tv_override_value_enum(int change, int arg) {
     static const char* modes[]={"64","50.8", "40.3", "32", "25.4","20","16", "12.7", "10","8", "6.3","5","4","3.2", "2.5","2", "1.6", "1.3", "1", "0.8", "0.6", "0.5", "0.4", "0.3", "1/4", "1/5", "1/6", "1/8", "1/10", "1/13", "1/15", "1/20", "1/25", "1/30", "1/40", "1/50", "1/60", "1/80", "1/100", "1/125", "1/160", "1/200", "1/250", "1/320", "1/400", "1/500", "1/640","1/800", "1/1000", "1/1250", "1/1600","1/2000","1/2500","1/3200","1/4000", "1/5000", "1/6400", "1/8000", "1/10000", "1/12500", "1/16000", "1/20000", "1/25000", "1/32000", "1/40000", "1/50000", "1/64000","1/80000", "1/100k"};
+    static char *buf;
 
     conf.tv_override_value+=change;
     if (conf.tv_enum_type) {
@@ -1210,11 +1216,12 @@ const char* gui_tv_override_value_enum(int change, int arg) {
      }
      else 
       {
-       char * buf="";	
        if (conf.tv_override_value<0) {
           conf.tv_override_value=100;
         }
        else if (conf.tv_override_value>100)  conf.tv_override_value=0;
+       if(!buf) buf=malloc(4);
+       if(!buf) return "";
        sprintf(buf, "%d",  conf.tv_override_value);
        return buf; 
       }
@@ -1479,6 +1486,10 @@ void gui_redraw()
         dg_game_test();
         dg_game_test_enabled = 0;
     }
+    if(dg_cameralog_screen_draw_enabled == 1) {
+        dg_cameralog_screen_draw();
+    }
+    
     // Disables disabling the screen, so it still displays stuff during image
     // capture and shutdown.
     //_MuteOffPhysicalScreen();
@@ -2496,4 +2507,16 @@ void gui_draw_dg_hexviewer(int arg) {
 void dg_game_test_init(int arg) {
 	dg_game_test_enabled = 1;
 }
+
+void dg_dynamic_menu_init() {
+	int i;
+	for(i=0;dg_submenu_items[i].text;i++) {
+		if(dg_submenu_items[i].text == LANG_MENU_DG_CAMLOG_FILE) {
+			dg_cameralog_file_dynamic_entry = &dg_submenu_items[i].text;
+		}
+	}
+}
+
+	
+
 

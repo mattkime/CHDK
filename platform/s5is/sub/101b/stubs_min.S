@@ -82,9 +82,18 @@ DEF(canon_shoot_menu_active,0xC05D) // 0xC05C + 1
 
 // Found in sub_FF9754AC. Again, ewavr found this one, he did supply one pointer
 // 'search for LDR R12, =0x3007'. I guess this is the right one then :)
-// ROM:FF9754AC 000                 STMFD   SP!, {R4,LR}
-// ROM:FF9754B0 008                 LDR     R1, =0xBD60
-// ROM:FF9754B4 008                 LDR     R12, =0x3007
-// ROM:FF9754B8 008                 LDR     R2, [R1,#0xCC]
+// ROM:FF9754AC   STMFD   SP!, {R4,LR}
+// ROM:FF9754B0   LDR     R1, =0xBD60
+// ROM:FF9754B4   LDR     R12, =0x3007
+// ROM:FF9754B8   LDR     R2, [R1,#0xCC]
 DEF(recreview_hold, 0xBE2C) // 0xBD60 + 0xCC
+
+
+// Found in PutsCameraLog, right before calling the actual 'puts' function
+// ROM:FF872A60   LDR     R5, =0x5C00
+// ..
+// ROM:FF872AC4   LDR     R0, [R5,#8]     @ Dereference 0x5C08 = pointer to log structure
+// ROM:FF872AC8   ADD     R1, SP, #0x50+var_4C
+// ROM:FF872ACC   BL      sub_FF82C558    @ Update log
+DEF(dg_cameralog_base, 0x5C08)
 

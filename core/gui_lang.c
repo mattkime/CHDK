@@ -499,6 +499,11 @@ static char* gui_lang_default = \
 
 "399 \"Fast-draw game test\"\n"
 
+"400 \"Draw camera log on screen\"\n"
+"401 \"Log camera log to file\"\n"
+"402 \"Stop logging camera log to file\"\n"
+"403 \"Resume logging camera log to file\"\n"
+
 
 ;
 

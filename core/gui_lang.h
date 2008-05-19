@@ -508,11 +508,16 @@
 
 #define LANG_DG_GAME_TEST                       399
 
+#define LANG_MENU_DG_SHOW_CAMLOG_SCREEN         400
+#define LANG_MENU_DG_CAMLOG_FILE                401
+#define LANG_MENU_DG_CAMLOG_FILE_STOP           402
+#define LANG_MENU_DG_CAMLOG_FILE_RESUME         403
+
 
 
 //-------------------------------------------------------------------
 
-#define GUI_LANG_ITEMS                  399
+#define GUI_LANG_ITEMS                  403
 
 //-------------------------------------------------------------------
 extern void gui_lang_init();
