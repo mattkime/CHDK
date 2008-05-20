@@ -243,7 +243,7 @@ static CMenuItem dg_submenu_items[] = {
 	{LANG_MENU_DG_IS_MENU,             MENUITEM_SUBMENU,        (int*)&dg_is_submenu },
 	{LANG_MENU_DG_LED_MESSAGES,        MENUITEM_SUBMENU,        (int*)&dg_postledmsg_submenu },
 	{LANG_MENU_DG_LED_DISCO,           MENUITEM_PROC,           (int*)dg_disco },
-#if defined(CAMERA_s5is)
+#if defined(CAMERA_s5is) || defined(CAMERA_a720)
 	{LANG_MENU_DG_BRIGHT_MENU,         MENUITEM_SUBMENU,        (int*)&dg_bright_submenu },
 #endif
 	{LANG_MENU_DG_QUICK_DEBUGGER,      MENUITEM_PROC,           (int*)dg_quick_debugger },

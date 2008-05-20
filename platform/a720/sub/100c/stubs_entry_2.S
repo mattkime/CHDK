@@ -177,3 +177,81 @@ NSTUB(taskIdListGet,			 0xFFC00958)
 NSTUB(taskName,				 0xFFC00958)
 NSTUB(taskResume,			 0xFFC00958)
 NSTUB(taskSuspend,			 0xFFC00958)
+
+///////////
+// Following functions are for dgmod
+NHSTUB(GetISPitchPWM,                             0xFFDAB558)
+NHSTUB(GetISYawPWM,                               0xFFDAB554)
+NHSTUB(GetISShiftLensPitchPosition,               0xFFDAB658)
+NHSTUB(GetISShiftLensYawPosition,                 0xFFDAB65C)
+NHSTUB(SetISPitchPWM,                             0xFFDAB58C)
+NHSTUB(SetISYawPWM,                               0xFFDAB5A0)
+NHSTUB(MoveISLensToTopLimitPosition,              0xFFDAB4A8)
+NHSTUB(MoveISLensToBottomLimitPosition,           0xFFDAB494)
+NHSTUB(MoveISLensToLeftLimitPosition,             0xFFDAB480)
+NHSTUB(MoveISLensToRightLimitPosition,            0xFFDAB46C)
+NHSTUB(MoveISLensToCentralPosition,               0xFFDAB654)
+
+NHSTUB(GetISHallDevicePitchOffset,                0xFFDAB4D0)
+NHSTUB(GetISHallDeviceYawOffset,                  0xFFDAB4CC)
+NHSTUB(GetISHallDevicePitchGain,                  0xFFDAB4C8)
+NHSTUB(GetISHallDeviceYawGain,                    0xFFDAB4C4)
+NHSTUB(GetISGyroPitchOffset,                      0xFFDAB3F4)
+NHSTUB(GetISGyroYawOffset,                        0xFFDAB3EC)
+NHSTUB(GetISGyroPitchGain,                        0xFFDAB524)
+NHSTUB(GetISGyroYawGain,                          0xFFDAB520)
+NHSTUB(GetISLensCenterShiftAaxis,                 0xFFDAB3C8)
+NHSTUB(GetISLensCenterShiftBaxis,                 0xFFDAB3D0)
+NHSTUB(GetISLensEViAaxis,                         0xFFDAB660)
+NHSTUB(GetISLensEViBaxis,                         0xFFDAB674)
+NHSTUB(GetISLensDampAaxis,                        0xFFDAB688)
+NHSTUB(GetISLensDampBaxis,                        0xFFDAB68C)
+
+// Second set of IS lens controls
+NHSTUB(GetISDriveAaxis,                           0xFFD05938)
+NHSTUB(GetISDriveBaxis,                           0xFFD05958)
+NHSTUB(GetISPositionAaxis,                        0xFFD05978)
+NHSTUB(GetISPositionBaxis,                        0xFFD05998)
+NHSTUB(GetISHallOffsetAaxis,                      0xFFD059B8)
+NHSTUB(GetISHallOffsetBaxis,                      0xFFD059D8)
+NHSTUB(GetISHallGainAaxis,                        0xFFD059F8)
+NHSTUB(GetISHallGainBaxis,                        0xFFD05A18)
+NHSTUB(GetISGyroGainAaxis,                        0xFFD05A38)
+NHSTUB(GetISGyroGainBaxis,                        0xFFD05A58)
+NHSTUB(GetISCoefficientP_A,                       0xFFD05F4C)
+NHSTUB(GetISCoefficientP_B,                       0xFFD05F68)
+NHSTUB(GetISCoefficientI_A,                       0xFFD05F84)
+NHSTUB(GetISCoefficientI_B,                       0xFFD05FA0)
+NHSTUB(GetISCoefficientD_A,                       0xFFD05FBC)
+NHSTUB(GetISCoefficientD_B,                       0xFFD05FD8)
+NHSTUB(GetISPLFAaxis,                             0xFFD05D64)
+NHSTUB(GetISPLFBaxis,                             0xFFD05D80)
+NHSTUB(GetISLPFAaxis,                             0xFFD05DB4)
+NHSTUB(GetISLPFBaxis,                             0xFFD05DD0)
+NHSTUB(GetISDbgData,                              0xFFD05AC0)
+NHSTUB(GetISADData,                               0xFFD05C38)
+NHSTUB(GetISDampAaxis,                            0xFFD05CCC)
+NHSTUB(GetISDampBaxis,                            0xFFD05CE4)
+NHSTUB(GetISEViAaxis,                             0xFFD05CFC)
+NHSTUB(GetISEViBaxis,                             0xFFD05D20)
+NHSTUB(GetISHallOut1Amp,                          0xFFD05CA4)
+NHSTUB(ISActive,                                  0xFFC00958) // nullsub_1
+
+NHSTUB(GetWBStruct,                               0xFFC00958) // nullsub_1, useless for now
+
+NHSTUB(MuteOffPhysicalScreen,                     0xFFC67724)
+
+
+//NHSTUB(PostLEDMessage,                  0xFF84CF8C) // Already in A720
+
+NHSTUB(TurnOnDisplay,                             0xFFC676AC)
+NHSTUB(TurnOffDisplay,                            0xFFC676C4)
+NHSTUB(TurnOnBackLight,                           0xFFC676DC)
+NHSTUB(TurnOffBackLight,                          0xFFC676F4)
+NHSTUB(SwitchOnDisplay,                           0xFFDA8F84)
+NHSTUB(SwitchOffDisplay,                          0xFFDA8F4C)
+
+NHSTUB(StopContinuousVRAMData,                    0xFFC00958) // nullsub_1, useless for now
+
+NHSTUB(GetShutterReadyStateVar,                   0xFFC00958) // nullsub_1, useless for now.
+

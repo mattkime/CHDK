@@ -209,6 +209,9 @@ NHSTUB(StopContinuousVRAMData,          0xFFA10388)
 
 NHSTUB(GetShutterReadyStateVar,         0xFF8166D4)
 
+NHSTUB(DispSwCon_MuteOffPhysicalScreen, 0xFF87D180)
+NHSTUB(DispSwCon_DisableMute,           0xFF87CF4C)
+NHSTUB(DispSw_Unlock,                   0xFF87CE58)
 
 
 ///////////
