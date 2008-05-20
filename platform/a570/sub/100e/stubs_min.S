@@ -10,3 +10,10 @@ DEF(FlashParamsTable,0xFFEE8478)
 DEF(canon_menu_active,0x2F38)
 DEF(canon_shoot_menu_active,0x27B1)
 DEF(recreview_hold, 0x2584)
+
+// Found in PutsCameraLogEvent, right before calling the actual 'puts' function
+// ROM:FFC059BC   LDR     R3, =0xD9CC
+// ROM:FFC059C0   LDR     R0, [R3]
+// ROM:FFC059C4   BL      LogPutsToBuffer
+DEF(dg_cameralog_base, 0xD9CC)
+

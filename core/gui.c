@@ -173,6 +173,7 @@ static void gui_draw_dg_orientation_demo(int arg);
 static void dg_game_test_init(int arg);
 const char* gui_dg_led_number_enum(int change, int arg);
 const char* gui_dg_led_action_enum(int change, int arg);
+const char* gui_dg_firmware_addr_enum(int change, int arg);
 static void gui_draw_dg_hexviewer(int arg);
 static int dg_show_is_internals_always = 0;
 static int dg_show_is2_internals_always = 0;
@@ -238,6 +239,15 @@ static CMenuItem dg_is_submenu_items[] = {
 
 static CMenu dg_is_submenu = {LANG_MENU_DG_IS_MENU_TITLE, NULL, dg_is_submenu_items };
 
+static CMenuItem dg_firmware_submenu_items[] = {
+	{LANG_MENU_DG_FIRM_DUMP_START_ADDR,MENUITEM_ENUM,           (int*)gui_dg_firmware_addr_enum },
+	{LANG_MENU_DG_FIRM_DUMP_DUMP,      MENUITEM_PROC,           (int*)dg_dump_firmware },
+	{LANG_MENU_BACK,                   MENUITEM_UP },
+	{0}
+};
+
+static CMenu dg_firmware_submenu = {LANG_MENU_DG_FIRM_DUMP_MENU_TITLE, NULL, dg_firmware_submenu_items };
+
 
 static CMenuItem dg_submenu_items[] = {
 	{LANG_MENU_DG_IS_MENU,             MENUITEM_SUBMENU,        (int*)&dg_is_submenu },
@@ -246,6 +256,7 @@ static CMenuItem dg_submenu_items[] = {
 #if defined(CAMERA_s5is) || defined(CAMERA_a720)
 	{LANG_MENU_DG_BRIGHT_MENU,         MENUITEM_SUBMENU,        (int*)&dg_bright_submenu },
 #endif
+	{LANG_MENU_DG_FIRM_DUMP_MENU,      MENUITEM_SUBMENU,        (int*)&dg_firmware_submenu },
 	{LANG_MENU_DG_QUICK_DEBUGGER,      MENUITEM_PROC,           (int*)dg_quick_debugger },
 	{LANG_MENU_DG_HEXVIEWER,           MENUITEM_PROC,           (int*)gui_draw_dg_hexviewer },
 	{LANG_DG_GAME_TEST,                MENUITEM_PROC,           (int*)dg_game_test_init },
@@ -1489,11 +1500,17 @@ void gui_redraw()
     if(dg_cameralog_screen_draw_enabled == 1) {
         dg_cameralog_screen_draw();
     }
-    
+    //static int disablemute = 0;
+    //if(!disablemute) {
+        //_DispSwCon_DisableMute(); // Disables screen muting (log entries still appear, though)
+        //disablemute = 1;
+    //}
     // Disables disabling the screen, so it still displays stuff during image
     // capture and shutdown.
     //_MuteOffPhysicalScreen();
-    
+    //_DispSwCon_MuteOffPhysicalScreen();
+    //_TurnOnDisplay();
+    //_DispSw_Unlock();
     gui_in_redraw = 1;
     gui_mode_old = gui_mode;
 
@@ -2517,6 +2534,19 @@ void dg_dynamic_menu_init() {
 	}
 }
 
-	
+
+const char* gui_dg_firmware_addr_enum(int change, int arg) {
+    static const char* modes[]={ "FF81...", "FFC0..."};
+
+    dg_firm_dump_start_addr+=change;
+    if (dg_firm_dump_start_addr<0)
+        dg_firm_dump_start_addr = 1;
+    else if (dg_firm_dump_start_addr>1)
+        dg_firm_dump_start_addr = 0;
+
+    return modes[dg_firm_dump_start_addr];
+}
+
+
 
 

@@ -504,6 +504,10 @@ static char* gui_lang_default = \
 "402 \"Stop logging camera log to file\"\n"
 "403 \"Resume logging camera log to file\"\n"
 
+"404 \"Firmware dumping ->\"\n"
+"405 \"Firmware dumping\"\n"
+"406 \"FW start address\"\n"
+"407 \"Dump FW to A/PRIMARY.BIN\"\n"
 
 ;
 

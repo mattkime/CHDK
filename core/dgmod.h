@@ -79,6 +79,8 @@ extern void dg_cameralog_file_dynamic_call(int arg);
 
 extern void dg_dynamic_menu_init();
 
+extern void dg_dump_firmware(int arg);
+
 extern long *_GetShutterReadyStateVar(long);
 
 
@@ -93,6 +95,7 @@ extern Led_control dgconf_lc;
 
 extern int *dg_cameralog_file_dynamic_entry;
 
+extern int dg_firm_dump_start_addr;
 
 
 //--- Macros --------------------------------------------------------

@@ -43,6 +43,7 @@ Led_control dgconf_lc;
 void (*dg_cameralog_file_dynamic_caller)();
 int *dg_cameralog_file_dynamic_entry;
 
+int dg_firm_dump_start_addr;
 
 //--- Local global variables ----------------------------------------
 static int dg_adjust_is_initial_draw;
@@ -139,6 +140,8 @@ void dg_cameralog_file_start();
 void dg_cameralog_file_resume();
 void dg_cameralog_file_stop();
 void dg_cameralog_file_dynamic_call(int arg);
+
+void dg_dump_firmware(int arg);
 
 //--- Local function prototypes -------------------------------------
 static void dg_bright_load_canon();
@@ -1541,4 +1544,29 @@ void dg_cameralog_file_stop() {
 void dg_cameralog_file_dynamic_call(int arg) {
 	(*dg_cameralog_file_dynamic_caller)();
 }
+
+
+// --- Firmware dumper ----------------------------------------------
+void dg_dump_firmware(int arg) {
+	char *base;
+	int fd;
+	
+	started();
+	
+	if(dg_firm_dump_start_addr == 0) {
+		base = (char *) 0xFF810000;
+	} else {
+		base = (char *) 0xFFC00000;
+	}
+	
+	fd = open("A/PRIMARY.BIN", O_WRONLY|O_CREAT|O_TRUNC, 0777);
+	if(fd >= 0) {
+		write(fd, base, 0xFFFFFFFF - (int) base);
+		close(fd);
+	}
+	
+	finished();
+}
+
+
 

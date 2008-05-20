@@ -513,11 +513,16 @@
 #define LANG_MENU_DG_CAMLOG_FILE_STOP           402
 #define LANG_MENU_DG_CAMLOG_FILE_RESUME         403
 
+#define LANG_MENU_DG_FIRM_DUMP_MENU             404
+#define LANG_MENU_DG_FIRM_DUMP_MENU_TITLE       405
+#define LANG_MENU_DG_FIRM_DUMP_START_ADDR       406
+#define LANG_MENU_DG_FIRM_DUMP_DUMP             407
+
 
 
 //-------------------------------------------------------------------
 
-#define GUI_LANG_ITEMS                  403
+#define GUI_LANG_ITEMS                  407
 
 //-------------------------------------------------------------------
 extern void gui_lang_init();
