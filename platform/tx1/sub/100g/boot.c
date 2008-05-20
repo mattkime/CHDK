@@ -161,3 +161,46 @@ void  h_usrRoot()
     );
 }
 
+void __attribute__((naked,noinline)) dg_tx1_EViA() {
+	asm volatile(
+		"STR     LR, [SP,#-4]!\n"
+		"BL      dg_tx1_EViA_cont\n"
+		"MOV     R0, R0,LSL#16\n"
+		"MOV     R0, R0,LSR#16\n"
+		"LDR     PC, [SP],#4\n"
+	);
+}
+
+void __attribute__((naked,noinline)) dg_tx1_EViA_cont() {
+	asm volatile (
+		"MOV     R0, #0x6C\n"
+		"STR     LR, [SP,#4]!\n"
+		"BL      sub_FFB08E20\n"
+		"MOV     R0, R0,LSL#16\n"
+		"MOV     R0, R0,LSR#16\n"
+		"LDR     PC, [SP],#4\n"
+	);
+}
+
+void __attribute__((naked,noinline)) dg_tx1_EViB() {
+	asm volatile(
+		"STR     LR, [SP,#-4]!\n"
+		"BL      dg_tx1_EViB_cont\n"
+		"MOV     R0, R0,LSL#16\n"
+		"MOV     R0, R0,LSR#16\n"
+		"LDR     PC, [SP],#4\n"
+	);
+}
+
+void __attribute__((naked,noinline)) dg_tx1_EViB_cont() {
+	asm volatile (
+		"MOV     R0, #0x6D\n"
+		"STR     LR, [SP,#4]!\n"
+		"BL      sub_FFB08E20\n"
+		"MOV     R0, R0,LSL#16\n"
+		"MOV     R0, R0,LSR#16\n"
+		"LDR     PC, [SP],#4\n"
+	);
+}
+
+
