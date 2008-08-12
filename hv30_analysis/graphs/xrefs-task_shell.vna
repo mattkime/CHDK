@@ -1,0 +1,1913 @@
+*Node data
+"ID", "text", "depthLevel", "type"
+ "PANIC2" "PANIC2" "2" "1"
+ "a000000" "000000" "5" "2"
+ "a02x_0" "%02x " "4" "2"
+ "a02x_1" "%02x  -> " "4" "2"
+ "a04x" "%04x " "4" "2"
+ "a04x_0" "%04x  -> " "4" "2"
+ "a08lx" "%08lx " "4" "2"
+ "a08lx06lx06lxS" "  %08lx %06lx %06lx  %s " "4" "2"
+ "a08lx08lx" "  %08lx(%08lx)" "4" "2"
+ "a08lxD" "%08lx(%d) " "4" "2"
+ "a08lx_0" "%08lx: " "4" "2"
+ "a08lx_1" "%08lx  -> " "4" "2"
+ "a08lx_2" "%08lx : " "4" "2"
+ "a10ld" " %10ld" "5" "2"
+ "a2d" "%2d" "4" "2"
+ "a3d" "   %3d" "4" "2"
+ "a3d08lx6s3dS" "%3d  %08lx %6s    %3d  %s " "4" "2"
+ "a3d5d10s3dS" "%3d  %5d %10s    %3d  %s " "4" "2"
+ "a3d6sS" "%3d  %6s  %s " "4" "2"
+ "a3dS5d5d5dS" "%3d   %s  %5d  %5d  %5d   %s " "4" "2"
+ "a3ld" " %3ld" "5" "2"
+ "a6s" " %6s" "5" "2"
+ "a7ld" "%7ld " "5" "2"
+ "a8s" " %8s" "5" "2"
+ "aA" "a+" "5" "2"
+ "aAcmt" "acmt:" "4" "2"
+ "aActive" "ACTIVE" "4" "2"
+ "aActive_0" "ACTIVE" "4" "2"
+ "aAddr00xLxAddr10xLxSizeD" "Addr0=0x%lx, Addr1=0x%lx, size=%d " "4" "2"
+ "aAddr0xLxData0xXAddr0xLxData0xX" "Addr=0x%lx,Data=0x%x  Addr=0x%lx,Data=0x%x " "4" "2"
+ "aAlfid1" "alFid1" "4" "2"
+ "aAliasedToCat" "aliased to cat" "3" "2"
+ "aAliasedToLsAlf" "aliased to `ls -alF --full-time'" "3" "2"
+ "aAliasedToMkdir" "aliased to mkdir" "3" "2"
+ "aAliasedToMv" "aliased to mv" "3" "2"
+ "aAliasedToRm" "aliased to rm" "3" "2"
+ "aAliasedToRmdir" "aliased to rmdir" "3" "2"
+ "aArgument08lx" "ARGUMENT = %08lx " "4" "2"
+ "aArgumentLx" "ARGUMENT    = %lx " "4" "2"
+ "aAttrib" "attrib" "3" "2"
+ "aB1byteAccess" "    b  : 1byte access " "4" "2"
+ "aB1byteAccess_0" "    b : 1byte access " "4" "2"
+ "aBin" "BIN|" "5" "2"
+ "aC_SRead" "c_%s: read " "4" "2"
+ "aCdev" "cdev" "3" "2"
+ "aChangeAPriorit" "change a priority of task" "3" "2"
+ "aChangeFileAcce" "change file access permissions" "3" "2"
+ "aChangeWorkin_0" "change working device" "3" "2"
+ "aChangeWorkingD" "change working directory" "3" "2"
+ "aCheckFileRead" "check file read" "3" "2"
+ "aCheckFileWrite" "check file write" "3" "2"
+ "aChkread" "chkread" "3" "2"
+ "aChkwrite" "chkwrite" "3" "2"
+ "aChmod" "chmod" "3" "2"
+ "aCloseAllDevice" "close all devices, file and socket" "3" "2"
+ "aCmd_debug_setu" "cmd_debug_setup() failed." "2" "2"
+ "aCmd_fs_setupFa" "cmd_fs_setup() failed." "2" "2"
+ "aCmd_misc_setup" "cmd_misc_setup() failed." "2" "2"
+ "aCmd_test_setup" "cmd_test_setup() failed." "2" "2"
+ "aCmp" "cmp" "3" "2"
+ "aCmpAddr0Addr1Size" "cmp <Addr0> <Addr1> <Size> " "4" "2"
+ "aCnt" "CNT|" "5" "2"
+ "aCodeDS" "code=%d: %s " "5" "2"
+ "aCompareContent" "compare contents of memory" "3" "2"
+ "aCond3d" "   COND(%3d)" "4" "2"
+ "aCondition" "CONDITION" "4" "2"
+ "aConstructAFile" "construct a file system" "3" "2"
+ "aCopyAFile" "copy a file" "3" "2"
+ "aCycleLdsecLdnsec" "CYCLE       = %ldsec,%ldnsec " "4" "2"
+ "aD_0" "(%d) " "4" "2"
+ "aDate" "date" "3" "2"
+ "aDebug" "Debug" "3" "2"
+ "aDel" "del" "3" "2"
+ "aDelay" "DELAY" "4" "2"
+ "aDelay3d" "  DELAY(%3d)" "4" "2"
+ "aDelete" "delete" "3" "2"
+ "aDeleteAKernelO" "delete a kernel object" "3" "2"
+ "aDeleteATask" "delete a task" "3" "2"
+ "aDeleteObjectNameObjectId" "delete <object name> <object ID> " "4" "2"
+ "aDelete_0" "delete" "5" "2"
+ "aDir" "dir" "3" "2"
+ "aDisplayAndWrit" "display and write the date and time" "3" "2"
+ "aDisplayCurrent" "display current time" "3" "2"
+ "aDisplayEventFl" "display event-flag information usage : event [event ID]" "3" "2"
+ "aDisplayMqInfor" "display mq information usage : mq [mq ID]" "3" "2"
+ "aDisplaySemapho" "display semaphore information usage : sem [sem ID]" "3" "2"
+ "aDisplayTaskInf" "display task information usage : task [-l | task ID]         " "3" "2"
+ "aDisplayTimerIn" "display timer information usage : timer [timer ID]" "3" "2"
+ "aDminfo" "dminfo" "3" "2"
+ "aDormant" "DORMANT" "4" "2"
+ "aDormant_0" " DORMANT" "4" "2"
+ "aDry" "Dry> " "5" "2"
+ "aDryMkPerforman" "Dry-MK performance test" "3" "2"
+ "aDrySpiObjectNameSemEventMqMutexCon" "  Dry-SPI object name : sem, event, mq, mutex, cond, timer " "4" "2"
+ "aDump" "dump" "3" "2"
+ "aDumpAFile" "dump a file" "3" "2"
+ "aDumpContentsOf" "dump contents of memory" "3" "2"
+ "aEcho" "echo" "3" "2"
+ "aEchoArguments" "echo arguments" "3" "2"
+ "aEntry08lx" "ENTRY    = %08lx " "4" "2"
+ "aEntryLx" "ENTRY       = %lx " "4" "2"
+ "aErrorC_freadOpen" "Error: c_fread: open " "4" "2"
+ "aErrorC_freadRead" "Error: c_fread: read " "4" "2"
+ "aErrorC_freadRead_0" "Error c_fread: read " "4" "2"
+ "aErrorC_truncateOpen" "Error c_truncate:open " "4" "2"
+ "aErrorC_truncateTruncate" "Error c_truncate:truncate " "4" "2"
+ "aErrorId0IsNotExist_" "Error : ID 0 is not exist. " "4" "2"
+ "aErrorSIdDIsCouldTDelete_" "Error : %s ID %d is could't delete. " "4" "2"
+ "aErrorSIsAIllegalObjectName_" "Error : '%s' is a illegal object name. " "4" "2"
+ "aError_IllegalTaskIdD_" "Error. Illegal task ID %d. " "4" "2"
+ "aEvent" "event" "3" "2"
+ "aEvent3d" "  EVENT(%3d)" "4" "2"
+ "aEventDIsNotExi" "event %d is not exist " "4" "2"
+ "aEvent_0" "event" "4" "2"
+ "aEvent_flag" "EVENT_FLAG" "4" "2"
+ "aExit" "exit" "3" "2"
+ "aExitTsk_dryshe" "exit Tsk_dryshell  " "2" "2"
+ "aExpireAbsLdsecLdnsec" "EXPIRE(ABS) = %ldsec,%ldnsec " "4" "2"
+ "aExpireRelLdsecLdnsec" "EXPIRE(REL) = %ldsec,%ldnsec " "4" "2"
+ "aF" "f" "4" "2"
+ "aFat" "fat" "6" "2"
+ "aFdDClosed_" "fd:%d closed. " "4" "2"
+ "aFifo" "FIFO" "4" "2"
+ "aFifo_0" "FIFO" "4" "2"
+ "aFileSystem" "File System" "3" "2"
+ "aFinishDryShell" "finish Dry-shell" "3" "2"
+ "aFlagsS" "FLAGS      = %s " "4" "2"
+ "aFlagsS_0" "FLAGS           = %s " "4" "2"
+ "aFlagsS_1" "FLAGS       = %s " "4" "2"
+ "aFlagsS_2" "FLAGS    = %s " "4" "2"
+ "aFlushFilesyste" "flush filesystem buffers" "3" "2"
+ "aFpu" "    FPU" "4" "2"
+ "aFread" "fread" "3" "2"
+ "aFullTime" "--full-time" "4" "2"
+ "aFwrite" "fwrite" "3" "2"
+ "aHelp" "help" "4" "2"
+ "aIdD" "ID         = %d " "4" "2"
+ "aIdD_0" "ID              = %d " "4" "2"
+ "aIdD_1" "ID          = %d " "4" "2"
+ "aIdD_2" "ID          = %d " "4" "2"
+ "aIdD_3" "ID       = %d " "4" "2"
+ "aIdFlagsMaxCountNtaskName" " ID  FLAGS    MAX  COUNT  NTASK   NAME " "4" "2"
+ "aIdStateName" " ID   STATE  NAME " "4" "2"
+ "aIdStatePrioFlagsEntryArgument" "ID   STATE  PRIO  FLAGS     ENTRY(ARGUMENT)" "4" "2"
+ "aIdStatePrioWaitIdName" "ID   STATE  PRIO    WAIT(ID)  NAME " "4" "2"
+ "aIdValueFlagsNt" " ID     VALUE  FLAGS  NTASK  NAME " "4" "2"
+ "aIdValueFlagsNtaskName" " ID  VALUE      FLAGS  NTASK  NAME " "4" "2"
+ "aIllegalTaskIdDOrPriorityD" "illegal task ID=%d or priority=%d " "4" "2"
+ "aInput" "input" "3" "2"
+ "aInputContentsO" "input contents of a file" "3" "2"
+ "aKill" "kill" "3" "2"
+ "aL4byteAccess" "    l  : 4byte access " "4" "2"
+ "aL4byteAccess_0" "    l : 4byte access " "4" "2"
+ "aLd" "%ld" "5" "2"
+ "aLdSCCC_CCCMs" "%ld[s] %c%c%c.%c%c%c[ms] " "5" "2"
+ "aListCommandNam" "list command names.   usage : help [command name]" "4" "2"
+ "aListDirectoryC" "list directory contents" "3" "2"
+ "aLogout" "logout " "4" "2"
+ "aLs" "ls" "3" "2"
+ "aMakeADirectory" "make a directory" "3" "2"
+ "aMallocErrorCou" "malloc error!! count=%d. " "4" "2"
+ "aMallocErrorCountD_" "malloc error!! count=%d. " "4" "2"
+ "aMallocErrorCountD__0" "malloc error!! count=%d. " "4" "2"
+ "aMallocErrorCountD__1" "malloc error!! count=%d. " "4" "2"
+ "aMallocErrorCountD__2" "malloc error!! count=%d. " "4" "2"
+ "aMap" "map" "3" "2"
+ "aMapFilesystem" "map filesystem" "3" "2"
+ "aMaxQueueD" "MAX QUEUE       = %d " "4" "2"
+ "aMbox" "MBOX" "4" "2"
+ "aMbox3d" "   MBOX(%3d)" "4" "2"
+ "aMd" "md" "3" "2"
+ "aMessageCountD" "MESSAGE COUNT   = %d " "4" "2"
+ "aMessagesPrio" "MESSAGES(PRIO)  = " "4" "2"
+ "aMiscellaneous" "Miscellaneous" "3" "2"
+ "aMkdir" "mkdir" "3" "2"
+ "aMkfs" "mkfs" "3" "2"
+ "aMktest" "mktest" "3" "2"
+ "aMount" "mount" "3" "2"
+ "aMountBadSuperblockOnS" "mount: bad superblock on %s " "5" "2"
+ "aMountCannotMountSOnSErrnoD" "mount: cannot mount %s on %s: errno=%d " "5" "2"
+ "aMountFileSyste" "mount file systems" "3" "2"
+ "aMountMountPointSDoesNotExit" "mount: mount point %s does not exit " "5" "2"
+ "aMountMountPointSIsNotADirectory" "mount: mount point %s is not a directory " "5" "2"
+ "aMountMountTableFull" "mount: mount table full " "5" "2"
+ "aMountSAlreadyMountedSBusy" "mount: %s already mounted, %s busy " "5" "2"
+ "aMountSCannotReadSuperblock" "mount: %s cannot read superblock " "5" "2"
+ "aMountSpecialDeviceSDoesNotExit" "mount: special-device %s does not exit " "5" "2"
+ "aMoveRenameAFil" "move (rename) a file" "3" "2"
+ "aMpool" "MPOOL" "4" "2"
+ "aMpool3d" "  MPOOL(%3d)" "4" "2"
+ "aMpoolv" "MPOOLV" "4" "2"
+ "aMpoolv3d" " MPOOLV(%3d)" "4" "2"
+ "aMq" "mq" "3" "2"
+ "aMqDIsNotExist" "mq %d is not exist " "4" "2"
+ "aMq_receive" "MQ_RECEIVE" "4" "2"
+ "aMq_send" "MQ_SEND" "4" "2"
+ "aMqrcv3d" "  MQRCV(%3d)" "4" "2"
+ "aMqsnd3d" "  MQSND(%3d)" "4" "2"
+ "aMulti" "MULTI" "4" "2"
+ "aMulti_0" " MULTI" "4" "2"
+ "aMutex" "MUTEX" "4" "2"
+ "aMutex3d" "  MUTEX(%3d)" "4" "2"
+ "aNameS" "NAME       = '%s' " "4" "2"
+ "aNameS_0" "NAME            = '%s' " "4" "2"
+ "aNameS_1" "NAME        = '%s' " "4" "2"
+ "aNameS_2" "NAME        = '%s' " "4" "2"
+ "aNameS_3" "NAME     = '%s' " "4" "2"
+ "aNextPage" "    >  : next page " "4" "2"
+ "aNh" "nh" "4" "2"
+ "aNoMoreShellTas" "No more shell task" "3" "2"
+ "aNoSuchFileOrDirectory" ": no such file or directory " "4" "2"
+ "aO_k_" "O.K. " "4" "2"
+ "aOnSSD02d02d02dD" " on %s %s %d %02d:%02d:%02d %d " "6" "2"
+ "aPreviousPage" "    <  : previous page " "4" "2"
+ "aPrintContentsO" "print contents of a file" "3" "2"
+ "aPrintInformati" "print information of Dry-DM" "3" "2"
+ "aPrintNameOfCur" "print name of current/working directory" "3" "2"
+ "aPrintVersionIn" "print version information" "3" "2"
+ "aPrio" "prio" "3" "2"
+ "aPrioTaskIdPriority" "prio <task ID> <priority> " "4" "2"
+ "aPrio_0" "PRIO" "4" "2"
+ "aPrio_1" "PRIO" "4" "2"
+ "aPriorityD" "PRIORITY = %d " "4" "2"
+ "aPwd" "pwd" "3" "2"
+ "aQ_fifo" "Q_FIFO" "5" "2"
+ "aQ_prio" "Q_PRIO" "5" "2"
+ "aQuit_" "Quit. " "4" "2"
+ "aR" "r" "5" "2"
+ "aRd" "rd" "3" "2"
+ "aReadFileAndMea" "read file and measure time" "3" "2"
+ "aReady" "READY" "4" "2"
+ "aReady_0" "READY" "4" "2"
+ "aReady_1" "   READY" "4" "2"
+ "aReady_2" " READY" "4" "2"
+ "aRelease" "release" "3" "2"
+ "aReleaseATaskFr" "release a task from wait status" "3" "2"
+ "aReleaseTaskId" "release <task ID> " "4" "2"
+ "aRemove" "remove" "5" "2"
+ "aRemoveAEmptyDi" "remove a empty directory" "3" "2"
+ "aRemoveAFile" "remove a file" "3" "2"
+ "aRen" "ren" "3" "2"
+ "aReportFilesyst" "report filesystem disk space usage" "3" "2"
+ "aResume" "resume" "3" "2"
+ "aResumeATask" "resume a task" "3" "2"
+ "aRm" "rm" "3" "2"
+ "aRmdir" "rmdir" "3" "2"
+ "aRoot" "root" "5" "2"
+ "aS" "%s " "4" "2"
+ "aS2d02d02d" "%s %2d %02d:%02d" "6" "2"
+ "aS2d4d" "%s %2d  %4d" "6" "2"
+ "aSCannotCreateADirectorySErrnoD" "%s: cannot create a directory `%s': errno=%d " "4" "2"
+ "aSCannotCreateDirectorySFileExists" "%s: cannot create directory `%s': file exists " "4" "2"
+ "aSCannotCreateDirectorySNoSuchFileO" "%s: cannot create directory `%s': no such file or directory " "4" "2"
+ "aSCannotCreateDirectorySNotADirecto" "%s: cannot create directory `%s': not a directory " "4" "2"
+ "aSCannotCreateDirectorySPermissionD" "%s: cannot create directory `%s': permission denied " "4" "2"
+ "aSCannotMoveSToS" "%s: cannot move `%s' to `%s' " "4" "2"
+ "aSCannotMoveSToS_0" "%s: cannot move `%s' to `%s' " "5" "2"
+ "aSCannotOpenS" "%s: cannot open %s " "4" "2"
+ "aSCannotRemoveDirectorySErrnoD" "%s: cannot remove directory `%s': errno=%d " "4" "2"
+ "aSCannotRemoveSIsADirectory" "%s: cannot remove `%s': is a directory " "5" "2"
+ "aSCannotRemoveSIsADirectory_0" "%s: cannot remove `%s': is a directory " "5" "2"
+ "aSCannotRemoveSNoSuchFileOrDirector" "%s: cannot remove `%s': no such file or directory " "5" "2"
+ "aSCannotUnlinkSErrnoD" "%s: cannot unlink `%s': errno=%d " "5" "2"
+ "aSCannotUnlinkSPermissionDenied" "%s: cannot unlink `%s': permission denied " "5" "2"
+ "aSClosedirDErrnoD" "%s: closedir: %d: errno=%d " "4" "2"
+ "aSFileArgumentsMissing_1" "%s: file arguments missing " "4" "2"
+ "aSIdDIsDeleted_" "%s ID %d is deleted. " "4" "2"
+ "aSIllegalOptionC" "%s: illegal option -- %c " "5" "2"
+ "aSInvalidDateFormatS" "%s: invalid date format `%s' " "4" "2"
+ "aSInvalidDateFormatS_0" "%s: invalid date format `%s' " "4" "2"
+ "aSMountPointSIsNotAnAbsolutePathnam" "%s: mount-point %s is not an absolute pathname " "4" "2"
+ "aSOnS" "%s on %s" "6" "2"
+ "aSOpendirSErrnoD" "%s: opendir %s: errno=%d" "4" "2"
+ "aSOptionRequiresAnArgmentC" "%s: option requires an argment -- %c " "5" "2"
+ "aSReaddirErrnoD" "%s: readdir: errno=%d " "4" "2"
+ "aSS2d02d02d02d4d" "%s %s %2d %02d:%02d:%02d %4d" "6" "2"
+ "aSSAndSAreTheSameFile" "%s: `%s' and `%s' are the same file " "4" "2"
+ "aSSCannotRemove_Or__" "%s: `%s': cannot remove '.' or '..' " "4" "2"
+ "aSSErrnoD" "%s: %s: errno=%d " "6" "2"
+ "aSSErrnoD_0" "%s: %s: errno=%d " "6" "2"
+ "aSSErrnoD_1" "%s: %s: errno=%d " "6" "2"
+ "aSSErrorOnStatdir" "%s: %s: error on statdir " "4" "2"
+ "aSSFileExists" "%s: `%s': file exists " "4" "2"
+ "aSSFilenameIsTooLong" "%s: `%s': filename is too long " "5" "2"
+ "aSSFilenameIsTooLong_0" "%s: `%s': filename is too long " "5" "2"
+ "aSSIsADirectory" "%s: %s: is a directory " "4" "2"
+ "aSSNoSuchFileOrDirectory" "%s: %s: no such file or directory " "4" "2"
+ "aSSNoSuchFileOrDirectory_0" "%s: `%s': no such file or directory " "4" "2"
+ "aSSNoSuchFileOrDirectory_1" "%s: `%s': no such file or directory " "5" "2"
+ "aSSNoSuchFileOrDirectory_2" "%s: `%s': no such file or directory " "4" "2"
+ "aSSNoSuchFileOrDirectory_3" "%s: %s: no such file or directory " "4" "2"
+ "aSSNotADirectory" "%s: `%s': not a directory " "4" "2"
+ "aSSPermissionDenied" "%s: `%s': permission denied " "4" "2"
+ "aSSWriteProtectedFileS?" "%s: %s write-protected file `%s'? " "5" "2"
+ "aSSettingTimesOfSNoSuchFileOrDirect" "%s: setting times of `%s': no such file or directory " "6" "2"
+ "aSSource___Directory" "       %s SOURCE... DIRECTORY " "4" "2"
+ "aSUmounted" "%s umounted " "5" "2"
+ "aSUsageSFileSizeKM" "%s: usage: %s FILE SIZE[k|M] " "4" "2"
+ "aS_0" "%s" "4" "2"
+ "aS_2" "%s: " "4" "2"
+ "aS_3" " %s " "5" "2"
+ "aS_4" "  %s " "4" "2"
+ "aSem" "sem" "3" "2"
+ "aSem3d" "    SEM(%3d)" "4" "2"
+ "aSemDIsNotExist" "sem %d is not exist " "4" "2"
+ "aSemaphore" "SEMAPHORE" "4" "2"
+ "aSetFileAccessA" "set file access and modification times" "3" "2"
+ "aSetTimer" "set timer" "3" "2"
+ "aSettimer" "settimer" "3" "2"
+ "aShowOrChangeFi" "show or change file attributes" "3" "2"
+ "aShutdown" "shutdown" "3" "2"
+ "aSingle" "SINGLE" "4" "2"
+ "aSingle_0" "SINGLE" "4" "2"
+ "aSize08lx" "      SIZE  = %08lx " "4" "2"
+ "aSleep3d" "  SLEEP(%3d)" "4" "2"
+ "aStackStart08lx" "STACK START = %08lx " "4" "2"
+ "aStartTsk_drysh" "start Tsk_dryshell  " "2" "2"
+ "aStateS" "STATE       = %s " "4" "2"
+ "aStateS_0" "STATE    = %s " "4" "2"
+ "aStfs" "stfs" "3" "2"
+ "aSuccess_" "Success. " "4" "2"
+ "aSuspend" "suspend" "3" "2"
+ "aSuspendATask" "suspend a task" "3" "2"
+ "aSuspend_0" " SUSPEND" "4" "2"
+ "aSuspended" "SUSPENDED" "4" "2"
+ "aSync" "sync" "3" "2"
+ "aSystemShutdownO_k_?YN" "System Shutdown O.K.?(y/n): " "4" "2"
+ "aTask" "task" "3" "2"
+ "aTaskCountD" "TASK COUNT = %d " "4" "2"
+ "aTaskCountD_0" "TASK COUNT  = %d " "4" "2"
+ "aTaskDIsNotExist" "task %d is not exist " "4" "2"
+ "aTaskIds" "TASK IDS        = " "4" "2"
+ "aTaskIds_0" "TASK IDS   = " "4" "2"
+ "aTaskIds_1" "TASK IDS    = " "4" "2"
+ "aTask_sleep" "TASK_SLEEP" "4" "2"
+ "aTest" "Test" "3" "2"
+ "aTime" "time" "3" "2"
+ "aTimer" "timer" "3" "2"
+ "aTimerDIsNotExist" "timer %d is not exist " "4" "2"
+ "aTimer_0" "timer" "4" "2"
+ "aTouch" "touch" "3" "2"
+ "aTruncate" "truncate" "3" "2"
+ "aTruncateFile" "truncate file" "3" "2"
+ "aType" "type" "3" "2"
+ "aTypeS" " type %s" "6" "2"
+ "aUmap" "umap" "3" "2"
+ "aUmount" "umount" "3" "2"
+ "aUmountCannotUnmountSErrnoD" "umount: cannot unmount %s: errno=%d " "5" "2"
+ "aUmountSCannotWriteSuperblock" "umount: %s: cannot write superblock " "5" "2"
+ "aUmountSDeviceIsBusy" "umount: %s: device is busy " "5" "2"
+ "aUmountSNotMounted" "umount: %s: not mounted " "5" "2"
+ "aUmountSNotMounted_0" "umount: %s: not mounted " "5" "2"
+ "aUnknownCommand" "Unknown Command : %s " "3" "2"
+ "aUnmapFilesyste" "unmap filesystem" "3" "2"
+ "aUnmountFileSys" "unmount file systems" "3" "2"
+ "aUsageMModeDirectory___" "usage: [-m mode] DIRECTORY... " "4" "2"
+ "aUsageSCTTimeFile___" "usage: %s [-c] [-t time] FILE... " "4" "2"
+ "aUsageSDirectory___" "usage: %s DIRECTORY... " "4" "2"
+ "aUsageSFFile___" "usage: %s [-f] FILE... " "4" "2"
+ "aUsageSFileSize" "usage: %s FILE SIZE " "4" "2"
+ "aUsageSHFile___" "usage: %s [-h] FILE... " "4" "2"
+ "aUsageSSourceDest" "usage: %s SOURCE DEST " "4" "2"
+ "aUsageSSpecialMount_point" "usage: %s special mount_point " "4" "2"
+ "aUsageSSpecialMount_point_0" "usage: %s {special | mount_point} " "4" "2"
+ "aUsed08lx" "      USED  = %08lx " "4" "2"
+ "aValue08lx" "VALUE      = %08lx " "4" "2"
+ "aValueD" "VALUE       = %d " "4" "2"
+ "aVers" "vers" "3" "2"
+ "aW2byteAccess" "    w  : 2byte access " "4" "2"
+ "aW2byteAccess_0" "    w : 2byte access " "4" "2"
+ "aWait" "WAIT" "4" "2"
+ "aWaitIdS" "WAIT(ID) = %s" "4" "2"
+ "aWaitIdStackSizeUsedName" "    WAIT(ID)     STACK   SIZE   USED  NAME " "4" "2"
+ "aWaitS" "  WAIT+S" "4" "2"
+ "aWaitSuspended" "WAIT+SUSPENDED" "4" "2"
+ "aWaitTaskCountD" " WAIT TASK COUNT = %d " "4" "2"
+ "aWait_0" "    WAIT" "4" "2"
+ "aWriteFileAndMe" "write file and measure time" "3" "2"
+ "aWriteInMemory" "write in memory" "3" "2"
+ "aX" "        %x" "4" "2"
+ "aX_0" "    %x" "4" "2"
+ "aX_1" "  %x" "4" "2"
+ "aXd" "xd" "3" "2"
+ "aXdAddressHex" "xd [- | address(hex) | > | <] " "4" "2"
+ "aXdAddressHexLineCount" "xd {address(hex) | > | <} [line count] " "4" "2"
+ "aXdAddressHexLineCountBWL" "xd {address(hex) | > | <}  line count  [b | w | l] " "4" "2"
+ "aXm" "xm" "3" "2"
+ "aXmAddressHex" "xm [- | address(hex)] " "4" "2"
+ "aXmAddressHexBWL" "xm address(hex) [b | w | l] " "4" "2"
+ "a__1" "." "5" "2"
+ "asc_40720C8" "-" "5" "2"
+ "asc_4072D90" "   -------- " "4" "2"
+ "asc_4072E60" "    ---" "4" "2"
+ "asc_407344C" "         " "4" "2"
+ "cmd_debug_setup" "cmd_debug_setup" "2" "1"
+ "cmd_fs_setup" "cmd_fs_setup" "2" "1"
+ "cmd_misc_setup" "cmd_misc_setup" "2" "1"
+ "cmd_test_setup" "cmd_test_setup" "2" "1"
+ "loc_405FFF2" "loc_405FFF2" "5" "1"
+ "loc_406016C" "loc_406016C" "5" "1"
+ "loc_4060192" "loc_4060192" "6" "1"
+ "loc_40602C4" "loc_40602C4" "4" "1"
+ "off_4072F54" "off_4072F54" "4" "3"
+ "off_407363C" "off_407363C" "7" "3"
+ "off_4073688" "off_4073688" "7" "3"
+ "off_40737F0" "off_40737F0" "8" "3"
+ "sema_dmLock" "sema_dmLock" "6" "3"
+ "sema_mallocSem" "sema_mallocSem" "5" "3"
+ "sema_stdioLock" "sema_stdioLock" "5" "3"
+ "shell_cat" "shell_cat" "3" "1"
+ "shell_cmp" "shell_cmp" "3" "1"
+ "shell_del" "shell_del" "3" "1"
+ "shell_delete" "shell_delete" "3" "1"
+ "shell_dir" "shell_dir" "3" "1"
+ "shell_echo" "shell_echo" "3" "1"
+ "shell_event" "shell_event" "3" "1"
+ "shell_exit" "shell_exit" "3" "1"
+ "shell_fread" "shell_fread" "3" "1"
+ "shell_kill" "shell_kill" "3" "1"
+ "shell_mkdir" "shell_mkdir" "3" "1"
+ "shell_mount" "shell_mount" "3" "1"
+ "shell_mq" "shell_mq" "3" "1"
+ "shell_prio" "shell_prio" "3" "1"
+ "shell_register" "shell_register" "3" "1"
+ "shell_release" "shell_release" "3" "1"
+ "shell_ren" "shell_ren" "3" "1"
+ "shell_resume" "shell_resume" "3" "1"
+ "shell_rmdir" "shell_rmdir" "3" "1"
+ "shell_sema" "shell_sema" "3" "1"
+ "shell_shutdown" "shell_shutdown" "3" "1"
+ "shell_suspend" "shell_suspend" "3" "1"
+ "shell_task" "shell_task" "3" "1"
+ "shell_timer" "shell_timer" "3" "1"
+ "shell_touch" "shell_touch" "3" "1"
+ "shell_truncate" "shell_truncate" "3" "1"
+ "shell_umount" "shell_umount" "3" "1"
+ "shell_xd_dump" "shell_xd_dump" "3" "1"
+ "shell_xm_writein" "shell_xm_writein" "3" "1"
+ "sub_40490CA" "sub_40490CA" "4" "1"
+ "sub_4057092" "sub_4057092" "5" "1"
+ "sub_4057162" "sub_4057162" "5" "1"
+ "sub_4057182" "sub_4057182" "7" "1"
+ "sub_40571BE" "sub_40571BE" "5" "1"
+ "sub_405754A" "sub_405754A" "5" "1"
+ "sub_405760C" "sub_405760C" "6" "1"
+ "sub_40576DE" "sub_40576DE" "4" "1"
+ "sub_40578A6" "sub_40578A6" "6" "1"
+ "sub_4057956" "sub_4057956" "8" "1"
+ "sub_4057AD2" "sub_4057AD2" "4" "1"
+ "sub_40586F8" "sub_40586F8" "10" "1"
+ "sub_4058706" "sub_4058706" "4" "1"
+ "sub_405871A" "sub_405871A" "5" "1"
+ "sub_405C4E4" "sub_405C4E4" "5" "1"
+ "sub_405C62E" "sub_405C62E" "5" "1"
+ "sub_405C6F2" "sub_405C6F2" "4" "1"
+ "sub_405D74C" "sub_405D74C" "5" "1"
+ "sub_405D7F4" "sub_405D7F4" "4" "1"
+ "sub_405DD18" "sub_405DD18" "5" "1"
+ "sub_405DD4C" "sub_405DD4C" "4" "1"
+ "sub_405E3C6" "sub_405E3C6" "4" "1"
+ "sub_405E9F6" "sub_405E9F6" "4" "1"
+ "sub_405FDF2" "sub_405FDF2" "4" "1"
+ "sub_4060414" "sub_4060414" "4" "1"
+ "sub_4060E40" "sub_4060E40" "6" "1"
+ "sub_4060E4C" "sub_4060E4C" "6" "1"
+ "sub_4060E58" "sub_4060E58" "4" "1"
+ "sub_4060F6E" "sub_4060F6E" "5" "1"
+ "sub_40610DA" "sub_40610DA" "4" "1"
+ "sub_40611C4" "sub_40611C4" "5" "1"
+ "sub_40611F6" "sub_40611F6" "5" "1"
+ "sub_40612B6" "sub_40612B6" "6" "1"
+ "sub_4061310" "sub_4061310" "6" "1"
+ "sub_4061350" "sub_4061350" "6" "1"
+ "sub_40613C6" "sub_40613C6" "5" "1"
+ "sub_4061430" "sub_4061430" "4" "1"
+ "sub_40614A2" "sub_40614A2" "4" "1"
+ "sub_4061502" "sub_4061502" "4" "1"
+ "sub_4061662" "sub_4061662" "3" "1"
+ "sub_40617D2" "sub_40617D2" "3" "1"
+ "sub_40617E6" "sub_40617E6" "3" "1"
+ "sub_406182A" "sub_406182A" "2" "1"
+ "sub_40619E0" "sub_40619E0" "4" "1"
+ "sub_40619EE" "sub_40619EE" "3" "1"
+ "sub_4061B2C" "sub_4061B2C" "4" "1"
+ "sub_4061B56" "sub_4061B56" "3" "1"
+ "sub_4061BB0" "sub_4061BB0" "3" "1"
+ "sub_4061BFE" "sub_4061BFE" "4" "1"
+ "sub_4061FC6" "sub_4061FC6" "8" "1"
+ "sub_4062060" "sub_4062060" "4" "1"
+ "sub_40620E4" "sub_40620E4" "6" "1"
+ "sub_406214C" "sub_406214C" "7" "1"
+ "sub_40628F2" "sub_40628F2" "4" "1"
+ "sub_4062A5E" "sub_4062A5E" "6" "1"
+ "sub_4062A94" "sub_4062A94" "4" "1"
+ "sub_4062B62" "sub_4062B62" "4" "1"
+ "sub_4062C26" "sub_4062C26" "4" "1"
+ "sub_4062C74" "sub_4062C74" "4" "1"
+ "sub_4062F44" "sub_4062F44" "4" "1"
+ "sub_4062FAE" "sub_4062FAE" "5" "1"
+ "sub_406306A" "sub_406306A" "5" "1"
+ "sub_406310E" "sub_406310E" "5" "1"
+ "sub_4063352" "sub_4063352" "6" "1"
+ "sub_4063394" "sub_4063394" "4" "1"
+ "sub_40633B0" "sub_40633B0" "5" "1"
+ "sub_40635CC" "sub_40635CC" "3" "1"
+ "sub_4063834" "sub_4063834" "6" "1"
+ "sub_4063866" "sub_4063866" "5" "1"
+ "sub_40638F0" "sub_40638F0" "5" "1"
+ "sub_4063908" "sub_4063908" "6" "1"
+ "sub_406392C" "sub_406392C" "5" "1"
+ "sub_4063B6A" "sub_4063B6A" "4" "1"
+ "sub_4063B9E" "sub_4063B9E" "5" "1"
+ "sub_4063BE8" "sub_4063BE8" "4" "1"
+ "sub_4063CC6" "sub_4063CC6" "6" "1"
+ "sub_4063CDE" "sub_4063CDE" "6" "1"
+ "sub_4063D26" "sub_4063D26" "7" "1"
+ "sub_4063D58" "sub_4063D58" "7" "1"
+ "sub_4063D88" "sub_4063D88" "9" "1"
+ "sub_4063DBC" "sub_4063DBC" "9" "1"
+ "sub_4063FAC" "sub_4063FAC" "5" "1"
+ "sub_40640E6" "sub_40640E6" "4" "1"
+ "sub_4064146" "sub_4064146" "5" "1"
+ "sub_4064292" "sub_4064292" "4" "1"
+ "sub_4064312" "sub_4064312" "6" "1"
+ "sub_4064450" "sub_4064450" "4" "1"
+ "sub_40644B4" "sub_40644B4" "6" "1"
+ "sub_4064598" "sub_4064598" "4" "1"
+ "sub_40646CA" "sub_40646CA" "6" "1"
+ "sub_4064782" "sub_4064782" "5" "1"
+ "sub_40647D6" "sub_40647D6" "5" "1"
+ "sub_4064B1E" "sub_4064B1E" "5" "1"
+ "sub_4064BF0" "sub_4064BF0" "5" "1"
+ "sub_4064C90" "sub_4064C90" "5" "1"
+ "sub_4064CF8" "sub_4064CF8" "4" "1"
+ "sub_4064DBE" "sub_4064DBE" "6" "1"
+ "sub_4064E70" "sub_4064E70" "5" "1"
+ "sub_4064EC4" "sub_4064EC4" "7" "1"
+ "sub_406516C" "sub_406516C" "6" "1"
+ "sub_406519A" "sub_406519A" "6" "1"
+ "sub_40651C8" "sub_40651C8" "8" "1"
+ "sub_406525E" "sub_406525E" "8" "1"
+ "sub_40652CC" "sub_40652CC" "5" "1"
+ "sub_4065306" "sub_4065306" "7" "1"
+ "sub_4065342" "sub_4065342" "5" "1"
+ "sub_4065594" "sub_4065594" "7" "1"
+ "sub_4065610" "sub_4065610" "7" "1"
+ "sub_406565A" "sub_406565A" "8" "1"
+ "sub_406567C" "sub_406567C" "8" "1"
+ "sub_4065728" "sub_4065728" "9" "1"
+ "sub_4065778" "sub_4065778" "8" "1"
+ "sub_40657A6" "sub_40657A6" "8" "1"
+ "sub_40657D6" "sub_40657D6" "8" "1"
+ "sub_4065866" "sub_4065866" "7" "1"
+ "sub_40658F8" "sub_40658F8" "6" "1"
+ "sub_4065978" "sub_4065978" "7" "1"
+ "sub_4065A50" "sub_4065A50" "6" "1"
+ "sub_4065C84" "sub_4065C84" "7" "1"
+ "sub_4065CC2" "sub_4065CC2" "10" "1"
+ "sub_4065CDA" "sub_4065CDA" "9" "1"
+ "sub_4065DAC" "sub_4065DAC" "8" "1"
+ "sub_4065E8E" "sub_4065E8E" "7" "1"
+ "sub_4065EF4" "sub_4065EF4" "6" "1"
+ "sub_4066080" "sub_4066080" "6" "1"
+ "sub_406610E" "sub_406610E" "5" "1"
+ "sub_406612C" "sub_406612C" "6" "1"
+ "sub_40661B6" "sub_40661B6" "5" "1"
+ "sub_40661D0" "sub_40661D0" "7" "1"
+ "sub_406625A" "sub_406625A" "6" "1"
+ "sub_4066274" "sub_4066274" "7" "1"
+ "sub_40663CC" "sub_40663CC" "6" "1"
+ "sub_40663F2" "sub_40663F2" "7" "1"
+ "sub_406642E" "sub_406642E" "6" "1"
+ "sub_40664F4" "sub_40664F4" "5" "1"
+ "sub_4066512" "sub_4066512" "8" "1"
+ "sub_4066944" "sub_4066944" "6" "1"
+ "sub_40669B0" "sub_40669B0" "9" "1"
+ "sub_4066A3C" "sub_4066A3C" "8" "1"
+ "sub_4066A98" "sub_4066A98" "7" "1"
+ "sub_4066B34" "sub_4066B34" "6" "1"
+ "sub_4066C4A" "sub_4066C4A" "7" "1"
+ "sys_CaptureSemaphore" "sys_CaptureSemaphore" "5" "3"
+ "sys_FreeSemaphore" "sys_FreeSemaphore" "5" "3"
+ "sys_errno" "sys_errno" "6" "1"
+ "sys_errno_low" "sys_errno_low" "3" "3"
+ "sys_free_maybe" "sys_free_maybe" "4" "1"
+ "sys_log" "sys_log" "2" "1"
+ "sys_log2" "sys_log2" "4" "1"
+ "sys_malloc" "sys_malloc" "4" "1"
+ "sys_mkdir" "sys_mkdir" "4" "1"
+ "sys_mount" "sys_mount" "4" "1"
+ "sys_move" "sys_move" "5" "1"
+ "sys_open" "sys_open" "4" "1"
+ "sys_printf" "sys_printf" "4" "1"
+ "sys_read" "sys_read" "6" "1"
+ "sys_send_to_shell" "sys_send_to_shell" "2" "3"
+ "sys_some_logger" "sys_some_logger" "5" "3"
+ "sys_taskCreate" "sys_taskCreate" "3" "3"
+ "sys_taskKill" "sys_taskKill" "4" "3"
+ "sys_taskSuspend" "sys_taskSuspend" "4" "3"
+ "task_post" "task_post" "2" "1"
+ "task_pre" "task_pre" "2" "1"
+ "task_shell" "task_shell" "1" "1"
+ "unk_1000F8" "unk_1000F8" "3" "3"
+ "unk_13001A" "unk_13001A" "3" "3"
+ "unk_1517F" "unk_1517F" "8" "3"
+ "unk_15180" "unk_15180" "8" "3"
+ "unk_172645C" "unk_172645C" "5" "3"
+ "unk_172647C" "unk_172647C" "4" "3"
+ "unk_1726480" "unk_1726480" "4" "3"
+ "unk_1726484" "unk_1726484" "4" "3"
+ "unk_1726488" "unk_1726488" "4" "3"
+ "unk_172648C" "unk_172648C" "4" "3"
+ "unk_1726490" "unk_1726490" "4" "3"
+ "unk_1726AF4" "unk_1726AF4" "4" "3"
+ "unk_1726AF8" "unk_1726AF8" "5" "3"
+ "unk_180000" "unk_180000" "3" "3"
+ "unk_4059E48" "unk_4059E48" "3" "3"
+ "unk_405A3B2" "unk_405A3B2" "3" "3"
+ "unk_405A40E" "unk_405A40E" "3" "3"
+ "unk_405A54C" "unk_405A54C" "3" "3"
+ "unk_405A5CE" "unk_405A5CE" "3" "3"
+ "unk_405A6C2" "unk_405A6C2" "3" "3"
+ "unk_405A870" "unk_405A870" "3" "3"
+ "unk_405AF14" "unk_405AF14" "3" "3"
+ "unk_405B1F2" "unk_405B1F2" "3" "3"
+ "unk_405B35E" "unk_405B35E" "3" "3"
+ "unk_405BBE4" "unk_405BBE4" "3" "3"
+ "unk_405C23E" "unk_405C23E" "3" "3"
+ "unk_405CF18" "unk_405CF18" "3" "3"
+ "unk_405D1D0" "unk_405D1D0" "3" "3"
+ "unk_405D280" "unk_405D280" "3" "3"
+ "unk_405E08C" "unk_405E08C" "3" "3"
+ "unk_405EA7E" "unk_405EA7E" "3" "3"
+ "unk_405F1AC" "unk_405F1AC" "3" "3"
+ "unk_405F290" "unk_405F290" "3" "3"
+ "unk_405F7E6" "unk_405F7E6" "3" "3"
+ "unk_40602D6" "unk_40602D6" "4" "3"
+ "unk_40602EA" "unk_40602EA" "4" "3"
+ "unk_406038E" "unk_406038E" "3" "3"
+ "unk_40605BC" "unk_40605BC" "3" "3"
+ "unk_4061CAC" "unk_4061CAC" "4" "3"
+ "unk_40631D0" "unk_40631D0" "5" "3"
+ "unk_4070984" "unk_4070984" "3" "3"
+ "unk_40709C4" "unk_40709C4" "3" "3"
+ "unk_4070A68" "unk_4070A68" "3" "3"
+ "unk_4070AD8" "unk_4070AD8" "3" "3"
+ "unk_40714CC" "unk_40714CC" "4" "3"
+ "unk_40714D8" "unk_40714D8" "4" "3"
+ "unk_4071784" "unk_4071784" "4" "3"
+ "unk_4071788" "unk_4071788" "4" "3"
+ "unk_40717E8" "unk_40717E8" "4" "3"
+ "unk_407182C" "unk_407182C" "4" "3"
+ "unk_4071AE0" "unk_4071AE0" "4" "3"
+ "unk_4071AE4" "unk_4071AE4" "4" "3"
+ "unk_4071AE8" "unk_4071AE8" "4" "3"
+ "unk_4071B68" "unk_4071B68" "4" "3"
+ "unk_4071B6C" "unk_4071B6C" "5" "3"
+ "unk_4071B70" "unk_4071B70" "5" "3"
+ "unk_4071B84" "unk_4071B84" "5" "3"
+ "unk_4071BA8" "unk_4071BA8" "5" "3"
+ "unk_4071D8C" "unk_4071D8C" "4" "3"
+ "unk_4071F44" "unk_4071F44" "4" "3"
+ "unk_40720CC" "unk_40720CC" "5" "3"
+ "unk_4072120" "unk_4072120" "4" "3"
+ "unk_4072124" "unk_4072124" "4" "3"
+ "unk_40721CC" "unk_40721CC" "4" "3"
+ "unk_4072214" "unk_4072214" "4" "3"
+ "unk_4072898" "unk_4072898" "4" "3"
+ "unk_407289C" "unk_407289C" "4" "3"
+ "unk_40728EC" "unk_40728EC" "4" "3"
+ "unk_4072930" "unk_4072930" "4" "3"
+ "unk_4072BB8" "unk_4072BB8" "4" "3"
+ "unk_4072C0C" "unk_4072C0C" "4" "3"
+ "unk_4072C7C" "unk_4072C7C" "4" "3"
+ "unk_4072CB8" "unk_4072CB8" "4" "3"
+ "unk_4072CBC" "unk_4072CBC" "4" "3"
+ "unk_4072D24" "unk_4072D24" "4" "3"
+ "unk_4072D64" "unk_4072D64" "4" "3"
+ "unk_4072D70" "unk_4072D70" "4" "3"
+ "unk_4072F50" "unk_4072F50" "4" "3"
+ "unk_4072FCC" "unk_4072FCC" "4" "3"
+ "unk_407307C" "unk_407307C" "4" "3"
+ "unk_40730C0" "unk_40730C0" "4" "3"
+ "unk_40732C4" "unk_40732C4" "4" "3"
+ "unk_407341C" "unk_407341C" "4" "3"
+ "unk_407342C" "unk_407342C" "4" "3"
+ "unk_4073438" "unk_4073438" "4" "3"
+ "unk_407343C" "unk_407343C" "4" "3"
+ "unk_4073440" "unk_4073440" "4" "3"
+ "unk_4073458" "unk_4073458" "4" "3"
+ "unk_407345C" "unk_407345C" "4" "3"
+ "unk_4073550" "unk_4073550" "4" "3"
+ "unk_4073604" "unk_4073604" "4" "3"
+ "unk_4073608" "unk_4073608" "6" "3"
+ "unk_407360C" "unk_407360C" "6" "3"
+ "unk_4073610" "unk_4073610" "6" "3"
+ "unk_4073614" "unk_4073614" "6" "3"
+ "unk_4073618" "unk_4073618" "6" "3"
+ "unk_407361C" "unk_407361C" "6" "3"
+ "unk_40737A8" "unk_40737A8" "4" "3"
+ "unk_4073830" "unk_4073830" "6" "3"
+ "unk_414C8" "unk_414C8" "10" "3"
+ "unk_414CC" "unk_414CC" "8" "3"
+ "unk_416C8" "unk_416C8" "3" "3"
+ "unk_43478" "unk_43478" "3" "3"
+ "unk_43730" "unk_43730" "6" "3"
+ "unk_43738" "unk_43738" "6" "3"
+ "unk_43748" "unk_43748" "8" "3"
+ "unk_437E8" "unk_437E8" "7" "3"
+ "unk_43A24" "unk_43A24" "5" "3"
+ "unk_43C2C" "unk_43C2C" "7" "3"
+ "unk_43C5C" "unk_43C5C" "5" "3"
+ "unk_43C64" "unk_43C64" "7" "3"
+ "unk_43C7C" "unk_43C7C" "4" "3"
+ "unk_43C90" "unk_43C90" "5" "3"
+ "unk_43CA4" "unk_43CA4" "5" "3"
+ "unk_43D3C" "unk_43D3C" "7" "3"
+ "unk_43D50" "unk_43D50" "6" "3"
+ "unk_43DC8" "unk_43DC8" "5" "3"
+ "unk_43DCC" "unk_43DCC" "6" "3"
+ "unk_43DF8" "unk_43DF8" "5" "3"
+ "unk_43DFC" "unk_43DFC" "6" "3"
+ "unk_43EC8" "unk_43EC8" "7" "3"
+ "unk_43F04" "unk_43F04" "9" "3"
+ "unk_43F58" "unk_43F58" "9" "3"
+ "unk_43F74" "unk_43F74" "9" "3"
+ "unk_43FB8" "unk_43FB8" "7" "3"
+ "unk_44080" "unk_44080" "7" "3"
+ "unk_AFACA" "unk_AFACA" "5" "3"
+ "unk_F08C4" "unk_F08C4" "4" "3"
+ "unk_F0AB0" "unk_F0AB0" "5" "3"
+ "unk_F0DC4" "unk_F0DC4" "5" "3"
+ "unk_F4240" "unk_F4240" "5" "3"
+ "unk_F4708" "unk_F4708" "4" "3"
+ "unk_F484C" "unk_F484C" "4" "3"
+ "unk_F4A4E" "unk_F4A4E" "4" "3"
+ "unk_F4AC2" "unk_F4AC2" "4" "3"
+ "unk_F4DB8" "unk_F4DB8" "4" "3"
+ "unk_F4FD8" "unk_F4FD8" "4" "3"
+ "unk_F504C" "unk_F504C" "4" "3"
+ "unk_F51FE" "unk_F51FE" "4" "3"
+ "unk_F544A" "unk_F544A" "4" "3"
+ "unk_F54BE" "unk_F54BE" "4" "3"
+ "unk_F5682" "unk_F5682" "4" "3"
+ "unk_F5912" "unk_F5912" "4" "3"
+ "unk_F5986" "unk_F5986" "4" "3"
+ "unk_F5E74" "unk_F5E74" "4" "3"
+ "unk_F5FCE" "unk_F5FCE" "3" "3"
+ "unk_F6018" "unk_F6018" "4" "3"
+ "unk_F616C" "unk_F616C" "4" "3"
+ "unk_F62CA" "unk_F62CA" "4" "3"
+ "unk_F644C" "unk_F644C" "4" "3"
+ "unk_F64C0" "unk_F64C0" "4" "3"
+ "unk_F66F4" "unk_F66F4" "3" "3"
+ "unk_F6F82" "unk_F6F82" "3" "3"
+ "unk_FE9B4" "unk_FE9B4" "3" "3"
+*Tie data
+FROM TO "length" "xxtype"
+"cmd_debug_setup" "aChangeAPriorit" 20 2
+"cmd_debug_setup" "aCmp" 20 2
+"cmd_debug_setup" "aCompareContent" 20 2
+"cmd_debug_setup" "aDebug" 20 2
+"cmd_debug_setup" "aDelete" 20 2
+"cmd_debug_setup" "aDeleteAKernelO" 20 2
+"cmd_debug_setup" "aDeleteATask" 20 2
+"cmd_debug_setup" "aDisplayEventFl" 20 2
+"cmd_debug_setup" "aDisplayMqInfor" 20 2
+"cmd_debug_setup" "aDisplaySemapho" 20 2
+"cmd_debug_setup" "aDisplayTaskInf" 20 2
+"cmd_debug_setup" "aDisplayTimerIn" 20 2
+"cmd_debug_setup" "aDumpContentsOf" 20 2
+"cmd_debug_setup" "aEvent" 20 2
+"cmd_debug_setup" "aKill" 20 2
+"cmd_debug_setup" "aMq" 20 2
+"cmd_debug_setup" "aPrio" 20 2
+"cmd_debug_setup" "aRelease" 20 2
+"cmd_debug_setup" "aReleaseATaskFr" 20 2
+"cmd_debug_setup" "aResume" 20 2
+"cmd_debug_setup" "aResumeATask" 20 2
+"cmd_debug_setup" "aSem" 20 2
+"cmd_debug_setup" "aSuspend" 20 2
+"cmd_debug_setup" "aSuspendATask" 20 2
+"cmd_debug_setup" "aTask" 20 2
+"cmd_debug_setup" "aTimer" 20 2
+"cmd_debug_setup" "aWriteInMemory" 20 2
+"cmd_debug_setup" "aXd" 20 2
+"cmd_debug_setup" "aXm" 20 2
+"cmd_debug_setup" "shell_cmp" 48 1
+"cmd_debug_setup" "shell_delete" 71 1
+"cmd_debug_setup" "shell_event" 91 1
+"cmd_debug_setup" "shell_kill" 122 1
+"cmd_debug_setup" "shell_mq" 178 1
+"cmd_debug_setup" "shell_prio" 192 1
+"cmd_debug_setup" "shell_register" 333 1
+"cmd_debug_setup" "shell_release" 200 1
+"cmd_debug_setup" "shell_resume" 201 1
+"cmd_debug_setup" "shell_sema" 213 1
+"cmd_debug_setup" "shell_suspend" 239 1
+"cmd_debug_setup" "shell_task" 240 1
+"cmd_debug_setup" "shell_timer" 263 1
+"cmd_debug_setup" "shell_xd_dump" 290 1
+"cmd_debug_setup" "shell_xm_writein" 306 1
+"cmd_debug_setup" "sub_4061662" 331 1
+"cmd_fs_setup" "aAliasedToCat" 20 2
+"cmd_fs_setup" "aAliasedToLsAlf" 20 2
+"cmd_fs_setup" "aAliasedToMkdir" 20 2
+"cmd_fs_setup" "aAliasedToMv" 20 2
+"cmd_fs_setup" "aAliasedToRm" 20 2
+"cmd_fs_setup" "aAliasedToRmdir" 20 2
+"cmd_fs_setup" "aAttrib" 20 2
+"cmd_fs_setup" "aCdev" 20 2
+"cmd_fs_setup" "aChangeFileAcce" 20 2
+"cmd_fs_setup" "aChangeWorkin_0" 20 2
+"cmd_fs_setup" "aChangeWorkingD" 20 2
+"cmd_fs_setup" "aChmod" 20 2
+"cmd_fs_setup" "aConstructAFile" 20 2
+"cmd_fs_setup" "aCopyAFile" 20 2
+"cmd_fs_setup" "aDel" 20 2
+"cmd_fs_setup" "aDir" 20 2
+"cmd_fs_setup" "aDump" 20 2
+"cmd_fs_setup" "aDumpAFile" 20 2
+"cmd_fs_setup" "aFileSystem" 20 2
+"cmd_fs_setup" "aFlushFilesyste" 20 2
+"cmd_fs_setup" "aInput" 20 2
+"cmd_fs_setup" "aInputContentsO" 20 2
+"cmd_fs_setup" "aListDirectoryC" 20 2
+"cmd_fs_setup" "aLs" 20 2
+"cmd_fs_setup" "aMakeADirectory" 20 2
+"cmd_fs_setup" "aMap" 20 2
+"cmd_fs_setup" "aMapFilesystem" 20 2
+"cmd_fs_setup" "aMd" 20 2
+"cmd_fs_setup" "aMkdir" 20 2
+"cmd_fs_setup" "aMkfs" 20 2
+"cmd_fs_setup" "aMount" 20 2
+"cmd_fs_setup" "aMountFileSyste" 20 2
+"cmd_fs_setup" "aMoveRenameAFil" 20 2
+"cmd_fs_setup" "aPrintContentsO" 20 2
+"cmd_fs_setup" "aPrintNameOfCur" 20 2
+"cmd_fs_setup" "aPwd" 20 2
+"cmd_fs_setup" "aRd" 20 2
+"cmd_fs_setup" "aRemoveAEmptyDi" 20 2
+"cmd_fs_setup" "aRemoveAFile" 20 2
+"cmd_fs_setup" "aRen" 20 2
+"cmd_fs_setup" "aReportFilesyst" 20 2
+"cmd_fs_setup" "aRm" 20 2
+"cmd_fs_setup" "aRmdir" 20 2
+"cmd_fs_setup" "aSetFileAccessA" 20 2
+"cmd_fs_setup" "aShowOrChangeFi" 20 2
+"cmd_fs_setup" "aStfs" 20 2
+"cmd_fs_setup" "aSync" 20 2
+"cmd_fs_setup" "aTouch" 20 2
+"cmd_fs_setup" "aType" 20 2
+"cmd_fs_setup" "aUmap" 20 2
+"cmd_fs_setup" "aUmount" 20 2
+"cmd_fs_setup" "aUnmapFilesyste" 20 2
+"cmd_fs_setup" "aUnmountFileSys" 20 2
+"cmd_fs_setup" "shell_cat" 26 1
+"cmd_fs_setup" "shell_del" 199 1
+"cmd_fs_setup" "shell_dir" 126 1
+"cmd_fs_setup" "shell_mkdir" 144 1
+"cmd_fs_setup" "shell_mount" 171 1
+"cmd_fs_setup" "shell_register" 327 1
+"cmd_fs_setup" "shell_ren" 183 1
+"cmd_fs_setup" "shell_rmdir" 202 1
+"cmd_fs_setup" "shell_touch" 268 1
+"cmd_fs_setup" "shell_umount" 281 1
+"cmd_fs_setup" "sub_4061662" 325 1
+"cmd_fs_setup" "unk_4059E48" 10 3
+"cmd_fs_setup" "unk_405A3B2" 10 3
+"cmd_fs_setup" "unk_405A40E" 10 3
+"cmd_fs_setup" "unk_405A6C2" 10 3
+"cmd_fs_setup" "unk_405A870" 10 3
+"cmd_fs_setup" "unk_405B35E" 10 3
+"cmd_fs_setup" "unk_405C23E" 10 3
+"cmd_fs_setup" "unk_405CF18" 10 3
+"cmd_fs_setup" "unk_405D1D0" 10 3
+"cmd_fs_setup" "unk_405E08C" 10 3
+"cmd_fs_setup" "unk_405F1AC" 10 3
+"cmd_fs_setup" "unk_405F290" 10 3
+"cmd_fs_setup" "unk_406038E" 10 3
+"cmd_fs_setup" "unk_4070984" 10 3
+"cmd_fs_setup" "unk_40709C4" 10 3
+"cmd_fs_setup" "unk_4070A68" 10 3
+"cmd_fs_setup" "unk_4070AD8" 10 3
+"cmd_misc_setup" "aCloseAllDevice" 20 2
+"cmd_misc_setup" "aDate" 20 2
+"cmd_misc_setup" "aDisplayAndWrit" 20 2
+"cmd_misc_setup" "aDminfo" 20 2
+"cmd_misc_setup" "aExit" 20 2
+"cmd_misc_setup" "aFinishDryShell" 20 2
+"cmd_misc_setup" "aMiscellaneous" 20 2
+"cmd_misc_setup" "aPrintInformati" 20 2
+"cmd_misc_setup" "aPrintVersionIn" 20 2
+"cmd_misc_setup" "aShutdown" 20 2
+"cmd_misc_setup" "aVers" 20 2
+"cmd_misc_setup" "shell_exit" 78 1
+"cmd_misc_setup" "shell_register" 315 1
+"cmd_misc_setup" "shell_shutdown" 217 1
+"cmd_misc_setup" "sub_4061662" 313 1
+"cmd_misc_setup" "unk_405AF14" 10 3
+"cmd_misc_setup" "unk_405B1F2" 10 3
+"cmd_misc_setup" "unk_40605BC" 10 3
+"cmd_test_setup" "aCheckFileRead" 20 2
+"cmd_test_setup" "aCheckFileWrite" 20 2
+"cmd_test_setup" "aChkread" 20 2
+"cmd_test_setup" "aChkwrite" 20 2
+"cmd_test_setup" "aDisplayCurrent" 20 2
+"cmd_test_setup" "aDryMkPerforman" 20 2
+"cmd_test_setup" "aEcho" 20 2
+"cmd_test_setup" "aEchoArguments" 20 2
+"cmd_test_setup" "aFread" 20 2
+"cmd_test_setup" "aFwrite" 20 2
+"cmd_test_setup" "aMktest" 20 2
+"cmd_test_setup" "aReadFileAndMea" 20 2
+"cmd_test_setup" "aSetTimer" 20 2
+"cmd_test_setup" "aSettimer" 20 2
+"cmd_test_setup" "aTest" 20 2
+"cmd_test_setup" "aTime" 20 2
+"cmd_test_setup" "aTruncate" 20 2
+"cmd_test_setup" "aTruncateFile" 20 2
+"cmd_test_setup" "aWriteFileAndMe" 20 2
+"cmd_test_setup" "shell_echo" 69 1
+"cmd_test_setup" "shell_fread" 76 1
+"cmd_test_setup" "shell_register" 312 1
+"cmd_test_setup" "shell_truncate" 261 1
+"cmd_test_setup" "sub_4061662" 311 1
+"cmd_test_setup" "unk_405A54C" 10 3
+"cmd_test_setup" "unk_405A5CE" 10 3
+"cmd_test_setup" "unk_405BBE4" 10 3
+"cmd_test_setup" "unk_405D280" 10 3
+"cmd_test_setup" "unk_405EA7E" 10 3
+"cmd_test_setup" "unk_405F7E6" 10 3
+"loc_406016C" "aSSErrnoD" 20 2
+"loc_406016C" "aSSErrnoD_0" 20 2
+"loc_406016C" "aSSErrnoD_1" 20 2
+"loc_406016C" "aSSettingTimesOfSNoSuchFileOrDirect" 20 2
+"loc_406016C" "shell_touch" 3 1
+"loc_406016C" "sub_40576DE" 354 1
+"loc_406016C" "sub_40610DA" 39 1
+"loc_406016C" "sub_4064312" 168 1
+"loc_406016C" "sub_4064450" 171 1
+"loc_406016C" "sys_errno" 135 1
+"loc_406016C" "sys_open" 356 1
+"loc_406016C" "sys_printf" 108 1
+"loc_4060192" "aSSErrnoD" 20 2
+"loc_4060192" "aSSErrnoD_0" 20 2
+"loc_4060192" "aSSErrnoD_1" 20 2
+"loc_4060192" "aSSettingTimesOfSNoSuchFileOrDirect" 20 2
+"loc_4060192" "shell_touch" 4 1
+"loc_4060192" "sub_40576DE" 355 1
+"loc_4060192" "sub_40610DA" 39 1
+"loc_4060192" "sub_4064312" 167 1
+"loc_4060192" "sub_4064450" 170 1
+"loc_4060192" "sys_errno" 135 1
+"loc_4060192" "sys_open" 356 1
+"loc_4060192" "sys_printf" 108 1
+"loc_40602C4" "shell_touch" 7 1
+"shell_cat" "aC_SRead" 20 2
+"shell_cat" "aNh" 20 2
+"shell_cat" "aSCannotOpenS" 20 2
+"shell_cat" "aSSIsADirectory" 20 2
+"shell_cat" "aSSNoSuchFileOrDirectory_3" 20 2
+"shell_cat" "aS_0" 20 2
+"shell_cat" "aUsageSHFile___" 20 2
+"shell_cat" "sub_40576DE" 109 1
+"shell_cat" "sub_40610DA" 284 1
+"shell_cat" "sub_4061502" 295 1
+"shell_cat" "sub_4064450" 416 1
+"shell_cat" "sub_4064C90" 437 1
+"shell_cat" "sys_log2" 370 1
+"shell_cat" "sys_open" 110 1
+"shell_cat" "sys_printf" 354 1
+"shell_cat" "sys_read" 105 1
+"shell_cat" "unk_43C7C" 10 3
+"shell_cmp" "aAddr00xLxAddr10xLxSizeD" 20 2
+"shell_cmp" "aAddr0xLxData0xXAddr0xLxData0xX" 20 2
+"shell_cmp" "aCmpAddr0Addr1Size" 20 2
+"shell_cmp" "sub_4063394" 358 1
+"shell_cmp" "sys_log2" 354 1
+"shell_del" "aF" 20 2
+"shell_del" "aUsageSFFile___" 20 2
+"shell_del" "sub_405E3C6" 3 1
+"shell_del" "sub_40610DA" 111 1
+"shell_del" "sub_4061502" 122 1
+"shell_del" "sub_4064C90" 264 1
+"shell_del" "sys_log2" 197 1
+"shell_delete" "aDeleteObjectNameObjectId" 20 2
+"shell_delete" "aDrySpiObjectNameSemEventMqMutexCon" 20 2
+"shell_delete" "aErrorId0IsNotExist_" 20 2
+"shell_delete" "aErrorSIdDIsCouldTDelete_" 20 2
+"shell_delete" "aErrorSIsAIllegalObjectName_" 20 2
+"shell_delete" "aEvent_0" 20 2
+"shell_delete" "aSIdDIsDeleted_" 20 2
+"shell_delete" "aTimer_0" 20 2
+"shell_delete" "sub_4058706" 106 1
+"shell_delete" "sub_4063394" 335 1
+"shell_delete" "sys_log2" 331 1
+"shell_delete" "unk_40714CC" 10 3
+"shell_delete" "unk_40714D8" 10 3
+"shell_delete" "unk_F484C" 10 3
+"shell_delete" "unk_F4DB8" 10 3
+"shell_delete" "unk_F51FE" 10 3
+"shell_delete" "unk_F5682" 10 3
+"shell_dir" "aAlfid1" 20 2
+"shell_dir" "aFullTime" 20 2
+"shell_dir" "aNoSuchFileOrDirectory" 20 2
+"shell_dir" "aSClosedirDErrnoD" 20 2
+"shell_dir" "aSOpendirSErrnoD" 20 2
+"shell_dir" "aSReaddirErrnoD" 20 2
+"shell_dir" "aSSErrorOnStatdir" 20 2
+"shell_dir" "aSSNoSuchFileOrDirectory" 20 2
+"shell_dir" "aS_2" 20 2
+"shell_dir" "sub_4058706" 167 1
+"shell_dir" "sub_405871A" 167 1
+"shell_dir" "sub_405C6F2" 3 1
+"shell_dir" "sub_40610DA" 185 1
+"shell_dir" "sub_4061502" 196 1
+"shell_dir" "sub_4062C26" 255 1
+"shell_dir" "sub_4062C74" 256 1
+"shell_dir" "sub_4063B6A" 294 1
+"shell_dir" "sub_4064450" 317 1
+"shell_dir" "sub_4064B1E" 334 1
+"shell_dir" "sub_4064BF0" 336 1
+"shell_dir" "sub_4064C90" 338 1
+"shell_dir" "sub_4064CF8" 339 1
+"shell_dir" "sys_errno" 281 1
+"shell_dir" "sys_log2" 270 1
+"shell_dir" "sys_printf" 254 1
+"shell_dir" "unk_4071AE0" 10 3
+"shell_dir" "unk_4071AE4" 10 3
+"shell_dir" "unk_4071AE8" 10 3
+"shell_dir" "unk_4071B68" 10 3
+"shell_dir" "unk_43C7C" 10 3
+"shell_dir" "unk_F0AB0" 10 3
+"shell_echo" "aS" 20 2
+"shell_echo" "sub_40610DA" 227 1
+"shell_echo" "sub_4062C26" 297 1
+"shell_echo" "sub_4064C90" 380 1
+"shell_echo" "sys_log2" 313 1
+"shell_echo" "unk_43C90" 10 3
+"shell_event" "a3d08lx6s3dS" 20 2
+"shell_event" "aEventDIsNotExi" 20 2
+"shell_event" "aFlagsS" 20 2
+"shell_event" "aIdD" 20 2
+"shell_event" "aIdValueFlagsNt" 20 2
+"shell_event" "aMallocErrorCou" 20 2
+"shell_event" "aMulti" 20 2
+"shell_event" "aMulti_0" 20 2
+"shell_event" "aNameS" 20 2
+"shell_event" "aSingle" 20 2
+"shell_event" "aSingle_0" 20 2
+"shell_event" "aTaskCountD" 20 2
+"shell_event" "aTaskIds_0" 20 2
+"shell_event" "aValue08lx" 20 2
+"shell_event" "sub_4063394" 315 1
+"shell_event" "sys_free_maybe" 301 1
+"shell_event" "sys_log2" 311 1
+"shell_event" "sys_malloc" 299 1
+"shell_event" "unk_4071784" 10 3
+"shell_event" "unk_4071788" 10 3
+"shell_event" "unk_40717E8" 10 3
+"shell_event" "unk_407182C" 10 3
+"shell_event" "unk_F544A" 10 3
+"shell_event" "unk_F54BE" 10 3
+"shell_exit" "aLogout" 20 2
+"shell_exit" "sub_40619E0" 244 1
+"shell_exit" "sys_log2" 306 1
+"shell_fread" "aErrorC_freadOpen" 20 2
+"shell_fread" "aErrorC_freadRead" 20 2
+"shell_fread" "aErrorC_freadRead_0" 20 2
+"shell_fread" "aSUsageSFileSizeKM" 20 2
+"shell_fread" "sub_40576DE" 173 1
+"shell_fread" "sub_4061430" 229 1
+"shell_fread" "sub_4062060" 260 1
+"shell_fread" "sub_4062C74" 291 1
+"shell_fread" "sub_4063394" 309 1
+"shell_fread" "sys_open" 174 1
+"shell_fread" "sys_printf" 289 1
+"shell_fread" "sys_read" 169 1
+"shell_fread" "unk_43C7C" 10 3
+"shell_kill" "sub_4063394" 283 1
+"shell_kill" "sys_taskKill" 10 3
+"shell_mkdir" "aSCannotCreateADirectorySErrnoD" 20 2
+"shell_mkdir" "aSCannotCreateDirectorySFileExists" 20 2
+"shell_mkdir" "aSCannotCreateDirectorySNoSuchFileO" 20 2
+"shell_mkdir" "aSCannotCreateDirectorySNotADirecto" 20 2
+"shell_mkdir" "aSCannotCreateDirectorySPermissionD" 20 2
+"shell_mkdir" "aUsageMModeDirectory___" 20 2
+"shell_mkdir" "sub_40610DA" 166 1
+"shell_mkdir" "sub_4061502" 177 1
+"shell_mkdir" "sub_4063394" 255 1
+"shell_mkdir" "sub_4064C90" 319 1
+"shell_mkdir" "sys_errno" 262 1
+"shell_mkdir" "sys_log2" 252 1
+"shell_mkdir" "sys_mkdir" 288 1
+"shell_mkdir" "sys_printf" 235 1
+"shell_mkdir" "unk_4071D8C" 10 3
+"shell_mkdir" "unk_43C7C" 10 3
+"shell_mount" "aSMountPointSIsNotAnAbsolutePathnam" 20 2
+"shell_mount" "aUsageSSpecialMount_point" 20 2
+"shell_mount" "sub_405D7F4" 5 1
+"shell_mount" "sub_4060E58" 134 1
+"shell_mount" "sys_mount" 4 1
+"shell_mount" "sys_printf" 209 1
+"shell_mount" "unk_4071F44" 10 3
+"shell_mount" "unk_43C7C" 10 3
+"shell_mq" "a08lxD" 20 2
+"shell_mq" "a3dS5d5d5dS" 20 2
+"shell_mq" "aFifo" 20 2
+"shell_mq" "aFifo_0" 20 2
+"shell_mq" "aFlagsS_0" 20 2
+"shell_mq" "aIdD_0" 20 2
+"shell_mq" "aIdFlagsMaxCountNtaskName" 20 2
+"shell_mq" "aMallocErrorCountD_" 20 2
+"shell_mq" "aMaxQueueD" 20 2
+"shell_mq" "aMessageCountD" 20 2
+"shell_mq" "aMessagesPrio" 20 2
+"shell_mq" "aMqDIsNotExist" 20 2
+"shell_mq" "aNameS_0" 20 2
+"shell_mq" "aPrio_0" 20 2
+"shell_mq" "aPrio_1" 20 2
+"shell_mq" "aTaskIds" 20 2
+"shell_mq" "aWaitTaskCountD" 20 2
+"shell_mq" "sub_4063394" 228 1
+"shell_mq" "sys_free_maybe" 213 1
+"shell_mq" "sys_log2" 224 1
+"shell_mq" "sys_malloc" 212 1
+"shell_mq" "unk_4072120" 10 3
+"shell_mq" "unk_4072124" 10 3
+"shell_mq" "unk_40721CC" 10 3
+"shell_mq" "unk_4072214" 10 3
+"shell_mq" "unk_F5912" 10 3
+"shell_mq" "unk_F5986" 10 3
+"shell_prio" "aIllegalTaskIdDOrPriorityD" 20 2
+"shell_prio" "aO_k_" 20 2
+"shell_prio" "aPrioTaskIdPriority" 20 2
+"shell_prio" "sub_4063394" 213 1
+"shell_prio" "sys_log2" 210 1
+"shell_prio" "unk_F62CA" 10 3
+"shell_register" "aHelp" 20 2
+"shell_register" "aListCommandNam" 20 2
+"shell_register" "sub_4058706" 368 1
+"shell_register" "unk_4061CAC" 10 3
+"shell_register" "unk_40737A8" 10 3
+"shell_release" "aError_IllegalTaskIdD_" 20 2
+"shell_release" "aReleaseTaskId" 20 2
+"shell_release" "aSuccess_" 20 2
+"shell_release" "sub_4063394" 205 1
+"shell_release" "sys_log2" 202 1
+"shell_release" "unk_F616C" 10 3
+"shell_ren" "aSCannotMoveSToS" 20 2
+"shell_ren" "aSSAndSAreTheSameFile" 20 2
+"shell_ren" "aSSNoSuchFileOrDirectory_0" 20 2
+"shell_ren" "aSSource___Directory" 20 2
+"shell_ren" "aUsageSSourceDest" 20 2
+"shell_ren" "sub_405DD4C" 4 1
+"shell_ren" "sub_4064450" 259 1
+"shell_ren" "sys_move" 252 1
+"shell_ren" "sys_printf" 196 1
+"shell_ren" "unk_43C7C" 10 3
+"shell_resume" "sub_4063394" 204 1
+"shell_resume" "unk_F5E74" 10 3
+"shell_rmdir" "aSCannotRemoveDirectorySErrnoD" 20 2
+"shell_rmdir" "aSSCannotRemove_Or__" 20 2
+"shell_rmdir" "aSSFileExists" 20 2
+"shell_rmdir" "aSSNoSuchFileOrDirectory_2" 20 2
+"shell_rmdir" "aSSNotADirectory" 20 2
+"shell_rmdir" "aSSPermissionDenied" 20 2
+"shell_rmdir" "aUsageSDirectory___" 20 2
+"shell_rmdir" "sub_40610DA" 109 1
+"shell_rmdir" "sub_40640E6" 232 1
+"shell_rmdir" "sub_4064C90" 262 1
+"shell_rmdir" "sys_errno" 205 1
+"shell_rmdir" "sys_printf" 178 1
+"shell_rmdir" "unk_43C7C" 10 3
+"shell_sema" "a3d5d10s3dS" 20 2
+"shell_sema" "aFlagsS_1" 20 2
+"shell_sema" "aIdD_2" 20 2
+"shell_sema" "aIdValueFlagsNtaskName" 20 2
+"shell_sema" "aMallocErrorCountD__1" 20 2
+"shell_sema" "aNameS_2" 20 2
+"shell_sema" "aSemDIsNotExist" 20 2
+"shell_sema" "aTaskCountD_0" 20 2
+"shell_sema" "aTaskIds_1" 20 2
+"shell_sema" "aValueD" 20 2
+"shell_sema" "sub_405E9F6" 5 1
+"shell_sema" "sub_4063394" 193 1
+"shell_sema" "sys_free_maybe" 179 1
+"shell_sema" "sys_log2" 189 1
+"shell_sema" "sys_malloc" 177 1
+"shell_sema" "unk_4072898" 10 3
+"shell_sema" "unk_407289C" 10 3
+"shell_sema" "unk_40728EC" 10 3
+"shell_sema" "unk_4072930" 10 3
+"shell_sema" "unk_F4FD8" 10 3
+"shell_sema" "unk_F504C" 10 3
+"shell_shutdown" "aFdDClosed_" 20 2
+"shell_shutdown" "aQuit_" 20 2
+"shell_shutdown" "aSystemShutdownO_k_?YN" 20 2
+"shell_shutdown" "sub_40576DE" 312 1
+"shell_shutdown" "sub_4062A94" 147 1
+"shell_shutdown" "sub_4062B62" 150 1
+"shell_shutdown" "sub_4064598" 217 1
+"shell_shutdown" "sys_log2" 167 1
+"shell_shutdown" "unk_43C7C" 10 3
+"shell_suspend" "sub_4063394" 166 1
+"shell_suspend" "sys_taskSuspend" 10 3
+"shell_task" "a08lx06lx06lxS" 20 2
+"shell_task" "a08lx08lx" 20 2
+"shell_task" "a2d" 20 2
+"shell_task" "a3d" 20 2
+"shell_task" "aArgument08lx" 20 2
+"shell_task" "aCond3d" 20 2
+"shell_task" "aCondition" 20 2
+"shell_task" "aD_0" 20 2
+"shell_task" "aDelay" 20 2
+"shell_task" "aDelay3d" 20 2
+"shell_task" "aDormant" 20 2
+"shell_task" "aDormant_0" 20 2
+"shell_task" "aEntry08lx" 20 2
+"shell_task" "aEvent3d" 20 2
+"shell_task" "aEvent_flag" 20 2
+"shell_task" "aFlagsS_2" 20 2
+"shell_task" "aFpu" 20 2
+"shell_task" "aIdD_3" 20 2
+"shell_task" "aIdStatePrioFlagsEntryArgument" 20 2
+"shell_task" "aIdStatePrioWaitIdName" 20 2
+"shell_task" "aMallocErrorCountD__2" 20 2
+"shell_task" "aMbox" 20 2
+"shell_task" "aMbox3d" 20 2
+"shell_task" "aMpool" 20 2
+"shell_task" "aMpool3d" 20 2
+"shell_task" "aMpoolv" 20 2
+"shell_task" "aMpoolv3d" 20 2
+"shell_task" "aMq_receive" 20 2
+"shell_task" "aMq_send" 20 2
+"shell_task" "aMqrcv3d" 20 2
+"shell_task" "aMqsnd3d" 20 2
+"shell_task" "aMutex" 20 2
+"shell_task" "aMutex3d" 20 2
+"shell_task" "aNameS_3" 20 2
+"shell_task" "aPriorityD" 20 2
+"shell_task" "aReady_0" 20 2
+"shell_task" "aReady_1" 20 2
+"shell_task" "aS_4" 20 2
+"shell_task" "aSem3d" 20 2
+"shell_task" "aSemaphore" 20 2
+"shell_task" "aSize08lx" 20 2
+"shell_task" "aSleep3d" 20 2
+"shell_task" "aStackStart08lx" 20 2
+"shell_task" "aStateS_0" 20 2
+"shell_task" "aSuspend_0" 20 2
+"shell_task" "aSuspended" 20 2
+"shell_task" "aTaskDIsNotExist" 20 2
+"shell_task" "aTask_sleep" 20 2
+"shell_task" "aUsed08lx" 20 2
+"shell_task" "aWait" 20 2
+"shell_task" "aWaitIdS" 20 2
+"shell_task" "aWaitIdStackSizeUsedName" 20 2
+"shell_task" "aWaitS" 20 2
+"shell_task" "aWaitSuspended" 20 2
+"shell_task" "aWait_0" 20 2
+"shell_task" "asc_4072D90" 20 2
+"shell_task" "asc_4072E60" 20 2
+"shell_task" "off_4072F54" 10 3
+"shell_task" "sub_4058706" 275 1
+"shell_task" "sub_4063394" 166 1
+"shell_task" "sys_free_maybe" 152 1
+"shell_task" "sys_log2" 162 1
+"shell_task" "sys_malloc" 150 1
+"shell_task" "unk_4072BB8" 10 3
+"shell_task" "unk_4072C0C" 10 3
+"shell_task" "unk_4072C7C" 10 3
+"shell_task" "unk_4072CB8" 10 3
+"shell_task" "unk_4072CBC" 10 3
+"shell_task" "unk_4072D24" 10 3
+"shell_task" "unk_4072D64" 10 3
+"shell_task" "unk_4072D70" 10 3
+"shell_task" "unk_4072F50" 10 3
+"shell_task" "unk_F644C" 10 3
+"shell_task" "unk_F64C0" 10 3
+"shell_timer" "a3d6sS" 20 2
+"shell_timer" "aActive" 20 2
+"shell_timer" "aActive_0" 20 2
+"shell_timer" "aArgumentLx" 20 2
+"shell_timer" "aCycleLdsecLdnsec" 20 2
+"shell_timer" "aEntryLx" 20 2
+"shell_timer" "aExpireAbsLdsecLdnsec" 20 2
+"shell_timer" "aExpireRelLdsecLdnsec" 20 2
+"shell_timer" "aIdD_1" 20 2
+"shell_timer" "aIdStateName" 20 2
+"shell_timer" "aMallocErrorCountD__0" 20 2
+"shell_timer" "aNameS_1" 20 2
+"shell_timer" "aReady" 20 2
+"shell_timer" "aReady_2" 20 2
+"shell_timer" "aStateS" 20 2
+"shell_timer" "aTimerDIsNotExist" 20 2
+"shell_timer" "sub_4063394" 142 1
+"shell_timer" "sys_free_maybe" 128 1
+"shell_timer" "sys_log2" 139 1
+"shell_timer" "sys_malloc" 127 1
+"shell_timer" "unk_4072FCC" 10 3
+"shell_timer" "unk_407307C" 10 3
+"shell_timer" "unk_40730C0" 10 3
+"shell_timer" "unk_F4708" 10 3
+"shell_timer" "unk_F4A4E" 10 3
+"shell_timer" "unk_F4AC2" 10 3
+"shell_touch" "aAcmt" 20 2
+"shell_touch" "aSFileArgumentsMissing_1" 20 2
+"shell_touch" "aSInvalidDateFormatS" 20 2
+"shell_touch" "aSInvalidDateFormatS_0" 20 2
+"shell_touch" "aSSErrnoD" 20 2
+"shell_touch" "aSSErrnoD_0" 20 2
+"shell_touch" "aSSErrnoD_1" 20 2
+"shell_touch" "aSSettingTimesOfSNoSuchFileOrDirect" 20 2
+"shell_touch" "aUsageSCTTimeFile___" 20 2
+"shell_touch" "sub_40576DE" 351 1
+"shell_touch" "sub_405FDF2" 5 1
+"shell_touch" "sub_40610DA" 43 1
+"shell_touch" "sub_4061502" 53 1
+"shell_touch" "sub_40628F2" 104 1
+"shell_touch" "sub_4062A5E" 108 1
+"shell_touch" "sub_4064312" 171 1
+"shell_touch" "sub_4064450" 174 1
+"shell_touch" "sys_errno" 139 1
+"shell_touch" "sys_open" 352 1
+"shell_touch" "sys_printf" 112 1
+"shell_touch" "unk_172645C" 10 3
+"shell_touch" "unk_172647C" 10 3
+"shell_touch" "unk_40602D6" 10 3
+"shell_touch" "unk_40602EA" 10 3
+"shell_touch" "unk_43C7C" 10 3
+"shell_truncate" "aErrorC_truncateOpen" 20 2
+"shell_truncate" "aErrorC_truncateTruncate" 20 2
+"shell_truncate" "aUsageSFileSize" 20 2
+"shell_truncate" "sub_40576DE" 358 1
+"shell_truncate" "sub_4062C74" 106 1
+"shell_truncate" "sub_4063394" 124 1
+"shell_truncate" "sub_4064292" 162 1
+"shell_truncate" "sys_open" 359 1
+"shell_truncate" "sys_printf" 104 1
+"shell_truncate" "unk_43C7C" 10 3
+"shell_umount" "aUsageSSpecialMount_point_0" 20 2
+"shell_umount" "sub_4058706" 322 1
+"shell_umount" "sub_4060414" 2 1
+"shell_umount" "sub_4060E58" 24 1
+"shell_umount" "sub_4063834" 131 1
+"shell_umount" "sub_4063866" 131 1
+"shell_umount" "sub_40638F0" 133 1
+"shell_umount" "sys_printf" 99 1
+"shell_umount" "unk_40732C4" 10 3
+"shell_umount" "unk_43CA4" 10 3
+"shell_xd_dump" "a02x_0" 20 2
+"shell_xd_dump" "a04x" 20 2
+"shell_xd_dump" "a08lx" 20 2
+"shell_xd_dump" "a08lx_0" 20 2
+"shell_xd_dump" "aB1byteAccess" 20 2
+"shell_xd_dump" "aL4byteAccess" 20 2
+"shell_xd_dump" "aNextPage" 20 2
+"shell_xd_dump" "aPreviousPage" 20 2
+"shell_xd_dump" "aW2byteAccess" 20 2
+"shell_xd_dump" "aX" 20 2
+"shell_xd_dump" "aX_0" 20 2
+"shell_xd_dump" "aX_1" 20 2
+"shell_xd_dump" "aXdAddressHex" 20 2
+"shell_xd_dump" "aXdAddressHexLineCount" 20 2
+"shell_xd_dump" "aXdAddressHexLineCountBWL" 20 2
+"shell_xd_dump" "asc_407344C" 20 2
+"shell_xd_dump" "sub_4058706" 325 1
+"shell_xd_dump" "sub_40614A2" 36 1
+"shell_xd_dump" "sub_4062C26" 96 1
+"shell_xd_dump" "sub_4062C74" 97 1
+"shell_xd_dump" "sub_4063394" 115 1
+"shell_xd_dump" "sys_log2" 112 1
+"shell_xd_dump" "unk_1726480" 10 3
+"shell_xd_dump" "unk_1726484" 10 3
+"shell_xd_dump" "unk_1726488" 10 3
+"shell_xd_dump" "unk_407341C" 10 3
+"shell_xd_dump" "unk_407342C" 10 3
+"shell_xd_dump" "unk_4073438" 10 3
+"shell_xd_dump" "unk_407343C" 10 3
+"shell_xd_dump" "unk_4073440" 10 3
+"shell_xd_dump" "unk_4073458" 10 3
+"shell_xd_dump" "unk_407345C" 10 3
+"shell_xd_dump" "unk_4073550" 10 3
+"shell_xd_dump" "unk_43C7C" 10 3
+"shell_xm_writein" "a02x_1" 20 2
+"shell_xm_writein" "a04x_0" 20 2
+"shell_xm_writein" "a08lx_1" 20 2
+"shell_xm_writein" "a08lx_2" 20 2
+"shell_xm_writein" "aB1byteAccess_0" 20 2
+"shell_xm_writein" "aL4byteAccess_0" 20 2
+"shell_xm_writein" "aW2byteAccess_0" 20 2
+"shell_xm_writein" "aXmAddressHex" 20 2
+"shell_xm_writein" "aXmAddressHexBWL" 20 2
+"shell_xm_writein" "sub_4058706" 341 1
+"shell_xm_writein" "sub_40614A2" 21 1
+"shell_xm_writein" "sub_4062A94" 77 1
+"shell_xm_writein" "sub_4062C26" 81 1
+"shell_xm_writein" "sub_4062F44" 89 1
+"shell_xm_writein" "sys_log2" 96 1
+"shell_xm_writein" "unk_172648C" 10 3
+"shell_xm_writein" "unk_1726490" 10 3
+"shell_xm_writein" "unk_4073604" 10 3
+"shell_xm_writein" "unk_43C7C" 10 3
+"sub_40490CA" "aCodeDS" 20 2
+"sub_40490CA" "sys_some_logger" 10 3
+"sub_4057092" "sema_dmLock" 10 3
+"sub_4057092" "sys_CaptureSemaphore" 10 3
+"sub_4057092" "sys_FreeSemaphore" 10 3
+"sub_4057092" "unk_43748" 10 3
+"sub_4057162" "unk_43748" 10 3
+"sub_4057182" "unk_43748" 10 3
+"sub_40571BE" "unk_43748" 10 3
+"sub_405754A" "sema_dmLock" 10 3
+"sub_405754A" "sys_CaptureSemaphore" 10 3
+"sub_405754A" "sys_FreeSemaphore" 10 3
+"sub_405754A" "unk_43730" 10 3
+"sub_405754A" "unk_43738" 10 3
+"sub_405760C" "sub_4058706" 43 1
+"sub_405760C" "unk_43738" 10 3
+"sub_40576DE" "sub_4057162" 14 1
+"sub_40576DE" "sub_4057182" 13 1
+"sub_40576DE" "sys_errno" 490 1
+"sub_40576DE" "unk_437E8" 10 3
+"sub_40578A6" "sub_4057182" 18 1
+"sub_40578A6" "sys_errno" 485 1
+"sub_40578A6" "unk_437E8" 10 3
+"sub_4057956" "sub_4057182" 20 1
+"sub_4057956" "sys_errno" 483 1
+"sub_4057956" "unk_437E8" 10 3
+"sub_4057AD2" "sub_4057182" 23 1
+"sub_4057AD2" "sys_errno" 480 1
+"sub_4057AD2" "unk_43A24" 10 3
+"sub_405C4E4" "aS2d02d02d" 20 2
+"sub_405C4E4" "aS2d4d" 20 2
+"sub_405C4E4" "aSS2d02d02d02d4d" 20 2
+"sub_405C4E4" "sub_4060E40" 187 1
+"sub_405C4E4" "sub_4060E4C" 187 1
+"sub_405C4E4" "sub_4061FC6" 232 1
+"sub_405C4E4" "sub_40620E4" 235 1
+"sub_405C4E4" "sub_4062A5E" 259 1
+"sub_405C4E4" "sub_4063352" 282 1
+"sub_405C6F2" "a10ld" 20 2
+"sub_405C6F2" "a3ld" 20 2
+"sub_405C6F2" "a6s" 20 2
+"sub_405C6F2" "a7ld" 20 2
+"sub_405C6F2" "a8s" 20 2
+"sub_405C6F2" "aRoot" 20 2
+"sub_405C6F2" "aS_3" 20 2
+"sub_405C6F2" "sub_405C4E4" 5 1
+"sub_405C6F2" "sub_405C62E" 1 1
+"sub_405C6F2" "sub_4062C26" 259 1
+"sub_405C6F2" "sys_log2" 274 1
+"sub_405C6F2" "unk_4071B6C" 10 3
+"sub_405C6F2" "unk_4071B70" 10 3
+"sub_405C6F2" "unk_4071B84" 10 3
+"sub_405C6F2" "unk_4071BA8" 10 3
+"sub_405C6F2" "unk_43C90" 10 3
+"sub_405D74C" "aFat" 20 2
+"sub_405D74C" "aOnSSD02d02d02dD" 20 2
+"sub_405D74C" "aSOnS" 20 2
+"sub_405D74C" "aTypeS" 20 2
+"sub_405D74C" "sub_4060E40" 140 1
+"sub_405D74C" "sub_4060E4C" 140 1
+"sub_405D74C" "sub_40620E4" 188 1
+"sub_405D74C" "sub_4063394" 236 1
+"sub_405D74C" "sys_log2" 232 1
+"sub_405D7F4" "aR" 20 2
+"sub_405D7F4" "sub_405D74C" 1 1
+"sub_405D7F4" "sub_4063834" 246 1
+"sub_405D7F4" "sub_4063866" 246 1
+"sub_405D7F4" "sub_40638F0" 248 1
+"sub_405DD4C" "aSCannotMoveSToS_0" 20 2
+"sub_405DD4C" "aSSFilenameIsTooLong" 20 2
+"sub_405DD4C" "aSSFilenameIsTooLong_0" 20 2
+"sub_405DD4C" "aSSNoSuchFileOrDirectory_1" 20 2
+"sub_405DD4C" "sub_405871A" 220 1
+"sub_405DD4C" "sub_405DD18" 0 1
+"sub_405DD4C" "sub_40610DA" 131 1
+"sub_405DD4C" "sub_4064450" 263 1
+"sub_405DD4C" "sub_4064C90" 284 1
+"sub_405DD4C" "sys_move" 256 1
+"sub_405DD4C" "sys_printf" 201 1
+"sub_405DD4C" "unk_43CA4" 10 3
+"sub_405DD4C" "unk_F0AB0" 10 3
+"sub_405E3C6" "aDelete_0" 20 2
+"sub_405E3C6" "aRemove" 20 2
+"sub_405E3C6" "aSCannotRemoveSIsADirectory" 20 2
+"sub_405E3C6" "aSCannotRemoveSIsADirectory_0" 20 2
+"sub_405E3C6" "aSCannotRemoveSNoSuchFileOrDirector" 20 2
+"sub_405E3C6" "aSCannotUnlinkSErrnoD" 20 2
+"sub_405E3C6" "aSCannotUnlinkSPermissionDenied" 20 2
+"sub_405E3C6" "aSSWriteProtectedFileS?" 20 2
+"sub_405E3C6" "sub_4062A94" 181 1
+"sub_405E3C6" "sub_4062B62" 183 1
+"sub_405E3C6" "sub_4064146" 239 1
+"sub_405E3C6" "sub_4064450" 247 1
+"sub_405E3C6" "sys_errno" 211 1
+"sub_405E3C6" "sys_printf" 184 1
+"sub_405E3C6" "unk_43C7C" 10 3
+"sub_405E9F6" "aBin" 20 2
+"sub_405E9F6" "aCnt" 20 2
+"sub_405E9F6" "aQ_fifo" 20 2
+"sub_405E9F6" "aQ_prio" 20 2
+"sub_405E9F6" "sub_405871A" 253 1
+"sub_405E9F6" "unk_F0AB0" 10 3
+"sub_405FDF2" "sub_40620E4" 89 1
+"sub_405FDF2" "sub_4062A5E" 113 1
+"sub_405FDF2" "sub_4063B9E" 157 1
+"sub_405FDF2" "unk_172645C" 10 3
+"sub_405FDF2" "unk_F0AB0" 10 3
+"sub_4060414" "aSUmounted" 20 2
+"sub_4060414" "aUmountCannotUnmountSErrnoD" 20 2
+"sub_4060414" "aUmountSCannotWriteSuperblock" 20 2
+"sub_4060414" "aUmountSDeviceIsBusy" 20 2
+"sub_4060414" "aUmountSNotMounted" 20 2
+"sub_4060414" "aUmountSNotMounted_0" 20 2
+"sub_4060414" "sub_4060F6E" 29 1
+"sub_4060414" "sub_4064782" 172 1
+"sub_4060414" "sys_errno" 128 1
+"sub_4060414" "sys_log2" 118 1
+"sub_4060414" "sys_printf" 101 1
+"sub_4060414" "unk_43C7C" 10 3
+"sub_4060E40" "off_4073688" 10 3
+"sub_4060E4C" "off_407363C" 10 3
+"sub_4060E58" "sub_405871A" 346 1
+"sub_4060E58" "unk_F0AB0" 10 3
+"sub_4060F6E" "sub_4058706" 349 1
+"sub_4060F6E" "sub_4063834" 104 1
+"sub_4060F6E" "sub_4063866" 104 1
+"sub_4060F6E" "sub_40638F0" 106 1
+"sub_4060F6E" "sub_406392C" 106 1
+"sub_4060F6E" "unk_4073608" 10 3
+"sub_4060F6E" "unk_407360C" 10 3
+"sub_4060F6E" "unk_4073610" 10 3
+"sub_4060F6E" "unk_4073614" 10 3
+"sub_4060F6E" "unk_4073618" 10 3
+"sub_4060F6E" "unk_407361C" 10 3
+"sub_40610DA" "a__1" 20 2
+"sub_40610DA" "sub_40611C4" 2 1
+"sub_40610DA" "sub_40611F6" 2 1
+"sub_40610DA" "sub_4064B1E" 149 1
+"sub_40610DA" "sub_4064BF0" 151 1
+"sub_40610DA" "sub_4064C90" 152 1
+"sub_40610DA" "sys_errno" 95 1
+"sub_40611F6" "sub_40612B6" 1 1
+"sub_40611F6" "sub_4061310" 2 1
+"sub_40611F6" "sub_4061350" 3 1
+"sub_4061430" "a000000" 20 2
+"sub_4061430" "aLdSCCC_CCCMs" 20 2
+"sub_4061430" "sub_40613C6" 1 1
+"sub_4061430" "sys_log2" 76 1
+"sub_4061430" "unk_F4240" 10 3
+"sub_4061502" "aSIllegalOptionC" 20 2
+"sub_4061502" "aSOptionRequiresAnArgmentC" 20 2
+"sub_4061502" "sub_4063B9E" 98 1
+"sub_4061502" "sys_printf" 58 1
+"sub_4061502" "unk_43C7C" 10 3
+"sub_4061662" "sub_4058706" 367 1
+"sub_40617E6" "sys_errno_low" 10 3
+"sub_406182A" "aNoMoreShellTas" 20 2
+"sub_406182A" "aUnknownCommand" 20 2
+"sub_406182A" "sub_4058706" 371 1
+"sub_406182A" "sub_40617D2" 0 1
+"sub_406182A" "sub_40617E6" 0 1
+"sub_406182A" "sub_40619EE" 4 1
+"sub_406182A" "sub_4061B56" 8 1
+"sub_406182A" "sub_4061BB0" 9 1
+"sub_406182A" "sub_40635CC" 75 1
+"sub_406182A" "sys_errno_low" 10 3
+"sub_406182A" "sys_log2" 66 1
+"sub_406182A" "sys_taskCreate" 10 3
+"sub_406182A" "unk_F5E74" 10 3
+"sub_406182A" "unk_F5FCE" 10 3
+"sub_40619E0" "unk_1726AF8" 10 3
+"sub_40619EE" "unk_1726AF4" 10 3
+"sub_40619EE" "unk_1726AF8" 10 3
+"sub_40619EE" "unk_F08C4" 10 3
+"sub_40619EE" "unk_F6018" 10 3
+"sub_4061B2C" "aDry" 20 2
+"sub_4061B2C" "sub_4062C74" 44 1
+"sub_4061B2C" "unk_43C90" 10 3
+"sub_4061B56" "sub_4057AD2" 410 1
+"sub_4061B56" "sub_40619E0" 3 1
+"sub_4061B56" "sub_4061B2C" 0 1
+"sub_4061B56" "sub_4062B62" 41 1
+"sub_4061B56" "unk_43C7C" 10 3
+"sub_4061BB0" "sub_4061BFE" 0 1
+"sub_4061FC6" "unk_F4240" 10 3
+"sub_4061FC6" "unk_F4708" 10 3
+"sub_4062060" "unk_F4708" 10 3
+"sub_40620E4" "sub_406214C" 1 1
+"sub_40620E4" "unk_43C2C" 10 3
+"sub_406214C" "off_40737F0" 10 3
+"sub_406214C" "unk_1517F" 10 3
+"sub_406214C" "unk_15180" 10 3
+"sub_40628F2" "unk_15180" 10 3
+"sub_40628F2" "unk_AFACA" 10 3
+"sub_4062A5E" "unk_F4708" 10 3
+"sub_4062A94" "sema_stdioLock" 10 3
+"sub_4062A94" "sub_406310E" 16 1
+"sub_4062A94" "sys_CaptureSemaphore" 10 3
+"sub_4062A94" "sys_FreeSemaphore" 10 3
+"sub_4062A94" "unk_43C7C" 10 3
+"sub_4062B62" "sub_4062FAE" 11 1
+"sub_4062C26" "sub_406306A" 10 1
+"sub_4062C74" "sub_406306A" 10 1
+"sub_4062C74" "sub_406310E" 11 1
+"sub_4062F44" "sub_4062FAE" 1 1
+"sub_4062F44" "unk_43C7C" 10 3
+"sub_4062FAE" "sys_errno" 17 1
+"sub_4062FAE" "sys_malloc" 5 1
+"sub_4062FAE" "sys_read" 469 1
+"sub_406306A" "sub_40578A6" 470 1
+"sub_406306A" "sys_errno" 15 1
+"sub_406306A" "sys_malloc" 7 1
+"sub_406310E" "sub_40578A6" 472 1
+"sub_4063352" "unk_F0DC4" 10 3
+"sub_4063394" "sub_40633B0" 0 1
+"sub_40633B0" "sys_errno" 6 1
+"sub_40633B0" "unk_4073830" 10 3
+"sub_40635CC" "sub_40490CA" 1077 1
+"sub_40635CC" "sub_4063BE8" 15 1
+"sub_4063834" "unk_43D3C" 10 3
+"sub_4063866" "sub_4063834" 0 1
+"sub_4063866" "sys_CaptureSemaphore" 10 3
+"sub_4063866" "unk_43D50" 10 3
+"sub_40638F0" "sys_FreeSemaphore" 10 3
+"sub_40638F0" "unk_43D50" 10 3
+"sub_406392C" "sub_4063908" 0 1
+"sub_406392C" "unk_43D3C" 10 3
+"sub_4063BE8" "unk_F0DC4" 10 3
+"sub_4063CC6" "sys_CaptureSemaphore" 10 3
+"sub_4063CC6" "unk_43DF8" 10 3
+"sub_4063CDE" "sys_FreeSemaphore" 10 3
+"sub_4063CDE" "unk_43DF8" 10 3
+"sub_4063D26" "sys_open" 508 1
+"sub_4063D58" "sub_40576DE" 508 1
+"sub_4063D88" "unk_43DCC" 10 3
+"sub_4063DBC" "unk_43DCC" 10 3
+"sub_4063FAC" "sub_405754A" 518 1
+"sub_4063FAC" "unk_43DC8" 10 3
+"sub_4063FAC" "unk_43DCC" 10 3
+"sub_40640E6" "sub_4063FAC" 3 1
+"sub_40640E6" "sub_40661B6" 84 1
+"sub_40640E6" "sys_CaptureSemaphore" 10 3
+"sub_40640E6" "sys_FreeSemaphore" 10 3
+"sub_40640E6" "sys_errno" 27 1
+"sub_40640E6" "unk_43DF8" 10 3
+"sub_4064146" "sub_4063FAC" 4 1
+"sub_4064146" "sub_406625A" 84 1
+"sub_4064146" "sys_CaptureSemaphore" 10 3
+"sub_4064146" "sys_FreeSemaphore" 10 3
+"sub_4064146" "sys_errno" 28 1
+"sub_4064146" "unk_43DF8" 10 3
+"sub_4064292" "sub_4057182" 535 1
+"sub_4064292" "sub_4064E70" 30 1
+"sub_4064292" "sys_CaptureSemaphore" 10 3
+"sub_4064292" "sys_FreeSemaphore" 10 3
+"sub_4064292" "sys_errno" 31 1
+"sub_4064292" "unk_43DC8" 10 3
+"sub_4064292" "unk_43DF8" 10 3
+"sub_4064312" "sub_4063FAC" 8 1
+"sub_4064312" "sub_4064EC4" 29 1
+"sub_4064312" "sys_CaptureSemaphore" 10 3
+"sub_4064312" "sys_FreeSemaphore" 10 3
+"sub_4064312" "sys_errno" 32 1
+"sub_4064312" "unk_43DF8" 10 3
+"sub_4064450" "sub_4063FAC" 11 1
+"sub_4064450" "sub_40652CC" 37 1
+"sub_4064450" "sys_CaptureSemaphore" 10 3
+"sub_4064450" "sys_FreeSemaphore" 10 3
+"sub_4064450" "sys_errno" 35 1
+"sub_4064450" "unk_43DF8" 10 3
+"sub_40644B4" "sub_4057182" 540 1
+"sub_40644B4" "sub_4065306" 36 1
+"sub_40644B4" "sys_CaptureSemaphore" 10 3
+"sub_40644B4" "sys_FreeSemaphore" 10 3
+"sub_40644B4" "sys_errno" 36 1
+"sub_40644B4" "unk_43DC8" 10 3
+"sub_40644B4" "unk_43DF8" 10 3
+"sub_4064598" "sub_40664F4" 80 1
+"sub_4064598" "sys_CaptureSemaphore" 10 3
+"sub_4064598" "sys_FreeSemaphore" 10 3
+"sub_4064598" "unk_43DF8" 10 3
+"sub_40646CA" "sub_4057182" 546 1
+"sub_40646CA" "sub_4065594" 37 1
+"sub_40646CA" "sys_errno" 42 1
+"sub_40646CA" "unk_43DC8" 10 3
+"sub_4064782" "sub_40658F8" 44 1
+"sub_4064782" "sys_CaptureSemaphore" 10 3
+"sub_4064782" "sys_FreeSemaphore" 10 3
+"sub_4064782" "sys_errno" 44 1
+"sub_4064782" "unk_43DF8" 10 3
+"sub_40647D6" "sub_405760C" 537 1
+"sub_40647D6" "sub_4063FAC" 20 1
+"sub_40647D6" "sub_4065A50" 47 1
+"sub_40647D6" "sys_CaptureSemaphore" 10 3
+"sub_40647D6" "sys_FreeSemaphore" 10 3
+"sub_40647D6" "sys_errno" 44 1
+"sub_40647D6" "unk_43DF8" 10 3
+"sub_4064B1E" "sub_40576DE" 543 1
+"sub_4064B1E" "sub_4063CC6" 36 1
+"sub_4064B1E" "sub_4063CDE" 36 1
+"sub_4064B1E" "sub_40644B4" 16 1
+"sub_4064B1E" "sys_errno" 53 1
+"sub_4064B1E" "sys_open" 544 1
+"sub_4064B1E" "unk_43DFC" 10 3
+"sub_4064BF0" "sub_4063CC6" 38 1
+"sub_4064BF0" "sub_4063CDE" 38 1
+"sub_4064BF0" "sub_40646CA" 13 1
+"sub_4064C90" "sub_40576DE" 547 1
+"sub_4064C90" "sub_4063CC6" 40 1
+"sub_4064C90" "sub_4063CDE" 40 1
+"sub_4064C90" "sys_errno" 56 1
+"sub_4064CF8" "sub_4063CC6" 41 1
+"sub_4064CF8" "sub_4063CDE" 41 1
+"sub_4064CF8" "sub_4065342" 16 1
+"sub_4064CF8" "sys_errno" 57 1
+"sub_4064DBE" "sub_4066C4A" 78 1
+"sub_4064E70" "sub_4064DBE" 1 1
+"sub_4064E70" "sub_406516C" 7 1
+"sub_4064E70" "sub_406519A" 8 1
+"sub_4064EC4" "sub_4065EF4" 41 1
+"sub_4064EC4" "sub_4066A98" 71 1
+"sub_4064EC4" "sub_4066C4A" 75 1
+"sub_406516C" "unk_43EC8" 10 3
+"sub_406519A" "sub_4066A98" 63 1
+"sub_40651C8" "sub_406519A" 0 1
+"sub_40651C8" "unk_43EC8" 10 3
+"sub_40652CC" "sub_406525E" 1 1
+"sub_40652CC" "sub_4065EF4" 31 1
+"sub_40652CC" "sub_4066A98" 60 1
+"sub_4065306" "sub_406516C" 4 1
+"sub_4065306" "sub_406519A" 3 1
+"sub_4065306" "sub_406525E" 1 1
+"sub_4065342" "sub_406525E" 2 1
+"sub_4065342" "sub_4066A98" 59 1
+"sub_4065342" "sub_4066B34" 61 1
+"sub_4065594" "sub_406516C" 10 1
+"sub_4065594" "sub_406519A" 10 1
+"sub_4065610" "unk_43F58" 10 3
+"sub_406565A" "unk_43F58" 10 3
+"sub_406567C" "unk_43F58" 10 3
+"sub_4065728" "sub_4058706" 532 1
+"sub_4065728" "unk_414C8" 10 3
+"sub_4065778" "unk_43F04" 10 3
+"sub_40657D6" "sub_4065728" 1 1
+"sub_40657D6" "unk_43F04" 10 3
+"sub_4065866" "sub_40651C8" 16 1
+"sub_4065866" "sub_406565A" 5 1
+"sub_4065866" "sub_4065778" 2 1
+"sub_4065866" "sub_40657A6" 1 1
+"sub_4065866" "sub_40664F4" 32 1
+"sub_4065866" "sub_4066512" 32 1
+"sub_4065866" "sub_4066A3C" 45 1
+"sub_4065866" "sub_4066A98" 46 1
+"sub_40658F8" "sub_4063D58" 70 1
+"sub_40658F8" "sub_4065610" 7 1
+"sub_40658F8" "sub_4065866" 1 1
+"sub_40658F8" "sub_4065EF4" 15 1
+"sub_40658F8" "sub_4066A98" 45 1
+"sub_4065978" "sub_406567C" 7 1
+"sub_4065978" "sub_40657D6" 4 1
+"sub_4065978" "sub_4065EF4" 14 1
+"sub_4065978" "sub_4066A98" 43 1
+"sub_4065A50" "sub_4063D26" 74 1
+"sub_4065A50" "sub_4063D58" 74 1
+"sub_4065A50" "sub_4065978" 2 1
+"sub_4065CDA" "sub_4063D88" 80 1
+"sub_4065CDA" "sub_4065CC2" 0 1
+"sub_4065CDA" "sub_4066A98" 35 1
+"sub_4065DAC" "sub_4063D88" 82 1
+"sub_4065DAC" "sub_4063DBC" 81 1
+"sub_4065DAC" "sub_4065CDA" 2 1
+"sub_4065DAC" "sub_4066A98" 33 1
+"sub_4065E8E" "sub_4065CDA" 4 1
+"sub_4065E8E" "sub_4065DAC" 2 1
+"sub_4065E8E" "sub_4066A98" 30 1
+"sub_4065EF4" "sub_4065C84" 6 1
+"sub_4065EF4" "sub_4065E8E" 1 1
+"sub_4066080" "sub_4065DAC" 7 1
+"sub_4066080" "sub_4066A98" 25 1
+"sub_406610E" "sub_4065C84" 11 1
+"sub_406610E" "sub_4066080" 1 1
+"sub_406612C" "sub_4065DAC" 8 1
+"sub_406612C" "sub_4066A98" 24 1
+"sub_40661B6" "sub_4065C84" 13 1
+"sub_40661B6" "sub_406612C" 1 1
+"sub_40661D0" "sub_4065DAC" 10 1
+"sub_40661D0" "sub_4066A98" 22 1
+"sub_406625A" "sub_4065C84" 14 1
+"sub_406625A" "sub_40661D0" 1 1
+"sub_4066274" "sub_4065DAC" 12 1
+"sub_4066274" "sub_4066A98" 20 1
+"sub_40663CC" "sub_4065C84" 18 1
+"sub_40663CC" "sub_4066274" 3 1
+"sub_40663F2" "sub_4057956" 600 1
+"sub_406642E" "sub_40663F2" 0 1
+"sub_406642E" "unk_43FB8" 10 3
+"sub_406642E" "unk_44080" 10 3
+"sub_40664F4" "sub_406642E" 1 1
+"sub_40664F4" "sub_4066944" 11 1
+"sub_4066512" "unk_43F74" 10 3
+"sub_4066944" "unk_44080" 10 3
+"sub_40669B0" "sub_40586F8" 580 1
+"sub_40669B0" "unk_414CC" 10 3
+"sub_4066A3C" "sub_40669B0" 1 1
+"sub_4066A3C" "unk_44080" 10 3
+"sub_4066A98" "unk_414CC" 10 3
+"sub_4066B34" "sub_4066A98" 1 1
+"sub_4066B34" "unk_414CC" 10 3
+"sub_4066B34" "unk_44080" 10 3
+"sub_4066C4A" "sub_4061FC6" 195 1
+"sys_errno" "sys_errno_low" 10 3
+"sys_errno" "unk_43C64" 10 3
+"sys_free_maybe" "sema_mallocSem" 10 3
+"sys_free_maybe" "sys_CaptureSemaphore" 10 3
+"sys_free_maybe" "sys_FreeSemaphore" 10 3
+"sys_free_maybe" "unk_43C5C" 10 3
+"sys_log" "unk_13001A" 10 3
+"sys_log" "unk_180000" 10 3
+"sys_log" "unk_43478" 10 3
+"sys_log" "unk_F66F4" 10 3
+"sys_log" "unk_FE9B4" 10 3
+"sys_log2" "sema_stdioLock" 10 3
+"sys_log2" "sys_CaptureSemaphore" 10 3
+"sys_log2" "sys_FreeSemaphore" 10 3
+"sys_log2" "unk_40631D0" 10 3
+"sys_log2" "unk_43C90" 10 3
+"sys_log2" "unk_F0DC4" 10 3
+"sys_malloc" "sema_mallocSem" 10 3
+"sys_malloc" "sys_CaptureSemaphore" 10 3
+"sys_malloc" "sys_FreeSemaphore" 10 3
+"sys_malloc" "unk_43C5C" 10 3
+"sys_mkdir" "sub_4063FAC" 1 1
+"sys_mkdir" "sub_406610E" 83 1
+"sys_mkdir" "sys_CaptureSemaphore" 10 3
+"sys_mkdir" "sys_FreeSemaphore" 10 3
+"sys_mkdir" "sys_errno" 25 1
+"sys_mkdir" "unk_43DF8" 10 3
+"sys_mount" "aA" 20 2
+"sys_mount" "aLd" 20 2
+"sys_mount" "aMountBadSuperblockOnS" 20 2
+"sys_mount" "aMountCannotMountSOnSErrnoD" 20 2
+"sys_mount" "aMountMountPointSDoesNotExit" 20 2
+"sys_mount" "aMountMountPointSIsNotADirectory" 20 2
+"sys_mount" "aMountMountTableFull" 20 2
+"sys_mount" "aMountSAlreadyMountedSBusy" 20 2
+"sys_mount" "aMountSCannotReadSuperblock" 20 2
+"sys_mount" "aMountSpecialDeviceSDoesNotExit" 20 2
+"sys_mount" "asc_40720C8" 20 2
+"sys_mount" "sub_405D74C" 2 1
+"sys_mount" "sub_4062A5E" 210 1
+"sys_mount" "sub_4063352" 233 1
+"sys_mount" "sub_4063866" 246 1
+"sys_mount" "sub_40638F0" 247 1
+"sys_mount" "sub_406392C" 248 1
+"sys_mount" "sub_4064450" 276 1
+"sys_mount" "sub_40647D6" 285 1
+"sys_mount" "sys_errno" 240 1
+"sys_mount" "sys_printf" 214 1
+"sys_mount" "unk_40720CC" 10 3
+"sys_mount" "unk_43C7C" 10 3
+"sys_move" "sub_4063FAC" 5 1
+"sys_move" "sub_40663CC" 87 1
+"sys_move" "sys_CaptureSemaphore" 10 3
+"sys_move" "sys_FreeSemaphore" 10 3
+"sys_move" "sys_errno" 29 1
+"sys_move" "unk_43DCC" 10 3
+"sys_move" "unk_43DF8" 10 3
+"sys_open" "sub_4057092" 14 1
+"sys_open" "sub_4057162" 12 1
+"sys_open" "sub_40571BE" 11 1
+"sys_open" "sub_405754A" 2 1
+"sys_open" "sys_errno" 491 1
+"sys_open" "unk_437E8" 10 3
+"sys_printf" "sema_stdioLock" 10 3
+"sys_printf" "sys_CaptureSemaphore" 10 3
+"sys_printf" "sys_FreeSemaphore" 10 3
+"sys_printf" "unk_40631D0" 10 3
+"sys_printf" "unk_F0DC4" 10 3
+"sys_read" "sub_4057182" 17 1
+"sys_read" "sys_errno" 486 1
+"sys_read" "unk_437E8" 10 3
+"task_post" "sys_errno_low" 10 3
+"task_post" "sys_taskSuspend" 10 3
+"task_post" "unk_1000F8" 10 3
+"task_post" "unk_416C8" 10 3
+"task_post" "unk_F6F82" 10 3
+"task_pre" "sys_errno_low" 10 3
+"task_pre" "unk_1000F8" 10 3
+"task_pre" "unk_416C8" 10 3
+"task_pre" "unk_F6F82" 10 3
+"task_shell" "PANIC2" 6 1
+"task_shell" "aCmd_debug_setu" 20 2
+"task_shell" "aCmd_fs_setupFa" 20 2
+"task_shell" "aCmd_misc_setup" 20 2
+"task_shell" "aCmd_test_setup" 20 2
+"task_shell" "aExitTsk_dryshe" 20 2
+"task_shell" "aStartTsk_drysh" 20 2
+"task_shell" "cmd_debug_setup" 634 1
+"task_shell" "cmd_fs_setup" 640 1
+"task_shell" "cmd_misc_setup" 652 1
+"task_shell" "cmd_test_setup" 655 1
+"task_shell" "sub_406182A" 971 1
+"task_shell" "sys_log" 119 1
+"task_shell" "sys_send_to_shell" 10 3
+"task_shell" "task_post" 51 1
+"task_shell" "task_pre" 70 1

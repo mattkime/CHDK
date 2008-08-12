@@ -1,0 +1,54 @@
+//
+//
+sub labPositional(
+   with all nodes do (
+      if(#depthLevel == null) then (
+      depthLevel <<# 10;
+      ) end;
+//      nodeplane y (#depthLevel * -3.0 ) same;
+//      nodeplane x 0.0 same;
+      itemsize (2.0/#depthLevel);
+//      itemmass #type/3.0;
+      itemcolor (rgb: 190 190 190);
+      if(#type == 1) then itemcolor (rgb: 200 200 200) end;
+      if(#type == 2) then itemcolor (rgb: 90 220 90) end;
+      if(#type == 3) then itemcolor (rgb: 90 90 220) end;
+      //itemdkcolor rgb: 250 0 0;
+      //itemfont "asdfasdf";
+//      pullstrength (10.0/#depthLevel);
+      //nodeinfo (#text);
+      nodelabel #text;
+   ) end;
+);
+
+
+sub labEdgeHighlighter (
+   with all edges do ( 
+      //itemcolor rgb: #migrationcount 60 50;
+      //itemdkcolor (linkorigin::getitemcolor * 0.5);
+      //itemcolor (rgb: 190 190 190);
+      itemcolor (linktarget::getitemcolor * 0.8);
+      //itemsize #migrationcount * 0.2;
+      //itemtexture name "textures/pacman.png";
+      //itemtexture name "textures/holedarrow.gif";
+      //itemtexture dx #migrationcount * 0.002;
+
+      edge:curve 0.3;
+      itemsize 0.8 + (#length/1000);
+      //Ktulhu!!   
+      pullstrength 1000.0 / (#length+1);
+
+   ) end;
+);
+
+//g_activecounter = 400000;
+//g_pull = 0.01; 
+g_globeness = 0.001;
+g_diameter = 1.0;
+
+loadfile "D:/projects/cail-digicdv/hv30_analysis/graphs/xrefs-task_shell.vna";
+
+./labPositional;
+
+./labEdgeHighlighter;
+

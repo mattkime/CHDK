@@ -1,0 +1,445 @@
+D120B CanonDV 
+              
+B 6$BN <
+dddddddd
+Maximum current consumption
+Function group6 info
+Function group5 info
+Function group4 info
+Function group3 info
+Function group2 info
+Function group1 info
+Function in group6
+Function in group5
+Function in group4
+Function in group3
+Function in group2
+Function in group1
+8CARDIF_EVENT
+									
+%s/IMG_%04d%s
+CANONMSC
+    :  :     :  :  
+\dev\cam
+/PRESET/
+camera_storage_task
+Edcpuif2_event
+jLcpuif2_cam_event
+cpuif2_cam_task
+"2BR-=M]"2BR-=M]
+Disconnect Caused By Recieving RAPI Before WakeUp
+cpuif2_event_m
+cpuif2_mutex
+cpuif2_exc_task
+semaphore_event
+_eventWait() error
+USB device ctrlTask
+dry-usbdev ctrlTask in init_task()
+Can't setup USB class in usbd_setup()
+Canon iVIS HV30
+Canon VIXIA HV30
+Canon HV30
+Canon DVC
+ptp_cmd_task
+ptp_event_task
+SCR_STRUCTURE
+DATA_STAT_AFTER_ERASE
+SD_SECURITY
+SD_BUS_WIDTH
+Manufacturer ID
+OEM/Application ID
+Product name
+Product revision
+Product serial number
+reserved
+Manufacturing date
+CRC7 checksum
+(always 1)
+CSD_STRUCTURE
+TRAN_SPEED
+READ_BL_LEN
+READ_BL_PARTIAL
+WRITE_BLK_MISALIGN
+READ_BLK_MISALIGN
+VDD_R_CURR_MIN
+VDD_R_CURR_MAX
+VDD_W_CURR_MIN
+VDD_W_CURR_MAX
+C_SIZE_MULT
+ERASE_BLK_EN
+SECTOR_SIZE
+WP_GRP_SIZE
+WP_GRP_ENABLE
+reserved for MultiMediaCard compatibility
+R2W_FACTOR
+WRITE_BL_LEN
+WRITE_BL_PARTIAL
+FILE_FORMAT_GRP
+PERM_WRITE_PROTECT
+TMP_WRITE_PROTECT
+FILE_FORMAT
+not used, always '1'
+DATA_BUS_WIDTH
+SECURED_MODE
+SD_CARD_TYPE
+SIZE_OF_PROTECTED_AREA
+PERFORMANCE_MOVE
+ERASE_SIZE
+ERASE_TIMEOUT
+ERASE_OFFSET
+Manufacturer ID
+OEM/Application ID
+Product name
+Product revision
+Product serial number
+Manufacturing date
+CRC7 checksum
+(always 1)
+CSD_STRUCTURE
+SPEC_VERS
+reserved
+TRAN_SPEED
+READ_BL_LEN
+READ_BL_PARTIAL
+WRITE_BLK_MISALIGN
+READ_BLK_MISALIGN
+VDD_R_CURR_MIN
+VDD_R_CURR_MAX
+VDD_W_CURR_MIN
+VDD_W_CURR_MAX
+C_SIZE_MULT
+ERASE_GRP_SIZE
+ERASE_GRP_MULT
+WP_GRP_SIZE
+WP_GRP_ENABLE
+DEFAULT_ECC
+R2W_FACTOR
+WRITE_BL_LEN
+WRITE_BL_PARTIAL
+CONTENT_PROT_APP
+FILE_FORMAT_GRP
+PERM_WRITE_PROTECT
+TMP_WRITE_PROTECT
+FILE_FORMAT
+not used, always '1'
+BUS_WIDTH
+HS_TIMING
+POWER_CLASS
+CMD_SET_REV
+EXT_CSD_REV
+CARD_TYPE
+PWR_CL_52_195
+PWR_CL_26_195
+PWR_CL_52_360
+PWR_CL_26_360
+MIN_PERF_R_4_26
+MIN_PERF_W_4_26
+MIN_PERF_R_8_26_4_52
+MIN_PERF_W_8_26_4_52
+MIN_PERF_R_8_52
+MIN_PERF_W_8_52
+SEC_COUNT
+S_CMD_SET
+CardMain Start
+CardCommand : 0x%X 
+D:/CANON/CEV/Update/
+D:/VEF9.FIM
+D:/CANON/CEV/Update/
+@D:/CANON/CEV/Update/
+USB device ctrl-EP sync
+USB device EP sync
+hdmi_main_task
+hdmi_sem
+XZWYXZWY
+D:/CANON/CEV/Update/
+0123456789ABCDEFFPOEVLDT/* FPO EVL */
+FPOAVEDT/* FPO AVE */
+/* FPO OFS */
+/* FPO RES */
+PTMEVLDT/* PTM EVL */
+PTMAVEDT/* PTM AVE */
+/* PTM RMS */
+/* PTM RES */
+FPGMSRDT/* ADJ RES */
+/* GGF MSR */
+/* GGF ADJ */
+/* FPG MSR */
+FPGADJDT/* FPG ADJ */
+/* FPG RES */
+HDMIREGS/* HDMI EDID */
+/* HDMI REGS */
+/* PAGE 00 */
+/* PAGE 01 */
+/* PAGE 02 */
+/* PAGE 10 */
+/* PAGE 11 */
+/* PAGE 12 */
+HDMILOGD/* HDMI LOG */
+/* D120 EEPROM DATA */
+/* ROM VERSION */
+/* TOTAL SIZE *//* ADJUST SIZE */
+/* FACTORY SIZE */
+/* MODE SIZE */
+/* PARAMETER SIZE */	+00	+01	+02	+03	+04	+05	+06	+07	+08	+09	+0A	+0B	+0C	+0D	+0E	+0F
+    :  :     :  :  
+D:/DCIM/100CANON
+D:/DCIM/%03dCANON
+/xxxxnnnn.xxx
+D:/DCIM/%03dxxxxx
+/xxxx%04d.
+%04d.THM
+D:/DCIM/%03dCANON/
+D:/DCIM/CANONMSC/%d.tmp
+[CARD]Err!!(errcode=0x%02X, pos=0x%02X, errno=0x%08X
+Canon DVC
+DD$$D11BC
+  !("0#8$@%H
+mmcfat_mount NG
+mmcfat_mount OK
+DD:/MISC/AUTPRINT.MRK
+"../DCIM/
+GEN REV = 01.10
+GEN CRT = "%s" -01.00
+GEN DTM = %04d:%02d:%02d:%02d:%02d:%02d
+PRT PID = %03d
+PRT TYP = STD
+PRT QTY = %03d
+IMG FMT = EXIF2 -J
+<IMG SRC = "../DCIM/%03dCANON/IMG_%04d.JPG">
+D:/DCIM/%03dCANON/IMG_%04d.JPG
+D:/CANON/CEV/Update/
+D:/MISC/AUTPRINT.MRK
+D:/MISC/AUTXFER.MRK
+<<<<<<<<	
+ (0<HLP	
+$,4@LPT	
+$,4@LPT	
+/18:BDLNVX`b
+#>35^ww~fw~"U^
+ 4L(((  
+@C 8 4 0 B 9 H 8 C C @  
+qf^XSNHC
+wja[UPJE
+  000000,,!!!!
+  $(,044
+  $(,044
+  $(,044
+  $(,044
+`P8@HTp`Tp`
+)8?FNU\d
+@@@0( ((((((((@@@8( ((((((((@@@0( ((88880(@@@8((((((((((
+.,*(&$" 
+6420.,*(&$" 
+.,*(&$" 
+<<<<<<<<	
+ (0<HLP	
+$,4@LPT	
+$,4@LPT	
+/18:BDLNVX`b
+#>35^ww~fw~"U^
+ 4L(((  
+@A 8 2 2 C 8 H 5 C C @  
+qf^XSNHC
+wja[UPJE
+  000000,,!!!!
+  $(,044
+  $(,044
+  $(,044
+  $(,044
+`P8@HTp`Tp`
+)8?FNU\d
+@@@0( ((((((((@@@8( ((((((((@@@0( ((88880(@@@8((((((((((
+.,*(&$" 
+6420.,*(&$" 
+.,*(&$" 
+dma1_sem
+dma1_sync
+D:/MISC/AUTXFER.MRK
+"../DCIM/
+GEN REV = 01.10
+GEN CRT = "%s" -01.00
+GEN DTM = %04d:%02d:%02d:%02d:%02d:%02d
+PMT PID = 001
+IMG FMT = EXIF2 -J
+IMG SRC = "../DCIM/%03dCANON/IMG_%04d.JPG"
+DAT SRC = "../DCIM/%03dCANON/MOV_%04d.AVI"
+D:/DCIM/%03dCANON/IMG_%04d.JPG
+D:/DCIM/%03dCANON/MOV_%04d.AVI
+2-2.0.0.0
+DDISCVRY.DPS
+DREQUEST.DPS
+DRSPONSE.DPS
+HDISCVRY.DPS
+HREQUEST.DPS
+HRSPONSE.DPS
+../DCIM/
+<?xml version="1.0"?>
+<dps xmlns="http://www.cipa.jp/dps/schema/">
+ <input>
+<?xml version="1.0"?>
+<dps xmlns="http://www.cipa.jp/dps/schema/">
+ <output>
+ </input>
+ </output>
+notifyJobStatus
+notifyDeviceStatus
+getFileID
+getFileInfo
+getPartialFile
+getFileList
+getThumb
+notifyStorageJobStatus
+filePath
+progress
+imagesPrinted
+dpsPrintServiceStatus
+jobEndReason
+errorStatus
+errorReason
+disconnectEnable
+capabilityChanged
+newJobOK
+basePathID
+totalProgress
+configurePrintService
+getCapability
+getJobStatus
+getDeviceStatus
+startJob
+abortJob
+continueJob
+configureStorageService
+getStorageCapability
+startStorageJob
+abortStorageJob
+printServiceAvailable
+dpsVersions
+vendorName
+vendorSpecificVersion
+productName
+serialNo
+capability
+qualities
+paperSizes
+paperTypes
+fileTypes
+datePrints
+fileNamePrints
+imageOptimizes
+fixedSize
+croppings
+directory
+directoryCreates
+jobConfig
+printInfo
+paperSize
+paperType
+fileType
+datePrint
+fileNamePrint
+imageOptimize
+cropping
+functionType
+totalImages
+directoryName
+fileName
+croppingArea
+abortStyle
+storageInfo
+  <configurePrintService>
+   <dpsVersions>
+</dpsVersions>
+   <vendorName>
+</vendorName>
+   <vendorSpecificVersion>
+</vendorSpecificVersion>
+   <productName>
+</productName>
+   <serialNo>
+</serialNo>
+  </configurePrintService>
+    <%s paperSize="%08X"/>
+    <%s/>
+  <getCapability>
+   <capability>
+   </capability>
+  </getCapability>
+  <getJobStatus/>
+  <getDeviceStatus/>
+  <startJob>
+   <jobConfig>
+    <paperType>
+</paperType>
+    <paperSize>
+</paperSize>
+    <datePrint>
+</datePrint>
+    <imageOptimize>
+</imageOptimize>
+    <layout>
+</layout>
+    <cropping>
+</cropping>
+   </jobConfig>
+   <printInfo>
+%04X %04X %04X %04X
+    <croppingArea>
+</croppingArea>
+    <fileID>
+</fileID>
+    <date>
+    <copies>
+</copies>
+   </printInfo>
+  </startJob>
+  <abortJob>
+   <abortStyle>90000000</abortStyle>
+  </abortJob>
+  <continueJob/>
+  <result>
+</result>
+  <notifyJobStatus/>
+  <notifyDeviceStatus/>
+  <getFileID>
+   <fileID>
+  </getFileID>
+  <getFileID/>
+  <startStorageJob>
+    <functionType>
+</functionType>
+    <totalImages>    </totalImages>
+   <storageInfo>
+   </storageInfo>
+    <fileID> 
+  </startStorageJob>
+  <abortStorageJob/>
+  <notifyStorageJobStatus/>
+%s(width = %d): 0x%x
+%s(width = %d): "%s"
+/dev/mmc0
+/dev/mmc0s
+/dev/mmc0s1
+WAVEfmt 
+0123456789ABCDEF/
+/MISC/AUTPRINT.MRK
+AUTPRINT.MRK
+/MISC/AUTXFER.MRK
+AUTXFER.MRK
+/DCIM/%03dCANON
+AUT_%04d.JPG
+    :  :     :  :  
+ST*:Stitch assist mode
+MVI:%s Movie
+IMG:%s JPEG
+%d:%02d:%02d %02d:%02d:%02d
+%d/%02d/%02d
+%02d:%02d:%02d
+0123456789ABCDEFxml
+/dev/mmc0
+8DDRYOSV2 
+CANON_DV   
+FAT12   
+FAT16   
+FAT32   
+jD/dev/mmc0
+120F120T120Z

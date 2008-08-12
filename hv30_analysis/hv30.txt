@@ -1,0 +1,22 @@
+
+Fujitsu FR71
+
+MB8AA101
+
+http://www.compitech.ru/html.cgi/arhiv/04_07/stat_fuj2.htm
+
+
+
+FR FAMILY INSTRUCTION MANUAL
+http://edevice.fujitsu.com/fj/MANUAL/MANUALp/en-pdf/CM71-00101-5E.pdf
+
+
+
+ROM: 0x04000000 - 0x043D0000
+(dump.code-4000000:0x00000000) => 0x04000000, size 0x003D0000
+
+
+RAM: 0x00000000 - 0x00100000
+(dump.code-4000000:0x003D0000) => 0x002C0000, size 0x00030000
+
+
