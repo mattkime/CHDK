@@ -3,16 +3,16 @@
 
 #include "scan-lib.idc"
 
-#define CODE_START 0x04000000
-#define CODE_END   0x04400000
+//#define CODE_START 0x04000000
+//#define CODE_END   0x04400000
 
-//#define CODE_START 0x4065FFE
-//#define CODE_END   0x4065FFE+1000
+#define CODE_START 0xBFA00000
+#define CODE_END   0xBFC00000
 
 #define ROM_START 0x4C8A6840
 #define ROM_END   0x4CB97064
 
-xxxxxxx badd!!!!!!!
+//xxxxxxx badd!!!!!!!
 static main()
 {
   auto sb, se, a, c, w, d;

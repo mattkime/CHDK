@@ -7,6 +7,17 @@
 
 static main()
 {
+    createSegments();
+
+    copySegments();
+
+    MakeCode(0x04000000);
+
+    makeNames1();
+}
+
+static createSegments()
+{
     auto fh;
 
     DeleteAll();    // purge database
@@ -24,7 +35,7 @@ RAM: 0x00000000 - 0x01000000
     loadfile(fh, 0x003D0000,  0x002C0000, 0x00030000);
 
 /*
-RAM2
+RAM2 IO ports mapped?
 */
     SegCreate(0x1700000, 0x1800000,0,1, saRelByte, scPub);
 
@@ -36,13 +47,20 @@ ROM: 0x04000000 - 0x043D0000
     fh = fopen(DUMP_NAME, "rb");
     loadfile(fh, 0x00000000,  0x04000000, 0x003D0000);
 
-    MakeCode(0x04000000);
-
-    makeNames1();
-
-
     fclose(fh);
 }
+
+
+
+static copySegments()
+{
+// RAM segment copying
+    memcpy(0x100400, 0x2D8114, 0x2FCE);
+// small RAM segment
+    memcpy(0x419C8, 0x002DB0E4, 0xE4);
+}
+
+
 
 
 static memcpy(to, from, size)
@@ -54,7 +72,5 @@ static memcpy(to, from, size)
         val = Byte(from+i);
         PatchByte(to+i, val);
     }
-
-
 
 }
