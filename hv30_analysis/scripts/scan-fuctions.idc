@@ -12,7 +12,7 @@
 
 static main()
 {
-  auto sb, se, a, c, w, d;
+  auto sb, se, a, c, w, d, y;
   auto lr, push;
 
   sb = CODE_START;
@@ -30,7 +30,12 @@ static main()
     if ( (d&0xFF00) == 0x8f00 || (d&0xFF00) == 0x8e00)
       lr = 1;
 
+    if ( d == 0x9F8C )
+      lr = 1;
+
     if (d == 0x1781) 
+      lr = 1;
+    if (d == 0x1708) 
       lr = 1;
 
 /*
@@ -38,15 +43,22 @@ static main()
       push = 1;
 */
 
-//    Message("code:%x, %x\n", (d&0xFF00) == 0x4f00, (d&0x00FF > 0x80));
-//    Message("lr:%x, push:%x\n",lr, push);
-    
     if (!lr && !push) continue;
 
-    if (lr && isUnknown(GetFlags(a)))
-      MakeCode(a);
+    if (!isUnknown(GetFlags(a))) continue;
 
-      //MakeFunction(a, BADADDR);
+    if (RfirstB0(a) == BADADDR && DfirstB(a) == BADADDR)  continue;
+
+    for(y = DfirstB(a); y != BADADDR; y=DnextB(a,y) )
+    {
+        Message("%08x: %s\n", y, GetDisasm(y));
+    }
+
+//    Message("lr:%x, push:%x\n",lr, push);
+
+    MakeFunction(a, BADADDR);
+
+      //
 /*    else if (isUnknown(GetFlags(a)))
     {
       MakeCode(a);

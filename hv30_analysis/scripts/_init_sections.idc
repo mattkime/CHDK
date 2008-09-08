@@ -7,6 +7,8 @@
 
 static main()
 {
+    memcpy(0x40294, 0x4073FB8, 0x1248);
+/*
     createSegments();
 
     copySegments();
@@ -14,6 +16,7 @@ static main()
     MakeCode(0x04000000);
 
     makeNames1();
+//*/
 }
 
 static createSegments()
@@ -58,6 +61,10 @@ static copySegments()
     memcpy(0x100400, 0x2D8114, 0x2FCE);
 // small RAM segment
     memcpy(0x419C8, 0x002DB0E4, 0xE4);
+
+// init_copy_4073FB8_40294_size1248
+    memcpy(0x40294, 0x4073FB8, 0x1248);
+
 }
 
 

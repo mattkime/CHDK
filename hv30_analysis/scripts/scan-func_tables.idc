@@ -17,31 +17,42 @@
 
 static isIn(addr)
 {
-  return addr > CODE_START && addr < CODE_END;
+  return (addr > CODE_START && addr < CODE_END) || addr == 0;
 }
+
+
 
 static main()
 {
-  auto sb, se, a, c, w, d;
-  sb = CODE_START;
-  se = CODE_END;
+
+  search_table(CODE_START, CODE_END);
+
+//  search_table(0x40294, 0x40294 + 0x1248);
+
+}
+
+
+static search_table(sb, se)
+{
+  auto a, c, w, d;
 
   c = 0;
   for (a=sb; a<se; a=a+4)
   {
     if (   isIn(Dword(a+0))
         && isIn(Dword(a+4))
-        && isIn(Dword(a+8))
+//        && isIn(Dword(a+8))
+        && isUnknown(GetFlags(a+0))
         )
     {
-       Message("Table: %x\n", a);
+       Message("%x : item\n", a);
        //MakeUnknown(a, 4, DOUNK_EXPAND);
-       c = c+3;
+       c = c+1;
 
        MakeDword(a+0);
        MakeDword(a+4);
        MakeDword(a+8);
-       a = a + 8;
+       //a = a + 4;
     }
 
     if (a % 0x100000 == 0) Message("scanning: %x\n", a);
