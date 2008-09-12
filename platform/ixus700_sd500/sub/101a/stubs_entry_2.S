@@ -39,3 +39,5 @@ NHSTUB(GetDrive_ClusterSize, 0xFF86A150)
 NHSTUB(GetDrive_TotalClusters, 0xFF86A18C)
 NHSTUB(GetDrive_FreeClusters, 0xFF86A1C8)
 NHSTUB(WriteSDCard, 0xFF87CACC)
+NHSTUB(MakeAFScan, 0xFF94EF7C)  //DoAFLock
+NHSTUB(ExpCtrlTool_StartContiAE, 0xFF8F94B8)  

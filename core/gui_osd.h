@@ -53,6 +53,7 @@ extern void gui_osd_calc_expo_param();
 //ARM End
 
 extern int  gui_osd_draw_zebra();
+extern void gui_osd_draw_ev_video(int visible);
 
 //-------------------------------------------------------------------
 #endif

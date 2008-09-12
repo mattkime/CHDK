@@ -438,9 +438,10 @@
 #define LANG_MENU_BAD_PIXEL_RAW_CONVERTER 339
 
 #define LANG_MENU_VIDEO_AF_KEY  340
+#define LANG_OSD_LAYOUT_EDITOR_EV 341
 //-------------------------------------------------------------------
 
-#define GUI_LANG_ITEMS                  340
+#define GUI_LANG_ITEMS                  341
 
 //-------------------------------------------------------------------
 extern void gui_lang_init();

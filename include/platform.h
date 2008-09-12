@@ -471,6 +471,12 @@ void MakeAFScan(void);
 extern int movie_status;
 extern int zoom_status;
 
+int get_ev_video_avail(void);
+void set_ev_video_avail(int); 
+int get_ev_video(void);
+void set_ev_video(int); 
+
+
 #define started() debug_led(1)
 #define finished() debug_led(0)
 

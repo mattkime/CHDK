@@ -81,6 +81,7 @@ typedef struct {
     OSD_pos mode_raw_pos;
     OSD_pos values_pos;
     OSD_pos clock_pos;
+    OSD_pos ev_video_pos;
 
     color histo_color;
     color histo_color2; // markers/border
