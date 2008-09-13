@@ -1,0 +1,6 @@
+uBASIC by Adam Dunkels
+http://www.sics.se/~adam/ubasic/
+
+Pablo d'Angelo improved the parser to support labels and removed
+the line numbers.
+
