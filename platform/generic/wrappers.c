@@ -54,6 +54,18 @@ void task_unlock()
     _taskUnlock();
 }
 
+#ifndef CAM_DRYOS
+const char *task_name(int id)
+{
+    return _taskName(id);
+}
+
+int task_id_list_get(int *idlist,int size)
+{
+    return _taskIdListGet(idlist,size);
+}
+#endif
+
 long get_property_case(long id, void *buf, long bufsize)
 {
     return _GetPropertyCase(id, buf, bufsize);
@@ -137,11 +149,42 @@ void lens_set_focus_pos(long newpos)
     _SetPropertyCase(PROPCASE_SUBJECT_DIST2, &newpos, sizeof(newpos));
 }
 
+void play_sound(unsigned sound)
+{
+	static const int sounds[]={ 0x2001, //startup sound
+                                0x2002, //shutter sound
+                                0x2003, //button press sound
+                                0x2004, //self-timer sound
+                                0xC211, //short beep
+                                50000,  // AF confirmation 
+                                0xC507, // error beep imo
+                                0x400D, // LONG ERROR BEEP CONTINIUOUS- warning, cannot be stopped (yet)
+                            };
+    if(sound >= sizeof(sounds)/sizeof(sounds[0]))
+        return;
+
+    _PT_PlaySound(sounds[sound], 0);
+}
+
 long stat_get_vbatt()
 {
     return _VbattGet();
 }
 
+int get_battery_temp()
+{
+    return _GetBatteryTemperature();
+}
+
+int get_ccd_temp()
+{
+    return _GetCCDTemperature();
+}
+
+int get_optical_temp()
+{
+    return _GetOpticalTemperature();
+}
 
 long get_tick_count()
 {
@@ -448,6 +491,15 @@ unsigned int GetRawCount(void){
 
 }
 
+void EnterToCompensationEVF(void)
+{
+  _EnterToCompensationEVF();
+}
+
+void ExitFromCompensationEVF()
+{
+  _ExitFromCompensationEVF();
+}
 
 #if CAM_MULTIPART
 
@@ -485,6 +537,12 @@ int mbr_read(char* mbr_sector, unsigned long drive_total_sectors, unsigned long 
 
  return valid;
 }
+
+
+
+
+
+
 
 int get_part_count(void){
  unsigned long part_start_sector, part_length;
@@ -537,27 +595,18 @@ void create_partitions(void){
 
 #endif
 
+#if CAM_CAN_MUTE_MICROPHONE
 int mute_on_zoom(int x){
  static int old_busy=0;
  int busy=zoom_busy||focus_busy;
- if (old_busy!=busy) {
-  if (busy) {
-#if CAM_CAN_MUTE_MICROPHONE
-   if (conf.mute_on_zoom) _TurnOffMic();
-#endif
-   }
-   else {
-#if CAM_CAN_MUTE_MICROPHONE
-  if (conf.mute_on_zoom) _TurnOnMic();
-#endif
-#if CAM_EV_IN_VIDEO
-  if (get_ev_video_avail()) set_ev_video_avail(0);
-#endif
-  }
+ if (conf.mute_on_zoom && (old_busy!=busy)) {
+  if (busy) _TurnOffMic(); else _TurnOnMic();
   old_busy=busy;
  }
  return x; // preserve R0 if called from assembler
 }
+#endif
+
 
 
 #if CAM_AF_SCAN_DURING_VIDEO_RECORD
@@ -574,3 +623,4 @@ void MakeAFScan(void){
  _ExpCtrlTool_StartContiAE(0,0);
 }
 #endif
+

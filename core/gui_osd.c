@@ -36,14 +36,18 @@ static OSD_elem osd[]={
     {LANG_OSD_LAYOUT_EDITOR_BAT_TEXT,   &conf.batt_txt_pos,     {5*FONT_WIDTH, FONT_HEIGHT}     },
     {LANG_OSD_LAYOUT_EDITOR_SPACE_TEXT,   &conf.space_txt_pos,     {5*FONT_WIDTH, FONT_HEIGHT}     },
     {LANG_OSD_LAYOUT_EDITOR_CLOCK,      &conf.clock_pos,        {5*FONT_WIDTH, FONT_HEIGHT}     },
-#if CAM_EV_IN_VIDEO
-    {LANG_OSD_LAYOUT_EDITOR_EV,         &conf.ev_video_pos,     {70,24}},
-#endif
+    {LANG_OSD_LAYOUT_EDITOR_TEMP,      &conf.temp_pos,        {9*FONT_WIDTH, FONT_HEIGHT}     },
+    {LANG_OSD_LAYOUT_EDITOR_VIDEO,     &conf.mode_video_pos,   {9*FONT_WIDTH, 4*FONT_HEIGHT}   },
+    {LANG_OSD_LAYOUT_EDITOR_EV,     &conf.mode_ev_pos,   {12*FONT_WIDTH, FONT_HEIGHT}   },
     {0}
 };
 static int osd_to_draw;
 static int curr_item;
 static char osd_buf[64];
+static char osd_buf2[10];
+static char osd_buf3[10];
+static char osd_buf4[10];
+
 static int step;
 static unsigned char *img_buf, *scr_buf;
 static int timer = 0;
@@ -79,9 +83,7 @@ void gui_osd_draw() {
         gui_osd_draw_raw_info();
         gui_osd_draw_values();
         gui_osd_draw_clock();
-      #if CAM_EV_IN_VIDEO
-        gui_osd_draw_ev_video(1);
-      #endif
+        gui_osd_draw_temp();
         for (i=1; i<=2; ++i) {
             draw_rect((osd[curr_item].pos->x>=i)?osd[curr_item].pos->x-i:0, (osd[curr_item].pos->y>=i)?osd[curr_item].pos->y-i:0, 
                       osd[curr_item].pos->x+osd[curr_item].size.x+i-1, osd[curr_item].pos->y+osd[curr_item].size.y+i-1,
@@ -226,6 +228,9 @@ static void gui_osd_draw_zebra_osd() {
                 if (conf.show_clock) {
                     gui_osd_draw_clock();
                 }
+                if (conf.show_temp>0) {
+                    gui_osd_draw_temp();
+                }
                 draw_set_draw_proc(NULL);
             }
             /* no break here */
@@ -247,7 +252,8 @@ int gui_osd_draw_zebra() {
     color cl_under=conf.zebra_color>>8, cl_over=conf.zebra_color&0xFF;
     static int need_restore=0;
     int viewport_height;
- int m = ((mode_get()&MODE_MASK) == MODE_REC);
+    int m = ((mode_get()&MODE_MASK) == MODE_REC);
+    int zebra_drawn=0;
     color cls[] = {
         COLOR_TRANSPARENT,
         (m)?0xDF:0xCC,
@@ -290,20 +296,7 @@ int gui_osd_draw_zebra() {
                 f = timer&4; 
                 break;
         }
-        if (!f) {
-            if (need_restore) {
-                if (conf.zebra_restore_screen || conf.zebra_restore_osd) {
-                    draw_restore();
-                } else {
-                    memset(buf, COLOR_TRANSPARENT, screen_buffer_size);
-                    gui_osd_draw_zebra_osd();
-                    memcpy(scr_buf, buf, screen_buffer_size);
-                    memcpy(scr_buf+screen_buffer_size, buf, screen_buffer_size);
-                }
-                need_restore=0;
-            }
-            return !(conf.zebra_restore_screen && conf.zebra_restore_osd);
-        } else {
+        if (f) {
             int step_x, step_v;
             over = 255-conf.zebra_over;
                 if (conf.zebra_multichannel) {step_x=2; step_v=6;} else {step_x=1; step_v=3;}
@@ -325,6 +318,7 @@ int gui_osd_draw_zebra() {
                          }
                         else if (((conf.zebra_mode == ZEBRA_MODE_ZEBRA_1 || conf.zebra_mode == ZEBRA_MODE_ZEBRA_2) && (y-x-timer)&f)) buf[s]=COLOR_TRANSPARENT;
                              else buf[s]=(yy>over)?cl_over:(yy<conf.zebra_under)?cl_under:COLOR_TRANSPARENT;
+                        if (buf[s] != COLOR_TRANSPARENT && !zebra_drawn) zebra_drawn = 1;
                     }
                     s+=screen_buffer_width-screen_width;
                     if (y*screen_height/viewport_height == (s+screen_buffer_width)/screen_buffer_width) {
@@ -332,6 +326,22 @@ int gui_osd_draw_zebra() {
                         s+=screen_buffer_width;
                     }
                 }
+            if (!zebra_drawn) f=0;
+        }
+        if (!f) {
+            if (need_restore) {
+                if (conf.zebra_restore_screen || conf.zebra_restore_osd) {
+                    draw_restore();
+                } else {
+                    memset(buf, COLOR_TRANSPARENT, screen_buffer_size);
+                    gui_osd_draw_zebra_osd();
+                    memcpy(scr_buf, buf, screen_buffer_size);
+                    memcpy(scr_buf+screen_buffer_size, buf, screen_buffer_size);
+                }
+                need_restore=0;
+            }
+            return !(conf.zebra_restore_screen && conf.zebra_restore_osd);
+        } else {
             
             
             gui_osd_draw_zebra_osd();
@@ -578,7 +588,7 @@ void gui_print_osd_state_string_int(const char * title, int value) {
   sprintf(osd_buf+strlen(osd_buf), "%d", value);
   sprintf(osd_buf+strlen(osd_buf), "%12s", "");
   osd_buf[12]=0;
-  draw_string(conf.mode_state_pos.x, conf.mode_state_pos.y+n, osd_buf, conf.osd_color);
+  draw_string(conf.mode_state_pos.x, conf.mode_state_pos.y+n, osd_buf, conf.osd_color_override);
   n+=FONT_HEIGHT;
 }
 
@@ -587,7 +597,7 @@ void gui_print_osd_state_string_chr(const char *title, const char *value) {
   sprintf(osd_buf+strlen(osd_buf), "%s", value);
   sprintf(osd_buf+strlen(osd_buf), "%12s", "");
   osd_buf[12]=0;    	
-  draw_string(conf.mode_state_pos.x, conf.mode_state_pos.y+n, osd_buf, conf.osd_color);
+  draw_string(conf.mode_state_pos.x, conf.mode_state_pos.y+n, osd_buf, conf.osd_color_override);
   n+=FONT_HEIGHT;
 }
 
@@ -596,7 +606,7 @@ void gui_print_osd_state_string_float(const char * title, const char * fmt, int 
   sprintf(osd_buf+strlen(osd_buf), fmt, (int)(value/divisor), (int)(value%divisor));
   sprintf(osd_buf+strlen(osd_buf), "%12s", "");
   osd_buf[12]=0;    	
-  draw_string(conf.mode_state_pos.x, conf.mode_state_pos.y+n, osd_buf, conf.osd_color);
+  draw_string(conf.mode_state_pos.x, conf.mode_state_pos.y+n, osd_buf, conf.osd_color_override);
   n+=FONT_HEIGHT;
 }
 
@@ -652,12 +662,15 @@ void gui_print_osd_misc_string_canon_values(const char * title, short value) {
 //-------------------------------------------------------------------
 void gui_osd_draw_raw_info() 
     {
-    int x;
+    int x, m=(mode_get()&MODE_SHOOTING_MASK);
     static int b;
+    
 
+    if ((!((movie_status > 1) && conf.save_raw_in_video   )) && (!((m==MODE_SPORTS) && conf.save_raw_in_sports)) && (!((shooting_get_prop(PROPCASE_DRIVE_MODE)==1) && conf.save_raw_in_burst && !(m==MODE_SPORTS)))  && (!((shooting_get_prop(PROPCASE_DRIVE_MODE)>=2) && conf.save_raw_in_timer)) && (!((shooting_get_prop(PROPCASE_BRACKET_MODE)==1) && conf.save_raw_in_ev_bracketing)) )
+    { 
     if (conf.show_remaining_raw) 
-       {
-       int raw_count=GetRawCount();  
+        {
+        int raw_count=GetRawCount();  
             if (raw_count>conf.remaining_raw_treshold)
                 {
                 sprintf(osd_buf, "RAW:%3d", raw_count);
@@ -679,9 +692,15 @@ void gui_osd_draw_raw_info()
                     b = b+1;
                     } 
                 }
-         }
+        }
     else draw_string(conf.mode_raw_pos.x, conf.mode_raw_pos.y, "RAW", conf.osd_color);
-	            
+	}   
+	else if (conf.raw_exceptions_warn)
+		{
+			gui_print_osd_state_string_chr("RAW Disabled","");
+		}
+		
+		         
 }
 //-------------------------------------------------------------------
 void gui_osd_draw_state() {
@@ -693,8 +712,9 @@ void gui_osd_draw_state() {
    //sprintf(osd_buf,"%s",get_debug());
    //draw_string(conf.mode_state_pos.x, conf.mode_state_pos.y+6*FONT_HEIGHT, osd_buf, conf.osd_color);
    ////////////////////////////  
+
       
-    if ((((conf.tv_enum_type) || (conf.tv_override_value)) && (conf.tv_override_koef)) || gui_mode==GUI_MODE_OSD){
+    if ((((conf.tv_enum_type) || (conf.tv_override_value)) && (conf.tv_override_koef)  && !(conf.override_disable==1)) || gui_mode==GUI_MODE_OSD){
     	if(kbd_is_key_pressed(KEY_SHOOT_HALF)) 
 		 { 
 		  t=(int)(shooting_get_shutter_speed_from_tv96(shooting_get_tv96())*100000);	
@@ -711,34 +731,40 @@ void gui_osd_draw_state() {
           }
        }
     }
-    if (conf.av_override_value || gui_mode==GUI_MODE_OSD) 
+    if ((conf.av_override_value && !(conf.override_disable==1))|| gui_mode==GUI_MODE_OSD)  
 	   gui_print_osd_state_string_float("AV:", "%d.%02d ", 100, shooting_get_aperture_from_av96(shooting_get_av96_override_value()));
 #if CAM_HAS_ND_FILTER
-    if (conf.nd_filter_state || gui_mode==GUI_MODE_OSD) 
+    if ((conf.nd_filter_state && !(conf.override_disable==1))|| gui_mode==GUI_MODE_OSD) 
 	   gui_print_osd_state_string_chr("NDFILTER:", ((conf.nd_filter_state==1)?"IN":"OUT"));
 #endif    
-    if ((conf.autoiso_enable && shooting_get_iso_mode()<=0 && !(m==MODE_M || m==MODE_TV) && shooting_get_flash_mode()) || gui_mode==GUI_MODE_OSD)  
-	    gui_print_osd_state_string_chr("AUTOISO:", "ON");
-    if ((conf.subj_dist_override_value && conf.subj_dist_override_koef && shooting_can_focus()) || ((gui_mode==GUI_MODE_ALT) && shooting_get_common_focus_mode())	|| gui_mode==GUI_MODE_OSD)   {
+    if ((conf.autoiso_enable && shooting_get_iso_mode()<=0 && !(m==MODE_M || m==MODE_TV) && shooting_get_flash_mode() && (!(conf.override_disable==1 && conf.override_disable_all))) || gui_mode==GUI_MODE_OSD)  
+	    gui_print_osd_state_string_chr("AUTOISO:", ((conf.autoiso_enable==1)?"ON":"OFF"));
+    if ((conf.subj_dist_override_value && conf.subj_dist_override_koef && shooting_can_focus() && !(conf.override_disable==1)) || ((gui_mode==GUI_MODE_ALT) && shooting_get_common_focus_mode())	|| gui_mode==GUI_MODE_OSD)   {
     	gui_print_osd_state_string_int("SD:",shooting_get_subject_distance_override_value());
         if (gui_mode==GUI_MODE_ALT)  
 		  gui_print_osd_state_string_int("FACTOR:",shooting_get_subject_distance_override_koef());   	
       }
-    if ((conf.iso_override_value && conf.iso_override_koef)	 || gui_mode==GUI_MODE_OSD)
+    if ((conf.iso_override_value && conf.iso_override_koef && !(conf.override_disable==1))	 || gui_mode==GUI_MODE_OSD)
     	gui_print_osd_state_string_int("ISO:", shooting_get_iso_override_value());
     if ((gui_mode==GUI_MODE_OSD) || (shooting_get_drive_mode())) {
-    if ((conf.tv_bracket_value) || (conf.av_bracket_value)  || (conf.iso_bracket_value && conf.iso_bracket_koef) || ((conf.subj_dist_bracket_value) && (conf.subj_dist_bracket_koef) && (shooting_can_focus())))  
+    if ((conf.tv_bracket_value && !(conf.override_disable==1 && conf.override_disable_all)) || (conf.av_bracket_value && !(conf.override_disable==1 && conf.override_disable_all))  || (conf.iso_bracket_value && conf.iso_bracket_koef && !(conf.override_disable==1 && conf.override_disable_all)) || ((conf.subj_dist_bracket_value) && (conf.subj_dist_bracket_koef) && (shooting_can_focus() && !(conf.override_disable==1 && conf.override_disable_all))))  
         gui_print_osd_state_string_chr("BRACKET:", shooting_get_bracket_type());
-      if (conf.tv_bracket_value)  
+      if (conf.tv_bracket_value && !(conf.override_disable==1 && conf.override_disable_all))  
 	    gui_print_osd_state_string_chr("TV:", shooting_get_tv_bracket_value());
-      else if  (conf.av_bracket_value) 
+      else if  (conf.av_bracket_value && !(conf.override_disable==1 && conf.override_disable_all)) 
 	    gui_print_osd_state_string_chr("AV:", shooting_get_av_bracket_value());
-      else if  (conf.iso_bracket_value && conf.iso_bracket_koef) 
+      else if  (conf.iso_bracket_value && conf.iso_bracket_koef   && !(conf.override_disable==1 && conf.override_disable_all)) 
 	    gui_print_osd_state_string_int("ISO:", shooting_get_iso_bracket_value());
-      else if  ((conf.subj_dist_bracket_value) && (conf.subj_dist_bracket_koef) && (shooting_can_focus()))
+      else if  ((conf.subj_dist_bracket_value  && !(conf.override_disable==1 && conf.override_disable_all)) && (conf.subj_dist_bracket_koef) && (shooting_can_focus()))
         gui_print_osd_state_string_int("SD:",shooting_get_subject_distance_bracket_value());
      }
-     
+	if (conf.curve_enable || gui_mode==GUI_MODE_OSD) {
+        if (conf.curve_enable==1) gui_print_osd_state_string_chr("CURVES:", "CSTM");
+        else if (conf.curve_enable==4) gui_print_osd_state_string_chr("CURVES:", "AUTO");
+        else if (conf.curve_enable==3) gui_print_osd_state_string_chr("CURVES:", "+2EV");
+        else if (conf.curve_enable==2) gui_print_osd_state_string_chr("CURVES:", "+1EV");
+    }
+    if (conf.override_disable == 1) gui_print_osd_state_string_chr("NO ", "OVERRIDES");
 /*
  draw_string(conf.mode_state_pos.x, conf.mode_state_pos.y+n, get_debug(), conf.osd_color);
         n+=FONT_HEIGHT;*/
@@ -888,30 +914,166 @@ void gui_osd_draw_seconds() {
 
 }
 
-//-------------------------------------------------------------------
-#if CAM_EV_IN_VIDEO
-void gui_osd_draw_ev_video(int visible){
- int x0=conf.ev_video_pos.x, y0=conf.ev_video_pos.y;
- int i, deltax;
+void gui_osd_draw_movie_time_left()  {
+ 
+static int card_used, init_space, elapsed, avg_use, time_left;
+static long init_time;
+static int record_running = 0;
+static int init = 0;
+static unsigned int skipcalls = 1;
+unsigned int hour=0, min=0, sec=0;
+int mode_video = MODE_IS_VIDEO(m); 
 
- draw_filled_rect(x0,y0,x0+70,y0+24, visible? ((conf.osd_color&0xFF00))|(conf.osd_color>>8): COLOR_TRANSPARENT);
 
- if (!visible) { return; }
+if (mode_video || movie_status > 1) {
+    // if manual adjust, show the field item to be adjusted
+   // if any value overriden, show the override value
+   if ((conf.video_mode == 0 && conf.fast_movie_quality_control==1) || conf.video_bitrate != VIDEO_DEFAULT_BITRATE) {
+       // gui_print_osd_state_string_chr("Bitrate: ",video_bitrate_strings[conf.video_bitrate]);
+       sprintf(osd_buf3, "Bit:%5s",video_bitrate_strings[conf.video_bitrate]);
+       draw_string( conf.mode_video_pos.x, conf.mode_video_pos.y+2*FONT_HEIGHT, osd_buf3, conf.osd_color);
+   }
+   if ((conf.video_mode == 1 && conf.fast_movie_quality_control==1) || conf.video_quality != VIDEO_DEFAULT_QUALITY) {
+       // gui_print_osd_state_string_int("Quality: ",conf.video_quality);
+			 sprintf(osd_buf4, "Qual:%2i",conf.video_quality);
+       draw_string( conf.mode_video_pos.x, conf.mode_video_pos.y+3*FONT_HEIGHT, osd_buf4, conf.osd_color);
+   }
+   // everything else is for stills
+	 if(mode_video)
+	 return;
+    }
 
- for (i=0;i<9;i++) draw_line(x0+2+i*8,   y0+12, x0+2+i*8,   y0+12-(i&1 ? 5 : 10), conf.osd_color);
- for (i=0;i<9;i++) draw_line(x0+2+i*8+1, y0+12, x0+2+i*8+1, y0+12-(i&1 ? 5 : 10), conf.osd_color);
+if (movie_reset == 1)
+	{
+		init = 0;
+		movie_reset = 0;
+	}
+    if (movie_status > 1) record_running = 1;
+    else 
+    {record_running = 0;
+    init = 0;
+    }
+    
+    if (record_running == 1 && init == 0)
+    {
+    init = 1;
+    init_space = GetFreeCardSpaceKb();
+    init_time  = get_tick_count();
+    }
+    if (init == 1)
+    {
+  
+    card_used = init_space - GetFreeCardSpaceKb();
+    elapsed = (int) ( get_tick_count() - init_time ) / 1000;
+    avg_use = card_used / elapsed;  // running average Kb/sec
+    time_left = (GetFreeCardSpaceKb() / avg_use);
+    hour = time_left / 3600;
+    min = (time_left % 3600) / 60;
+    sec = (time_left % 3600) % 60;
 
- deltax=8*get_ev_video();
+       if (elapsed<1)
+   {
+  sprintf(osd_buf, "Calc...");
+   draw_string( conf.mode_video_pos.x, conf.mode_video_pos.y, osd_buf, conf.osd_color);
+    }
+    
+   if (--skipcalls ==0) { 
+    if (elapsed>1)
+     {
+     if (conf.show_movie_time == 3){
+      sprintf(osd_buf, "%04d KB/s", avg_use);
+      draw_string( conf.mode_video_pos.x, conf.mode_video_pos.y, osd_buf, conf.osd_color);
+      sprintf(osd_buf2, "-%02d:%02d:%02d", hour, min, sec);
+      draw_string( conf.mode_video_pos.x, conf.mode_video_pos.y+FONT_HEIGHT, osd_buf2, conf.osd_color);
+    }
+     if (conf.show_movie_time == 2)
+      {sprintf(osd_buf, "%04d KB/s", avg_use);
+      draw_string( conf.mode_video_pos.x, conf.mode_video_pos.y, osd_buf, conf.osd_color);
+    }
+      if (conf.show_movie_time == 1)
+       {
+        sprintf(osd_buf, "-%02d:%02d:%02d", hour, min, sec);
+        draw_string( conf.mode_video_pos.x, conf.mode_video_pos.y, osd_buf, conf.osd_color);
+				}
+      }
 
- x0+=deltax;
+     skipcalls = conf.show_movie_refresh*5;
+    }
+    }
+        }
 
- draw_line(x0+34,y0+16,x0+34,y0+22,conf.osd_color);
- draw_line(x0+35,y0+16,x0+35,y0+22,conf.osd_color);
+void gui_osd_draw_ev() {
+#if (CAM_PROPSET == 1)  
+    sprintf(osd_buf, "EV: %+d,%2d", shooting_get_prop(25)/96,shooting_get_prop(25)%96);
+#elif (CAM_PROPSET == 2)
+    sprintf(osd_buf, "EV: %+d,%2d", shooting_get_prop(107)/96,shooting_get_prop(107)%96);
+#endif
 
- draw_line(x0+32,y0+19,x0+32,y0+22,conf.osd_color);
- draw_line(x0+33,y0+18,x0+33,y0+22,conf.osd_color);
- draw_line(x0+36,y0+18,x0+36,y0+22,conf.osd_color);
- draw_line(x0+37,y0+19,x0+37,y0+22,conf.osd_color);
+    draw_string(conf.mode_ev_pos.x, conf.mode_ev_pos.y, osd_buf, conf.osd_color);
 
 }
-#endif
+
+
+void gui_osd_draw_temp() {
+ 		if (conf.show_temp == 1)
+ 			{
+ 				if (conf.clock_format == 0)
+ 						{
+ 							sprintf(osd_buf," opt: %i°",get_optical_temp());
+ 						}
+ 				else
+ 						{
+ 							sprintf(osd_buf,"opt: %i°",(get_optical_temp()*18+320)/10);
+ 						}
+ 				draw_string(conf.temp_pos.x, conf.temp_pos.y, osd_buf, conf.osd_color);
+ 			}
+ 		if (conf.show_temp==2)
+ 			{
+ 				if (conf.clock_format == 0)
+ 						{
+ 							sprintf(osd_buf," ccd: %i°",get_ccd_temp());
+ 						}
+ 				else
+ 						{
+ 							sprintf(osd_buf,"ccd: %i°",(get_ccd_temp()*18+320)/10);
+ 						}
+ 				draw_string(conf.temp_pos.x, conf.temp_pos.y, osd_buf, conf.osd_color);
+ 			}
+ 		if (conf.show_temp==3)
+ 			{
+ 				if (conf.clock_format == 0)
+ 						{
+ 							sprintf(osd_buf," batt:%i°",get_battery_temp());
+ 						}
+ 				else
+ 						{
+ 							sprintf(osd_buf,"batt:%i°",(get_battery_temp()*18+320)/10);
+ 						}
+ 				draw_string(conf.temp_pos.x, conf.temp_pos.y, osd_buf, conf.osd_color);
+ 			}
+ 		if (conf.show_temp==4)
+ 			{
+				if (conf.clock_format == 0)
+ 					{ 				
+ 						sprintf(osd_buf," opt: %i°",get_optical_temp());
+ 						draw_string(conf.temp_pos.x, conf.temp_pos.y, osd_buf, conf.osd_color);
+ 						sprintf(osd_buf," ccd: %i°",get_ccd_temp());
+ 						draw_string(conf.temp_pos.x, conf.temp_pos.y+FONT_HEIGHT, osd_buf, conf.osd_color);
+ 						sprintf(osd_buf," batt:%i°",get_battery_temp());
+ 						draw_string(conf.temp_pos.x, conf.temp_pos.y+2*FONT_HEIGHT, osd_buf, conf.osd_color);
+ 					}	
+    		else
+					{
+ 						sprintf(osd_buf,"opt: %i°",(get_optical_temp()*18+320)/10);
+ 						draw_string(conf.temp_pos.x, conf.temp_pos.y, osd_buf, conf.osd_color);
+ 						sprintf(osd_buf,"ccd: %i°",(get_ccd_temp()*18+320)/10);
+ 						draw_string(conf.temp_pos.x, conf.temp_pos.y+FONT_HEIGHT, osd_buf, conf.osd_color);
+ 						sprintf(osd_buf,"batt:%i°",(get_battery_temp()*18+320)/10);
+ 						draw_string(conf.temp_pos.x, conf.temp_pos.y+2*FONT_HEIGHT, osd_buf, conf.osd_color);
+					}    			
+    }
+}
+
+
+
+//-------------------------------------------------------------------

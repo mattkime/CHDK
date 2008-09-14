@@ -96,7 +96,6 @@ NHSTUB(TurnOffMic, 0xFFC382B4)
 NHSTUB(ExpCtrlTool_StopContiAE,  0xFFC24410) 
 NHSTUB(ExpCtrlTool_StartContiAE, 0xFFC24250) 
 NHSTUB(MakeAFScan,  0xFFDE3A8C) 
-NHSTUB(SetAE_ShutterSpeed, 0xFFDB7018) 
 
 
 // null stubs
@@ -135,3 +134,11 @@ NSTUB(taskIdListGet,			 0xFFC00958)
 NSTUB(taskName,				 0xFFC00958)
 NSTUB(taskResume,			 0xFFC00958)
 NSTUB(taskSuspend,			 0xFFC00958)
+NHSTUB(GetBatteryTemperature, 0xFFC39D34)
+NHSTUB(GetCCDTemperature, 0xFFC39CC4)
+NHSTUB(GetOpticalTemperature, 0xFFC39DA4)
+NHSTUB(PT_PlaySound, 0xFFC521E0)
+
+
+NHSTUB(EnterToCompensationEVF, 0xffc17108) 
+NHSTUB(ExitFromCompensationEVF, 0xffc17158)

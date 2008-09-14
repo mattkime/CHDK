@@ -18,6 +18,7 @@
     #define CAM_USE_ZOOM_FOR_MF         1   // Zoom lever can be used for manual focus adjustments
     #undef  CAM_ADJUSTABLE_ALT_BUTTON       // ALT-button can be set from menu
     #define CAM_REMOTE                  1   // Camera supports USB-remote
+    #define CAM_SYNCH                   1   // Camera supports SDM precision synch
     #undef  CAM_MULTIPART                   // Camera supports SD-card multipartitioning 
     #define CAM_HAS_ZOOM_LEVER          1   // Camera has dedicated zoom buttons
     #undef  CAM_DRAW_EXPOSITION             // Output expo-pair on screen (for cameras which (sometimes) don't do that)
@@ -40,8 +41,8 @@
     #define CAM_EMUL_KEYPRESS_DELAY     40  // Delay to interpret <alt>-button press as longpress
     #define CAM_EMUL_KEYPRESS_DURATION  5   // Length of keypress emulation
 
-    #undef  CAM_AF_SCAN_DURING_VIDEO_RECORD // CHDK can make single AF scan during video record
-    #undef  CAM_EV_IN_VIDEO                 // CHDK can change exposure in video mode
+    #undef  CAM_AF_SCAN_DURING_VIDEO_RECORD // CHDK can make single AF scan during video record 
+    #undef  CAM_HAS_VIDEO_BUTTON            // Camera can take stills in video mode, and vice versa
 
 //----------------------------------------------------------
 // Overridden values for each camera
@@ -63,7 +64,6 @@
     #undef  CAM_HAS_IS
     #define CAM_AF_SCAN_DURING_VIDEO_RECORD 1
     
-
 //==========================================================
 // A-series
 //==========================================================
@@ -85,7 +85,6 @@
     #undef  CAM_HAS_IS
     #define CAM_CAN_MUTE_MICROPHONE     1
     #define CAM_AF_SCAN_DURING_VIDEO_RECORD 1
-    #define CAM_EV_IN_VIDEO             1
     
 //----------------------------------------------------------
 #elif defined (CAMERA_a460)
@@ -106,7 +105,6 @@
     #undef  CAM_HAS_IS
     #define CAM_CAN_MUTE_MICROPHONE     1
     #define CAM_AF_SCAN_DURING_VIDEO_RECORD 1
-    #define CAM_EV_IN_VIDEO             1
     
 //----------------------------------------------------------
 #elif defined (CAMERA_a530)
@@ -130,8 +128,7 @@
     #undef  CAM_HAS_IS
     #define CAM_CAN_MUTE_MICROPHONE     1
     #define CAM_AF_SCAN_DURING_VIDEO_RECORD 2
-    #define CAM_EV_IN_VIDEO             1
-
+    
 //----------------------------------------------------------
 #elif defined (CAMERA_a540)
     #define CAM_PROPSET                 1
@@ -149,8 +146,7 @@
     #undef  CAM_HAS_IS
     #define CAM_CAN_MUTE_MICROPHONE     1
     #define CAM_AF_SCAN_DURING_VIDEO_RECORD 2
-    #define CAM_EV_IN_VIDEO             1
-
+    
 //----------------------------------------------------------
 #elif defined (CAMERA_a550)
     #define CAM_PROPSET                 2
@@ -169,7 +165,7 @@
     #undef  CAM_HAS_IS
     #define CAM_CAN_MUTE_MICROPHONE     1
     #define CAM_AF_SCAN_DURING_VIDEO_RECORD 1
-
+    
 //----------------------------------------------------------
 #elif defined (CAMERA_a560)
     #define CAM_PROPSET                 2
@@ -198,8 +194,7 @@
     #define CAM_MULTIPART               1
     #define CAM_CAN_MUTE_MICROPHONE     1
     #define CAM_AF_SCAN_DURING_VIDEO_RECORD 1
-    #define CAM_EV_IN_VIDEO             1
-
+    
 //----------------------------------------------------------
 #elif defined (CAMERA_a610)
     #define CAM_PROPSET                 1
@@ -212,8 +207,6 @@
     #undef  CAM_HAS_IS
     #define CAM_CAN_MUTE_MICROPHONE     1
     #define CAM_AF_SCAN_DURING_VIDEO_RECORD 2
-    #define CAM_EV_IN_VIDEO             1
-
 
 //----------------------------------------------------------
 #elif defined (CAMERA_a620)
@@ -227,7 +220,6 @@
     #undef  CAM_HAS_IS    
     #define CAM_CAN_MUTE_MICROPHONE     1
     #define CAM_AF_SCAN_DURING_VIDEO_RECORD 2
-    #define CAM_EV_IN_VIDEO             1
 
 //----------------------------------------------------------
 #elif defined (CAMERA_a630)
@@ -242,8 +234,7 @@
     #undef  CAM_HAS_IS
     #define CAM_CAN_MUTE_MICROPHONE     1
     #define CAM_AF_SCAN_DURING_VIDEO_RECORD 1
-    #define CAM_EV_IN_VIDEO             1
-
+    
 //----------------------------------------------------------
 #elif defined (CAMERA_a640)
     #define CAM_PROPSET                 1
@@ -257,8 +248,7 @@
     #undef  CAM_HAS_IS
     #define CAM_CAN_MUTE_MICROPHONE     1
     #define CAM_AF_SCAN_DURING_VIDEO_RECORD 1
-    #define CAM_EV_IN_VIDEO             1
-
+    
 //----------------------------------------------------------
 #elif defined (CAMERA_a650)
     #define CAM_PROPSET                 2
@@ -274,8 +264,7 @@
     #undef  CAM_EMUL_KEYPRESS_DURATION
     #define CAM_EMUL_KEYPRESS_DURATION  10
     #define CAM_AF_SCAN_DURING_VIDEO_RECORD 1
-    #define CAM_EV_IN_VIDEO             1
-
+    
 //----------------------------------------------------------
 #elif defined (CAMERA_a700)
     #define CAM_PROPSET                 1
@@ -286,8 +275,7 @@
     #undef  CAM_HAS_IS
     #define CAM_CAN_MUTE_MICROPHONE     1
     #define CAM_AF_SCAN_DURING_VIDEO_RECORD 2
-    #define CAM_EV_IN_VIDEO             1
-
+    
 //----------------------------------------------------------
 #elif defined (CAMERA_a710)
     #define CAM_PROPSET                 1
@@ -298,8 +286,7 @@
     #define CAM_MULTIPART               1
     #define CAM_CAN_MUTE_MICROPHONE     1
     #define CAM_AF_SCAN_DURING_VIDEO_RECORD 1
-    #define CAM_EV_IN_VIDEO             1
-
+    
 //----------------------------------------------------------
 #elif defined (CAMERA_a720)
     #define CAM_PROPSET                 2
@@ -309,8 +296,6 @@
     #define CAM_RAW_ROWS                2480   // for new 8 MP
     #define CAM_CAN_MUTE_MICROPHONE     1
     #define CAM_AF_SCAN_DURING_VIDEO_RECORD 1
-    #define CAM_EV_IN_VIDEO             1
-
 
 //==========================================================
 // SD-Series (IXUS-Series)
@@ -328,16 +313,18 @@
     #undef  CAM_HAS_MANUAL_FOCUS
     #undef  CAM_HAS_USER_TV_MODES
     #define CAM_SHOW_OSD_IN_SHOOT_MENU  1
+    #undef  CAM_CAN_UNLOCK_OPTICAL_ZOOM_IN_VIDEO
     #undef  CAM_HAS_IS
     #undef CAM_CONSOLE_LOG_ENABLED
-    #undef  CAM_CAN_UNLOCK_OPTICAL_ZOOM_IN_VIDEO
 //----------------------------------------------------------
+
 #elif defined (CAMERA_ixus50_sd400)
     #define CAM_PROPSET                 1
 
     #define CAM_RAW_ROWPIX              2672   // for 5 MP
     #define CAM_RAW_ROWS                1968   // for 5 MP
 
+    #undef  CAM_SYNCH  
     #undef  CAM_USE_ZOOM_FOR_MF
     #undef  CAM_HAS_ERASE_BUTTON
     #undef  CAM_HAS_IRIS_DIAPHRAGM
@@ -364,6 +351,29 @@
     #define CAM_SHOW_OSD_IN_SHOOT_MENU  1
     #undef  CAM_HAS_IS
     #define CAM_AF_SCAN_DURING_VIDEO_RECORD 2
+
+//----------------------------------------------------------
+#elif defined (CAMERA_ixus60_sd600)
+    #define CAM_PROPSET                 1
+
+    #define CAM_RAW_ROWPIX              2888   // for 6 MP
+    #define CAM_RAW_ROWS                2136   // for 6 MP
+
+    #undef  CAM_SYNCH
+    #undef  CAM_USE_ZOOM_FOR_MF
+    #undef  CAM_HAS_ERASE_BUTTON
+    #undef  CAM_HAS_IRIS_DIAPHRAGM
+    #define CAM_HAS_ND_FILTER           1
+    #undef  CAM_HAS_MANUAL_FOCUS
+    #undef  CAM_HAS_USER_TV_MODES
+    #define CAM_DRAW_EXPOSITION		    1
+    #define CAM_SHOW_OSD_IN_SHOOT_MENU  1
+    #undef  CAM_CAN_UNLOCK_OPTICAL_ZOOM_IN_VIDEO
+    #define CAM_FEATURE_FEATHER         1
+
+//    #define CAM_CONSOLE_LOG_ENABLED     1  //100a won't compile if this is defined ("undefined reference to `_iosDevFind'")
+    #undef  CAM_HAS_IS
+    #undef  CAM_CHDK_HAS_EXT_VIDEO_MENU
 
 //----------------------------------------------------------
 #elif defined (CAMERA_ixus65_sd630)
@@ -411,6 +421,7 @@
     #define CAM_RAW_ROWPIX              3152   // for 7 MP
     #define CAM_RAW_ROWS                2340   // for 7 MP
 
+    #undef  CAM_SYNCH
     #undef  CAM_USE_ZOOM_FOR_MF
     #define CAM_DRAW_EXPOSITION         1
     #undef  CAM_HAS_ERASE_BUTTON
@@ -422,7 +433,6 @@
     #define CAM_SHOW_OSD_IN_SHOOT_MENU  1
     #undef  CAM_HAS_IS
     #define CAM_MULTIPART               1
-    #define CAM_AF_SCAN_DURING_VIDEO_RECORD 1
 
 //----------------------------------------------------------
 
@@ -492,7 +502,7 @@
     #undef  CAM_HAS_MANUAL_FOCUS
     #undef  CAM_HAS_USER_TV_MODES
     #define CAM_SHOW_OSD_IN_SHOOT_MENU  1
-	#define CAM_CAN_UNLOCK_OPTICAL_ZOOM_IN_VIDEO 1
+  	#define CAM_CAN_UNLOCK_OPTICAL_ZOOM_IN_VIDEO 1
     #undef  CAM_CAN_MUTE_MICROPHONE
     
 //----------------------------------------------------------
@@ -509,8 +519,24 @@
     #undef  CAM_HAS_MANUAL_FOCUS
     #undef  CAM_HAS_USER_TV_MODES
     #define CAM_SHOW_OSD_IN_SHOOT_MENU  1
-    #define CAM_MULTIPART		1
+    #define CAM_MULTIPART               1
     #define CAM_AF_SCAN_DURING_VIDEO_RECORD 1
+    
+//----------------------------------------------------------
+#elif defined (CAMERA_ixus960_sd950)
+    #define CAM_PROPSET                 2
+    #define CAM_DRYOS                   1
+
+    #define CAM_RAW_ROWPIX              4104   
+    #define CAM_RAW_ROWS                3048   
+
+    #undef  CAM_USE_ZOOM_FOR_MF
+    #undef  CAM_HAS_ERASE_BUTTON
+    #undef  CAM_HAS_IRIS_DIAPHRAGM
+    #define CAM_HAS_ND_FILTER           1
+    #undef  CAM_HAS_MANUAL_FOCUS
+    #undef  CAM_HAS_USER_TV_MODES
+    #define CAM_SHOW_OSD_IN_SHOOT_MENU  1
 
 //==========================================================
 // S-Series
@@ -521,9 +547,11 @@
     #define CAM_RAW_ROWPIX              2672   // for 5 MP
     #define CAM_RAW_ROWS                1968   // for 5 MP
     
+    #undef  CAM_SYNCH   
     #define CAM_SWIVEL_SCREEN           1
     #define CAM_ADJUSTABLE_ALT_BUTTON   1
     #undef  CAM_CAN_UNLOCK_OPTICAL_ZOOM_IN_VIDEO
+    #define  CAM_HAS_VIDEO_BUTTON       1
 
 
 //----------------------------------------------------------
@@ -533,11 +561,13 @@
     #define CAM_RAW_ROWPIX              2888   // for 6 MP
     #define CAM_RAW_ROWS                2136   // for 6 MP
     
+    #undef  CAM_SYNCH  
     #define CAM_SWIVEL_SCREEN           1
     #define CAM_ADJUSTABLE_ALT_BUTTON   1
     #define CAM_MULTIPART               1
     #undef  CAM_CAN_SD_OVER_NOT_IN_MF
     #undef  CAM_CAN_UNLOCK_OPTICAL_ZOOM_IN_VIDEO
+    #define  CAM_HAS_VIDEO_BUTTON       1
 
 
 //----------------------------------------------------------
@@ -553,6 +583,7 @@
     #undef  CAM_CAN_SD_OVER_NOT_IN_MF
     #undef  CAM_CAN_UNLOCK_OPTICAL_ZOOM_IN_VIDEO
     #undef  CAM_CHDK_HAS_EXT_VIDEO_MENU
+    #define  CAM_HAS_VIDEO_BUTTON       1
 
 
 //==========================================================
@@ -581,10 +612,11 @@
 
     #define CAM_RAW_ROWPIX              3336   // for new 8 MP
     #define CAM_RAW_ROWS                2480   // for new 8 MP
-    #define CAM_CAN_MUTE_MICROPHONE     1
-    #define CAM_AF_SCAN_DURING_VIDEO_RECORD 1
-    #define CAM_ADJUSTABLE_ALT_BUTTON   1
-    #define CAM_SHOW_OSD_IN_SHOOT_MENU  1
+    #undef CAM_SYNCH 
+#define CAM_CAN_MUTE_MICROPHONE     1 
+#define CAM_AF_SCAN_DURING_VIDEO_RECORD 1 
+   #define CAM_ADJUSTABLE_ALT_BUTTON   1
+   #define CAM_SHOW_OSD_IN_SHOOT_MENU  1
 
 //----------------------------------------------------------
 
